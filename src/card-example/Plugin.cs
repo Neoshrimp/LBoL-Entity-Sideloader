@@ -1,0 +1,541 @@
+﻿using BepInEx;
+using BepInEx.Configuration;
+using HarmonyLib;
+using LBoL.Base;
+using LBoL.Base.Extensions;
+using LBoL.ConfigData;
+using LBoL.Core;
+using LBoL.Core.Adventures;
+using LBoL.Core.Attributes;
+using LBoL.Core.Battle;
+using LBoL.Core.Battle.BattleActionRecord;
+using LBoL.Core.Battle.BattleActions;
+using LBoL.Core.Battle.Interactions;
+using LBoL.Core.Cards;
+using LBoL.Core.Dialogs;
+using LBoL.Core.GapOptions;
+using LBoL.Core.Helpers;
+using LBoL.Core.Intentions;
+using LBoL.Core.JadeBoxes;
+using LBoL.Core.PlatformHandlers;
+using LBoL.Core.Randoms;
+using LBoL.Core.SaveData;
+using LBoL.Core.Stations;
+using LBoL.Core.Stats;
+using LBoL.Core.StatusEffects;
+using LBoL.Core.Units;
+using LBoL.EntityLib.Adventures;
+using LBoL.EntityLib.Adventures.Common;
+using LBoL.EntityLib.Adventures.FirstPlace;
+using LBoL.EntityLib.Adventures.Shared12;
+using LBoL.EntityLib.Adventures.Shared23;
+using LBoL.EntityLib.Adventures.Stage1;
+using LBoL.EntityLib.Adventures.Stage2;
+using LBoL.EntityLib.Adventures.Stage3;
+using LBoL.EntityLib.Cards.Character.Cirno;
+using LBoL.EntityLib.Cards.Character.Cirno.FairySupport;
+using LBoL.EntityLib.Cards.Character.Koishi;
+using LBoL.EntityLib.Cards.Character.Marisa;
+using LBoL.EntityLib.Cards.Character.Reimu;
+using LBoL.EntityLib.Cards.Character.Sakuya;
+using LBoL.EntityLib.Cards.Devel;
+using LBoL.EntityLib.Cards.Neutral;
+using LBoL.EntityLib.Cards.Neutral.Black;
+using LBoL.EntityLib.Cards.Neutral.Blue;
+using LBoL.EntityLib.Cards.Neutral.Green;
+using LBoL.EntityLib.Cards.Neutral.MultiColor;
+using LBoL.EntityLib.Cards.Neutral.NoColor;
+using LBoL.EntityLib.Cards.Neutral.Red;
+using LBoL.EntityLib.Cards.Neutral.TwoColor;
+using LBoL.EntityLib.Cards.Neutral.White;
+using LBoL.EntityLib.Cards.Other.Adventure;
+using LBoL.EntityLib.Cards.Other.Enemy;
+using LBoL.EntityLib.Cards.Other.Misfortune;
+using LBoL.EntityLib.Cards.Other.Tool;
+using LBoL.EntityLib.Devel;
+using LBoL.EntityLib.Dolls;
+using LBoL.EntityLib.EnemyUnits.Character;
+using LBoL.EntityLib.EnemyUnits.Character.DreamServants;
+using LBoL.EntityLib.EnemyUnits.Lore;
+using LBoL.EntityLib.EnemyUnits.Normal;
+using LBoL.EntityLib.EnemyUnits.Normal.Bats;
+using LBoL.EntityLib.EnemyUnits.Normal.Drones;
+using LBoL.EntityLib.EnemyUnits.Normal.Guihuos;
+using LBoL.EntityLib.EnemyUnits.Normal.Maoyus;
+using LBoL.EntityLib.EnemyUnits.Normal.Ravens;
+using LBoL.EntityLib.EnemyUnits.Opponent;
+using LBoL.EntityLib.Exhibits;
+using LBoL.EntityLib.Exhibits.Adventure;
+using LBoL.EntityLib.Exhibits.Common;
+using LBoL.EntityLib.Exhibits.Mythic;
+using LBoL.EntityLib.Exhibits.Seija;
+using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.EntityLib.JadeBoxes;
+using LBoL.EntityLib.Mixins;
+using LBoL.EntityLib.PlayerUnits;
+using LBoL.EntityLib.Stages;
+using LBoL.EntityLib.Stages.NormalStages;
+using LBoL.EntityLib.StatusEffects.Basic;
+using LBoL.EntityLib.StatusEffects.Cirno;
+using LBoL.EntityLib.StatusEffects.Enemy;
+using LBoL.EntityLib.StatusEffects.Enemy.SeijaItems;
+using LBoL.EntityLib.StatusEffects.Marisa;
+using LBoL.EntityLib.StatusEffects.Neutral;
+using LBoL.EntityLib.StatusEffects.Neutral.Black;
+using LBoL.EntityLib.StatusEffects.Neutral.Blue;
+using LBoL.EntityLib.StatusEffects.Neutral.Green;
+using LBoL.EntityLib.StatusEffects.Neutral.Red;
+using LBoL.EntityLib.StatusEffects.Neutral.TwoColor;
+using LBoL.EntityLib.StatusEffects.Neutral.White;
+using LBoL.EntityLib.StatusEffects.Others;
+using LBoL.EntityLib.StatusEffects.Reimu;
+using LBoL.EntityLib.StatusEffects.Sakuya;
+using LBoL.EntityLib.UltimateSkills;
+using LBoL.Presentation;
+using LBoL.Presentation.Animations;
+using LBoL.Presentation.Bullet;
+using LBoL.Presentation.Effect;
+using LBoL.Presentation.I10N;
+using LBoL.Presentation.UI;
+using LBoL.Presentation.UI.Dialogs;
+using LBoL.Presentation.UI.ExtraWidgets;
+using LBoL.Presentation.UI.Panels;
+using LBoL.Presentation.UI.Transitions;
+using LBoL.Presentation.UI.Widgets;
+using LBoL.Presentation.Units;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using UnityEngine;
+using Untitled;
+using Untitled.ConfigDataBuilder;
+using Untitled.ConfigDataBuilder.Base;
+using Debug = UnityEngine.Debug;
+
+
+namespace CardExample
+{
+    [BepInPlugin(GUID, "CardExample", version)]
+    [BepInProcess("LBoL.exe")]
+    public class Plugin : BaseUnityPlugin
+    {
+        public const string GUID = "neo.lbol.cardexample";
+        public const string version = "1.0.0";
+
+        private static readonly Harmony harmony = new Harmony(GUID);
+
+        internal static BepInEx.Logging.ManualLogSource log;
+
+        private void Awake()
+        {
+            log = Logger;
+
+            // very important. Without it the entry point MonoBehaviour gets destroid
+            DontDestroyOnLoad(gameObject);
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+            harmony.PatchAll();
+
+
+/*            try
+            {
+                ConfigDataManager_Patch.Postfix();
+            }
+            catch (Exception ex)
+            {
+
+                log.LogError(ex);
+            }*/
+
+        }
+
+        private void OnDestroy()
+        {
+            if (harmony != null)
+                harmony.UnpatchSelf();
+        }
+
+
+        //load config +
+            //process indexes
+        //card unlock?
+        //load assets
+            // support multiple sources
+                // asset bundles
+                // plain files
+                // packaged manifest resources
+            // texture2d/sprite +
+                // card image template/dimensions
+            // sfx
+            // vfx
+            // bgm
+            // spine
+            // yarn
+
+        //load entity type +
+        //load localization
+
+        //live entity reload
+        // no yarnSpinner parser or script files
+        // BETTER DEBUG TOOLS NOW
+
+
+        
+        public abstract class EntityDefinition<T, C> where T : class where C : class
+        {
+            private string id;
+
+            private Assembly assembly = Assembly.GetExecutingAssembly();
+            public string Id { get => id; set => id = value; }
+            public Assembly Assembly { get => assembly; set => assembly = value; }
+
+
+            public abstract C CreateConfig();
+        }
+
+        public class TemporialGuardianDefinition : EntityDefinition<Card, CardConfig>
+        {
+
+            public TemporialGuardianDefinition()
+            {
+                Id = nameof(TemporalGuardian);
+            }
+
+            public override CardConfig CreateConfig()
+            {
+
+                var cardConfig = new CardConfig(
+                               Index: 6969,
+                               Id: Id,
+                               Order: 10,
+                               AutoPerform: true,
+                               Perform: new string[0][],
+                               GunName: "Simple1",
+                               GunNameBurst: "Simple1",
+                               DebugLevel: 0,
+                               // test
+                               Revealable: false,
+                               IsPooled: true,
+                               IsUpgradable: true,
+                               Rarity: Rarity.Uncommon,
+                               Type: CardType.Ability,
+                               TargetType: TargetType.Self,
+                               Colors: new List<ManaColor>() { ManaColor.Blue, ManaColor.White },
+                               IsXCost: false,
+                               // test
+                               Cost: new ManaGroup() { Any = 1 }, //  new ManaGroup() { Any = 1, Blue = 2, White = 2 },
+                               UpgradedCost: null,//new ManaGroup() { Any = 1, Blue = 1, White = 1 },
+                               MoneyCost: null,
+                               Damage: null,
+                               UpgradedDamage: null,
+                               Block: null,
+                               UpgradedBlock: null,
+                               Shield: null,
+                               UpgradedShield: null,
+                               Value1: 2,
+                               UpgradedValue1: null,
+                               Value2: null,
+                               UpgradedValue2: null,
+                               Mana: null,
+                               UpgradedMana: null,
+                               Scry: null,
+                               UpgradedScry: null,
+                               ToolPlayableTimes: null,
+                               Keywords: Keyword.None,
+                               UpgradedKeywords: Keyword.None,
+                               EmptyDescription: false,
+                               // what does it do?
+                               RelativeKeyword: Keyword.None,
+                               UpgradedRelativeKeyword: Keyword.None,
+                               RelativeEffects: new List<string>() { "TimeAuraSe" },
+                               UpgradedRelativeEffects: new List<string>() { "TimeAuraSe" },
+                               RelativeCards: new List<string>(),
+                               UpgradedRelativeCards: new List<string>(),
+                               Owner: "Sakuya",
+                               Unfinished: false,
+                               Illustrator: null,
+                               SubIllustrator: new List<string>()
+                    );
+                return cardConfig;
+            }
+
+            
+            public sealed class TemporalGuardian : Card
+            {   
+                protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
+                {
+                    yield return base.BuffAction<TemporialGuardianSeDefinition.TemporalGuardianSe>(base.Value1, 0, 0, 0, 0.3f);
+                    yield break;
+                }
+            }
+
+
+        }
+
+
+        public class TemporialGuardianSeDefinition : EntityDefinition<StatusEffect, StatusEffectConfig>
+        {
+
+            public TemporialGuardianSeDefinition()
+            { 
+                Id = nameof(TemporalGuardianSe);
+            }
+
+            public override StatusEffectConfig CreateConfig()
+            {
+
+                var se = new StatusEffectConfig(
+                                Id: Id,
+                                Order: 10,
+                                Type: StatusEffectType.Positive,
+                                IsVerbose: false,
+                                IsStackable: true,
+                                StackActionTriggerLevel: null,
+                                HasLevel: true,
+                                LevelStackType: StackType.Add,
+                                HasDuration: false,
+                                DurationStackType: StackType.Add,
+                                DurationDecreaseTiming: DurationDecreaseTiming.Custom,
+                                HasCount: false,
+                                CountStackType: StackType.Keep,
+                                LimitStackType: StackType.Keep,
+                                ShowPlusByLimit: false,
+                                Keywords: Keyword.None,
+                                RelativeEffects: new List<string>() { "TimeAuraSe" },
+                                VFX: "BuffBlue",
+                                VFXloop: "Default",
+                                SFX: "Default"
+                            );
+
+                return se;
+            }
+            public sealed class TemporalGuardianSe : StatusEffect
+            {
+
+                
+
+                protected override void OnAdded(Unit unit)
+                {
+                    ReactOwnerEvent<StatusEffectApplyEventArgs>(Battle.Player.StatusEffectAdding,
+                        new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdding));
+
+                    ReactOwnerEvent<StatusEffectApplyEventArgs>(Battle.Player.StatusEffectAdded,
+                        new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdded));
+
+                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectChanged,
+                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange));
+
+                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectRemoved,
+                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoved));
+
+                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectRemoving,
+                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoving));
+                }
+
+                private IEnumerable<BattleAction> TimePulseAdding(StatusEffectApplyEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"addING: level: {ta.Level}, trigger level: {ta.TriggerLevel}, args Level:{args.Level}");
+                    }
+                    yield break;
+                }
+
+                private IEnumerable<BattleAction> TimePulseAdded(StatusEffectApplyEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"addED: level: {ta.Level}, trigger level: {ta.TriggerLevel}, args Level:{args.Level}");
+                    }
+                    yield break;
+                }
+
+                private IEnumerable<BattleAction> TimePulseChange(StatusEffectEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"changed: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
+                    }
+                    yield break;
+                }
+
+                private IEnumerable<BattleAction> TimePulseRemoved(StatusEffectEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"removED: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
+                    }
+                    yield break;
+                }
+
+                private IEnumerable<BattleAction> TimePulseRemoving(StatusEffectEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"removED: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
+                    }
+                    yield break;
+                }
+            }
+        }
+
+        public class MeetTheGamemasterDefinition : EntityDefinition<Adventure, AdventureConfig>
+        {
+
+            public MeetTheGamemasterDefinition()
+            {
+                Id = nameof(MeetTheGamemaster);
+            }
+
+            public override AdventureConfig CreateConfig()
+            {
+                var ac = new AdventureConfig(
+                                No: 696,
+                                Id: Id,
+                                HostId: "",
+                                HostId2: "",
+                                Music: 2,
+                                HideUlt: false,
+                                TempArt: true
+                    );
+
+                return ac;
+            }
+
+            public sealed class MeetTheGamemaster : Adventure
+            {
+                [RuntimeCommand("GetLegalCards", "")]
+                public IEnumerator GetLegalCards()
+                {
+                    var legalCards = Library.EnumerateRollableCardTypes(10)
+                        .SelectMany(vt => new Card[] { Library.CreateCard(vt.Item1), Library.CreateCard(vt.Item1), Library.CreateCard(vt.Item1) } );
+                    
+                    legalCards.Do(c => c.GameRun = GameRun);
+
+
+                    SelectCardInteraction interaction = new SelectCardInteraction(0, legalCards.Count(), legalCards, SelectedCardHandling.DoNothing)
+                    {
+                        CanCancel = false,
+                        Description = "deeznuts"
+                    };
+
+
+                    yield return base.GameRun.InteractionViewer.View(interaction);
+
+                    //var cards = interaction.SelectedCards;
+                    //base.Storage.SetValue("$pill", card.Id);
+                    yield break;
+
+
+                }
+            }
+        }
+
+
+
+
+        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
+        class ConfigDataManager_Patch
+        {
+
+            public static void RegisterEntity<T, C>(EntityDefinition<T, C> entityDefinition) where T : class where C : class
+            {
+
+                log.LogInfo($"{entityDefinition.Id}, T:{typeof(T)}, C:{typeof(C)}");
+
+                try
+                {
+                    var cType = typeof(C);
+                    //= entityDefinition.CreateConfig();
+
+                    var mFromId = AccessTools.Method(cType, "FromId");
+
+                    var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
+                    var newConfig = entityDefinition.CreateConfig();
+
+                    if (config == null)
+                    {
+                        log.LogInfo($"initial config load for {entityDefinition.Id}");
+
+                        var f_Data = AccessTools.Field(typeof(C), "_data");
+                        var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+                        var f_IdTable = AccessTools.Field(cType, "_IdTable");
+
+
+
+                        ref_Data() = ref_Data().AddItem(newConfig).ToArray();
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.Id, newConfig);
+
+                    }
+                    else
+                    {
+                        log.LogInfo($"secondary config reload for {entityDefinition.Id}");
+                        config = newConfig;
+                    }
+
+                    if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
+                    {
+                        log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
+                        TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+
+                    log.LogError($"Exception registering {entityDefinition.Id}: {ex}");
+
+                }
+            }
+
+
+            public static void Postfix()
+            {
+                RegisterEntity(new TemporialGuardianDefinition());
+                RegisterEntity(new TemporialGuardianSeDefinition());
+                //RegisterEntity(new MeetTheGamemasterDefinition());
+                
+            }
+        }
+
+
+        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
+        class ResourcesHelper_Patch
+        {
+
+            public static ResourceSource resouceFromFile = new ResourceSource(ResourceSource.SourceType.File, 
+                Path.Combine(Paths.BepInExRootPath, "customAssets"));
+            
+            static void Postfix()
+            {
+                log.LogInfo($"source: {resouceFromFile.path}");
+
+                var id = new TemporialGuardianDefinition().Id;
+
+                var tex = ResourceLoader.LoadTexture(id + ".png", resouceFromFile);
+
+                
+                var suc = ResourcesHelper.CardImages.TryAdd(id, tex);
+                log.LogInfo($"{id} added to CardImages?: {suc}");
+
+            }
+        }
+
+        
+
+
+
+
+    }
+}
