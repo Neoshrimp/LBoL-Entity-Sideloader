@@ -8,6 +8,7 @@
 	<PublicizerRuntimeStrategies>IgnoresAccessChecksTo</PublicizerRuntimeStrategies>
   </PropertyGroup>
 
+
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -22,12 +23,13 @@
   </ItemGroup>
 	
   <ItemGroup>
-      <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.Core;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
+      <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.Core;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
   </ItemGroup>
 	
   <PropertyGroup>
 	  <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
 	  <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
+	  <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("-", ""))</RootNamespace>
   </PropertyGroup>
 
 
@@ -79,13 +81,7 @@
   </Target>
 	
 
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\killMeIDontWantToLiv\source\repos\LBoL-DebugMode\src\DebugMode\.editorconfig" />
-  </ItemGroup>
 	
 
-  <ItemGroup>
-    <None Include="C:\Users\killMeIDontWantToLiv\source\repos\LBoL-DebugMode\src\DebugMode\.editorconfig" />
-  </ItemGroup>
 
 </Project>

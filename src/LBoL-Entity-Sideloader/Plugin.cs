@@ -119,8 +119,9 @@ using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
 
-namespace EntitySideloader
+namespace LBoLEntitySideloader
 {
+
     [BepInPlugin(GUID, "Entity Sideloader", version)]
     [BepInProcess("LBoL.exe")]
     public class Plugin : BaseUnityPlugin
@@ -136,7 +137,7 @@ namespace EntitySideloader
         {
             log = Logger;
 
-            // very important. Without it the entry point MonoBehaviour gets destroid
+            // very important. Without it the entry point MonoBehaviour gets destroyed
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
@@ -151,42 +152,21 @@ namespace EntitySideloader
         }
 
 
-        //load config +
-        //process indexes
-        //card unlock?
-        //load assets
-        // support multiple sources
-        // asset bundles
-        // plain files
-        // packaged manifest resources
-        // texture2d/sprite +
-        // card image template/dimensions
-        // sfx
-        // vfx
-        // bgm
-        // spine
-        // yarn
 
-        //load entity type +
-        //load localization
-
-        //live entity reload
-        // no yarnSpinner parser or script files
-        // BETTER DEBUG TOOLS NOW
-
-
-
-        public abstract class EntityDefinition<T, C> where T : class where C : class
+        class MethodComp : IEqualityComparer<MethodInfo>
         {
-            private string id;
+            public bool Equals(MethodInfo x, MethodInfo y)
+            {
+                return x.Name == y.Name;
+            }
 
-            private Assembly assembly = Assembly.GetExecutingAssembly();
-            public string Id { get => id; set => id = value; }
-            public Assembly Assembly { get => assembly; set => assembly = value; }
-
-
-            public abstract C CreateConfig();
+            public int GetHashCode(MethodInfo obj)
+            {
+                return obj.Name.GetHashCode();
+            }
         }
+
+       
 
         [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
         class ConfigDataManager_Patch
@@ -200,9 +180,26 @@ namespace EntitySideloader
                 try
                 {
                     var cType = typeof(C);
-                    //= entityDefinition.CreateConfig();
 
-                    var mFromId = AccessTools.Method(cType, "FromId");
+                    var potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
+
+
+                    MethodInfo mFromId = null;
+
+                    foreach(var n in potentialFromIdNames)
+                    {
+                        mFromId = AccessTools.Method(cType, n);
+                        if (mFromId != null)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (mFromId == null)
+                    {
+                        throw new MissingMemberException("None of the potential fromId names managed to reflect a method");
+                    }
+                        
 
                     var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
                     var newConfig = entityDefinition.CreateConfig();
@@ -247,10 +244,16 @@ namespace EntitySideloader
             {
                 //2do register config entities..
 
+
+
+
             }
         }
 
 
+
+
+        
 
 
 

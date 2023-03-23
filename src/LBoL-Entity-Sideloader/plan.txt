@@ -1,0 +1,25 @@
+﻿load config +
+    process indexes
+card unlock?
+load assets
+        support multiple sources
+            asset bundles
+            plain files
+            packaged manifest resources
+        texture2d/sprite +
+            card image template/dimensions +
+            card image canvas size is 454x313 +
+            height should not be bigger than 512 making largest unstretched window 743x512
+        yarn
+        sfx
+        vfx
+        bgm
+        spine
+        yarn
+
+load entity type +
+load localization
+
+live entity reload
+no yarnSpinner parser or script files
+BETTER DEBUG TOOLS NOW +
