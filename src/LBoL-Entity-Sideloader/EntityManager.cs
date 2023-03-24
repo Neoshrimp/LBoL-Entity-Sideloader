@@ -111,132 +111,158 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
-namespace CardExample
+namespace LBoLEntitySideloader
 {
-
-    public class ResourceSource
+    public class EntityManager
     {
-        public enum SourceType
+        static private EntityManager _instance;
+
+        static private BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
+
+        public static EntityManager Instance
         {
-            File,
-            Manifest,
-            Bundle
-        }
-
-        public SourceType sourceType;
-
-        public string path;
-
-        public ResourceSource(SourceType sourceType, string path)
-        {
-            this.sourceType = sourceType;
-            this.path = path;
-        }
-
-        public string GetResourcePath(string name = "")
-        {
-            switch (sourceType)
+            get
             {
-                case SourceType.File:
-                    return Path.Combine(Path.GetFullPath(path), name);
-                    break;
-                case SourceType.Manifest:
-                    throw new NotImplementedException();
-                    break;
-                case SourceType.Bundle:
-                    throw new NotImplementedException();
-                    break;
-                default:
-                    throw new InvalidOperationException($"No resource type: {sourceType}");
-                    break;
+                if (_instance == null)
+                    _instance = new EntityManager();
+                return _instance;
             }
         }
-    }
-    public class ResourceLoader
-    {
 
+        internal class SideloaderUsers
+        {
+            public Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
+
+            public void AddUser(Assembly assembly)
+            {
+                if (users.ContainsKey(assembly))
+                {
+                    throw new Exception($"{assembly.GetName().Name} is already registered");
+                
+                }
+                users.Add(assembly, FindEntityDefinitions(assembly));
+            }
+
+            public void RemoveUser(Assembly assembly)
+            {
+                if (!users.ContainsKey(assembly))
+                {
+                    throw new Exception($"{assembly.GetName().Name} is not registered");
+                }
+
+                users.Remove(assembly);
+            }
+
+            internal List<Type> FindEntityDefinitions(Assembly assembly)
+            {
+                // 2do add optional DontLoad attribute filter
+                return assembly.GetExportedTypes().
+                    Where(t => t.IsSubclassOfGeneric(typeof(EntityDefinition<,>))).ToList();
+            }
+
+        }
+
+        internal SideloaderUsers sideloaderUsers;
         
 
-        public static Texture2D LoadTexture(string name, ResourceSource source)
+        static public void RegisterSelf()
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var a = Assembly.GetCallingAssembly();
+            Instance.sideloaderUsers.AddUser(a);
+
+        }
 
 
-            var resourceName = source.GetResourcePath(name);
-            Stream resource = null;
 
-            switch (source.sourceType)
+
+                
+        static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
+        
+        internal void RegisterEntity<T, C>(EntityDefinition<T, C> entityDefinition) where T : class where C : class
+        {
+
+            log.LogInfo($"{entityDefinition.Id}, T:{typeof(T)}, C:{typeof(C)}");
+
+            try
             {
-                case ResourceSource.SourceType.File:
-                    resource = new FileStream(resourceName, FileMode.Open);
-                    break;
-                case ResourceSource.SourceType.Manifest:
-                    resource = assembly.GetManifestResourceStream(resourceName);
-                    break;
-                case ResourceSource.SourceType.Bundle:
-                    break;
-                default:
-                    break;
+                var cType = typeof(C);
+
+                MethodInfo mFromId = null;
+
+                foreach (var n in potentialFromIdNames)
+                {
+                    mFromId = AccessTools.Method(cType, n);
+                    if (mFromId != null)
+                    {
+                        break;
+                    }
+                }
+
+                if (mFromId == null)
+                {
+                    throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
+                }
+
+                var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
+                var newConfig = entityDefinition.GetConfig();
+
+                if (config == null)
+                {
+                    log.LogInfo($"initial config load for {entityDefinition.Id}");
+
+                    var f_Data = AccessTools.Field(typeof(C), "_data");
+                    var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+                    var f_IdTable = AccessTools.Field(cType, "_IdTable");
+
+                    ref_Data() = ref_Data().AddItem(newConfig).ToArray();
+                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.Id, newConfig);
+
+                }
+                else
+                {
+                    log.LogInfo($"secondary config reload for {entityDefinition.Id}");
+                    config = newConfig;
+                }
+
+                if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
+                {
+                    log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
+                    TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
+                }
+
             }
-
-
-            /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
-            var resource = assembly.GetManifestResourceStream(resourceName);*/
-            using var memoryStream = new MemoryStream();
-            var buffer = new byte[16384];
-            int count;
-            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
-                memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            catch (Exception ex)
             {
-                anisoLevel = 1,
-                filterMode = 0
-            };
 
-            spriteTexture.LoadImage(memoryStream.ToArray());
-            return spriteTexture;
-        }
+                log.LogError($"Exception registering {entityDefinition.Id}: {ex}");
 
-        public static Sprite LoadSprite(string name, int ppu = 1, Vector2? pivot = null)
-        {
-            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
-            var resource = assembly.GetManifestResourceStream(resourceName);
-            using var memoryStream = new MemoryStream();
-            var buffer = new byte[16384];
-            int count;
-            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
-                memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
-            {
-                anisoLevel = 1,
-                filterMode = 0
-            };
-
-            spriteTexture.LoadImage(memoryStream.ToArray());
-            var sprite = Sprite.Create(spriteTexture, new Rect(0, 0, spriteTexture.width, spriteTexture.height), (Vector2)pivot, ppu);
-            return sprite;
-        }
-
-        public static byte[] ResourceBinary(string name)
-        {
-            Assembly a = Assembly.GetExecutingAssembly();
-            var resourceName = a.GetManifestResourceNames().First(r => r.Contains(name));
-            using (Stream resFilestream = a.GetManifestResourceStream(resourceName))
-            {
-                if (resFilestream == null) return null;
-                byte[] ba = new byte[resFilestream.Length];
-                resFilestream.Read(ba, 0, ba.Length);
-                return ba;
             }
         }
+
+        internal void RegisterUsers()
+        {
+            foreach (var kv in sideloaderUsers.users)
+            {
+                foreach (var def in kv.Value)
+                {
+
+                    // 2do sort this shit out
+                    if (def is Type)
+                    {
+                       Activator.CreateInstance(def);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }
-

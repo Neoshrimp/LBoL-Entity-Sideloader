@@ -11,7 +11,7 @@ load assets
             card image canvas size is 454x313 +
             height should not be bigger than 512 making largest unstretched window 743x512
         yarn
-        sfx
+        sfx 
         vfx
         bgm
         spine

@@ -14,6 +14,12 @@ namespace LBoLEntitySideloader
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
 
-        public abstract C CreateConfig();
+        //public abstract EntityDefinition<T,C> Init();
+
+
+        public abstract C GetConfig();
+
+
+
     }
 }

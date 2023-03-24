@@ -111,50 +111,53 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-
-
-namespace CardExample
+namespace LBoLEntitySideloader
 {
-    [BepInPlugin(GUID, "CardExample", version)]
-    [BepInProcess("LBoL.exe")]
-    [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
-    public class Plugin : BaseUnityPlugin
+    internal class InjectionPoints
     {
-        public const string GUID = "neo.lbol.cardexample";
-        public const string version = "1.0.0";
 
-        private static readonly Harmony harmony = new Harmony(GUID);
-
-        internal static BepInEx.Logging.ManualLogSource log;
-
-        private void Awake()
+        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
+        class ConfigDataManager_Patch
         {
-            log = Logger;
+            static public void Postfix()
+            {
+                EntityManager.Instance.RegisterUsers();
+            }
 
-            // very important. Without it the entry point MonoBehaviour gets destroyed
-            DontDestroyOnLoad(gameObject);
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
-
-            harmony.PatchAll();
-
-            LBoLEntitySideloader.EntityManager.RegisterSelf();
-
-        }
-            
-        private void OnDestroy()
-        {
-            if (harmony != null)
-                harmony.UnpatchSelf();
         }
 
 
-       
+        // temp debug, texture loading entry point
+        /*        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
+                class ResourcesHelper_Patch
+                {
+
+                    public static ResourceSource resouceFromFile = new ResourceSource(ResourceSource.SourceType.File,
+                        Path.Combine(Paths.BepInExRootPath, "customAssets"));
+
+                    static void Postfix()
+                    {
+                        log.LogInfo($"source: {resouceFromFile.path}");
+
+                        var id = new TemporialGuardianDefinition().Id;
+
+                        var def = new TemporialGuardianDefinition();
 
 
+                        var tex = ResourceLoader.LoadTexture(id + ".png", resouceFromFile);
+
+                        def.CreateConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
+                            TryAdd(id + sub, ResourceLoader.LoadTexture(id + sub + ".png", resouceFromFile)));
+
+                        var suc = ResourcesHelper.CardImages.TryAdd(id, tex);
+
+                    }
+                }*/
     }
 }

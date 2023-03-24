@@ -20,6 +20,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj" />
+  </ItemGroup>
 	
   <ItemGroup>
       <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.Core;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
@@ -79,14 +83,5 @@
     <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
   </Target>
 	
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\killMeIDontWantToLiv\source\repos\LBoL-DebugMode\src\DebugMode\.editorconfig" />
-  </ItemGroup>
-	
-
-  <ItemGroup>
-    <None Include="C:\Users\killMeIDontWantToLiv\source\repos\LBoL-DebugMode\src\DebugMode\.editorconfig" />
-  </ItemGroup>
 
 </Project>

@@ -111,151 +111,25 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-
-
 namespace LBoLEntitySideloader
 {
-
-    [BepInPlugin(GUID, "Entity Sideloader", version)]
-    [BepInProcess("LBoL.exe")]
-    public class Plugin : BaseUnityPlugin
+    internal class ConfigFactory<C> where C : class
     {
-        public const string GUID = "neo.lbol.frameworks.entitySideloader";      
-        public const string version = "1.0.0";
 
-        private static readonly Harmony harmony = new Harmony(GUID);
-
-        internal static BepInEx.Logging.ManualLogSource log;
-
-        private void Awake()
-        {
-            log = Logger;
-
-            // very important. Without it the entry point MonoBehaviour gets destroyed
-            DontDestroyOnLoad(gameObject);
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
-
-            harmony.PatchAll();
-
-        }
-
-        private void OnDestroy()
-        {
-            if (harmony != null)
-                harmony.UnpatchSelf();
-        }
-
-
-
-        class MethodComp : IEqualityComparer<MethodInfo>
-        {
-            public bool Equals(MethodInfo x, MethodInfo y)
-            {
-                return x.Name == y.Name;
-            }
-
-            public int GetHashCode(MethodInfo obj)
-            {
-                return obj.Name.GetHashCode();
-            }
-        }
-
-       
-
-        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
-        class ConfigDataManager_Patch
+        C CreateConfig(IConfigSource<C> configSource)
         {
 
-            public static void RegisterEntity<T, C>(EntityDefinition<T, C> entityDefinition) where T : class where C : class
-            {
-
-                log.LogInfo($"{entityDefinition.Id}, T:{typeof(T)}, C:{typeof(C)}");
-
-                try
-                {
-                    var cType = typeof(C);
-
-                    var potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
-
-
-                    MethodInfo mFromId = null;
-
-                    foreach(var n in potentialFromIdNames)
-                    {
-                        mFromId = AccessTools.Method(cType, n);
-                        if (mFromId != null)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (mFromId == null)
-                    {
-                        throw new MissingMemberException("None of the potential fromId names managed to reflect a method");
-                    }
-                        
-
-                    var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
-                    var newConfig = entityDefinition.CreateConfig();
-
-                    if (config == null)
-                    {
-                        log.LogInfo($"initial config load for {entityDefinition.Id}");
-
-                        var f_Data = AccessTools.Field(typeof(C), "_data");
-                        var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-                        var f_IdTable = AccessTools.Field(cType, "_IdTable");
-
-                        ref_Data() = ref_Data().AddItem(newConfig).ToArray();
-                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.Id, newConfig);
-
-                    }
-                    else
-                    {
-                        log.LogInfo($"secondary config reload for {entityDefinition.Id}");
-                        config = newConfig;
-                    }
-
-                    if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
-                    {
-                        log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
-                        TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
-                    }
-
-
-                }
-                catch (Exception ex)
-                {
-
-                    log.LogError($"Exception registering {entityDefinition.Id}: {ex}");
-
-                }
-            }
-
-
-
-            public static void Postfix()
-            {
-                //2do register config entities..
-
-
-
-
-            }
-        }
-
-
+            throw new NotImplementedException();
+            var constructor = AccessTools.Constructor(typeof(C));
 
 
         
-
-
-
+        }
     }
 }
+    

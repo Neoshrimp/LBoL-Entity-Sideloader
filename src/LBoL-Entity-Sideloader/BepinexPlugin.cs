@@ -111,26 +111,26 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
+using LBoLEntitySideloader;
 
 
-namespace CardExample
+namespace LBoLEntitySideloader
 {
-    [BepInPlugin(GUID, "CardExample", version)]
-    [BepInProcess("LBoL.exe")]
-    [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
-    public class Plugin : BaseUnityPlugin
-    {
-        public const string GUID = "neo.lbol.cardexample";
-        public const string version = "1.0.0";
 
-        private static readonly Harmony harmony = new Harmony(GUID);
+    [BepInPlugin(PluginInfo.GUID, PluginInfo.description, PluginInfo.version)]
+    [BepInProcess("LBoL.exe")]
+    public class BepinexPlugin : BaseUnityPlugin
+    {
 
         internal static BepInEx.Logging.ManualLogSource log;
+
+        private static Harmony harmony = PluginInfo.harmony;
 
         private void Awake()
         {
@@ -142,18 +142,14 @@ namespace CardExample
 
             harmony.PatchAll();
 
-            LBoLEntitySideloader.EntityManager.RegisterSelf();
-
         }
-            
+
         private void OnDestroy()
         {
             if (harmony != null)
                 harmony.UnpatchSelf();
         }
 
-
-       
 
 
     }

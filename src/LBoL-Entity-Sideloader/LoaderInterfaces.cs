@@ -4,19 +4,14 @@ using System.Text;
 
 namespace LBoLEntitySideloader
 {
-    public interface IEntityLoader<T, C> where T : class where C : class
+    public interface IConfigSource<C> where C : class
     {
-        EntityDefinition<T, C> LoadEntity();
+        C LoadConfig(C deez);
     }
 
 
-    public interface IAssetLoader<T>
-    {
-        
-    }
 
-
-    public interface ResourceSourceType
+    public interface IFileSource
     {
 
     }
