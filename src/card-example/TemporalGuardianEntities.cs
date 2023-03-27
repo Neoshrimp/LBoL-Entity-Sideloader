@@ -125,7 +125,7 @@ namespace CardExample
 
         private static BepInEx.Logging.ManualLogSource log = Plugin.log;
 
-        public class TemporalGuardianDefinition : EntityDefinition<Card, CardConfig>
+        public class TemporalGuardianDefinition : CardTemplate
         {
 
             public TemporalGuardianDefinition()
@@ -145,7 +145,6 @@ namespace CardExample
                                GunName: "Simple1",
                                GunNameBurst: "Simple1",
                                DebugLevel: 0,
-                               // test
                                Revealable: true,
                                IsPooled: true,
                                IsUpgradable: true,
@@ -155,8 +154,8 @@ namespace CardExample
                                Colors: new List<ManaColor>() { ManaColor.Blue, ManaColor.White },
                                IsXCost: false,
                                // test
-                               Cost: new ManaGroup() { Any = 1 }, //  new ManaGroup() { Any = 1, Blue = 2, White = 2 },
-                               UpgradedCost: null,//new ManaGroup() { Any = 1, Blue = 1, White = 1 },
+                               Cost: new ManaGroup() { Any = 1, Blue = 2, White = 2 },
+                               UpgradedCost: new ManaGroup() { Any = 1, Blue = 1, White = 1 },
                                MoneyCost: null,
                                Damage: null,
                                UpgradedDamage: null,
@@ -205,7 +204,7 @@ namespace CardExample
         }
 
 
-        public class TemporialGuardianSeDefinition : EntityDefinition<StatusEffect, StatusEffectConfig>
+        public class TemporialGuardianSeDefinition : StatusEffectTemplate
         {
 
             public TemporialGuardianSeDefinition()
@@ -318,7 +317,7 @@ namespace CardExample
 
 
 
-        public class MeetTheGamemasterDefinition : EntityDefinition<Adventure, AdventureConfig>
+/*        public class MeetTheGamemasterDefinition : EntityDefinition<Adventure, AdventureConfig>
         {
 
             public MeetTheGamemasterDefinition()
@@ -368,7 +367,7 @@ namespace CardExample
 
                 }
             }
-        }
+        }*/
 
 
     }

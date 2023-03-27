@@ -138,7 +138,7 @@ namespace LBoLEntitySideloader
 
         internal class SideloaderUsers
         {
-            public new Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
+            public Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
 
             public void AddUser(Assembly assembly)
             {
@@ -163,13 +163,20 @@ namespace LBoLEntitySideloader
             internal List<Type> FindEntityDefinitions(Assembly assembly)
             {
                 // 2do add optional DontLoad attribute filter
-                return assembly.GetExportedTypes().
-                    Where(t => t.IsSubclassOfGeneric(typeof(EntityDefinition<,>))).ToList();
+                // 2do slightly ineffective
+                var list = assembly.GetExportedTypes().
+                    Where(t => t.IsSubclassOf(typeof(EntityDefinition))).ToList();
+
+                list.Do(i => log.LogDebug(i));
+
+                
+
+                return list;
             }
 
         }
 
-        internal SideloaderUsers sideloaderUsers;
+        internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
         
 
         static public void RegisterSelf()
@@ -185,10 +192,13 @@ namespace LBoLEntitySideloader
                 
         static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
         
-        internal void RegisterEntity<T, C>(EntityDefinition<T, C> entityDefinition) where T : class where C : class
+        internal void RegisterConfig<C, E>(IConfigProvider <C> configProvider, IGameEntityProvider<E> gameEntityProvider) where C : class where E : GameEntity
         {
 
-            log.LogInfo($"{entityDefinition.Id}, T:{typeof(T)}, C:{typeof(C)}");
+            // this is a bit more complicated
+            var Id = UniquefyId(typeof(E).Name);
+                
+            log.LogInfo($"{Id},  C:{typeof(C)}");
 
             try
             {
@@ -210,39 +220,45 @@ namespace LBoLEntitySideloader
                     throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
                 }
 
-                var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
-                var newConfig = entityDefinition.GetConfig();
+                var config = (C)mFromId.Invoke(null, new object[] { Id});
+                var newConfig = configProvider.GetConfig();
 
                 if (config == null)
                 {
-                    log.LogInfo($"initial config load for {entityDefinition.Id}");
+                    log.LogInfo($"initial config load for {Id}");
 
                     var f_Data = AccessTools.Field(typeof(C), "_data");
                     var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
                     var f_IdTable = AccessTools.Field(cType, "_IdTable");
 
                     ref_Data() = ref_Data().AddItem(newConfig).ToArray();
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.Id, newConfig);
+                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
                 else
                 {
-                    log.LogInfo($"secondary config reload for {entityDefinition.Id}");
+                    log.LogInfo($"secondary config reload for {Id}");
                     config = newConfig;
                 }
 
-                if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
-                {
-                    log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
-                    TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
-                }
+
 
             }
             catch (Exception ex)
             {
 
-                log.LogError($"Exception registering {entityDefinition.Id}: {ex}");
+                log.LogError($"Exception registering {Id}: {ex}");
 
+            }
+        }
+
+        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider ) where T : GameEntity
+        {
+            if (TypeFactory<T>.TryGetType(typeof(T).Name) == null)
+            {
+                log.LogInfo($"registering public sealed types in {typeof(T).Assembly}");
+
+                TypeFactory<T>.RegisterAssembly(typeof(T).Assembly);
             }
         }
 
@@ -253,13 +269,38 @@ namespace LBoLEntitySideloader
                 foreach (var def in kv.Value)
                 {
 
+                    var definition = Activator.CreateInstance(def);
                     // 2do sort this shit out
-                    RegisterEntity(Activator.CreateInstance(def));
+                    if (definition is CardTemplate ct)
+                    {
+                        RegisterConfig(ct, ct);
+                        RegisterType(ct);
+                    }
+                    else if (definition is StatusEffectTemplate st)
+                    {
+                        RegisterConfig(st, st);
+                        RegisterType(st);
+                    }
+
+
                 }
             }
         }
 
 
+
+        internal int UniquefyIndexes(int Index)
+        {
+            return Index;
+
+        }
+
+
+        internal string UniquefyId(string Id)
+        {
+            return Id;
+
+        }
 
     }
 }

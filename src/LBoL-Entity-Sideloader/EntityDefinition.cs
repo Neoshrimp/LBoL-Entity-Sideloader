@@ -1,16 +1,31 @@
-﻿using System;
+﻿using LBoL.Core;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using LBoL.Core.Adventures;
+
 
 namespace LBoLEntitySideloader
 {
 
-    public interface IConfigProvider
+    public interface IConfigProvider<C> where C : class
+    {
+        abstract public C DefaultConfig();
+
+        abstract public C GetConfig();
+    }
+
+    public interface IGameEntityProvider<E> where E : GameEntity
     {
     }
 
-    public abstract class EntityDefinition<T, C> : IConfigProvider where T : class where C : class
+    // Adventure does not extend GameEntity
+    public interface IAdventureProvider<A> where A : Adventure
+    {
+    }
+
+    public abstract class EntityDefinition
     {
         private string id;
 
@@ -18,13 +33,6 @@ namespace LBoLEntitySideloader
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
         
-        
-        //public abstract EntityDefinition<T,C> Init();
-
-
-        public abstract C GetConfig();
-
-
 
     }
 }

@@ -111,53 +111,83 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-
-
-namespace CardExample
+using LBoLEntitySideloader;
+namespace LBoLEntitySideloader
 {
-    [BepInPlugin(GUID, "CardExample", version)]
-    [BepInProcess("LBoL.exe")]
-    [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
-    public class Plugin : BaseUnityPlugin
+    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>
     {
-        public const string GUID = "neo.lbol.cardexample";
-        public const string version = "1.0.0";
-
-        private static readonly Harmony harmony = new Harmony(GUID);
-
-        internal static BepInEx.Logging.ManualLogSource log;
-
-        private void Awake()
+        public CardConfig DefaultConfig()
         {
-            log = Logger;
+            var cardConfig = new CardConfig(
+               Index: default(int),
+               Id: "",
+               Order: 10,
+               AutoPerform: false,
+               Perform: new string[0][],
+               GunName: "",
+               GunNameBurst: "",
+               DebugLevel: 0,
+               Revealable: false,
+               IsPooled: false,
+               IsUpgradable: false,
+               Rarity: default(Rarity),
+               Type: default(CardType),
+               TargetType: null,
+               Colors: new List<ManaColor>() { },
+               IsXCost: false,
+               Cost: new ManaGroup() { },
+               UpgradedCost: null,
+               MoneyCost: null,
+               Damage: null,
+               UpgradedDamage: null,
+               Block: null,
+               UpgradedBlock: null,
+               Shield: null,
+               UpgradedShield: null,
+               Value1: null,
+               UpgradedValue1: null,
+               Value2: null,
+               UpgradedValue2: null,
+               Mana: null,
+               UpgradedMana: null,
+               Scry: null,
+               UpgradedScry: null,
+               ToolPlayableTimes: null,
 
-            // very important. Without it the entry point MonoBehaviour gets destroyed
-            DontDestroyOnLoad(gameObject);
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
+               Keywords: default(Keyword),
+               UpgradedKeywords: default(Keyword),
+               EmptyDescription: false,
+               RelativeKeyword: default(Keyword),
+               UpgradedRelativeKeyword: default(Keyword),
 
-            harmony.PatchAll();
+               RelativeEffects: new List<string>() { },
+               UpgradedRelativeEffects: new List<string>() { },
+               RelativeCards: new List<string>() { },
+               UpgradedRelativeCards: new List<string>() { },
+               Owner: null,
+               Unfinished: false,
+               Illustrator: null,
+               SubIllustrator: new List<string>() { }
+            );
 
-            log.LogInfo("DEEEZ");
-            LBoLEntitySideloader.EntityManager.RegisterSelf();
-
-
-
+            return cardConfig;
         }
-            
-        private void OnDestroy()
+        public abstract CardConfig GetConfig();
+    }
+
+
+    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<StatusEffectConfig>, IGameEntityProvider<StatusEffect>
+    {
+        public StatusEffectConfig DefaultConfig()
         {
-            if (harmony != null)
-                harmony.UnpatchSelf();
-        }
-
-
-       
-
-
+            throw new NotImplementedException();
+        }            
+        public abstract StatusEffectConfig GetConfig();
     }
 }
