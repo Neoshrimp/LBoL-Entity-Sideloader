@@ -192,18 +192,20 @@ namespace LBoLEntitySideloader
                 
         static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
         
-        internal void RegisterConfig<C, E>(IConfigProvider <C> configProvider, IGameEntityProvider<E> gameEntityProvider) where C : class where E : GameEntity
+        internal void RegisterConfig<C>(IConfigProvider <C> configProvider, EntityDefinition entityDefinition) where C : class 
         {
 
             // this is a bit more complicated
-            var Id = UniquefyId(typeof(E).Name);
-                
+            
+            var Id = UniquefyId(entityDefinition.Id);
             log.LogInfo($"{Id},  C:{typeof(C)}");
 
             try
             {
                 var cType = typeof(C);
 
+
+                // cache?
                 MethodInfo mFromId = null;
 
                 foreach (var n in potentialFromIdNames)
@@ -220,8 +222,9 @@ namespace LBoLEntitySideloader
                     throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
                 }
 
-                var config = (C)mFromId.Invoke(null, new object[] { Id});
                 var newConfig = configProvider.GetConfig();
+
+                var config = (C)mFromId.Invoke(null, new object[] { Id});
 
                 if (config == null)
                 {
@@ -252,13 +255,13 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider ) where T : GameEntity
+        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
         {
-            if (TypeFactory<T>.TryGetType(typeof(T).Name) == null)
+            if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
             {
-                log.LogInfo($"registering public sealed types in {typeof(T).Assembly}");
+                log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
 
-                TypeFactory<T>.RegisterAssembly(typeof(T).Assembly);
+                TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
             }
         }
 
@@ -266,23 +269,43 @@ namespace LBoLEntitySideloader
         {
             foreach (var kv in sideloaderUsers.users)
             {
-                foreach (var def in kv.Value)
+                foreach (var type in kv.Value)
                 {
 
-                    var definition = Activator.CreateInstance(def);
+                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+
+                    definition.Assembly = kv.Key;
                     // 2do sort this shit out
                     if (definition is CardTemplate ct)
                     {
+                        ct.Id = ct.GetConfig().Id;
                         RegisterConfig(ct, ct);
-                        RegisterType(ct);
+                        RegisterType(ct, ct);
                     }
                     else if (definition is StatusEffectTemplate st)
                     {
                         RegisterConfig(st, st);
-                        RegisterType(st);
+                        RegisterType(st, st);
                     }
 
 
+                }
+            }
+        }
+
+        internal void LoadAssets()
+        {
+            foreach (var kv in sideloaderUsers.users)
+            {
+                foreach (var type in kv.Value)
+                {
+
+                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+
+                    if (definition is IAssetLoader al)
+                    {
+                        al.Load();
+                    }
                 }
             }
         }

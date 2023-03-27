@@ -145,7 +145,8 @@ namespace CardExample
                                GunName: "Simple1",
                                GunNameBurst: "Simple1",
                                DebugLevel: 0,
-                               Revealable: true,
+                               // for debug
+                               Revealable: false,
                                IsPooled: true,
                                IsUpgradable: true,
                                Rarity: Rarity.Uncommon,
@@ -153,7 +154,6 @@ namespace CardExample
                                TargetType: TargetType.Self,
                                Colors: new List<ManaColor>() { ManaColor.Blue, ManaColor.White },
                                IsXCost: false,
-                               // test
                                Cost: new ManaGroup() { Any = 1, Blue = 2, White = 2 },
                                UpgradedCost: new ManaGroup() { Any = 1, Blue = 1, White = 1 },
                                MoneyCost: null,

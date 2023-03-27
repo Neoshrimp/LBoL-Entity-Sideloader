@@ -120,7 +120,7 @@ using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
 namespace LBoLEntitySideloader
 {
-    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>
+    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>, IAssetLoader
     {
         public CardConfig DefaultConfig()
         {
@@ -179,6 +179,20 @@ namespace LBoLEntitySideloader
             return cardConfig;
         }
         public abstract CardConfig GetConfig();
+
+        public void Load()
+        {
+
+            if (Id.IsNullOrEmpty())
+                Id = GetConfig().Id;
+
+            var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
+
+            GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
+                TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
+
+            var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
+        }
     }
 
 

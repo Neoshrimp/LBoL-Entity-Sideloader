@@ -117,11 +117,13 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
-namespace CardExample
+namespace LBoLEntitySideloader
 {
-
+    // janky and temporary
     public class ResourceSource
     {
+        public static ResourceSource resouceFromFile = new ResourceSource(SourceType.File,
+        Path.Combine(Paths.BepInExRootPath, "customAssets"));
         public enum SourceType
         {
             File,
@@ -154,6 +156,8 @@ namespace CardExample
             }
         }
     }
+
+
     public class ResourceLoader
     {
 

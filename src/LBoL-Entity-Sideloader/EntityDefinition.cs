@@ -25,6 +25,11 @@ namespace LBoLEntitySideloader
     {
     }
 
+    public interface IAssetLoader
+    {
+        public void Load();  
+    }
+
     public abstract class EntityDefinition
     {
         private string id;
