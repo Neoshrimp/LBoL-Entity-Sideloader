@@ -138,7 +138,7 @@ namespace LBoLEntitySideloader
 
         internal class SideloaderUsers
         {
-            public Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
+            public new Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
 
             public void AddUser(Assembly assembly)
             {
@@ -254,10 +254,7 @@ namespace LBoLEntitySideloader
                 {
 
                     // 2do sort this shit out
-                    if (def is Type)
-                    {
-                       Activator.CreateInstance(def);
-                    }
+                    RegisterEntity(Activator.CreateInstance(def));
                 }
             }
         }

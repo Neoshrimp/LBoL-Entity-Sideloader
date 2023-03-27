@@ -146,7 +146,7 @@ namespace CardExample
                                GunNameBurst: "Simple1",
                                DebugLevel: 0,
                                // test
-                               Revealable: false,
+                               Revealable: true,
                                IsPooled: true,
                                IsUpgradable: true,
                                Rarity: Rarity.Uncommon,
@@ -234,7 +234,7 @@ namespace CardExample
                                 ShowPlusByLimit: false,
                                 Keywords: Keyword.None,
                                 RelativeEffects: new List<string>() { "TimeAuraSe" },
-                                VFX: "BuffBlue",
+                                VFX : "BuffBlue",
                                 VFXloop: "Default",
                                 SFX: "Default"
                             );
