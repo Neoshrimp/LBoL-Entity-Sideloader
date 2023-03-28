@@ -111,132 +111,97 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-
+using LBoLEntitySideloader;
 namespace LBoLEntitySideloader
 {
-    // janky and temporary
-    public class ResourceSource
+    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>, IAssetLoader
     {
-        public static ResourceSource resouceFromFile = new ResourceSource(SourceType.File,
-        Path.Combine(Paths.BepInExRootPath, "customAssets"));
-        public enum SourceType
+        public CardConfig DefaultConfig()
         {
-            File,
-            Manifest,
-            Bundle
+            var cardConfig = new CardConfig(
+               Index: default(int),
+               Id: "",
+               Order: 10,
+               AutoPerform: false,
+               Perform: new string[0][],
+               GunName: "",
+               GunNameBurst: "",
+               DebugLevel: 0,
+               Revealable: false,
+               IsPooled: false,
+               IsUpgradable: false,
+               Rarity: default(Rarity),
+               Type: default(CardType),
+               TargetType: null,
+               Colors: new List<ManaColor>() { },
+               IsXCost: false,
+               Cost: new ManaGroup() { },
+               UpgradedCost: null,
+               MoneyCost: null,
+               Damage: null,
+               UpgradedDamage: null,
+               Block: null,
+               UpgradedBlock: null,
+               Shield: null,
+               UpgradedShield: null,
+               Value1: null,
+               UpgradedValue1: null,
+               Value2: null,
+               UpgradedValue2: null,
+               Mana: null,
+               UpgradedMana: null,
+               Scry: null,
+               UpgradedScry: null,
+               ToolPlayableTimes: null,
+
+               Keywords: default(Keyword),
+               UpgradedKeywords: default(Keyword),
+               EmptyDescription: false,
+               RelativeKeyword: default(Keyword),
+               UpgradedRelativeKeyword: default(Keyword),
+
+               RelativeEffects: new List<string>() { },
+               UpgradedRelativeEffects: new List<string>() { },
+               RelativeCards: new List<string>() { },
+               UpgradedRelativeCards: new List<string>() { },
+               Owner: null,
+               Unfinished: false,
+               Illustrator: null,
+               SubIllustrator: new List<string>() { }
+            );
+
+            return cardConfig;
         }
+        public abstract CardConfig GetConfig();
 
-        public SourceType sourceType;
-
-        public string path;
-
-        public ResourceSource(SourceType sourceType, string path)   
+        public void Load()
         {
-            this.sourceType = sourceType;
-            this.path = path;
-        }
 
-        public string GetResourcePath(string name = "")
-        {
-            switch (sourceType)
-            {
-                case SourceType.File:
-                    return Path.Combine(Path.GetFullPath(path), name);
-                case SourceType.Manifest:
-                    throw new NotImplementedException();
-                case SourceType.Bundle:
-                    throw new NotImplementedException();
-                default:
-                    throw new InvalidOperationException($"No resource type: {sourceType}");
-            }
+            if (Id.IsNullOrEmpty())
+                Id = GetConfig().Id;
+
+            var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
+
+            GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
+                TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
+
+            var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
         }
     }
 
 
-    public class ResourceLoader
+    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<StatusEffectConfig>, IGameEntityProvider<StatusEffect>
     {
-
-        
-
-        public static Texture2D LoadTexture(string name, ResourceSource source)
+        public StatusEffectConfig DefaultConfig()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
-
-            var resourceName = source.GetResourcePath(name);
-            Stream resource = null;
-
-            switch (source.sourceType)
-            {
-                case ResourceSource.SourceType.File:
-                    resource = new FileStream(resourceName, FileMode.Open);
-                    break;
-                case ResourceSource.SourceType.Manifest:
-                    resource = assembly.GetManifestResourceStream(resourceName);
-                    break;
-                case ResourceSource.SourceType.Bundle:
-                    break;
-                default:
-                    break;
-            }
-
-
-            /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
-            var resource = assembly.GetManifestResourceStream(resourceName);*/
-            using var memoryStream = new MemoryStream();
-            var buffer = new byte[16384];
-            int count;
-            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
-                memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
-            {
-                anisoLevel = 1,
-                filterMode = 0
-            };
-
-            spriteTexture.LoadImage(memoryStream.ToArray());
-            return spriteTexture;
-        }
-
-        public static Sprite LoadSprite(string name, int ppu = 1, Vector2? pivot = null)
-        {
-            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
-            var resource = assembly.GetManifestResourceStream(resourceName);
-            using var memoryStream = new MemoryStream();
-            var buffer = new byte[16384];
-            int count;
-            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
-                memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
-            {
-                anisoLevel = 1,
-                filterMode = 0
-            };
-
-            spriteTexture.LoadImage(memoryStream.ToArray());
-            var sprite = Sprite.Create(spriteTexture, new Rect(0, 0, spriteTexture.width, spriteTexture.height), (Vector2)pivot, ppu);
-            return sprite;
-        }
-
-        public static byte[] ResourceBinary(string name)
-        {
-            Assembly a = Assembly.GetExecutingAssembly();
-            var resourceName = a.GetManifestResourceNames().First(r => r.Contains(name));
-            using (Stream resFilestream = a.GetManifestResourceStream(resourceName))
-            {
-                if (resFilestream == null) return null;
-                byte[] ba = new byte[resFilestream.Length];
-                resFilestream.Read(ba, 0, ba.Length);
-                return ba;
-            }
-        }
+            throw new NotImplementedException();
+        }            
+        public abstract StatusEffectConfig GetConfig();
     }
 }
-
