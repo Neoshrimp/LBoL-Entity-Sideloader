@@ -163,13 +163,20 @@ namespace LBoLEntitySideloader
             internal List<Type> FindEntityDefinitions(Assembly assembly)
             {
                 // 2do add optional DontLoad attribute filter
-                return assembly.GetExportedTypes().
-                    Where(t => t.IsSubclassOfGeneric(typeof(EntityDefinition<,>))).ToList();
+                // 2do slightly ineffective
+                var list = assembly.GetExportedTypes().
+                    Where(t => t.IsSubclassOf(typeof(EntityDefinition))).ToList();
+
+                list.Do(i => log.LogDebug(i));
+
+                
+
+                return list;
             }
 
         }
 
-        internal SideloaderUsers sideloaderUsers;
+        internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
         
 
         static public void RegisterSelf()
@@ -185,15 +192,20 @@ namespace LBoLEntitySideloader
                 
         static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
         
-        internal void RegisterEntity<T, C>(EntityDefinition<T, C> entityDefinition) where T : class where C : class
+        internal void RegisterConfig<C>(IConfigProvider <C> configProvider, EntityDefinition entityDefinition) where C : class 
         {
 
-            log.LogInfo($"{entityDefinition.Id}, T:{typeof(T)}, C:{typeof(C)}");
+            // this is a bit more complicated
+            
+            var Id = UniquefyId(entityDefinition.Id);
+            log.LogInfo($"{Id},  C:{typeof(C)}");
 
             try
             {
                 var cType = typeof(C);
 
+
+                // cache?
                 MethodInfo mFromId = null;
 
                 foreach (var n in potentialFromIdNames)
@@ -210,39 +222,46 @@ namespace LBoLEntitySideloader
                     throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
                 }
 
-                var config = (C)mFromId.Invoke(null, new object[] { entityDefinition.Id });
-                var newConfig = entityDefinition.GetConfig();
+                var newConfig = configProvider.GetConfig();
+
+                var config = (C)mFromId.Invoke(null, new object[] { Id});
 
                 if (config == null)
                 {
-                    log.LogInfo($"initial config load for {entityDefinition.Id}");
+                    log.LogInfo($"initial config load for {Id}");
 
                     var f_Data = AccessTools.Field(typeof(C), "_data");
                     var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
                     var f_IdTable = AccessTools.Field(cType, "_IdTable");
 
                     ref_Data() = ref_Data().AddItem(newConfig).ToArray();
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.Id, newConfig);
+                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
                 else
                 {
-                    log.LogInfo($"secondary config reload for {entityDefinition.Id}");
+                    log.LogInfo($"secondary config reload for {Id}");
                     config = newConfig;
                 }
 
-                if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
-                {
-                    log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
-                    TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
-                }
+
 
             }
             catch (Exception ex)
             {
 
-                log.LogError($"Exception registering {entityDefinition.Id}: {ex}");
+                log.LogError($"Exception registering {Id}: {ex}");
 
+            }
+        }
+
+        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
+        {
+            if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
+            {
+                log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
+
+                TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
             }
         }
 
@@ -250,16 +269,61 @@ namespace LBoLEntitySideloader
         {
             foreach (var kv in sideloaderUsers.users)
             {
-                foreach (var def in kv.Value)
+                foreach (var type in kv.Value)
                 {
 
+                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+
+                    definition.Assembly = kv.Key;
                     // 2do sort this shit out
-                    RegisterEntity(Activator.CreateInstance(def));
+                    if (definition is CardTemplate ct)
+                    {
+                        ct.Id = ct.GetConfig().Id;
+                        RegisterConfig(ct, ct);
+                        RegisterType(ct, ct);
+                    }
+                    else if (definition is StatusEffectTemplate st)
+                    {
+                        RegisterConfig(st, st);
+                        RegisterType(st, st);
+                    }
+
+
+                }
+            }
+        }
+
+        internal void LoadAssets()
+        {
+            foreach (var kv in sideloaderUsers.users)
+            {
+                foreach (var type in kv.Value)
+                {
+
+                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+
+                    if (definition is IAssetLoader al)
+                    {
+                        al.Load();
+                    }
                 }
             }
         }
 
 
+
+        internal int UniquefyIndexes(int Index)
+        {
+            return Index;
+
+        }
+
+
+        internal string UniquefyId(string Id)
+        {
+            return Id;
+
+        }
 
     }
 }

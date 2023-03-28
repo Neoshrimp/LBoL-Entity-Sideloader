@@ -133,31 +133,18 @@ namespace LBoLEntitySideloader
         }
 
 
-        // temp debug, texture loading entry point
-        /*        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
-                class ResourcesHelper_Patch
-                {
-
-                    public static ResourceSource resouceFromFile = new ResourceSource(ResourceSource.SourceType.File,
-                        Path.Combine(Paths.BepInExRootPath, "customAssets"));
-
-                    static void Postfix()
-                    {
-                        log.LogInfo($"source: {resouceFromFile.path}");
-
-                        var id = new TemporialGuardianDefinition().Id;
-
-                        var def = new TemporialGuardianDefinition();
+        
+        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
+        class ResourcesHelper_Patch
+        {
 
 
-                        var tex = ResourceLoader.LoadTexture(id + ".png", resouceFromFile);
+            static void Postfix()
+            {
 
-                        def.CreateConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
-                            TryAdd(id + sub, ResourceLoader.LoadTexture(id + sub + ".png", resouceFromFile)));
+                EntityManager.Instance.LoadAssets();
 
-                        var suc = ResourcesHelper.CardImages.TryAdd(id, tex);
-
-                    }
-                }*/
+            }
+        }
     }
 }
