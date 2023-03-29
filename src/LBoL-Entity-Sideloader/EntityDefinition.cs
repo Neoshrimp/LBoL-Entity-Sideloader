@@ -8,10 +8,11 @@ using LBoL.Core.Adventures;
 
 namespace LBoLEntitySideloader
 {
-    public abstract class EntityDefinition<T, C> where T : class where C : class
+
+
+    public interface IConfigProvider<C> where C : class
     {
         abstract public C DefaultConfig();
-
         abstract public C GetConfig();
     }
 

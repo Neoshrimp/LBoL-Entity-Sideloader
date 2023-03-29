@@ -138,7 +138,7 @@ namespace LBoLEntitySideloader
 
         internal class SideloaderUsers
         {
-            public new Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
+            public Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
 
             public void AddUser(Assembly assembly)
             {
@@ -274,7 +274,7 @@ namespace LBoLEntitySideloader
 
                     var definition = (EntityDefinition)Activator.CreateInstance(type);
 
-                    definition.Assembly = kv.Key;
+                    // definition.Assembly = kv.Key;
                     // 2do sort this shit out
                     if (definition is CardTemplate ct)
                     {

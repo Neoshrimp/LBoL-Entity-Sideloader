@@ -142,7 +142,6 @@ namespace CardExample
 
             harmony.PatchAll();
 
-            log.LogInfo("DEEEZ");
             LBoLEntitySideloader.EntityManager.RegisterSelf();
 
 
