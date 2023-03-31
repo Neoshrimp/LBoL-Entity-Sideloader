@@ -144,7 +144,7 @@ namespace LBoLEntitySideloader
 
     public interface IAssetLoader
     {
-        public void Load();  
+        public void Load();
     }
 
     public abstract class EntityDefinition<C, T> : ITypeProvider<T> 
@@ -156,6 +156,10 @@ namespace LBoLEntitySideloader
         private Assembly assembly;
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
+
+        public Type GetConfigType() { return typeof(C); }
+
+        public Type GetEntityType() { return typeof(T); }
 
         public abstract C DefaultConfig();
         public abstract C GetConfig();

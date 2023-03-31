@@ -163,9 +163,9 @@ namespace LBoLEntitySideloader
             internal List<Type> FindEntityDefinitions(Assembly assembly)
             {
                 // 2do add optional DontLoad attribute filter
-                // 2do slightly ineffective
+                // 2do maybe restrict to sealed 
                 var list = assembly.GetExportedTypes().
-                    Where(t => t.IsSubclassOf(typeof(EntityDefinition))).ToList();
+                    Where(t => t.IsSubclassOf(typeof(EntityDefinition<,>))).ToList();
 
                 list.Do(i => log.LogDebug(i));
 
@@ -258,6 +258,19 @@ namespace LBoLEntitySideloader
                     var definition = Activator.CreateInstance(type);
 
                     var typeEntityDefinition = typeof(EntityDefinition<,>);
+
+                    if (type.BaseType.IsGenericType)
+                    {
+                        var genericTypes = type.BaseType.GenericTypeArguments;
+
+                        type.MakeGenericType(genericTypes);
+
+                    }
+
+                    if (ConfigReflectionHelper.GetAllConfigTypes().Contains(type))
+                    {
+                        
+                    }
 
                     typeEntityDefinition.MakeGenericType();
 
