@@ -124,7 +124,7 @@ namespace LBoLEntitySideloader
     {
         static private EntityManager _instance;
 
-        static private BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
         public static EntityManager Instance
         {
@@ -190,9 +190,8 @@ namespace LBoLEntitySideloader
 
 
                 
-        static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
         
-        internal void RegisterConfig<C>(IConfigProvider <C> configProvider, EntityDefinition entityDefinition) where C : class 
+        internal void RegisterConfig<C, T>(EntityDefinition<C, T> entityDefinition) where C : class where T : class
         {
 
             // this is a bit more complicated
@@ -204,25 +203,9 @@ namespace LBoLEntitySideloader
             {
                 var cType = typeof(C);
 
+                var mFromId = ConfigReflectionHelper.GetFromIdMethod(cType);
 
-                // cache?
-                MethodInfo mFromId = null;
-
-                foreach (var n in potentialFromIdNames)
-                {
-                    mFromId = AccessTools.Method(cType, n);
-                    if (mFromId != null)
-                    {
-                        break;
-                    }
-                }
-
-                if (mFromId == null)
-                {
-                    throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
-                }
-
-                var newConfig = configProvider.GetConfig();
+                var newConfig = entityDefinition.GetConfig();
 
                 var config = (C)mFromId.Invoke(null, new object[] { Id});
 
@@ -255,7 +238,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
+        internal static void RegisterType<T>(ITypeProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
         {
             if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
             {
@@ -272,14 +255,18 @@ namespace LBoLEntitySideloader
                 foreach (var type in kv.Value)
                 {
 
-                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+                    var definition = Activator.CreateInstance(type);
+
+                    var typeEntityDefinition = typeof(EntityDefinition<,>);
+
+                    typeEntityDefinition.MakeGenericType();
 
                     // definition.Assembly = kv.Key;
                     // 2do sort this shit out
                     if (definition is CardTemplate ct)
                     {
                         ct.Id = ct.GetConfig().Id;
-                        RegisterConfig(ct, ct);
+                        RegisterConfig(ct);
                         RegisterType(ct, ct);
                     }
                     else if (definition is StatusEffectTemplate st)

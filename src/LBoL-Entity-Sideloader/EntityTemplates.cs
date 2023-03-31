@@ -118,11 +118,13 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
+
+
 namespace LBoLEntitySideloader
 {
-    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>, IAssetLoader
+    public abstract class CardTemplate : EntityDefinition<CardConfig, Card>, IAssetLoader
     {
-        public CardConfig DefaultConfig()
+        public override CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(
                Index: default(int),
@@ -178,7 +180,8 @@ namespace LBoLEntitySideloader
 
             return cardConfig;
         }
-        public abstract CardConfig GetConfig();
+
+        public abstract override CardConfig GetConfig();
 
         public void Load()
         {
@@ -196,7 +199,7 @@ namespace LBoLEntitySideloader
     }
 
 
-    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<StatusEffectConfig>, IGameEntityProvider<StatusEffect>
+    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<object>, IGameEntityProvider<StatusEffect>
     {
         public StatusEffectConfig DefaultConfig()
         {

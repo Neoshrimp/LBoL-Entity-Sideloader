@@ -133,6 +133,7 @@ namespace CardExample
                 Id = nameof(TemporalGuardian);
             }
 
+
             public override CardConfig GetConfig()
             {
 
@@ -189,6 +190,7 @@ namespace CardExample
                     );
                 return cardConfig;
             }
+
 
 
             public sealed class TemporalGuardian : Card
