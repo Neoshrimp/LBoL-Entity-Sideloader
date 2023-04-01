@@ -124,32 +124,28 @@ namespace LBoLEntitySideloader
 {
 
 
-    public interface IConfigProvider
+    public interface IConfigProvider<C> where C : class
     {
-        abstract public C DefaultConfig<C>();
-        abstract public C GetConfig<C>();
+
+        public static MethodInfo mGetConfig = AccessTools.Method(typeof(IConfigProvider<>), nameof(IConfigProvider<object>.GetConfig));
+
+        abstract public C DefaultConfig();
+        abstract public C GetConfig();
     }
 
     public interface ITypeProvider<T> where T : class { }
 
-
-    public interface IGameEntityProvider<E> : ITypeProvider<E> where E : GameEntity
-    {
-    }
+    public interface IGameEntityProvider<E> : ITypeProvider<E> where E : GameEntity { }
 
     // Adventure does not extend GameEntity
-    public interface IAdventureProvider<A> : ITypeProvider<A> where A : Adventure
-    {
-    }
+    public interface IAdventureProvider<A> : ITypeProvider<A> where A : Adventure { }
 
     public interface IAssetLoader
     {
         public void Load();
     }
 
-    public abstract class EntityDefinition<C, T> : ITypeProvider<T> 
-        where C : class
-        where T : class
+    public abstract class EntityDefinition 
     { 
         private string id;
 
@@ -157,11 +153,9 @@ namespace LBoLEntitySideloader
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
-        public Type GetConfigType() { return typeof(C); }
+        public abstract Type GetConfigType();
 
-        public Type GetEntityType() { return typeof(T); }
+        public abstract Type GetEntityType();
 
-        public abstract C DefaultConfig();
-        public abstract C GetConfig();
     }
 }

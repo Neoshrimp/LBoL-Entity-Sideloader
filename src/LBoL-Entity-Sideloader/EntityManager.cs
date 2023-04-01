@@ -188,36 +188,47 @@ namespace LBoLEntitySideloader
 
 
 
-
                 
-        
-        internal void RegisterConfig<C, T>(EntityDefinition<C, T> entityDefinition) where C : class where T : class
+        internal void RegisterConfig(EntityDefinition entityDefinition)
         {
 
             // this is a bit more complicated
-            
             var Id = UniquefyId(entityDefinition.Id);
-            log.LogInfo($"{Id},  C:{typeof(C)}");
+            log.LogInfo($"{Id},  C:{entityDefinition.GetConfigType()}");
 
             try
             {
-                var cType = typeof(C);
+                var cType = entityDefinition.GetConfigType();
 
                 var mFromId = ConfigReflectionHelper.GetFromIdMethod(cType);
 
-                var newConfig = entityDefinition.GetConfig();
 
-                var config = (C)mFromId.Invoke(null, new object[] { Id});
+
+
+                var newConfig = IConfigProvider<object>.mGetConfig.Invoke(entityDefinition, null);
+
+                var config = mFromId.Invoke(null, new object[] { Id});
 
                 if (config == null)
                 {
                     log.LogInfo($"initial config load for {Id}");
 
-                    var f_Data = AccessTools.Field(typeof(C), "_data");
-                    var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+                    var f_Data = AccessTools.Field(entityDefinition.GetEntityType(), "_data");
+
+
+                    //var ref_Data = AccessTools.StaticFieldRefAccess<C[](f_Data);
+
+                    entityDefinition.GetEntityType();
                     var f_IdTable = AccessTools.Field(cType, "_IdTable");
 
+                    
+
+                    AccessTools.Method(typeof(Array<>), "AddItem");
+
                     ref_Data() = ref_Data().AddItem(newConfig).ToArray();
+
+
+
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
@@ -238,7 +249,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void RegisterType<T>(ITypeProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
+        internal static void RegisterType<T>(EntityDefinition entityDefinition)
         {
             if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
             {
@@ -280,12 +291,12 @@ namespace LBoLEntitySideloader
                     {
                         ct.Id = ct.GetConfig().Id;
                         RegisterConfig(ct);
-                        RegisterType(ct, ct);
+                        RegisterType(ct);
                     }
                     else if (definition is StatusEffectTemplate st)
                     {
-                        RegisterConfig(st, st);
-                        RegisterType(st, st);
+                        RegisterConfig(st);
+                        RegisterType(st);
                     }
 
 
@@ -300,7 +311,7 @@ namespace LBoLEntitySideloader
                 foreach (var type in kv.Value)
                 {
 
-                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+                    var definition = Activator.CreateInstance(type);
 
                     if (definition is IAssetLoader al)
                     {

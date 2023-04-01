@@ -122,9 +122,23 @@ using LBoLEntitySideloader;
 
 namespace LBoLEntitySideloader
 {
-    public abstract class CardTemplate : EntityDefinition<CardConfig, Card>, IAssetLoader
+    public abstract class CardTemplate : EntityDefinition, 
+        IConfigProvider<CardConfig>, 
+        IGameEntityProvider<Card>, 
+        IAssetLoader
     {
-        public override CardConfig DefaultConfig()
+
+        public override Type GetConfigType()
+        {
+            return typeof(CardConfig);
+        }
+
+        public override Type GetEntityType()
+        {
+            return typeof(Card);
+        }
+
+        public CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(
                Index: default(int),
@@ -181,7 +195,7 @@ namespace LBoLEntitySideloader
             return cardConfig;
         }
 
-        public abstract override CardConfig GetConfig();
+        public abstract CardConfig GetConfig();
 
 
         public void Load()
@@ -200,12 +214,12 @@ namespace LBoLEntitySideloader
     }
 
 
-    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<object>, IGameEntityProvider<StatusEffect>
+    public abstract class StatusEffectTemplate : EntityDefinition<StatusEffectConfig, StatusEffect>
     {
-        public StatusEffectConfig DefaultConfig()
+        public override StatusEffectConfig DefaultConfig()
         {
             throw new NotImplementedException();
         }            
-        public abstract StatusEffectConfig GetConfig();
+        public override abstract StatusEffectConfig GetConfig();
     }
 }
