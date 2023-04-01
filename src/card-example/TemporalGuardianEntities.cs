@@ -134,6 +134,7 @@ namespace CardExample
             }
 
 
+
             public override CardConfig GetConfig()
             {
 
