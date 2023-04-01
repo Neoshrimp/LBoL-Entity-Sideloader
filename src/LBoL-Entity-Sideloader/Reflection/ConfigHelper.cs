@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace LBoLEntitySideloader
+namespace LBoLEntitySideloader.Reflection
 {
-    public class ConfigReflectionHelper
+    public class ConfigHelper
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
@@ -72,7 +72,7 @@ namespace LBoLEntitySideloader
                     a.GetExportedTypes().Where(t => t.IsSealed && t.Name.EndsWith("Config")).Do(t => configTypeCache.Add(t));
                 }
             }
-                
+
             return configTypeCache;
         }
 

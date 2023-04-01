@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace LBoLEntitySideloader
                 // 2do add optional DontLoad attribute filter
                 // 2do maybe restrict to sealed 
                 var list = assembly.GetExportedTypes().
-                    Where(t => t.IsSubclassOf(typeof(EntityDefinition<,>))).ToList();
+                    Where(t => t.IsSubclassOf(typeof(EntityDefinition))).ToList();
 
                 list.Do(i => log.LogDebug(i));
 
@@ -188,6 +189,8 @@ namespace LBoLEntitySideloader
 
 
 
+
+
                 
         internal void RegisterConfig(EntityDefinition entityDefinition)
         {
@@ -198,38 +201,38 @@ namespace LBoLEntitySideloader
 
             try
             {
-                var cType = entityDefinition.GetConfigType();
+                var configType = entityDefinition.GetConfigType();
 
-                var mFromId = ConfigReflectionHelper.GetFromIdMethod(cType);
-
-
+                var m_FromId = ConfigHelper.GetFromIdMethod(configType);
 
 
-                var newConfig = IConfigProvider<object>.mGetConfig.Invoke(entityDefinition, null);
+                var newConfig = EntityDefinition.mGetConfig.Invoke(entityDefinition, null);
 
-                var config = mFromId.Invoke(null, new object[] { Id});
+                log.LogDebug(newConfig);
+
+                var config = m_FromId.Invoke(null, new object[] { Id});
 
                 if (config == null)
                 {
                     log.LogInfo($"initial config load for {Id}");
 
-                    var f_Data = AccessTools.Field(entityDefinition.GetEntityType(), "_data");
 
 
                     //var ref_Data = AccessTools.StaticFieldRefAccess<C[](f_Data);
-
-                    entityDefinition.GetEntityType();
-                    var f_IdTable = AccessTools.Field(cType, "_IdTable");
-
-                    
-
-                    AccessTools.Method(typeof(Array<>), "AddItem");
-
-                    ref_Data() = ref_Data().AddItem(newConfig).ToArray();
+                    //ref_Data() = ref_Data().AddItem(newConfig).ToArray();
 
 
+                    // static method
+                    var f_Data = AccessTools.Field(entityDefinition.GetConfigType(), "_data");
+                    var m_AddToArray = AccessTools.Method(typeof(HarmonyLib.CollectionExtensions), nameof(HarmonyLib.CollectionExtensions.AddToArray));
+                    m_AddToArray.Invoke(null, new object[] { f_Data.GetValue(null), newConfig });
 
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
+                    var t_ConfigDic = GeneralHelper.MakeGenericType(typeof(Dictionary<,>), new Type[] { typeof(string), configType });
+                    var f_IdTable = AccessTools.Field(configType, "_IdTable");
+                    var m_dicAdd = AccessTools.Method(t_ConfigDic, nameof(Dictionary<object, object>.Add));
+                    m_dicAdd.Invoke(f_IdTable.GetValue(null), new object[] { newConfig });
+
+                    //((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
                 else
@@ -249,8 +252,15 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void RegisterType<T>(EntityDefinition entityDefinition)
+
+        internal static void RegisterType<T>(ITypeProvider<T> typeProvider, EntityDefinition entityDefinition) where T : class
         {
+
+/*            var t_Factory = GeneralHelper.MakeGenericType(typeof(TypeFactory<>), new Type[] { entityDefinition.GetEntityType() });*/
+
+            
+            
+
             if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
             {
                 log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
@@ -266,37 +276,23 @@ namespace LBoLEntitySideloader
                 foreach (var type in kv.Value)
                 {
 
-                    var definition = Activator.CreateInstance(type);
+                    var definition = (EntityDefinition)Activator.CreateInstance(type);
 
-                    var typeEntityDefinition = typeof(EntityDefinition<,>);
-
-                    if (type.BaseType.IsGenericType)
-                    {
-                        var genericTypes = type.BaseType.GenericTypeArguments;
-
-                        type.MakeGenericType(genericTypes);
-
-                    }
-
-                    if (ConfigReflectionHelper.GetAllConfigTypes().Contains(type))
-                    {
-                        
-                    }
-
-                    typeEntityDefinition.MakeGenericType();
+                   
+                    // id needs to be set
+                    RegisterConfig(definition);
+                    
 
                     // definition.Assembly = kv.Key;
                     // 2do sort this shit out
                     if (definition is CardTemplate ct)
                     {
                         ct.Id = ct.GetConfig().Id;
-                        RegisterConfig(ct);
-                        RegisterType(ct);
+                        RegisterType(ct, ct);
                     }
                     else if (definition is StatusEffectTemplate st)
                     {
-                        RegisterConfig(st);
-                        RegisterType(st);
+                        RegisterType(st, st);
                     }
 
 

@@ -214,12 +214,25 @@ namespace LBoLEntitySideloader
     }
 
 
-    public abstract class StatusEffectTemplate : EntityDefinition<StatusEffectConfig, StatusEffect>
+    public abstract class StatusEffectTemplate : EntityDefinition,
+        IConfigProvider<StatusEffectConfig>,
+        IGameEntityProvider<StatusEffect>
     {
-        public override StatusEffectConfig DefaultConfig()
+
+        public override Type GetConfigType()
+        {
+            return typeof(StatusEffectConfig);
+        }
+
+        public override Type GetEntityType()
+        {
+            return typeof(StatusEffect);
+        }
+
+        public StatusEffectConfig DefaultConfig()
         {
             throw new NotImplementedException();
         }            
-        public override abstract StatusEffectConfig GetConfig();
+        public abstract StatusEffectConfig GetConfig();
     }
 }

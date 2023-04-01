@@ -127,7 +127,6 @@ namespace LBoLEntitySideloader
     public interface IConfigProvider<C> where C : class
     {
 
-        public static MethodInfo mGetConfig = AccessTools.Method(typeof(IConfigProvider<>), nameof(IConfigProvider<object>.GetConfig));
 
         abstract public C DefaultConfig();
         abstract public C GetConfig();
@@ -152,6 +151,8 @@ namespace LBoLEntitySideloader
         private Assembly assembly;
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
+
+        public static MethodInfo mGetConfig = AccessTools.Method(typeof(IConfigProvider<>), nameof(IConfigProvider<object>.GetConfig));
 
         public abstract Type GetConfigType();
 
