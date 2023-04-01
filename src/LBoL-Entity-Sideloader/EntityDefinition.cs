@@ -152,7 +152,6 @@ namespace LBoLEntitySideloader
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
-        public static MethodInfo mGetConfig = AccessTools.Method(typeof(IConfigProvider<>), nameof(IConfigProvider<object>.GetConfig));
 
         public abstract Type GetConfigType();
 

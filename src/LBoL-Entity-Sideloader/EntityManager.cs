@@ -205,8 +205,9 @@ namespace LBoLEntitySideloader
 
                 var m_FromId = ConfigHelper.GetFromIdMethod(configType);
 
-
-                var newConfig = EntityDefinition.mGetConfig.Invoke(entityDefinition, null);
+                var t_getConfig = GeneralHelper.MakeGenericType(typeof(IConfigProvider<>), new Type[]{ entityDefinition.GetConfigType() });
+                var m_getConfig = AccessTools.Method(t_getConfig, nameof(IConfigProvider<object>.GetConfig));
+                var newConfig = m_getConfig.Invoke(entityDefinition, null);
 
                 log.LogDebug(newConfig);
 
@@ -225,12 +226,14 @@ namespace LBoLEntitySideloader
                     // static method
                     var f_Data = AccessTools.Field(entityDefinition.GetConfigType(), "_data");
                     var m_AddToArray = AccessTools.Method(typeof(HarmonyLib.CollectionExtensions), nameof(HarmonyLib.CollectionExtensions.AddToArray));
+
+                    m_AddToArray = m_AddToArray.MakeGenericMethod(new Type[] { configType });
                     m_AddToArray.Invoke(null, new object[] { f_Data.GetValue(null), newConfig });
 
                     var t_ConfigDic = GeneralHelper.MakeGenericType(typeof(Dictionary<,>), new Type[] { typeof(string), configType });
                     var f_IdTable = AccessTools.Field(configType, "_IdTable");
                     var m_dicAdd = AccessTools.Method(t_ConfigDic, nameof(Dictionary<object, object>.Add));
-                    m_dicAdd.Invoke(f_IdTable.GetValue(null), new object[] { newConfig });
+                    m_dicAdd.Invoke(f_IdTable.GetValue(null), new object[] { Id, newConfig });
 
                     //((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
@@ -246,7 +249,7 @@ namespace LBoLEntitySideloader
             }
             catch (Exception ex)
             {
-
+                throw (ex);
                 log.LogError($"Exception registering {Id}: {ex}");
 
             }
@@ -279,15 +282,17 @@ namespace LBoLEntitySideloader
                     var definition = (EntityDefinition)Activator.CreateInstance(type);
 
                    
+                    definition.Assembly = kv.Key;
                     // id needs to be set
                     RegisterConfig(definition);
                     
 
-                    // definition.Assembly = kv.Key;
                     // 2do sort this shit out
                     if (definition is CardTemplate ct)
                     {
-                        ct.Id = ct.GetConfig().Id;
+
+                        // id is currently set in constructor which is not enforced in any way
+                        //ct.Id = ct.GetConfig().Id;
                         RegisterType(ct, ct);
                     }
                     else if (definition is StatusEffectTemplate st)
