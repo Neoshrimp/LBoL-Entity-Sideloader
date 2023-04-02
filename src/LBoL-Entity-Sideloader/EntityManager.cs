@@ -249,7 +249,6 @@ namespace LBoLEntitySideloader
             }
             catch (Exception ex)
             {
-                throw (ex);
                 log.LogError($"Exception registering {Id}: {ex}");
 
             }
