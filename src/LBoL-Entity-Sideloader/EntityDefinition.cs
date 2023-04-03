@@ -152,7 +152,6 @@ namespace LBoLEntitySideloader
         public string Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
-
         public abstract Type GetConfigType();
 
         public abstract Type GetEntityType();

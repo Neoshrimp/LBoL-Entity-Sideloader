@@ -197,7 +197,6 @@ namespace LBoLEntitySideloader
 
         public abstract CardConfig GetConfig();
 
-
         public void Load()
         {
 

@@ -125,7 +125,7 @@ namespace CardExample
 
         private static BepInEx.Logging.ManualLogSource log = Plugin.log;
 
-        public class TemporalGuardianDefinition : CardTemplate
+        public sealed class TemporalGuardianDefinition : CardTemplate
         {
 
             public TemporalGuardianDefinition()
@@ -207,7 +207,7 @@ namespace CardExample
         }
 
 
-        public class TemporialGuardianSeDefinition : StatusEffectTemplate
+        public sealed class TemporialGuardianSeDefinition : StatusEffectTemplate
         {
 
             public TemporialGuardianSeDefinition()
