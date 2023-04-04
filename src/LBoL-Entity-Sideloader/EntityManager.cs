@@ -103,9 +103,12 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Attributes;
+using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -124,7 +127,7 @@ namespace LBoLEntitySideloader
     {
         static private EntityManager _instance;
 
-        static private BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
         public static EntityManager Instance
         {
@@ -136,105 +139,202 @@ namespace LBoLEntitySideloader
             }
         }
 
+        public class UserInfo
+        {
+
+            public string GUID;
+
+            public bool isRegistered = false;
+
+            public Assembly assembly;
+
+            public HashSet<Type> templateTypes = new HashSet<Type>();
+
+            public Dictionary<Type, List<Type>> entityTypes = new Dictionary<Type, List<Type>>();
+
+            // unique => original
+            public Dictionary<Type, string> templateIds = new Dictionary<Type, string>();
+
+            public Dictionary<Type, int?> templateIndexes = new Dictionary<Type, int?>();
+
+            public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
+
+
+            public static UserInfo ScanAssembly(Assembly assembly)
+            {
+                var userInfo = new UserInfo();
+                userInfo.assembly = assembly;
+
+
+                var exportedTypes = assembly.GetExportedTypes();
+
+                userInfo.assembly = assembly;
+
+                foreach (var type in exportedTypes)
+                {
+
+                    if (type.IsSubclassOf(typeof(BaseUnityPlugin)))
+                    {
+                        var attributes = type.GetCustomAttributes(inherit: false);
+
+                        var bepinplugin = attributes.Where(a => a.GetType() == typeof(BepInPlugin)).SingleOrDefault();
+                        if (bepinplugin is BepInPlugin bp)
+                        {
+                            userInfo.GUID = bp.GUID;
+                        }
+                        else
+                        {
+                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInPlugin).Name} attribute despite extending {typeof(BaseUnityPlugin).Name}");
+                        }
+
+                        var bepinDependencies = attributes.Where(a => a.GetType() == typeof(BepInDependency)).Select(a => (BepInDependency)a).AsEnumerable();
+
+                        if (bepinDependencies.Count() == 0)
+                        {
+                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute");
+                        }
+                        else
+                        { 
+                            bool depFound = false;
+                            foreach (var bd in bepinDependencies)
+                            {
+                                if (bd.DependencyGUID == PluginInfo.GUID && bd.Flags == BepInDependency.DependencyFlags.HardDependency)
+                                {
+                                    depFound = true;
+                                    break;
+                                }
+                            }
+                            if (!depFound)
+                            {
+                                log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
+                            }
+                        }
+                    }
+
+                    
+                    // final templates need to be Sealed
+                    if (type.IsSealed)
+                    {
+
+                        // 2do add attribute for overwriting existing entities/configs
+                        if (type.IsSubclassOf(typeof(EntityDefinition)))
+                        {
+                            userInfo.templateTypes.Add(type);
+
+
+                            userInfo.templateIds.Add(type, null);
+                            //if(ConfigReflection.HasIndex(...bunch load generic reflection is needed...) != null)
+                            userInfo.templateIndexes.Add(type, null);
+
+
+                            var attributes = type.GetCustomAttributes(inherit: false);
+                            var overwritte = attributes.Where(a => a.GetType() == typeof(OverwriteVanilla)).SingleOrDefault();
+
+
+                            // 2do add optional DontLoad attribute filter
+                            if (overwritte is OverwriteVanilla ov) 
+                            {
+                                throw new NotImplementedException();
+                            }
+                        } 
+                        else
+                        
+                        {
+                            var facType = TypeFactoryReflection.factoryTypes.Find(t => type.IsSubclassOf(t));
+                            if (facType != null)
+                            {
+                                userInfo.entityTypes.TryAdd(facType, new List<Type>());
+                                userInfo.entityTypes[facType].Add(type);
+                            }
+                        }
+                    }
+                }
+
+                userInfo.entityTypes.Do(kv => log.LogDebug($"{kv.Key}: {kv.Value}")) ;
+
+                return userInfo;
+            }
+        }
+
+        
+
         internal class SideloaderUsers
         {
-            public Dictionary<Assembly, List<Type>> users = new Dictionary<Assembly, List<Type>>();
+            public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
+
 
             public void AddUser(Assembly assembly)
             {
-                if (users.ContainsKey(assembly))
+                if (userInfos.ContainsKey(assembly))
                 {
                     throw new Exception($"{assembly.GetName().Name} is already registered");
                 
                 }
-                users.Add(assembly, FindEntityDefinitions(assembly));
+                userInfos.Add(assembly, UserInfo.ScanAssembly(assembly));
             }
 
             public void RemoveUser(Assembly assembly)
             {
-                if (!users.ContainsKey(assembly))
+                if (!userInfos.ContainsKey(assembly))
                 {
                     throw new Exception($"{assembly.GetName().Name} is not registered");
                 }
 
-                users.Remove(assembly);
+                userInfos.Remove(assembly);
             }
-
-            internal List<Type> FindEntityDefinitions(Assembly assembly)
-            {
-                // 2do add optional DontLoad attribute filter
-                // 2do slightly ineffective
-                var list = assembly.GetExportedTypes().
-                    Where(t => t.IsSubclassOf(typeof(EntityDefinition))).ToList();
-
-                list.Do(i => log.LogDebug(i));
-
-                
-
-                return list;
-            }
-
         }
 
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
+
+
         
 
         static public void RegisterSelf()
         {
             var a = Assembly.GetCallingAssembly();
-            Instance.sideloaderUsers.AddUser(a);
-
+            RegisterAssembly(a);
         }
 
-
-
+        static public void RegisterAssembly(Assembly assembly)
+        {
+            Instance.sideloaderUsers.AddUser(assembly);
+        }
 
                 
-        static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
-        
-        internal void RegisterConfig<C>(IConfigProvider <C> configProvider, EntityDefinition entityDefinition) where C : class 
+        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, EntityDefinition entityDefinition = null) where C : class
         {
 
-            // this is a bit more complicated
-            
-            var Id = UniquefyId(entityDefinition.Id);
-            log.LogInfo($"{Id},  C:{typeof(C)}");
+            if (entityDefinition == null)
+            {
+                entityDefinition = (EntityDefinition)configProvider;
+            }
 
+            // this is a bit more complicated
+            var Id = UniquefyId(entityDefinition.Id);
+            log.LogInfo($"Registering config: {Id},  type:{entityDefinition.GetConfigType()}");
+
+
+            // if (id registered skip)
             try
             {
-                var cType = typeof(C);
+                var configType = entityDefinition.GetConfigType();
 
-
-                // cache?
-                MethodInfo mFromId = null;
-
-                foreach (var n in potentialFromIdNames)
-                {
-                    mFromId = AccessTools.Method(cType, n);
-                    if (mFromId != null)
-                    {
-                        break;
-                    }
-                }
-
-                if (mFromId == null)
-                {
-                    throw new MissingMemberException($"None of the potential fromId names managed to reflect a method from {cType}");
-                }
-
+                var m_FromId = ConfigReflection.GetFromIdMethod(configType);
                 var newConfig = configProvider.GetConfig();
 
-                var config = (C)mFromId.Invoke(null, new object[] { Id});
+                var config = m_FromId.Invoke(null, new object[] { Id});
 
                 if (config == null)
                 {
                     log.LogInfo($"initial config load for {Id}");
 
-                    var f_Data = AccessTools.Field(typeof(C), "_data");
+                    // Add config to array
+                    var f_Data = ConfigReflection.GetArrayField(configType);
+                    // cache maybe
                     var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-                    var f_IdTable = AccessTools.Field(cType, "_IdTable");
-
-                    ref_Data() = ref_Data().AddItem(newConfig).ToArray();
+                    ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+                    // Add config to dictionary
+                    var f_IdTable = ConfigReflection.GetTableField(configType);
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
@@ -244,71 +344,110 @@ namespace LBoLEntitySideloader
                     config = newConfig;
                 }
 
-
-
             }
             catch (Exception ex)
             {
-
                 log.LogError($"Exception registering {Id}: {ex}");
+            }
+        }
+
+
+
+        //Dictionary<Assembly, HashSet<Type>> typesRegisteredInFactory = new Dictionary<Assembly, HashSet<Type>>();
+
+
+        internal static void RegisterType<T>(ITypeProvider<T> typeProvider, UserInfo user, EntityDefinition entityDefinition = null) where T : class
+        {
+
+
+
+            entityDefinition ??= (EntityDefinition)typeProvider;
+
+            var hasTypes = user.entityTypes.TryGetValue(typeof(T), out List<Type> typesToRegister);
+
+            if (hasTypes)
+            { 
+                foreach (var t in typesToRegister)
+                {
+                    log.LogDebug($"TypeFactory<{typeof(T).Name}>, id: {t.Name} from {entityDefinition.Assembly.GetName().Name}");
+
+                    if (!TypeFactory<T>.FullNameTypeDict.TryAdd(t.FullName, t))
+                    {
+                        log.LogError($"RegisterType: {t.FullName} matches an already registered type. Please change plugin namespace.");
+                    }
+
+                    // 2do make unique
+                    TypeFactory<T>.TypeDict.TryAdd(t.Name, t);
+                }
+            }
+        }
+
+        internal void RegisterUser(UserInfo user)
+        {
+            foreach (var type in user.templateTypes)
+            {
+
+                var definition = (EntityDefinition)Activator.CreateInstance(type);
+
+                definition.Assembly = user.assembly;
+                // id needs to be set
+
+
+                if (definition is CardTemplate ct)
+                {
+
+                    // id is currently set in constructor which is not enforced in any way
+                    ct.Id = ct.GetConfig().Id;
+                    RegisterConfig(ct);
+                    RegisterType(ct, user);
+                }
+                else if (definition is StatusEffectTemplate st)
+                {
+                    st.Id = st.GetConfig().Id;
+                    RegisterConfig(st);
+                    RegisterType(st, user);
+                }
+
 
             }
         }
 
-        internal static void RegisterType<T>(IGameEntityProvider<T> gameEntityProvider, EntityDefinition entityDefinition) where T : GameEntity
+        internal void UnregisterUser(Assembly assembly)
         {
-            if (TypeFactory<T>.TryGetType(entityDefinition.Id) == null)
-            {
-                log.LogInfo($"registering public sealed types in {entityDefinition.Assembly}");
 
-                TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
-            }
         }
 
         internal void RegisterUsers()
         {
-            foreach (var kv in sideloaderUsers.users)
+            foreach (var kv in sideloaderUsers.userInfos)
             {
-                foreach (var type in kv.Value)
-                {
 
-                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+                var info = kv.Value;
 
-                    // definition.Assembly = kv.Key;
-                    // 2do sort this shit out
-                    if (definition is CardTemplate ct)
-                    {
-                        ct.Id = ct.GetConfig().Id;
-                        RegisterConfig(ct, ct);
-                        RegisterType(ct, ct);
-                    }
-                    else if (definition is StatusEffectTemplate st)
-                    {
-                        RegisterConfig(st, st);
-                        RegisterType(st, st);
-                    }
+                RegisterUser(info);
 
-
-                }
+               
             }
         }
 
         internal void LoadAssets()
         {
-            foreach (var kv in sideloaderUsers.users)
+            foreach (var kv in sideloaderUsers.userInfos)
             {
-                foreach (var type in kv.Value)
+/*                foreach (var type in kv.Value)
                 {
 
-                    var definition = (EntityDefinition)Activator.CreateInstance(type);
+                    var definition = Activator.CreateInstance(type);
 
                     if (definition is IAssetLoader al)
                     {
-                        al.Load();
+                        //al.Load();
                     }
-                }
+                }*/
             }
         }
+
+
 
 
 

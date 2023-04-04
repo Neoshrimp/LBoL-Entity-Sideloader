@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LBoL-Entity-Sideloader", "src\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj", "{DC0F1FD4-CE58-4280-AC3D-AE1C137D9BC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "card-example", "src\card-example\card-example.csproj", "{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card-example", "src\card-example\card-example.csproj", "{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "card-example2", "src\card-example2\card-example2.csproj", "{630A0608-7CDC-47DC-BC71-49F153C5DAF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -125,13 +125,15 @@ namespace CardExample
 
         private static BepInEx.Logging.ManualLogSource log = Plugin.log;
 
-        public class TemporalGuardianDefinition : CardTemplate
+        public sealed class TemporalGuardianDefinition : CardTemplate
         {
 
             public TemporalGuardianDefinition()
             {
                 Id = nameof(TemporalGuardian);
             }
+
+
 
             public override CardConfig GetConfig()
             {
@@ -191,6 +193,7 @@ namespace CardExample
             }
 
 
+
             public sealed class TemporalGuardian : Card
             {
                 protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
@@ -204,7 +207,7 @@ namespace CardExample
         }
 
 
-        public class TemporialGuardianSeDefinition : StatusEffectTemplate
+        public sealed class TemporialGuardianSeDefinition : StatusEffectTemplate
         {
 
             public TemporialGuardianSeDefinition()

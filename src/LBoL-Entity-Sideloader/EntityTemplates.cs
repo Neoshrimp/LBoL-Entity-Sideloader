@@ -118,10 +118,26 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
+
+
 namespace LBoLEntitySideloader
 {
-    abstract public class CardTemplate : EntityDefinition, IConfigProvider<CardConfig>, IGameEntityProvider<Card>, IAssetLoader
+    public abstract class CardTemplate : EntityDefinition, 
+        IConfigProvider<CardConfig>, 
+        IGameEntityProvider<Card>, 
+        IAssetLoader
     {
+
+        public override Type GetConfigType()
+        {
+            return typeof(CardConfig);
+        }
+
+        public override Type GetEntityType()
+        {
+            return typeof(Card);
+        }
+
         public CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(
@@ -178,6 +194,7 @@ namespace LBoLEntitySideloader
 
             return cardConfig;
         }
+
         public abstract CardConfig GetConfig();
 
         public void Load()
@@ -196,8 +213,21 @@ namespace LBoLEntitySideloader
     }
 
 
-    public abstract class StatusEffectTemplate : EntityDefinition, IConfigProvider<StatusEffectConfig>, IGameEntityProvider<StatusEffect>
+    public abstract class StatusEffectTemplate : EntityDefinition,
+        IConfigProvider<StatusEffectConfig>,
+        IGameEntityProvider<StatusEffect>
     {
+
+        public override Type GetConfigType()
+        {
+            return typeof(StatusEffectConfig);
+        }
+
+        public override Type GetEntityType()
+        {
+            return typeof(StatusEffect);
+        }
+
         public StatusEffectConfig DefaultConfig()
         {
             throw new NotImplementedException();

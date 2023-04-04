@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -121,6 +122,7 @@ namespace LBoLEntitySideloader
 {
     internal class InjectionPoints
     {
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
         [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
         class ConfigDataManager_Patch
@@ -146,5 +148,45 @@ namespace LBoLEntitySideloader
 
             }
         }
+
+
+
+        [HarmonyPatch]
+        class ReadVanillaConfigIds_Patch
+        {
+
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                foreach (var t in ConfigReflection.GetAllConfigTypes())
+                {
+                    yield return AccessTools.Method(t, "Load");
+                }
+            }
+
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                foreach (var ci in instructions)
+                {
+                    if (ci.Is(OpCodes.Newobj, AccessTools.FirstConstructor(original.DeclaringType, c => c.GetParameters().Count() > 0)))
+                    {
+                        //log.LogDebug($"injected at {original.DeclaringType.Name}");
+
+                        yield return ci;
+                        yield return new CodeInstruction(OpCodes.Dup);
+                        yield return new CodeInstruction(OpCodes.Ldc_I4_1);
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueIdTracker), nameof(UniqueIdTracker.AddConfig)));
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
+                }
+            }
+
+
+        }
+
+
     }
 }

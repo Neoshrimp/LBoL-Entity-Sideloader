@@ -103,10 +103,10 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -116,20 +116,87 @@ using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-namespace LBoLEntitySideloader
-{
-    internal class ConfigFactory<C> where C : class
-    {
 
-        C CreateConfig(IConfigSource<C> configSource)
+
+namespace CardExample2
+{
+    [BepInPlugin(GUID, "CardExample2", version)]
+    [BepInProcess("LBoL.exe")]
+    public class Plugin : BaseUnityPlugin
+    {
+        public const string GUID = "neo.lbol.test.CardExample2";
+        public const string version = "1.0.0";
+
+        private static readonly Harmony harmony = new Harmony(GUID);
+
+        internal static BepInEx.Logging.ManualLogSource log;
+
+        private void Awake()
+        {
+            log = Logger;
+
+            // very important. Without this the entry point MonoBehaviour gets destroyed
+            DontDestroyOnLoad(gameObject);
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+            
+            EntityManager.RegisterSelf();
+            harmony.PatchAll();
+
+        }
+
+        private void OnDestroy()
+        {
+            if (harmony != null)
+                harmony.UnpatchSelf();
+        }
+
+
+
+        public sealed class DeeznutsDefinition : CardTemplate
         {
 
-            throw new NotImplementedException();
-            var constructor = AccessTools.Constructor(typeof(C));
+            public override CardConfig GetConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = 69696;
+                cardConfig.Id = nameof(Deeznuts);
+                cardConfig.Type = CardType.Status;
+                return cardConfig;
+            }
 
 
-        
+            public sealed class Deeznuts : Card
+            {
+                public override IEnumerable<BattleAction> OnDraw()
+                {
+                    log.LogInfo("Deez");
+                    return base.OnDraw();   
+                }
+            }
         }
+
+
+        public sealed class NutsDefinition : CardTemplate
+        {
+            public override CardConfig GetConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = 42020;
+                cardConfig.Id = "Nuts";
+                cardConfig.Type = CardType.Misfortune;
+                return cardConfig;
+            }
+
+
+            public sealed class Nuts : Card
+            {
+                public override IEnumerable<BattleAction> OnDraw()
+                {
+                    log.LogInfo("Nuts");
+                    return base.OnDraw();
+                }
+            }
+        }
+
     }
 }
-    
