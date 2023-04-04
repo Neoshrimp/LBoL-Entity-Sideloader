@@ -3,8 +3,10 @@ using LBoL.Base.Extensions;
 using LBoL.ConfigData;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace LBoLEntitySideloader.ReflectionHelpers
 {
@@ -13,45 +15,54 @@ namespace LBoLEntitySideloader.ReflectionHelpers
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
-
         static readonly List<Assembly> configAssemblies = new List<Assembly>() { typeof(CardConfig).Assembly };
-
-        
 
         static HashSet<Type> configTypeCache = new HashSet<Type>();
 
+        // exclude these 2 for now since they are using int as Id
+        // ExpConfig is using Id for logic as well...
+        static HashSet<Type> excludeConfig = new HashSet<Type>() { typeof(PieceConfig), typeof(ExpConfig) };
+
+
+        static public string BackingWrap(string s) { return $"<{s}>k__BackingField";  }
 
         static Dictionary<Type, FieldInfo> indexFields = new Dictionary<Type, FieldInfo>()
         {
             {
                 typeof(CardConfig),
-                AccessTools.Field(typeof(CardConfig), nameof(CardConfig.Index))
+                AccessTools.Field(typeof(CardConfig), BackingWrap(nameof(CardConfig.Index)))
             },
 
             {
                 typeof(AdventureConfig),
-                AccessTools.Field(typeof(AdventureConfig), nameof(AdventureConfig.No))
+                AccessTools.Field(typeof(AdventureConfig), BackingWrap(nameof(AdventureConfig.No)))
             },
 
             {
                 typeof(BgmConfig),
-                AccessTools.Field(typeof(BgmConfig), nameof(BgmConfig.No))
+                AccessTools.Field(typeof(BgmConfig), BackingWrap(nameof(BgmConfig.No)))
             },
 
             {
                 typeof(ExhibitConfig),
-                AccessTools.Field(typeof(ExhibitConfig), nameof(ExhibitConfig.Index))
+                AccessTools.Field(typeof(ExhibitConfig), BackingWrap(nameof(ExhibitConfig.Index)))
+            },
+
+            // Id is an index, yes
+            {
+                typeof(GunConfig),
+                AccessTools.Field(typeof(GunConfig), BackingWrap(nameof(GunConfig.Id)))
             },
 
             {
                 typeof(JadeBoxConfig),
-                AccessTools.Field(typeof(JadeBoxConfig), nameof(JadeBoxConfig.Index))
+                AccessTools.Field(typeof(JadeBoxConfig), BackingWrap(nameof(JadeBoxConfig.Index)))
             },
 
             {
                 // kind of an index
                 typeof(PlayerUnitConfig),
-                AccessTools.Field(typeof(PlayerUnitConfig), nameof(PlayerUnitConfig.ShowOrder))
+                AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.ShowOrder)))
             },
         };
 
@@ -72,15 +83,24 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         static Dictionary<Type, FieldInfo> arrayFieldCache = new Dictionary<Type, FieldInfo>();
 
-        public static FieldInfo GetArrayField(Type configType) => GetDataField(configType, potentialArrayNames, arrayFieldCache);
+        public static FieldInfo GetArrayField(Type configType) => GetFieldInfo(configType, potentialArrayNames, arrayFieldCache);
 
         static string[] potentialTableNames = new string[] { "_IdTable", "_LevelTable", "_NameTable", "_IDTable" };
 
         static Dictionary<Type, FieldInfo> tableFieldCache = new Dictionary<Type, FieldInfo>();
 
-        public static FieldInfo GetTableField(Type configType) => GetDataField(configType, potentialTableNames, tableFieldCache);
+        public static FieldInfo GetTableField(Type configType) => GetFieldInfo(configType, potentialTableNames, tableFieldCache);
 
-        public static FieldInfo GetDataField(Type configType, string[] potentialNames, Dictionary<Type, FieldInfo> cache)
+        static Dictionary<Type, FieldInfo> idFieldCache = new Dictionary<Type, FieldInfo>() {
+            // special case
+            { typeof(GunConfig), AccessTools.Field(typeof(GunConfig), BackingWrap(nameof(GunConfig.Name))) }
+        };
+
+        static string[] potentialIdNames = new string[] { BackingWrap("Id"), BackingWrap("Level"), BackingWrap("Name"), BackingWrap("ID"), };
+
+        public static FieldInfo GetIdField(Type configType) => GetFieldInfo(configType, potentialIdNames, idFieldCache);
+
+        public static FieldInfo GetFieldInfo(Type configType, string[] potentialNames, Dictionary<Type, FieldInfo> cache)
         {
             if (cache.TryGetValue(configType, out FieldInfo result))
                 return result;
@@ -94,10 +114,11 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             FieldInfo field = null;
             foreach (var n in potentialNames)
             {
-                field =  AccessTools.Field(configType, n);
-                if(field != null )
-                { 
-                    break ; 
+                // avoid printing out HarmonyX warning
+                field = AccessTools.FindIncludingBaseTypes(configType, (Type t) => t.GetField(n, AccessTools.all));
+                if (field != null)
+                {
+                    break;
                 }
             }
 
@@ -131,7 +152,8 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
             foreach (var n in potentialFromIdNames)
             {
-                mFromId = AccessTools.Method(configType, n);
+                // avoid printing out HarmonyX warning
+                mFromId = AccessTools.FindIncludingBaseTypes(configType, (Type t) => t.GetMethod(n, AccessTools.all));
                 if (mFromId != null)
                 {
                     break;
@@ -161,7 +183,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             return mFromId;
         }
 
-        public static IEnumerable<Type> GetAllConfigTypes(IEnumerable<Assembly> assemblies = null, bool refresh = false)
+        public static IEnumerable<Type> GetAllConfigTypes(IEnumerable<Assembly> assemblies = null, bool exclude = true, bool refresh = false)
         {
             if (assemblies == null)
                 assemblies = configAssemblies;
@@ -177,6 +199,10 @@ namespace LBoLEntitySideloader.ReflectionHelpers
                 }
             }
 
+
+            if (exclude)
+                return configTypeCache.Except(excludeConfig);
+
             return configTypeCache;
         }
 
@@ -190,7 +216,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static void LogFromIdNames()
         {
-            var types = GetAllConfigTypes();
+            var types = GetAllConfigTypes(exclude:false);
 
             types.Do(t => log.LogInfo(t.Name));
 
@@ -221,7 +247,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static void LogFieldNames(Type fieldType)
         {
-            var types = GetAllConfigTypes();
+            var types = GetAllConfigTypes(exclude: false);
 
             IEnumerable<HashSet<FieldInfo>> fieldSets = null;
 

@@ -108,6 +108,7 @@ using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -149,7 +150,7 @@ namespace LBoLEntitySideloader
 
             public HashSet<Type> templateTypes = new HashSet<Type>();
 
-            public HashSet<Type> entityTypes = new HashSet<Type>();
+            public Dictionary<Type, List<Type>> entityTypes = new Dictionary<Type, List<Type>>();
 
             // unique => original
             public Dictionary<Type, string> templateIds = new Dictionary<Type, string>();
@@ -190,7 +191,7 @@ namespace LBoLEntitySideloader
 
                         if (bepinDependencies.Count() == 0)
                         {
-                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInDependency).Name} attribute");
+                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute");
                         }
                         else
                         { 
@@ -205,7 +206,7 @@ namespace LBoLEntitySideloader
                             }
                             if (!depFound)
                             {
-                                log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
+                                log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
                             }
                         }
                     }
@@ -214,10 +215,7 @@ namespace LBoLEntitySideloader
                     // final templates need to be Sealed
                     if (type.IsSealed)
                     {
-                        if (TypeFactoryReflection.factoryTypes.Contains(type))
-                        {
-                            userInfo.entityTypes.Add(type);
-                        }
+
                         // 2do add attribute for overwriting existing entities/configs
                         if (type.IsSubclassOf(typeof(EntityDefinition)))
                         {
@@ -225,6 +223,7 @@ namespace LBoLEntitySideloader
 
 
                             userInfo.templateIds.Add(type, null);
+                            //if(ConfigReflection.HasIndex(...bunch load generic reflection is needed...) != null)
                             userInfo.templateIndexes.Add(type, null);
 
 
@@ -237,9 +236,21 @@ namespace LBoLEntitySideloader
                             {
                                 throw new NotImplementedException();
                             }
+                        } 
+                        else
+                        
+                        {
+                            var facType = TypeFactoryReflection.factoryTypes.Find(t => type.IsSubclassOf(t));
+                            if (facType != null)
+                            {
+                                userInfo.entityTypes.TryAdd(facType, new List<Type>());
+                                userInfo.entityTypes[facType].Add(type);
+                            }
                         }
                     }
                 }
+
+                userInfo.entityTypes.Do(kv => log.LogDebug($"{kv.Key}: {kv.Value}")) ;
 
                 return userInfo;
             }
@@ -276,7 +287,6 @@ namespace LBoLEntitySideloader
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
 
 
-        Dictionary<Assembly, HashSet<Type>> typesRegisteredInFactory = new Dictionary<Assembly, HashSet<Type>>();
         
 
         static public void RegisterSelf()
@@ -343,41 +353,43 @@ namespace LBoLEntitySideloader
 
 
 
+        //Dictionary<Assembly, HashSet<Type>> typesRegisteredInFactory = new Dictionary<Assembly, HashSet<Type>>();
 
 
-        internal static void RegisterType<T>(ITypeProvider<T> typeProvider, EntityDefinition entityDefinition = null) where T : class
+        internal static void RegisterType<T>(ITypeProvider<T> typeProvider, UserInfo user, EntityDefinition entityDefinition = null) where T : class
         {
-            if (entityDefinition == null)
-            {
-                entityDefinition = (EntityDefinition)typeProvider;
-            }
 
 
-            if (!Instance.typesRegisteredInFactory.ContainsKey(entityDefinition.Assembly))
-            {
-                Instance.typesRegisteredInFactory.Add(entityDefinition.Assembly, new HashSet<Type>());
-            }
 
-            var entityTypes = Instance.typesRegisteredInFactory[entityDefinition.Assembly];
+            entityDefinition ??= (EntityDefinition)typeProvider;
 
-            if (!entityTypes.Contains(typeof(T)))
-            {
-                log.LogInfo($"registering public sealed extension of {typeof(T).Name} in {entityDefinition.Assembly.GetName()}");
+            var hasTypes = user.entityTypes.TryGetValue(typeof(T), out List<Type> typesToRegister);
 
-                TypeFactory<T>.RegisterAssembly(entityDefinition.Assembly);
+            if (hasTypes)
+            { 
+                foreach (var t in typesToRegister)
+                {
+                    log.LogDebug($"TypeFactory<{typeof(T).Name}>, id: {t.Name} from {entityDefinition.Assembly.GetName().Name}");
 
-                entityTypes.Add(typeof(T));
+                    if (!TypeFactory<T>.FullNameTypeDict.TryAdd(t.FullName, t))
+                    {
+                        log.LogError($"RegisterType: {t.FullName} matches an already registered type. Please change plugin namespace.");
+                    }
+
+                    // 2do make unique
+                    TypeFactory<T>.TypeDict.TryAdd(t.Name, t);
+                }
             }
         }
 
-        internal void RegisterUser(UserInfo info)
+        internal void RegisterUser(UserInfo user)
         {
-            foreach (var type in info.templateTypes)
+            foreach (var type in user.templateTypes)
             {
 
                 var definition = (EntityDefinition)Activator.CreateInstance(type);
 
-                definition.Assembly = info.assembly;
+                definition.Assembly = user.assembly;
                 // id needs to be set
 
 
@@ -387,13 +399,13 @@ namespace LBoLEntitySideloader
                     // id is currently set in constructor which is not enforced in any way
                     ct.Id = ct.GetConfig().Id;
                     RegisterConfig(ct);
-                    RegisterType(ct);
+                    RegisterType(ct, user);
                 }
                 else if (definition is StatusEffectTemplate st)
                 {
                     st.Id = st.GetConfig().Id;
                     RegisterConfig(st);
-                    RegisterType(st);
+                    RegisterType(st, user);
                 }
 
 
