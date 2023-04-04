@@ -103,7 +103,8 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
-using LBoLEntitySideloader.Reflection;
+using LBoLEntitySideloader.Attributes;
+using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -146,16 +147,16 @@ namespace LBoLEntitySideloader
 
             public Assembly assembly;
 
-            public HashSet<Type> templateTypes;
+            public HashSet<Type> templateTypes = new HashSet<Type>();
 
-            public HashSet<Type> entityTypes;
+            public HashSet<Type> entityTypes = new HashSet<Type>();
 
             // unique => original
-            public Dictionary<Type, string> templateIds;
+            public Dictionary<Type, string> templateIds = new Dictionary<Type, string>();
 
-            public Dictionary<Type, int> templateIndexes;
+            public Dictionary<Type, int?> templateIndexes = new Dictionary<Type, int?>();
 
-            public Dictionary<Type, string> entitiesToModify;
+            public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
 
 
             public static UserInfo ScanAssembly(Assembly assembly)
@@ -174,33 +175,68 @@ namespace LBoLEntitySideloader
                     if (type.IsSubclassOf(typeof(BaseUnityPlugin)))
                     {
                         var attributes = type.GetCustomAttributes(inherit: false);
-                        var bepinplugin = attributes.Where(a => (Type)a == typeof(BepInPlugin)).SingleOrDefault();
+
+                        var bepinplugin = attributes.Where(a => a.GetType() == typeof(BepInPlugin)).SingleOrDefault();
                         if (bepinplugin is BepInPlugin bp)
                         {
                             userInfo.GUID = bp.GUID;
                         }
                         else
                         {
-
-                            // 2do. do more check
-                            log.LogWarning($"{assembly.GetName()}: {type} does not have {typeof(BepInPlugin).Name} attribute despite extending {typeof(BaseUnityPlugin).Name}");
+                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInPlugin).Name} attribute despite extending {typeof(BaseUnityPlugin).Name}");
                         }
-                        
+
+                        var bepinDependencies = attributes.Where(a => a.GetType() == typeof(BepInDependency)).Select(a => (BepInDependency)a).AsEnumerable();
+
+                        if (bepinDependencies.Count() == 0)
+                        {
+                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInDependency).Name} attribute");
+                        }
+                        else
+                        { 
+                            bool depFound = false;
+                            foreach (var bd in bepinDependencies)
+                            {
+                                if (bd.DependencyGUID == PluginInfo.GUID && bd.Flags == BepInDependency.DependencyFlags.HardDependency)
+                                {
+                                    depFound = true;
+                                    break;
+                                }
+                            }
+                            if (!depFound)
+                            {
+                                log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
+                            }
+                        }
                     }
 
                     
                     // final templates need to be Sealed
                     if (type.IsSealed)
                     {
-                        if (ReflectionHelpers.TypeFactory.factoryTypes.Contains(type))
+                        if (TypeFactoryReflection.factoryTypes.Contains(type))
                         {
                             userInfo.entityTypes.Add(type);
                         }
                         // 2do add attribute for overwriting existing entities/configs
-                        // 2do add optional DontLoad attribute filter
                         if (type.IsSubclassOf(typeof(EntityDefinition)))
                         {
                             userInfo.templateTypes.Add(type);
+
+
+                            userInfo.templateIds.Add(type, null);
+                            userInfo.templateIndexes.Add(type, null);
+
+
+                            var attributes = type.GetCustomAttributes(inherit: false);
+                            var overwritte = attributes.Where(a => a.GetType() == typeof(OverwriteVanilla)).SingleOrDefault();
+
+
+                            // 2do add optional DontLoad attribute filter
+                            if (overwritte is OverwriteVanilla ov) 
+                            {
+                                throw new NotImplementedException();
+                            }
                         }
                     }
                 }
@@ -235,9 +271,6 @@ namespace LBoLEntitySideloader
 
                 userInfos.Remove(assembly);
             }
-
-
-
         }
 
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
@@ -276,7 +309,7 @@ namespace LBoLEntitySideloader
             {
                 var configType = entityDefinition.GetConfigType();
 
-                var m_FromId = ReflectionHelpers.Config.GetFromIdMethod(configType);
+                var m_FromId = ConfigReflection.GetFromIdMethod(configType);
                 var newConfig = configProvider.GetConfig();
 
                 var config = m_FromId.Invoke(null, new object[] { Id});
@@ -286,11 +319,12 @@ namespace LBoLEntitySideloader
                     log.LogInfo($"initial config load for {Id}");
 
                     // Add config to array
-                    var f_Data = AccessTools.Field(configType, "_data");
+                    var f_Data = ConfigReflection.GetArrayField(configType);
+                    // cache maybe
                     var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
                     ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                     // Add config to dictionary
-                    var f_IdTable = AccessTools.Field(configType, "_IdTable");
+                    var f_IdTable = ConfigReflection.GetTableField(configType);
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
 
                 }
@@ -306,6 +340,9 @@ namespace LBoLEntitySideloader
                 log.LogError($"Exception registering {Id}: {ex}");
             }
         }
+
+
+
 
 
         internal static void RegisterType<T>(ITypeProvider<T> typeProvider, EntityDefinition entityDefinition = null) where T : class
@@ -397,6 +434,8 @@ namespace LBoLEntitySideloader
                 }*/
             }
         }
+
+
 
 
 

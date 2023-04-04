@@ -126,8 +126,6 @@ namespace LBoLEntitySideloader
 
     public interface IConfigProvider<C> where C : class
     {
-
-
         abstract public C DefaultConfig();
         abstract public C GetConfig();
     }
