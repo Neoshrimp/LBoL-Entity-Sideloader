@@ -157,7 +157,7 @@ namespace LBoLEntitySideloader
 
             static IEnumerable<MethodBase> TargetMethods()
             {
-                foreach (var t in ConfigReflection.GetAllConfigTypes())
+                foreach (var t in ConfigReflection.GetAllConfigTypes(exclude: false))
                 {
                     yield return AccessTools.Method(t, "Load");
                 }

@@ -11,33 +11,80 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Collections;
+using UnityEngine;
 
 namespace LBoLEntitySideloader.ReflectionHelpers
 {
 
-    public class TypeFactoryReflection
+    public class TypeFactoryReflection 
     {
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
+
+
         // from Library.RegisterAllAsync. No sensible common pattern exists to extract these types reflectively
-        public static List<Type> factoryTypes = new List<Type>() { typeof(Stage), typeof(Card), typeof(UltimateSkill), typeof(Exhibit), typeof(PlayerUnit), typeof(EnemyUnit), typeof(StatusEffect), typeof(Doll), typeof(GapOption), typeof(Intention), typeof(Adventure), typeof(JadeBox) };
+        public static HashSet<Type> factoryTypes = new HashSet<Type>() { typeof(Stage), typeof(Card), typeof(UltimateSkill), typeof(Exhibit), typeof(PlayerUnit), typeof(EnemyUnit), typeof(StatusEffect), typeof(Doll), typeof(GapOption), typeof(Intention), typeof(Adventure), typeof(JadeBox) };
 
 
-/*        static HashSet<Type> _isSubclass = new HashSet<Type>(new AssignabilityComparer());
+        static Type genericTypeFactoryType = typeof(TypeFactory<>).GetGenericTypeDefinition();
 
-        public static HashSet<Type> IsSubclass 
-        { 
-            get 
+        static Dictionary<Type, Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>>> entityDicCache = new Dictionary<Type, Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>>>();
+
+        public static AccessTools.FieldRef<object, Dictionary<string, Type>> GetAccessRef(Type facType, TableFieldName tableFieldName)
+        {
+
+            if (!factoryTypes.Contains(facType))
             {
-                if (_isSubclass.Empty())
-                {
-                    factoryTypes.Do(t => _isSubclass.Add(t));
-
-                    _isSubclass.Do(t => UnityEngine.Debug.Log(t.Name));
-                }
-
-                return _isSubclass;
+                log.LogWarning($"GetAccessRef: {facType} is not a type used by TypeFactory");
+                return null;
             }
-                
-        }*/
+
+
+            if (entityDicCache.TryGetValue(facType, out Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>> potentialResult))
+            {
+                if (potentialResult.TryGetValue(tableFieldName, out AccessTools.FieldRef<object, Dictionary<string, Type>> result))
+                { 
+                    return result;
+                }
+            }
+            var typeFactoryType = genericTypeFactoryType.MakeGenericType(new Type[] {facType});
+
+            var fieldRef = AccessTools.FieldRefAccess<Dictionary<string, Type>>(typeFactoryType, tableFieldName.ToString());
+
+
+            entityDicCache.TryAdd(facType, new Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>>());
+            entityDicCache[facType].TryAdd(tableFieldName, fieldRef);
+
+            return fieldRef;
+        
+        }
+
+
+
+        public enum TableFieldName
+        {
+            FullNameTypeDict,
+            TypeDict
+        }
+
+
+        /*        static HashSet<Type> _isSubclass = new HashSet<Type>(new AssignabilityComparer());
+
+                public static HashSet<Type> IsSubclass 
+                { 
+                    get 
+                    {
+                        if (_isSubclass.Empty())
+                        {
+                            factoryTypes.Do(t => _isSubclass.Add(t));
+
+                            _isSubclass.Do(t => UnityEngine.Debug.Log(t.Name));
+                        }
+
+                        return _isSubclass;
+                    }
+
+                }*/
     }
 
 

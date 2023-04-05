@@ -200,7 +200,7 @@ namespace LBoLEntitySideloader
         public void Load()
         {
 
-            if (Id.IsNullOrEmpty())
+/*            if (Id.IsNullOrEmpty())
                 Id = GetConfig().Id;
 
             var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
@@ -208,7 +208,7 @@ namespace LBoLEntitySideloader
             GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
                 TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
 
-            var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
+            var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);*/
         }
     }
 

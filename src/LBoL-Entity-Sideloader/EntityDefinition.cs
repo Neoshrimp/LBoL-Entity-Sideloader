@@ -123,8 +123,7 @@ using LBoLEntitySideloader;
 namespace LBoLEntitySideloader
 {
 
-
-    public interface IConfigProvider<C> where C : class
+    public interface IConfigProvider<out C> where C : class
     {
         abstract public C DefaultConfig();
         abstract public C GetConfig();
@@ -144,10 +143,10 @@ namespace LBoLEntitySideloader
 
     public abstract class EntityDefinition 
     { 
-        private string id;
-
+        private IdContainer id;
         private Assembly assembly;
-        public string Id { get => id; set => id = value; }
+
+        public IdContainer Id { get => id; set => id = value; }
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
         public abstract Type GetConfigType();

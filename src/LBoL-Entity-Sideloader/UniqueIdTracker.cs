@@ -11,18 +11,22 @@ namespace LBoLEntitySideloader
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
         // config type => used Ids
-        static public Dictionary<Type, HashSet<string>> configIds = new Dictionary<Type, HashSet<string>>();
+        static public Dictionary<Type, HashSet<IdContainer>> configIds = new Dictionary<Type, HashSet<IdContainer>>();
 
         static public Dictionary<Type, HashSet<int>> configIndexes = new Dictionary<Type, HashSet<int>>();
+
+
+        static public Dictionary<Type, HashSet<IdContainer>> modifiedIds = new Dictionary<Type, HashSet<IdContainer>>();
+
 
         //duplicate
         static public void AddConfig(object config, bool allowDuplicateIndex = false )
         {
-            configIds.TryAdd(config.GetType(), new HashSet<string>());
-            configIds.TryGetValue(config.GetType(), out HashSet<string> ids);
+            configIds.TryAdd(config.GetType(), new HashSet<IdContainer>());
+            configIds.TryGetValue(config.GetType(), out HashSet<IdContainer> ids);
 
             var f_id = ConfigReflection.GetIdField(config.GetType());
-            var id = (string)f_id.GetValue(config);
+            var id = (IdContainer)f_id.GetValue(config);
 
             if (ids.Contains(id))
             {

@@ -139,6 +139,7 @@ namespace LBoLEntitySideloader
             }
         }
 
+
         public class UserInfo
         {
 
@@ -152,8 +153,8 @@ namespace LBoLEntitySideloader
 
             public Dictionary<Type, List<Type>> entityTypes = new Dictionary<Type, List<Type>>();
 
-            // unique => original
-            public Dictionary<Type, string> templateIds = new Dictionary<Type, string>();
+            // definition => id
+            public Dictionary<Type, IdContainer> templateIds = new Dictionary<Type, IdContainer>();
 
             public Dictionary<Type, int?> templateIndexes = new Dictionary<Type, int?>();
 
@@ -162,6 +163,7 @@ namespace LBoLEntitySideloader
 
             public static UserInfo ScanAssembly(Assembly assembly)
             {
+
                 var userInfo = new UserInfo();
                 userInfo.assembly = assembly;
 
@@ -184,7 +186,7 @@ namespace LBoLEntitySideloader
                         }
                         else
                         {
-                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have {typeof(BepInPlugin).Name} attribute despite extending {typeof(BaseUnityPlugin).Name}");
+                            log.LogError($"{assembly.GetName().Name}: {type} does not have {typeof(BepInPlugin).Name} attribute despite extending {typeof(BaseUnityPlugin).Name}");
                         }
 
                         var bepinDependencies = attributes.Where(a => a.GetType() == typeof(BepInDependency)).Select(a => (BepInDependency)a).AsEnumerable();
@@ -215,8 +217,7 @@ namespace LBoLEntitySideloader
                     // final templates need to be Sealed
                     if (type.IsSealed)
                     {
-
-                        // 2do add attribute for overwriting existing entities/configs
+                        // 2do maybe more error feedback
                         if (type.IsSubclassOf(typeof(EntityDefinition)))
                         {
                             userInfo.templateTypes.Add(type);
@@ -240,7 +241,7 @@ namespace LBoLEntitySideloader
                         else
                         
                         {
-                            var facType = TypeFactoryReflection.factoryTypes.Find(t => type.IsSubclassOf(t));
+                            var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
                             if (facType != null)
                             {
                                 userInfo.entityTypes.TryAdd(facType, new List<Type>());
@@ -301,7 +302,7 @@ namespace LBoLEntitySideloader
         }
 
                 
-        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, EntityDefinition entityDefinition = null) where C : class
+        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
             if (entityDefinition == null)
@@ -309,40 +310,55 @@ namespace LBoLEntitySideloader
                 entityDefinition = (EntityDefinition)configProvider;
             }
 
+            if (user.templateIds.TryGetValue(configProvider.GetType(), out IdContainer id))
+            {
+                
+            }
+
+            
+
             // this is a bit more complicated
-            var Id = UniquefyId(entityDefinition.Id);
-            log.LogInfo($"Registering config: {Id},  type:{entityDefinition.GetConfigType()}");
+            
 
 
             // if (id registered skip)
             try
             {
                 var configType = entityDefinition.GetConfigType();
-
-                var m_FromId = ConfigReflection.GetFromIdMethod(configType);
                 var newConfig = configProvider.GetConfig();
 
-                var config = m_FromId.Invoke(null, new object[] { Id});
+                var f_Id = ConfigReflection.GetIdField(configType);
+                // REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                var Id = (IdContainer)f_Id.GetValue(newConfig);
 
-                if (config == null)
-                {
-                    log.LogInfo($"initial config load for {Id}");
+                UniqueIdTracker.AddConfig(newConfig);
 
-                    // Add config to array
-                    var f_Data = ConfigReflection.GetArrayField(configType);
-                    // cache maybe
-                    var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-                    ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
-                    // Add config to dictionary
-                    var f_IdTable = ConfigReflection.GetTableField(configType);
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
+                entityDefinition.Id = Id;
+                log.LogInfo($"Registering config: {Id},  type:{entityDefinition.GetConfigType()}");
 
-                }
+                //var m_FromId = ConfigReflection.GetFromIdMethod(configType);
+
+                //var config = m_FromId.Invoke(null, new object[] { Id});
+
+                /*                if (config == null)
+                                {*/
+                log.LogInfo($"initial config load for {Id}");
+
+                // Add config to array
+                var f_Data = ConfigReflection.GetArrayField(configType);
+                // cache maybe
+                var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+                ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+                // Add config to dictionary
+                var f_IdTable = ConfigReflection.GetTableField(configType);
+                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
+
+/*                }
                 else
                 {
                     log.LogInfo($"secondary config reload for {Id}");
                     config = newConfig;
-                }
+                }*/
 
             }
             catch (Exception ex)
@@ -382,12 +398,39 @@ namespace LBoLEntitySideloader
             }
         }
 
+
+        internal static void RegisterTypes(Type facType, UserInfo user)
+        {
+
+            if (!user.isRegistered)
+                throw new ArgumentException($"RegisterTypes: user {user} is not registered");
+           
+            var hasTypes = user.entityTypes.TryGetValue(facType, out List<Type> typesToRegister);
+
+            if (hasTypes)
+            {
+                foreach (var t in typesToRegister)
+                {
+                    log.LogDebug($"TypeFactory<{facType.Name}>, id: {t.Name} from {user.assembly.GetName().Name}");
+
+                    if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(t.FullName, t))
+                    {
+                        log.LogError($"RegisterType: {t.FullName} matches an already registered type. Please change plugin namespace.");
+                    }
+
+                    // 2do make unique
+                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().TryAdd(t.Name, t);
+                }
+            }
+        }
+
         internal void RegisterUser(UserInfo user)
         {
             foreach (var type in user.templateTypes)
             {
 
                 var definition = (EntityDefinition)Activator.CreateInstance(type);
+
 
                 definition.Assembly = user.assembly;
                 // id needs to be set
@@ -396,25 +439,29 @@ namespace LBoLEntitySideloader
                 if (definition is CardTemplate ct)
                 {
 
-                    // id is currently set in constructor which is not enforced in any way
-                    ct.Id = ct.GetConfig().Id;
+
                     RegisterConfig(ct);
-                    RegisterType(ct, user);
+                    //RegisterType(ct, user);
                 }
                 else if (definition is StatusEffectTemplate st)
                 {
-                    st.Id = st.GetConfig().Id;
                     RegisterConfig(st);
-                    RegisterType(st, user);
+                    //RegisterType(st, user);
                 }
-
-
             }
+            user.isRegistered = true;
+
+            foreach (var kv in user.entityTypes)
+            {
+                RegisterTypes(kv.Key, user);
+            }
+
         }
 
-        internal void UnregisterUser(Assembly assembly)
+        internal void UnregisterUser(UserInfo user)
         {
 
+            user.isRegistered = false;
         }
 
         internal void RegisterUsers()

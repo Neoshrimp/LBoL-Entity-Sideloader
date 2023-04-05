@@ -128,10 +128,10 @@ namespace CardExample
         public sealed class TemporalGuardianDefinition : CardTemplate
         {
 
-            public TemporalGuardianDefinition()
+/*            public TemporalGuardianDefinition()
             {
                 Id = nameof(TemporalGuardian);
-            }
+            }*/
 
 
 
@@ -210,10 +210,10 @@ namespace CardExample
         public sealed class TemporialGuardianSeDefinition : StatusEffectTemplate
         {
 
-            public TemporialGuardianSeDefinition()
+/*            public TemporialGuardianSeDefinition()
             {
                 Id = nameof(TemporalGuardianSe);
-            }
+            }*/
 
             public override StatusEffectConfig GetConfig()
             {
