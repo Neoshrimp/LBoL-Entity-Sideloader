@@ -5,13 +5,19 @@ using System.Text;
 namespace LBoLEntitySideloader.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class OverwriteVanilla : Attribute
+    public sealed class OverwriteVanilla : Attribute
     {
-        public string orginalId;
+        readonly IdContainer idToOverwrite;
 
-        public OverwriteVanilla(string orginalId)
+        private bool overideAllComponents = false;
+
+        public OverwriteVanilla(IdContainer orginalId)
         {
-            this.orginalId = orginalId;
+            idToOverwrite = orginalId;
         }
+
+        public IdContainer IdToOverride => idToOverwrite;
+
+        public bool OverideAllComponents { get => overideAllComponents; set => overideAllComponents = value; }
     }
 }

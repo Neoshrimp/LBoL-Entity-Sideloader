@@ -132,6 +132,9 @@ namespace LBoLEntitySideloader
 
         private static Harmony harmony = PluginInfo.harmony;
 
+
+        public static ConfigEntry<bool> devModeConfig;
+
         private void Awake()
         {
             log = Logger;
@@ -139,6 +142,9 @@ namespace LBoLEntitySideloader
             // very important. Without it the entry point MonoBehaviour gets destroyed
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+            devModeConfig = Config.Bind("DevMode", "Enabled", false, "Enables mod developer mode for extra functionality and error feedback");
+
 
             harmony.PatchAll();
 

@@ -68,7 +68,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static FieldInfo HasIndex(Type configType)
         {
-            if (!GetAllConfigTypes().Contains(configType))
+            if (!GetAllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"HasIndex: {configType} is not a config type");
                 return null;
@@ -105,7 +105,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             if (cache.TryGetValue(configType, out FieldInfo result))
                 return result;
 
-            if (!GetAllConfigTypes().Contains(configType))
+            if (!GetAllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"GetDataField: {configType} is not a config type");
                 return null;
@@ -142,7 +142,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             if (fromIdCache.TryGetValue(configType, out MethodInfo result))
                 return result;
 
-            if (!GetAllConfigTypes().Contains(configType))
+            if (!GetAllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"GetFromIdMethod: {configType} is not a config type");
                 return null;

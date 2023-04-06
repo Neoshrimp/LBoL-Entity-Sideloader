@@ -143,10 +143,10 @@ namespace LBoLEntitySideloader
 
     public abstract class EntityDefinition 
     { 
-        private IdContainer id;
+        internal IdContainer id;
         private Assembly assembly;
 
-        public IdContainer Id { get => id; set => id = value; }
+
         public Assembly Assembly { get => assembly; set => assembly = value; }
 
         public abstract Type GetConfigType();
@@ -154,4 +154,5 @@ namespace LBoLEntitySideloader
         public abstract Type GetEntityType();
 
     }
+
 }

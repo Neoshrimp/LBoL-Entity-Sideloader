@@ -9,11 +9,13 @@ namespace LBoLEntitySideloader
 
     public struct IdContainer
     {
-        public string sId;
-        public int iId;
+        private string sId;
+        private int iId;
 
-        private readonly IdType idType;
+        public readonly IdType idType;
 
+        public string SId { get => sId; set => sId = value; }
+        public int IId { get => iId; set => iId = value; }
 
         public static implicit operator string(IdContainer id) => id.sId;
 
@@ -22,10 +24,25 @@ namespace LBoLEntitySideloader
         public static implicit operator int(IdContainer id) => id.iId;
 
         public static implicit operator IdContainer(string s) => new IdContainer(s);
-
+        
         public static implicit operator IdContainer(int i) => new IdContainer(i);
 
+        public static IdContainer CastFromObject(object o)
+        {
+            if (o is string s)
+            {
+                return new IdContainer(s);
+            }
+            else if (o is int ii)
+            {
+                return new IdContainer(ii);
+            }
+            else
+            {
+                throw new ArgumentException($"IdContainer: {o.GetType()} is not a valid type to cast from");
+            }
 
+        }
 
         public IdContainer(string s) : this()
         {

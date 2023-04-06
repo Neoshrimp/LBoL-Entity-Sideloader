@@ -104,6 +104,7 @@ using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Attributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -165,6 +166,7 @@ namespace CardExample2
             }
 
 
+            [EntityLogic(typeof(DeeznutsDefinition))]
             public sealed class Deeznuts : Card
             {
                 public override IEnumerable<BattleAction> OnDraw()
@@ -176,6 +178,7 @@ namespace CardExample2
         }
 
 
+        // mismatched id and type name
         public sealed class NutsDefinition : CardTemplate
         {
             public override CardConfig GetConfig()
@@ -188,11 +191,41 @@ namespace CardExample2
             }
 
 
-            public sealed class Nuts : Card
+
+            [EntityLogic(typeof(NutsDefinition))]
+            public sealed class DeeeeeeezNuts : Card
             {
                 public override IEnumerable<BattleAction> OnDraw()
                 {
                     log.LogInfo("Nuts");
+                    return base.OnDraw();
+                }
+            }
+        }
+
+
+        // duplicate id and type name
+
+        // 2do no unique id enforcing inside a plugin
+        public sealed class DeezDefinition : CardTemplate
+        {
+            public override CardConfig GetConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = 42020;
+                cardConfig.Id = nameof(Deeznuts);
+                cardConfig.Type = CardType.Misfortune;
+                return cardConfig;
+            }
+
+
+
+            [EntityLogic(typeof(DeezDefinition))]
+            public sealed class Deeznuts : Card
+            {
+                public override IEnumerable<BattleAction> OnDraw()
+                {
+                    log.LogInfo("Deeznuts the second");
                     return base.OnDraw();
                 }
             }

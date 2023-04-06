@@ -135,12 +135,9 @@ namespace LBoLEntitySideloader
         }
 
 
-        
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
         class ResourcesHelper_Patch
         {
-
-
             static void Postfix()
             {
 
@@ -175,7 +172,7 @@ namespace LBoLEntitySideloader
                         yield return ci;
                         yield return new CodeInstruction(OpCodes.Dup);
                         yield return new CodeInstruction(OpCodes.Ldc_I4_1);
-                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueIdTracker), nameof(UniqueIdTracker.AddConfig)));
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueIdTracker), nameof(UniqueIdTracker.TrackVanillaConfig)));
                     }
                     else
                     {

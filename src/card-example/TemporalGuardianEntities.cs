@@ -117,6 +117,7 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Attributes;
 
 namespace CardExample
 {
@@ -128,11 +129,6 @@ namespace CardExample
         public sealed class TemporalGuardianDefinition : CardTemplate
         {
 
-/*            public TemporalGuardianDefinition()
-            {
-                Id = nameof(TemporalGuardian);
-            }*/
-
 
 
             public override CardConfig GetConfig()
@@ -140,7 +136,7 @@ namespace CardExample
 
                 var cardConfig = new CardConfig(
                                Index: 6969,
-                               Id: Id,
+                               Id: nameof(TemporalGuardian),
                                Order: 10,
                                AutoPerform: true,
                                Perform: new string[0][],
@@ -193,7 +189,7 @@ namespace CardExample
             }
 
 
-
+            [EntityLogic(typeof(TemporalGuardianDefinition))]
             public sealed class TemporalGuardian : Card
             {
                 protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
@@ -219,7 +215,7 @@ namespace CardExample
             {
 
                 var se = new StatusEffectConfig(
-                                Id: Id,
+                                Id: nameof(TemporalGuardianSe),
                                 Order: 10,
                                 Type: StatusEffectType.Positive,
                                 IsVerbose: false,
@@ -243,6 +239,9 @@ namespace CardExample
 
                 return se;
             }
+
+
+            [EntityLogic(typeof(TemporialGuardianSeDefinition))]
             public sealed class TemporalGuardianSe : StatusEffect
             {
 
