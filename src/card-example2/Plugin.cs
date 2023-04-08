@@ -132,6 +132,8 @@ namespace CardExample2
 
         internal static BepInEx.Logging.ManualLogSource log;
 
+        internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
+
         private void Awake()
         {
             log = Logger;
@@ -159,7 +161,7 @@ namespace CardExample2
             public override CardConfig GetConfig()
             {
                 var cardConfig = DefaultConfig();
-                cardConfig.Index = 69696;
+                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
                 cardConfig.Id = nameof(Deeznuts);
                 cardConfig.Type = CardType.Status;
                 return cardConfig;
@@ -184,7 +186,7 @@ namespace CardExample2
             public override CardConfig GetConfig()
             {
                 var cardConfig = DefaultConfig();
-                cardConfig.Index = 42020;
+                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
                 cardConfig.Id = "Nuts";
                 cardConfig.Type = CardType.Misfortune;
                 return cardConfig;

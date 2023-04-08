@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -131,6 +132,8 @@ namespace CardExample
         private static readonly Harmony harmony = new Harmony(GUID);
 
         internal static BepInEx.Logging.ManualLogSource log;
+
+        internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
         private void Awake()
         {

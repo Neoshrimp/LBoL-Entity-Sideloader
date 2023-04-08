@@ -20,6 +20,12 @@ namespace LBoLEntitySideloader
         // EntityDefinition type 
         static public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
+
+
+        static Sequence uIdSalt = new Sequence();
+
+        static TemplateSequenceTable indexTable = new TemplateSequenceTable();
+
         static public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
@@ -76,7 +82,7 @@ namespace LBoLEntitySideloader
 
         static public IdContainer GetUniqueId(EntityDefinition entityDefinition)
         {
-            if (entity2uniqueIds.TryGetValue(entityDefinition.GetConfigType(), out IdContainer uId))
+            if (entity2uniqueIds.TryGetValue(entityDefinition.GetType(), out IdContainer uId))
             {
                 return uId;
             }
@@ -88,27 +94,28 @@ namespace LBoLEntitySideloader
         }
 
 
-        static internal void AddUniqueId(IdContainer id, EntityDefinition entityDefinition, UserInfo userInfo)
+        static internal void AddUniqueId(IdContainer Id, EntityDefinition entityDefinition, UserInfo userInfo)
         {
 
-            log.LogDebug($"AddUniqueId: {entityDefinition.GetType().Name} {id}");
+            log.LogDebug($"AddUniqueId: {entityDefinition.GetType().Name} {Id}");
             var configType = entityDefinition.GetConfigType();
             configIds.TryAdd(configType, new HashSet<IdContainer>());
             var ids = configIds[configType];
 
 
+            log.LogDebug($"contains {ids.Count}: {ids.Contains(Id)}");
 
-
-            //if (ids.Contains(id))
-            if (ids.FirstOrDefault(id => id.SId == id) != default(IdContainer))
+            //if (ids.Contains(Id))
+            if (ids.FirstOrDefault(id => id.SId == Id) != default)
             {
 
-                log.LogDebug($"deeznuts cvontains");
+                log.LogDebug($"{ids.FirstOrDefault(id => id.SId == Id)}");
+
 
                 if (!entity2uniqueIds.ContainsKey(entityDefinition.GetType()))
                 {
-                    log.LogDebug($"deeznuts");
-                    var uId = MakeUniqueId(id, userInfo);
+                    var uId = MakeUniqueId(Id, userInfo);
+                    log.LogDebug($"{entityDefinition.GetType()} {uId}");
                     entity2uniqueIds.Add(entityDefinition.GetType(), uId);
                     ids.Add(uId);
                 }
@@ -119,7 +126,7 @@ namespace LBoLEntitySideloader
             }
             else
             {
-                ids.Add(id);
+                ids.Add(Id);
             }
 
         }

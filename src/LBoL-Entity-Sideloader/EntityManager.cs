@@ -209,11 +209,13 @@ namespace LBoLEntitySideloader
 
 
                         var attributes = type.GetCustomAttributes(inherit: false);
-                        var overwritte = attributes.Where(a => a.GetType() == typeof(OverwriteVanilla)).SingleOrDefault();
+
+                        var overwritte = type.SingularAttribute<OverwriteVanilla>();
+                        
 
 
                         // 2do add optional DontLoad attribute filter
-                        if (overwritte is OverwriteVanilla ov)
+                        if (overwritte != null)
                         {
                             throw new NotImplementedException();
                         }

@@ -68,7 +68,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static FieldInfo HasIndex(Type configType)
         {
-            if (!GetAllConfigTypes(exclude: false).Contains(configType))
+            if (!AllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"HasIndex: {configType} is not a config type");
                 return null;
@@ -105,7 +105,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             if (cache.TryGetValue(configType, out FieldInfo result))
                 return result;
 
-            if (!GetAllConfigTypes(exclude: false).Contains(configType))
+            if (!AllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"GetDataField: {configType} is not a config type");
                 return null;
@@ -142,7 +142,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             if (fromIdCache.TryGetValue(configType, out MethodInfo result))
                 return result;
 
-            if (!GetAllConfigTypes(exclude: false).Contains(configType))
+            if (!AllConfigTypes(exclude: false).Contains(configType))
             {
                 log.LogWarning($"GetFromIdMethod: {configType} is not a config type");
                 return null;
@@ -183,7 +183,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             return mFromId;
         }
 
-        public static IEnumerable<Type> GetAllConfigTypes(IEnumerable<Assembly> assemblies = null, bool exclude = true, bool refresh = false)
+        public static IEnumerable<Type> AllConfigTypes(IEnumerable<Assembly> assemblies = null, bool exclude = true, bool refresh = false)
         {
             if (assemblies == null)
                 assemblies = configAssemblies;
@@ -216,7 +216,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static void LogFromIdNames()
         {
-            var types = GetAllConfigTypes(exclude:false);
+            var types = AllConfigTypes(exclude:false);
 
             types.Do(t => log.LogInfo(t.Name));
 
@@ -247,7 +247,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static void LogFieldNames(Type fieldType)
         {
-            var types = GetAllConfigTypes(exclude: false);
+            var types = AllConfigTypes(exclude: false);
 
             IEnumerable<HashSet<FieldInfo>> fieldSets = null;
 

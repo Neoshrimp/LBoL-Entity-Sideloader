@@ -24,7 +24,7 @@ namespace LBoLEntitySideloader
         public static implicit operator int(IdContainer id) => id.iId;
 
         public static implicit operator IdContainer(string s) => new IdContainer(s);
-        
+
         public static implicit operator IdContainer(int i) => new IdContainer(i);
 
         public static IdContainer CastFromObject(object o)
@@ -47,7 +47,7 @@ namespace LBoLEntitySideloader
         public IdContainer(string s) : this()
         {
             this.sId = s;
-            this.idType =  IdType.String;
+            this.idType = IdType.String;
         }
 
         public IdContainer(int i) : this()
@@ -66,11 +66,15 @@ namespace LBoLEntitySideloader
             switch (a.idType)
             {
                 case IdType.String:
-                    return a.sId == b.sId;
+                    if (object.ReferenceEquals(null, a.sId))
+                        return false;
+                    return a.sId.Equals(b.sId);
                 case IdType.Int:
-                    return a.iId == b.iId;
+                    return a.iId.Equals(b.iId);
                 default:
-                    return a.sId == b.sId;
+                    if (object.ReferenceEquals(null, a.sId))
+                        return false;
+                    return a.sId.Equals(b.sId);
             }
         }
 
@@ -85,16 +89,26 @@ namespace LBoLEntitySideloader
             switch (a.idType)
             {
                 case IdType.String:
-                    return a.sId != b.sId;
+                    if (object.ReferenceEquals(null, a.sId))
+                        return true;
+                    return !a.sId.Equals(b.sId);
                 case IdType.Int:
-                    return a.iId != b.iId;
+                    return !a.iId.Equals(b.iId);
                 default:
-                    return a.sId != b.sId;
+                    if (object.ReferenceEquals(null, a.sId))
+                        return true;
+                    return !a.sId.Equals(b.sId);
             }
         }
 
         public override bool Equals(object obj)
         {
+            if (object.ReferenceEquals(this, obj))
+                return true;
+
+            if (object.ReferenceEquals(null, obj))
+                return false;
+
             switch (idType)
             {
                 case IdType.String:
@@ -112,10 +126,14 @@ namespace LBoLEntitySideloader
             switch (idType)
             {
                 case IdType.String:
+                    if (object.ReferenceEquals(null, sId))
+                        return 0;
                     return sId.GetHashCode();
                 case IdType.Int:
                     return iId.GetHashCode();
                 default:
+                    if (object.ReferenceEquals(null, sId))
+                        return 0;
                     return sId.GetHashCode();
             }
         }
@@ -125,14 +143,14 @@ namespace LBoLEntitySideloader
             switch (idType)
             {
                 case IdType.String:
-                    return sId.ToString();
+                    return sId?.ToString();
                 case IdType.Int:
                     return iId.ToString();
                 default:
-                    return sId.ToString();
+                    return sId?.ToString();
             }
         }
-    
+
 
 
 

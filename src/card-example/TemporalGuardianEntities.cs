@@ -126,16 +126,16 @@ namespace CardExample
 
         private static BepInEx.Logging.ManualLogSource log = Plugin.log;
 
+        internal static TemplateSequenceTable sequenceTable = Plugin.sequenceTable;
+
+
         public sealed class TemporalGuardianDefinition : CardTemplate
         {
-
-
-
             public override CardConfig GetConfig()
             {
 
                 var cardConfig = new CardConfig(
-                               Index: 6969,
+                               Index: sequenceTable.Next(typeof(CardConfig)),
                                Id: nameof(TemporalGuardian),
                                Order: 10,
                                AutoPerform: true,
