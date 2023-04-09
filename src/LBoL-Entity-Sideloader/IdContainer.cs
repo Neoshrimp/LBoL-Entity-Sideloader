@@ -7,7 +7,7 @@ using System.Text;
 namespace LBoLEntitySideloader
 {
 
-    public struct IdContainer
+    public struct IdContainer : IEquatable<IdContainer>
     {
         private string sId;
         private int iId;
@@ -151,8 +151,10 @@ namespace LBoLEntitySideloader
             }
         }
 
-
-
+        public bool Equals(IdContainer other)
+        {
+            return this == other;
+        }
 
         public enum IdType
         {
