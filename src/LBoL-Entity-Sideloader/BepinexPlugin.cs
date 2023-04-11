@@ -118,12 +118,15 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
+using UnityEngine.PlayerLoop;
+using BePinex;
 
 
 namespace LBoLEntitySideloader
 {
 
     [BepInPlugin(PluginInfo.GUID, PluginInfo.description, PluginInfo.version)]
+    [BepInDependency("com.bepis.bepinex.scriptengine", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("LBoL.exe")]
     public class BepinexPlugin : BaseUnityPlugin
     {
@@ -132,8 +135,11 @@ namespace LBoLEntitySideloader
 
         private static Harmony harmony = PluginInfo.harmony;
 
-
+        
         public static ConfigEntry<bool> devModeConfig;
+
+        public static ConfigEntry<KeyboardShortcut> reloadKeyConfig;
+
 
         private void Awake()
         {
@@ -143,9 +149,9 @@ namespace LBoLEntitySideloader
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            devModeConfig = Config.Bind("DevMode", "Enabled", false, "Enables mod developer mode for extra functionality and error feedback");
+            devModeConfig = Config.Bind("DevMode", "DevMode", false, "Enables mod developer mode for extra functionality and error feedback");
 
-
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities");
             harmony.PatchAll();
 
         }
@@ -154,6 +160,59 @@ namespace LBoLEntitySideloader
         {
             if (harmony != null)
                 harmony.UnpatchSelf();
+        }
+
+        void Update()
+        {
+
+            if (devModeConfig.Value && reloadKeyConfig.Value.IsDown()) 
+            {
+                if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
+
+                {
+                    HardReload(pluginInfo);
+                }
+                else
+                {
+                    log.LogInfo($"BePinEx scriptengine is needed to use  ");
+                }
+            }
+        }
+
+
+
+        public void HardReload(BepInEx.PluginInfo scriptEngineInfo)
+        {
+
+            foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
+            {
+                EntityManager.Instance.UnregisterUser(user);
+            }
+
+            EntityManager.Instance.sideloaderUsers.userInfos = new Dictionary<Assembly, UserInfo>();
+
+
+            ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
+
+            //ensures plugins are reloaded first
+            StartCoroutine(DoubleDelayAction(() =>
+            {
+                UniqueIdTracker.Destroy();
+
+                ConfigDataManager.Reload();
+
+                EntityManager.Instance.RegisterUsers();
+            }));
+
+
+        }
+
+        IEnumerator DoubleDelayAction(Action action)
+        {
+            yield return null;
+            yield return null;
+
+            action();
         }
 
 

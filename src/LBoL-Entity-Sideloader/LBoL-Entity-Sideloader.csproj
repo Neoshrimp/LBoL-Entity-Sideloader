@@ -34,6 +34,9 @@
 
 
   <ItemGroup>
+    <Reference Include="ScriptEngine">
+        <HintPath>$(BepInExFolder)\plugins\ScriptEngine.dll</HintPath>
+    </Reference>
     <Reference Include="LBoL.Base">
       <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Base.dll</HintPath>
     </Reference>

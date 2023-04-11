@@ -142,6 +142,7 @@ namespace CardExample
             {
 
                 var cardConfig = new CardConfig(
+                               //2do reloading problem
                                Index: sequenceTable.Next(typeof(CardConfig)),
                                Id: GetId(),
                                Order: 10,
@@ -258,19 +259,20 @@ namespace CardExample
 
                 protected override void OnAdded(Unit unit)
                 {
-                    ReactOwnerEvent<StatusEffectApplyEventArgs>(Battle.Player.StatusEffectAdding,
+
+                    ReactOwnerEvent(Battle.Player.StatusEffectAdding,
                         new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdding));
 
-                    ReactOwnerEvent<StatusEffectApplyEventArgs>(Battle.Player.StatusEffectAdded,
+                    ReactOwnerEvent(Battle.Player.StatusEffectAdded,
                         new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdded));
 
-                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectChanged,
+                    ReactOwnerEvent(Battle.Player.StatusEffectChanged,
                         new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange));
 
-                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectRemoved,
+                    ReactOwnerEvent(Battle.Player.StatusEffectRemoved,
                         new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoved));
 
-                    ReactOwnerEvent<StatusEffectEventArgs>(Battle.Player.StatusEffectRemoving,
+                    ReactOwnerEvent(Battle.Player.StatusEffectRemoving,
                         new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoving));
                 }
 

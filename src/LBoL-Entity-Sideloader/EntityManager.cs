@@ -270,15 +270,23 @@ namespace LBoLEntitySideloader
                 userInfos.Add(assembly, ScanAssembly(assembly));
             }
 
-            public void RemoveUser(Assembly assembly)
+            public void UnregisterUser(Assembly assembly)
             {
-                if (!userInfos.ContainsKey(assembly))
+                if (userInfos.ContainsKey(assembly))
                 {
-                    throw new Exception($"{assembly.GetName().Name} is not registered");
+                    userInfos[assembly] = new UserInfo();
                 }
 
-                userInfos.Remove(assembly);
             }
+
+            public void ReRegisterUser(Assembly assembly)
+            {
+                if (userInfos.ContainsKey(assembly)) 
+                {
+                    userInfos[assembly] = ScanAssembly(assembly);
+                }
+            }
+
         }
 
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
@@ -390,33 +398,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-
-
-        //Dictionary<Assembly, HashSet<Type>> typesRegisteredInFactory = new Dictionary<Assembly, HashSet<Type>>();
-
-
-/*        internal static void RegisterType<T>(ITypeProvider<T> typeProvider, UserInfo user, EntityDefinition entityDefinition = null) where T : class
-        {
-
-            entityDefinition ??= (EntityDefinition)typeProvider;
-
-            var hasTypes = user.entityInfos.TryGetValue(typeof(T), out List<EntityInfo> typesToRegister);
-
-            if (hasTypes)
-            { 
-                foreach (var t in typesToRegister)
-                {
-                    log.LogDebug($"TypeFactory<{typeof(T).Name}>, id: {t.Name} from {entityDefinition.Assembly.GetName().Name}");
-
-                    if (!TypeFactory<T>.FullNameTypeDict.TryAdd(t.FullName, t))
-                    {
-                        log.LogError($"RegisterType: {t.FullName} matches an already registered type. Please change plugin namespace.");
-                    }
-
-                    TypeFactory<T>.TypeDict.TryAdd(t.Name, t);
-                }
-            }
-        }*/
+       
 
 
         internal static void RegisterTypes(Type facType, UserInfo user)
@@ -447,6 +429,25 @@ namespace LBoLEntitySideloader
                     TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().TryAdd(uId, ei.entityType);
                 }
             }
+        }
+
+        internal static void UnRegisterTypes(Type facType, UserInfo user) 
+        {
+
+            var hasTypes = user.entityInfos.TryGetValue(facType, out List<EntityInfo> typesToRegister);
+            if (hasTypes)
+            {
+                foreach (var ei in typesToRegister)
+                {
+
+                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().Remove(ei.entityType.FullName);
+
+                    var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
+
+                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Remove(uId);
+                }
+            }
+
         }
 
         internal void RegisterUser(UserInfo user)
@@ -483,19 +484,25 @@ namespace LBoLEntitySideloader
 
         internal void UnregisterUser(UserInfo user)
         {
+            foreach (var kv in user.entityInfos)
+            {
+                UnRegisterTypes(kv.Key, user);
+            }
 
         }
+
+
+
+
 
         internal void RegisterUsers()
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
+                var user = kv.Value;
+                log.LogDebug(user.assembly.GetName().Name);
 
-                var info = kv.Value;
-
-                RegisterUser(info);
-
-               
+                RegisterUser(user);
             }
         }
 

@@ -129,7 +129,9 @@ namespace LBoLEntitySideloader
         {
             static public void Postfix()
             {
-                EntityManager.Instance.RegisterUsers();
+
+                if(!BepinexPlugin.devModeConfig.Value)
+                    EntityManager.Instance.RegisterUsers();
             }
 
         }
@@ -140,6 +142,10 @@ namespace LBoLEntitySideloader
         {
             static void Postfix()
             {
+
+                // delay registering after script engine has loaded
+                if (BepinexPlugin.devModeConfig.Value)
+                    EntityManager.Instance.RegisterUsers();
 
                 EntityManager.Instance.LoadAssets();
 

@@ -126,7 +126,7 @@ namespace CardExample
     [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string GUID = "neo.lbol.cardexample";
+        public const string GUID = "neo.lbol.cardexample";  
         public const string version = "1.0.0";
 
         private static readonly Harmony harmony = new Harmony(GUID);
