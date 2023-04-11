@@ -16,8 +16,6 @@ namespace LBoLEntitySideloader
 
         public string GUID;
 
-        public bool isRegistered = false;
-
         public Assembly assembly;
 
         // EntityDefinition type => EntityDefinition
@@ -27,10 +25,6 @@ namespace LBoLEntitySideloader
         public Dictionary<Type, List<EntityInfo>> entityInfos = new Dictionary<Type, List<EntityInfo>>();
 
         // definition => id
-        public Dictionary<Type, IdContainer> templateIds = new Dictionary<Type, IdContainer>();
-
-        public Dictionary<Type, int?> templateIndexes = new Dictionary<Type, int?>();
-
         public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
 
 

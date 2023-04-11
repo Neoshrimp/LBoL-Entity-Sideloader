@@ -131,12 +131,19 @@ namespace CardExample
 
         public sealed class TemporalGuardianDefinition : CardTemplate
         {
-            public override CardConfig GetConfig()
+
+            public override IdContainer GetId() 
+            {
+
+                return nameof(TemporalGuardian);
+            }
+
+            public override CardConfig ReturnConfig()
             {
 
                 var cardConfig = new CardConfig(
                                Index: sequenceTable.Next(typeof(CardConfig)),
-                               Id: nameof(TemporalGuardian),
+                               Id: GetId(),
                                Order: 10,
                                AutoPerform: true,
                                Perform: new string[0][],
@@ -189,6 +196,7 @@ namespace CardExample
             }
 
 
+
             [EntityLogic(typeof(TemporalGuardianDefinition))]
             public sealed class TemporalGuardian : Card
             {
@@ -206,16 +214,16 @@ namespace CardExample
         public sealed class TemporialGuardianSeDefinition : StatusEffectTemplate
         {
 
-/*            public TemporialGuardianSeDefinition()
+            public override IdContainer GetId()
             {
-                Id = nameof(TemporalGuardianSe);
-            }*/
+                return nameof(TemporalGuardianSe);
+            }
 
-            public override StatusEffectConfig GetConfig()
+            public override StatusEffectConfig ReturnConfig()
             {
 
                 var se = new StatusEffectConfig(
-                                Id: nameof(TemporalGuardianSe),
+                                Id: GetId(),
                                 Order: 10,
                                 Type: StatusEffectType.Positive,
                                 IsVerbose: false,
@@ -239,6 +247,7 @@ namespace CardExample
 
                 return se;
             }
+
 
 
             [EntityLogic(typeof(TemporialGuardianSeDefinition))]

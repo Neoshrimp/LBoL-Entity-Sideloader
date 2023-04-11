@@ -20,11 +20,14 @@ namespace LBoLEntitySideloader
         // EntityDefinition type 
         static public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
-
-
+        
+        
         static Sequence uIdSalt = new Sequence();
 
-        static TemplateSequenceTable indexTable = new TemplateSequenceTable();
+        static Sequence uIntId = new Sequence(1394);
+
+
+        static TemplateSequenceTable indexTable = new TemplateSequenceTable(12000);
 
         static public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
@@ -86,42 +89,36 @@ namespace LBoLEntitySideloader
             {
                 return uId;
             }
-            if (entityDefinition.id != default)
-            {
-                return entityDefinition.id;
-            }
-            throw new ArgumentException($"GetUniqueId: {entityDefinition} doesn't have an id");
+            return entityDefinition.GetId();
         }
 
 
-        static internal void AddUniqueId(IdContainer Id, EntityDefinition entityDefinition, UserInfo userInfo)
+        static internal void AddUniqueId(EntityDefinition entityDefinition, UserInfo userInfo)
         {
 
-            log.LogDebug($"AddUniqueId: {entityDefinition.GetType().Name} {Id}");
-            var configType = entityDefinition.GetConfigType();
+            var Id = entityDefinition.GetId();
+
+            var configType = entityDefinition.ConfigType();
             configIds.TryAdd(configType, new HashSet<IdContainer>());
             var ids = configIds[configType];
 
 
-            log.LogDebug($"contains {ids.Count}: {ids.Contains(Id)}");
-
-            //if (ids.Contains(Id))
-            if (ids.FirstOrDefault(id => id.SId == Id) != default)
+            if (ids.Contains(Id))
             {
 
-                log.LogDebug($"{ids.FirstOrDefault(id => id.SId == Id)}");
-
+                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {Id} which already used");
 
                 if (!entity2uniqueIds.ContainsKey(entityDefinition.GetType()))
                 {
-                    var uId = MakeUniqueId(Id, userInfo);
-                    log.LogDebug($"{entityDefinition.GetType()} {uId}");
+                    var uId = MakeUniqueId(Id, entityDefinition, userInfo);
                     entity2uniqueIds.Add(entityDefinition.GetType(), uId);
                     ids.Add(uId);
                 }
                 else 
                 {
-                    log.LogWarning($"{entityDefinition.GetType()} already has a unique id");
+
+
+                    throw new ArgumentException($"{entityDefinition.GetType()} already has a unique id"); 
                 }
             }
             else
@@ -132,16 +129,39 @@ namespace LBoLEntitySideloader
         }
 
 
-        static internal IdContainer MakeUniqueId(IdContainer id, UserInfo userInfo)
+        static internal IdContainer MakeUniqueId(IdContainer id, EntityDefinition entityDefinition, UserInfo userInfo)
         {
             if (id.idType == IdContainer.IdType.String)
-                return userInfo.GUID + id;
+            {
+                var uId = userInfo.GUID + id;
+                // for fringe case of plugin have non-unique ids internally
+                if (configIds[entityDefinition.ConfigType()].Contains(uId))
+                    uId = uId + uIdSalt.Next().ToString();
+                return uId;
+
+            }
+
+
+
+            if (id.idType == IdContainer.IdType.Int)
+                throw new NotImplementedException();
             throw new NotImplementedException();
+            
         }
 
-        static internal int MakeUniqueIndex(int index, UserInfo userInfo)
+        static internal int AddUniqueIndex(int index, EntityDefinition entityDefinition)
         {
-            throw new NotImplementedException();
+            int i = indexTable.Next(entityDefinition.ConfigType());
+            var indexes = configIndexes[entityDefinition.ConfigType()];
+            while (indexes.Contains(index + i))
+            {
+                log.LogDebug($"MakeUniqueIndex: duplicate index{index + i} of {entityDefinition.ConfigType()}");
+                i = indexTable.Next(entityDefinition.ConfigType());
+            }
+
+            indexes.Add(index + i);
+            return index + i;
+
         }
 
 

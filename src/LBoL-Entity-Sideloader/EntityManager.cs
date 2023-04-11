@@ -203,16 +203,9 @@ namespace LBoLEntitySideloader
                         userInfo.definitionInfos.Add(type, (EntityDefinition)Activator.CreateInstance(type));
 
 
-                        userInfo.templateIds.Add(type, null);
-                        //if(ConfigReflection.HasIndex(...bunch load generic reflection is needed...) != null)
-                        userInfo.templateIndexes.Add(type, null);
-
-
-                        var attributes = type.GetCustomAttributes(inherit: false);
 
                         var overwritte = type.SingularAttribute<OverwriteVanilla>();
                         
-
 
                         // 2do add optional DontLoad attribute filter
                         if (overwritte != null)
@@ -304,35 +297,68 @@ namespace LBoLEntitySideloader
             Instance.sideloaderUsers.AddUser(assembly);
         }
 
-                
+
+        internal bool RegisterId(UserInfo user, EntityDefinition entityDefinition)
+        {
+            try
+            {
+                UniqueIdTracker.AddUniqueId(entityDefinition, user);
+            }
+            catch (Exception ex)
+            {
+
+                log.LogError(ex);
+                return false;
+            }
+
+
+            return true;
+
+        }
+
+
         internal void RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
             if (entityDefinition == null)
             {
                 entityDefinition = (EntityDefinition)configProvider;
-            }
 
+            }
 
 
             try
             {
-                var configType = entityDefinition.GetConfigType();
-                var newConfig = configProvider.GetConfig();
+                var configType = entityDefinition.ConfigType();
+                var newConfig = configProvider.ReturnConfig();
 
                 var f_Id = ConfigReflection.GetIdField(configType);
+
+                switch (entityDefinition.UniqueId().idType)
+                {
+                    case IdContainer.IdType.String:
+                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId());
+                        break;
+                    case IdContainer.IdType.Int:
+                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId());
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
+                }
                 
-                var Id = IdContainer.CastFromObject(f_Id.GetValue(newConfig));
-
-                UniqueIdTracker.AddUniqueId(Id, entityDefinition, user);
-
-                // stinky fragmented logic..
-                entityDefinition.id = Id;
-                Id = UniqueIdTracker.GetUniqueId(entityDefinition);
 
 
+                var f_Index = ConfigReflection.HasIndex(configType);
 
-                log.LogInfo($"Registering config: {Id},  type:{entityDefinition.GetConfigType().Name}");
+                if (f_Index != null)
+                {
+                    f_Index.SetValue(newConfig, UniqueIdTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
+                }
+
+
+
+                log.LogInfo($"Registering config: {f_Id.GetValue(newConfig)},  type:{entityDefinition.ConfigType().Name}");
 
                 //var m_FromId = ConfigReflection.GetFromIdMethod(configType);
 
@@ -348,7 +374,7 @@ namespace LBoLEntitySideloader
                 ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                 // Add config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
-                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(Id, newConfig);
+                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId(), newConfig);
 
 /*                }
                 else
@@ -395,9 +421,6 @@ namespace LBoLEntitySideloader
 
         internal static void RegisterTypes(Type facType, UserInfo user)
         {
-            // magic flags ...
-            if (!user.isRegistered)
-                throw new ArgumentException($"RegisterTypes: user {user} is not registered");
            
             var hasTypes = user.entityInfos.TryGetValue(facType, out List<EntityInfo> typesToRegister);
 
@@ -412,8 +435,14 @@ namespace LBoLEntitySideloader
                         log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
                     }
 
-
+                    // should be type.name for now
                     var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
+
+                    if(uId != ei.entityType.Name )
+                    {
+
+                        log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
+                    }
 
                     TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().TryAdd(uId, ei.entityType);
                 }
@@ -422,26 +451,28 @@ namespace LBoLEntitySideloader
 
         internal void RegisterUser(UserInfo user)
         {
+
+
             foreach (var kv in user.definitionInfos)
             {
                 var type = kv.Key;
 
-                var definition = kv.Value;
-
-                // kinda redundant
-                definition.Assembly = user.assembly;
+                var entityDefinition = kv.Value;
 
 
-                if (definition is CardTemplate ct)
+
+                if (!RegisterId(user, entityDefinition))
+                    continue;
+
+                if (entityDefinition is CardTemplate ct)
                 {
                     RegisterConfig(ct, user);
                 }
-                else if (definition is StatusEffectTemplate st)
+                else if (entityDefinition is StatusEffectTemplate st)
                 {
                     RegisterConfig(st, user);
                 }
             }
-            user.isRegistered = true;
 
             foreach (var kv in user.entityInfos)
             {
@@ -453,7 +484,6 @@ namespace LBoLEntitySideloader
         internal void UnregisterUser(UserInfo user)
         {
 
-            user.isRegistered = false;
         }
 
         internal void RegisterUsers()

@@ -21,7 +21,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         // exclude these 2 for now since they are using int as Id
         // ExpConfig is using Id for logic as well...
-        static HashSet<Type> excludeConfig = new HashSet<Type>() { typeof(PieceConfig), typeof(ExpConfig) };
+        static readonly HashSet<Type> intAsIdTypes = new HashSet<Type>() { typeof(PieceConfig), typeof(ExpConfig) };
 
 
         static public string BackingWrap(string s) { return $"<{s}>k__BackingField";  }
@@ -201,7 +201,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
 
             if (exclude)
-                return configTypeCache.Except(excludeConfig);
+                return configTypeCache.Except(intAsIdTypes);
 
             return configTypeCache;
         }

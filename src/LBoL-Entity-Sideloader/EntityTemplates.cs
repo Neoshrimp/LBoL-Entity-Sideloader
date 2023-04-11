@@ -128,12 +128,12 @@ namespace LBoLEntitySideloader
         IAssetLoader
     {
 
-        public override Type GetConfigType()
+        public override Type ConfigType()
         {
             return typeof(CardConfig);
         }
 
-        public override Type GetEntityType()
+        public override Type EntityType()
         {
             return typeof(Card);
         }
@@ -195,7 +195,7 @@ namespace LBoLEntitySideloader
             return cardConfig;
         }
 
-        public abstract CardConfig GetConfig();
+        public abstract CardConfig ReturnConfig();
 
         public void Load()
         {
@@ -218,12 +218,12 @@ namespace LBoLEntitySideloader
         IGameEntityProvider<StatusEffect>
     {
 
-        public override Type GetConfigType()
+        public override Type ConfigType()
         {
             return typeof(StatusEffectConfig);
         }
 
-        public override Type GetEntityType()
+        public override Type EntityType()
         {
             return typeof(StatusEffect);
         }
@@ -232,6 +232,6 @@ namespace LBoLEntitySideloader
         {
             throw new NotImplementedException();
         }            
-        public abstract StatusEffectConfig GetConfig();
+        public abstract StatusEffectConfig ReturnConfig();
     }
 }

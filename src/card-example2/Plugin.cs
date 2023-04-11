@@ -154,15 +154,18 @@ namespace CardExample2
         }
 
 
-
         public sealed class DeeznutsDefinition : CardTemplate
         {
+            public override IdContainer GetId()
+            {
+                return nameof(Deeznuts);
+            }
 
-            public override CardConfig GetConfig()
+            public override CardConfig ReturnConfig()
             {
                 var cardConfig = DefaultConfig();
                 cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
-                cardConfig.Id = nameof(Deeznuts);
+                cardConfig.Id = GetId();
                 cardConfig.Type = CardType.Status;
                 return cardConfig;
             }
@@ -183,7 +186,12 @@ namespace CardExample2
         // mismatched id and type name
         public sealed class NutsDefinition : CardTemplate
         {
-            public override CardConfig GetConfig()
+            public override IdContainer GetId()
+            {
+                return "Nuts";
+            }
+
+            public override CardConfig ReturnConfig()
             {
                 var cardConfig = DefaultConfig();
                 cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
@@ -211,11 +219,16 @@ namespace CardExample2
         // 2do no unique id enforcing inside a plugin
         public sealed class DeezDefinition : CardTemplate
         {
-            public override CardConfig GetConfig()
+            public override IdContainer GetId()
+            {
+                return nameof(Deeznuts);
+            }
+
+            public override CardConfig ReturnConfig()
             {
                 var cardConfig = DefaultConfig();
                 cardConfig.Index = 42020;
-                cardConfig.Id = nameof(Deeznuts);
+                cardConfig.Id = GetId();
                 cardConfig.Type = CardType.Misfortune;
                 return cardConfig;
             }

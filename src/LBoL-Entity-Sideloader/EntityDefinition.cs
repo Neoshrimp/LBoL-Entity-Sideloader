@@ -126,7 +126,7 @@ namespace LBoLEntitySideloader
     public interface IConfigProvider<out C> where C : class
     {
         abstract public C DefaultConfig();
-        abstract public C GetConfig();
+        abstract public C ReturnConfig();
     }
 
     public interface ITypeProvider<T> where T : class { }
@@ -142,16 +142,19 @@ namespace LBoLEntitySideloader
     }
 
     public abstract class EntityDefinition 
-    { 
-        internal IdContainer id;
-        private Assembly assembly;
+    {
+        /*internal IdContainer id;
+        internal Assembly assembly;*/
 
+        public IdContainer UniqueId() 
+        {
+            return UniqueIdTracker.GetUniqueId(this);
+        }
+        public abstract IdContainer GetId();
 
-        public Assembly Assembly { get => assembly; set => assembly = value; }
+        public abstract Type ConfigType();
 
-        public abstract Type GetConfigType();
-
-        public abstract Type GetEntityType();
+        public abstract Type EntityType();
 
     }
 
