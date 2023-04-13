@@ -111,51 +111,115 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-using LBoLEntitySideloader;
 
-
-namespace LBoLEntitySideloader
+namespace LBoLEntitySideloader.Resources
 {
-
-    public interface IConfigProvider<out C> where C : class
+    // janky and temporary
+    public class ResourceSource
     {
-        abstract public C DefaultConfig();
-        abstract public C ReturnConfig();
-    }
-
-    public interface ITypeProvider<T> where T : class { }
-
-    public interface IGameEntityProvider<E> : ITypeProvider<E> where E : GameEntity { }
-
-    // Adventure does not extend GameEntity
-    public interface IAdventureProvider<A> : ITypeProvider<A> where A : Adventure { }
-
-    public interface IAssetLoader
-    {
-        public void Load();
-    }
-
-    public abstract class EntityDefinition 
-    {
-        /*internal IdContainer id;
-        internal Assembly assembly;*/
-
-        public IdContainer UniqueId() 
+        public static ResourceSource resouceFromFile = new ResourceSource(SourceType.File,
+        Path.Combine(Paths.BepInExRootPath, "customAssets"));
+        public enum SourceType
         {
-            return UniqueIdTracker.GetUniqueId(this);
+            File,
+            Manifest,
+            Bundle
         }
-        public abstract IdContainer GetId();
 
-        public abstract Type ConfigType();
+        public SourceType sourceType;
 
-        public abstract Type EntityType();
+        public string path;
 
+        public ResourceSource(SourceType sourceType, string path)
+        {
+            this.sourceType = sourceType;
+            this.path = path;
+        }
+
+        public string GetResourcePath(string name = "")
+        {
+            switch (sourceType)
+            {
+                case SourceType.File:
+                    return Path.Combine(Path.GetFullPath(path), name);
+                case SourceType.Manifest:
+                    throw new NotImplementedException();
+                case SourceType.Bundle:
+                    throw new NotImplementedException();
+                default:
+                    throw new InvalidOperationException($"No resource type: {sourceType}");
+            }
+        }
     }
 
+
+    public class ResourceLoader
+    {
+
+
+
+        public static Texture2D LoadTexture(string name, IResourceSource source)
+        {
+
+            //var resourceName = source.GetResourcePath(name);
+            Stream resource = source.Load(name);
+
+            /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
+            var resource = assembly.GetManifestResourceStream(resourceName);*/
+            using var memoryStream = new MemoryStream();
+            var buffer = new byte[16384];
+            int count;
+            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
+                memoryStream.Write(buffer, 0, count);
+            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            {
+                anisoLevel = 1,
+                filterMode = 0
+            };
+
+            spriteTexture.LoadImage(memoryStream.ToArray());
+            return spriteTexture;
+        }
+
+        public static Sprite LoadSprite(string name, int ppu = 1, Vector2? pivot = null)
+        {
+            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
+            var resource = assembly.GetManifestResourceStream(resourceName);
+            using var memoryStream = new MemoryStream();
+            var buffer = new byte[16384];
+            int count;
+            while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
+                memoryStream.Write(buffer, 0, count);
+            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            {
+                anisoLevel = 1,
+                filterMode = 0
+            };
+
+            spriteTexture.LoadImage(memoryStream.ToArray());
+            var sprite = Sprite.Create(spriteTexture, new Rect(0, 0, spriteTexture.width, spriteTexture.height), (Vector2)pivot, ppu);
+            return sprite;
+        }
+
+        public static byte[] ResourceBinary(string name)
+        {
+            Assembly a = Assembly.GetExecutingAssembly();
+            var resourceName = a.GetManifestResourceNames().First(r => r.Contains(name));
+            using (Stream resFilestream = a.GetManifestResourceStream(resourceName))
+            {
+                if (resFilestream == null) return null;
+                byte[] ba = new byte[resFilestream.Length];
+                resFilestream.Read(ba, 0, ba.Length);
+                return ba;
+            }
+        }
+    }
 }
+

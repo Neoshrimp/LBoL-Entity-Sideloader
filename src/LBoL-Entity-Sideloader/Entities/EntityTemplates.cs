@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -117,15 +118,21 @@ using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-using LBoLEntitySideloader;
+using static LBoLEntitySideloader.BepinexPlugin;
 
 
-namespace LBoLEntitySideloader
+namespace LBoLEntitySideloader.Entities
 {
-    public abstract class CardTemplate : EntityDefinition, 
-        IConfigProvider<CardConfig>, 
-        IGameEntityProvider<Card>, 
-        IAssetLoader
+    public abstract class CardTemplate : EntityDefinition,
+        IConfigProvider<CardConfig>,
+        IGameEntityProvider<Card>,
+        IResourceProvider<CardImages>,
+        IResourceProvider<TextAsset>,
+        IResourceProvider<GameObject>,
+        IResourceConsumer<CardImages>,
+        IResourceConsumer<TextAsset>,
+        IResourceConsumer<GameObject>
+
     {
 
         public override Type ConfigType()
@@ -141,7 +148,7 @@ namespace LBoLEntitySideloader
         public CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(
-               Index: default(int),
+               Index: default,
                Id: "",
                Order: 10,
                AutoPerform: false,
@@ -152,8 +159,8 @@ namespace LBoLEntitySideloader
                Revealable: false,
                IsPooled: false,
                IsUpgradable: false,
-               Rarity: default(Rarity),
-               Type: default(CardType),
+               Rarity: default,
+               Type: default,
                TargetType: null,
                Colors: new List<ManaColor>() { },
                IsXCost: false,
@@ -176,11 +183,11 @@ namespace LBoLEntitySideloader
                UpgradedScry: null,
                ToolPlayableTimes: null,
 
-               Keywords: default(Keyword),
-               UpgradedKeywords: default(Keyword),
+               Keywords: default,
+               UpgradedKeywords: default,
                EmptyDescription: false,
-               RelativeKeyword: default(Keyword),
-               UpgradedRelativeKeyword: default(Keyword),
+               RelativeKeyword: default,
+               UpgradedRelativeKeyword: default,
 
                RelativeEffects: new List<string>() { },
                UpgradedRelativeEffects: new List<string>() { },
@@ -195,21 +202,69 @@ namespace LBoLEntitySideloader
             return cardConfig;
         }
 
-        public abstract CardConfig ReturnConfig();
-
-        public void Load()
+        public abstract CardConfig MakeConfig();
+        public virtual void Consume(CardImages cardImages)
         {
 
-/*            if (Id.IsNullOrEmpty())
-                Id = GetConfig().Id;
+            if (!ResourcesHelper.CardImages.TryAdd(UniqueId, cardImages.main))
+            {
+                log.LogWarning($"{UniqueId} is already used by ResourcesHelper.CardImages");
+            }
 
-            var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
 
-            GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
-                TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
+            var subNames = CardConfig.FromId(UniqueId).SubIllustrator;
+            var subNameCount = subNames.Count();
+            var subCount = cardImages.subs.Count;
 
-            var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);*/
+            //if (subNameCount != cardImages.sub.Count)
+                //log.LogWarning($"{UniqueId}: {subName}");
+
+
+            for (int i = 0; i < Math.Min(subNameCount, subCount); i++) 
+            {
+                if (!ResourcesHelper.CardImages.TryAdd(UniqueId + subNames[i], cardImages.subs[i]))
+                {
+                    log.LogWarning($"{UniqueId + subNames[i]} is already used by ResourcesHelper.CardImages");
+                }
+            }
+            
         }
+
+        public virtual void Consume(TextAsset asset) 
+        {
+            
+        }
+        public virtual void Consume(GameObject asset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public abstract CardImages Load();
+
+        TextAsset IResourceProvider<TextAsset>.Load()
+        {
+            throw new NotImplementedException();
+        }
+
+        GameObject IResourceProvider<GameObject>.Load()
+        {
+            throw new NotImplementedException();
+        }
+
+        /*        public void Load()
+                {
+
+                    if (Id.IsNullOrEmpty())
+                        Id = GetConfig().Id;
+
+                    var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
+
+                    GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
+                        TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
+
+                    var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
+                }*/
+
     }
 
 
@@ -231,7 +286,7 @@ namespace LBoLEntitySideloader
         public StatusEffectConfig DefaultConfig()
         {
             throw new NotImplementedException();
-        }            
-        public abstract StatusEffectConfig ReturnConfig();
+        }
+        public abstract StatusEffectConfig MakeConfig();
     }
 }

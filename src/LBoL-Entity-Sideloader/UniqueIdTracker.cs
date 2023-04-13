@@ -1,4 +1,5 @@
 ﻿using LBoL.Presentation.UI.Widgets;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections.Generic;

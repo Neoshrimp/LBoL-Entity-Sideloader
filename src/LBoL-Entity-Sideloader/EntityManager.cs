@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader.Attributes;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections;
@@ -325,7 +326,7 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
+        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, EntityDefinition entityDefinition = null) where C : class
         {
 
             if (entityDefinition == null)
@@ -338,17 +339,17 @@ namespace LBoLEntitySideloader
             try
             {
                 var configType = entityDefinition.ConfigType();
-                var newConfig = configProvider.ReturnConfig();
+                var newConfig = configProvider.MakeConfig();
 
                 var f_Id = ConfigReflection.GetIdField(configType);
 
-                switch (entityDefinition.UniqueId().idType)
+                switch (entityDefinition.UniqueId.idType)
                 {
                     case IdContainer.IdType.String:
-                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId());
+                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
                         break;
                     case IdContainer.IdType.Int:
-                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId());
+                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
                         break;
                     default:
                         log.LogWarning("RegisterConfig: you shouldn't be here");
@@ -382,7 +383,7 @@ namespace LBoLEntitySideloader
                 ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                 // Add config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
-                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId(), newConfig);
+                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
 
 /*                }
                 else
@@ -467,11 +468,11 @@ namespace LBoLEntitySideloader
 
                 if (entityDefinition is CardTemplate ct)
                 {
-                    RegisterConfig(ct, user);
+                    RegisterConfig(ct);
                 }
                 else if (entityDefinition is StatusEffectTemplate st)
                 {
-                    RegisterConfig(st, user);
+                    RegisterConfig(st);
                 }
             }
 
@@ -506,20 +507,20 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal void LoadAssets()
+        internal void AssetsForResourceHelper()
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
-/*                foreach (var type in kv.Value)
+                foreach (var template in kv.Value.definitionInfos)
                 {
 
-                    var definition = Activator.CreateInstance(type);
 
-                    if (definition is IAssetLoader al)
+                    var definition = template.Value;
+                    if (definition is CardTemplate ct)
                     {
-                        //al.Load();
+                        ct.Consume(ct.Load());
                     }
-                }*/
+                }
             }
         }
 

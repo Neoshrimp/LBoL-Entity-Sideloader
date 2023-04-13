@@ -104,6 +104,7 @@ using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -135,6 +136,8 @@ namespace CardExample
 
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
+        internal static IResourceSource directorySource = new DirectorySource("C:\\Program Files (x86)\\Steam\\steamapps\\common\\LBoL\\BepInEx\\customAssets");
+
         private void Awake()
         {
             log = Logger;
@@ -145,7 +148,10 @@ namespace CardExample
 
             harmony.PatchAll();
 
-            LBoLEntitySideloader.EntityManager.RegisterSelf();
+
+
+
+            EntityManager.RegisterSelf();
 
 
 

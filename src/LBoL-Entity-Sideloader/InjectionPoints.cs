@@ -143,14 +143,27 @@ namespace LBoLEntitySideloader
             static void Postfix()
             {
 
-                // delay registering after script engine has loaded
+                // delay registering after script engine has loaded the plugins
                 if (BepinexPlugin.devModeConfig.Value)
                     EntityManager.Instance.RegisterUsers();
 
-                EntityManager.Instance.LoadAssets();
+                EntityManager.Instance.AssetsForResourceHelper();
 
             }
         }
+
+
+
+        [HarmonyPatch(typeof(Localization), nameof(Localization.LoadTypeLocalizationTableAsync))]
+        class Localization_Patch
+        {
+            static void Postfix()
+            {
+
+            }
+        }
+
+
 
 
 

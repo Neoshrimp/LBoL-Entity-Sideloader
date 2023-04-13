@@ -118,6 +118,8 @@ using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
+using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Resources;
 
 namespace CardExample
 {
@@ -138,7 +140,12 @@ namespace CardExample
                 return nameof(TemporalGuardian);
             }
 
-            public override CardConfig ReturnConfig()
+            public override CardImages Load()
+            {
+                return new CardImages(ResourceLoader.LoadTexture(GetId()+".png", Plugin.directorySource));
+            }
+
+            public override CardConfig MakeConfig()
             {
 
                 var cardConfig = new CardConfig(
@@ -160,8 +167,8 @@ namespace CardExample
                                TargetType: TargetType.Self,
                                Colors: new List<ManaColor>() { ManaColor.Blue, ManaColor.White },
                                IsXCost: false,
-                               Cost: new ManaGroup() { Any = 1, Blue = 2, White = 2 },
-                               UpgradedCost: new ManaGroup() { Any = 1, Blue = 1, White = 1 },
+                               Cost: new ManaGroup() { Any = 1, Blue = 1, White = 1 },
+                               UpgradedCost: new ManaGroup() { Any = 1 },
                                MoneyCost: null,
                                Damage: null,
                                UpgradedDamage: null,
@@ -169,7 +176,7 @@ namespace CardExample
                                UpgradedBlock: null,
                                Shield: null,
                                UpgradedShield: null,
-                               Value1: 2,
+                               Value1: 3,
                                UpgradedValue1: null,
                                Value2: null,
                                UpgradedValue2: null,
@@ -220,7 +227,7 @@ namespace CardExample
                 return nameof(TemporalGuardianSe);
             }
 
-            public override StatusEffectConfig ReturnConfig()
+            public override StatusEffectConfig MakeConfig()
             {
 
                 var se = new StatusEffectConfig(
@@ -251,29 +258,53 @@ namespace CardExample
 
 
 
-            [EntityLogic(typeof(TemporialGuardianSeDefinition))]
-            public sealed class TemporalGuardianSe : StatusEffect
+            [HarmonyPatch(typeof(StatusEffect), nameof(StatusEffect.NotifyChanged))]
+            class StatusEffect_Patch
             {
 
+                static void Postfix(StatusEffect __instance)
+                {
+                    if (__instance is TimeAuraSe ta && __instance.Battle != null &&  __instance.Owner == __instance.Battle.Player &&  __instance.Battle.Player.HasStatusEffect<TemporalGuardianSe>())
+                    {
 
+                        
+                        new CastBlockShieldAction(__instance.Battle.Player, new ShieldInfo(ta.Level * __instance.Battle.Player.GetStatusEffect<TemporalGuardianSe>().Level, BlockShieldType.Direct), false);
+                    }
+                }
+            }
+
+
+
+
+            [EntityLogic(typeof(TemporialGuardianSeDefinition))]
+            public sealed class TemporalGuardianSe : StatusEffect
+            { 
 
                 protected override void OnAdded(Unit unit)
                 {
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectAdding,
-                        new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdding));
+                    ReactOwnerEvent(Battle.Player.StatusEffectAdding, new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdding));
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectAdded,
-                        new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdded));
+                    ReactOwnerEvent(Battle.Player.StatusEffectAdded, new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdded));
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectChanged,
-                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange));
+                    //ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange));
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectRemoved,
-                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoved));
+                    ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(ChargeChange));
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectRemoving,
-                        new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoving));
+                    ReactOwnerEvent(Battle.Player.StatusEffectRemoved, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoved));
+
+                    ReactOwnerEvent(Battle.Player.StatusEffectRemoving, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoving));
+                }
+
+
+                private IEnumerable<BattleAction> ChargeChange(StatusEffectEventArgs args)
+                {
+                    if (args.Effect is Charging c)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"changed: level: {c.Level}, trigger level: {c.TriggerLevel}, {args.Unit}");
+                    }
+                    yield break;
                 }
 
                 private IEnumerable<BattleAction> TimePulseAdding(StatusEffectApplyEventArgs args)
@@ -311,6 +342,8 @@ namespace CardExample
                     if (args.Effect is TimeAuraSe ta)
                     {
                         NotifyActivating();
+                        var current_lvl = ta.Level;
+                        yield return new CastBlockShieldAction(Battle.Player, new ShieldInfo(current_lvl * Level, BlockShieldType.Direct), false);
                         log.LogDebug($"removED: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
                     }
                     yield break;
@@ -321,7 +354,7 @@ namespace CardExample
                     if (args.Effect is TimeAuraSe ta)
                     {
                         NotifyActivating();
-                        log.LogDebug($"removED: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
+                        log.LogDebug($"removING: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
                     }
                     yield break;
                 }

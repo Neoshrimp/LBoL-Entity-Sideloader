@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LBoL.Base.Extensions;
+using LBoLEntitySideloader.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
