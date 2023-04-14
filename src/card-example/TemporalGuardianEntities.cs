@@ -275,6 +275,23 @@ namespace CardExample
 
 
 
+            //[HarmonyPatch(typeof(ActionResolver), nameof(ActionResolver.React))]
+            class ActionResolver_Patch
+            {
+                static void Prefix(ActionResolver __instance)
+                {
+                    if (__instance._reactors == null)
+                    {
+                        __instance._reactors = new List<Reactor>();
+                    }
+                }
+
+            }
+
+
+
+
+
 
             [EntityLogic(typeof(TemporialGuardianSeDefinition))]
             public sealed class TemporalGuardianSe : StatusEffect
@@ -287,9 +304,11 @@ namespace CardExample
 
                     ReactOwnerEvent(Battle.Player.StatusEffectAdded, new EventSequencedReactor<StatusEffectApplyEventArgs>(TimePulseAdded));
 
-                    //ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange));
+                    ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseChange), GameEventPriority.Highest);
 
-                    ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(ChargeChange));
+                    ReactOwnerEvent(Battle.Player.StatusEffectChanged, new EventSequencedReactor<StatusEffectEventArgs>(ChargeChange), GameEventPriority.Lowest);
+
+                    HandleOwnerEvent(Battle.Player.StatusEffectAdded, new GameEventHandler<StatusEffectApplyEventArgs>(TimeAuraHandler));
 
                     ReactOwnerEvent(Battle.Player.StatusEffectRemoved, new EventSequencedReactor<StatusEffectEventArgs>(TimePulseRemoved));
 
@@ -305,6 +324,27 @@ namespace CardExample
                         log.LogDebug($"changed: level: {c.Level}, trigger level: {c.TriggerLevel}, {args.Unit}");
                     }
                     yield break;
+                }
+
+                private IEnumerable<BattleAction> TimePulseChange(StatusEffectEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"changed: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
+                    }
+                    yield break;
+                }
+
+
+                private void TimeAuraHandler(StatusEffectApplyEventArgs args)
+                {
+                    if (args.Effect is TimeAuraSe ta)
+                    {
+                        NotifyActivating();
+                        log.LogDebug($"deeznuts");
+                        args.Effect.Level += 10;
+                    }
                 }
 
                 private IEnumerable<BattleAction> TimePulseAdding(StatusEffectApplyEventArgs args)
@@ -327,15 +367,7 @@ namespace CardExample
                     yield break;
                 }
 
-                private IEnumerable<BattleAction> TimePulseChange(StatusEffectEventArgs args)
-                {
-                    if (args.Effect is TimeAuraSe ta)
-                    {
-                        NotifyActivating();
-                        log.LogDebug($"changed: level: {ta.Level}, trigger level: {ta.TriggerLevel}");
-                    }
-                    yield break;
-                }
+
 
                 private IEnumerable<BattleAction> TimePulseRemoved(StatusEffectEventArgs args)
                 {

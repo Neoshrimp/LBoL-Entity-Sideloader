@@ -22,7 +22,6 @@ using LBoL.Core.Randoms;
 using LBoL.Core.SaveData;
 using LBoL.Core.Stations;
 using LBoL.Core.Stats;
-using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Adventures;
 using LBoL.EntityLib.Adventures.Common;
@@ -148,7 +147,7 @@ namespace LBoLEntitySideloader.Entities
         public CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(
-               Index: default,
+               Index: 0,
                Id: "",
                Order: 10,
                AutoPerform: false,
@@ -203,8 +202,11 @@ namespace LBoLEntitySideloader.Entities
         }
 
         public abstract CardConfig MakeConfig();
-        public virtual void Consume(CardImages cardImages)
+        public void Consume(CardImages cardImages)
         {
+
+            if (cardImages == null)
+                return;
 
             if (!ResourcesHelper.CardImages.TryAdd(UniqueId, cardImages.main))
             {
@@ -265,28 +267,5 @@ namespace LBoLEntitySideloader.Entities
                     var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
                 }*/
 
-    }
-
-
-    public abstract class StatusEffectTemplate : EntityDefinition,
-        IConfigProvider<StatusEffectConfig>,
-        IGameEntityProvider<StatusEffect>
-    {
-
-        public override Type ConfigType()
-        {
-            return typeof(StatusEffectConfig);
-        }
-
-        public override Type EntityType()
-        {
-            return typeof(StatusEffect);
-        }
-
-        public StatusEffectConfig DefaultConfig()
-        {
-            throw new NotImplementedException();
-        }
-        public abstract StatusEffectConfig MakeConfig();
     }
 }

@@ -108,10 +108,10 @@ using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using Untitled;
@@ -120,38 +120,40 @@ using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
 
-namespace CardExample
+namespace GunToolCard
 {
-    [BepInPlugin(GUID, "CardExample", version)]
+    [BepInPlugin(GUID, "Gun tool", version)]
     [BepInProcess("LBoL.exe")]
     [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string GUID = "neo.lbol.cardexample";  
+        public const string GUID = "neo.lbol.card.memes.gunTool";
         public const string version = "1.0.0";
 
         private static readonly Harmony harmony = new Harmony(GUID);
 
         internal static BepInEx.Logging.ManualLogSource log;
 
+
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
-        internal static IResourceSource directorySource = new DirectorySource("C:\\Program Files (x86)\\Steam\\steamapps\\common\\LBoL\\BepInEx\\customAssets");
+        internal static IResourceSource manifestSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
 
         private void Awake()
         {
             log = Logger;
 
-            // very important. Without it the entry point MonoBehaviour gets destroyed
+            // very important. Without this the entry point MonoBehaviour gets destroyed
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            harmony.PatchAll();
 
             EntityManager.RegisterSelf();
 
+            harmony.PatchAll();
+
         }
-            
+
         private void OnDestroy()
         {
             if (harmony != null)
@@ -159,7 +161,6 @@ namespace CardExample
         }
 
 
-       
 
 
     }
