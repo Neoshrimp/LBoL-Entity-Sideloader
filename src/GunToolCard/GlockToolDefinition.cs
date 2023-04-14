@@ -14,19 +14,29 @@ using System.Collections.Generic;
 using System.Text;
 using static GunToolCard.Plugin;
 using System.Reflection;
+using YamlDotNet.RepresentationModel;
+using HarmonyLib;
 
 namespace GunToolCard
 {
-    public sealed class GunCardDefinition : CardTemplate
+    public sealed class GlockToolDefinition : CardTemplate
     {
         public override IdContainer GetId()
         {
-            return nameof(ItsOverTool);
+            return nameof(GlockTool);
         }
 
-        public override CardImages Load()
+        public override CardImages LoadCardImages()
         {
-            return new CardImages(ResourceLoader.LoadTexture(GetId(), manifestSource));
+            var cardImages = new CardImages(ResourceLoader.LoadTexture(GetId() + ".png", manifestSource));
+
+            CardConfig.FromId(UniqueId).SubIllustrator.Do(s => cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + s + ".png", manifestSource)));
+            return cardImages;
+        }
+
+        public override YamlMappingNode LoadYaml()
+        {
+            return ResourceLoader.LoadYaml(GetId() + ".yaml", manifestSource);
         }
 
         public override CardConfig MakeConfig()
@@ -66,7 +76,7 @@ namespace GunToolCard
                Scry: null,
                UpgradedScry: null,
                ToolPlayableTimes: 1,
-               Keywords: Keyword.Exile | Keyword.Replenish,
+               Keywords: Keyword.Exile,
                UpgradedKeywords: default,
                EmptyDescription: false,
                RelativeKeyword: default,
@@ -78,15 +88,15 @@ namespace GunToolCard
                UpgradedRelativeCards: new List<string>() { },
                Owner: null,
                Unfinished: false,
-               Illustrator: null,
-               SubIllustrator: new List<string>() { }
+               Illustrator: "@abikozyozi",
+               SubIllustrator: new List<string>() { "alt1" }
             );
 
             return cardConfig;
         }
 
-        [EntityLogic(typeof(GunCardDefinition))]
-        public sealed class ItsOverTool : Card
+        [EntityLogic(typeof(GlockToolDefinition))]
+        public sealed class GlockTool : Card
         {
             protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
             {

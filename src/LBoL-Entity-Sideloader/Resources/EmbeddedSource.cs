@@ -35,7 +35,7 @@ namespace LBoLEntitySideloader.Resources
             //return resourceManager.GetStream(id);
 
 
-            var fullName = assembly.GetManifestResourceNames().First(n => n.Contains(id));
+            var fullName = assembly.GetManifestResourceNames().First(n => n.EndsWith(id));
 
             return assembly.GetManifestResourceStream(fullName);
         }

@@ -138,8 +138,8 @@ namespace LBoLEntitySideloader.Entities
 
     public abstract class EntityDefinition
     {
-        /*internal IdContainer id;
-        internal Assembly assembly;*/
+        
+        internal Assembly assembly;
 
         public IdContainer UniqueId
         {

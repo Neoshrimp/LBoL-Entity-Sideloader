@@ -115,59 +115,20 @@ using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
+using YamlDotNet.RepresentationModel;
 using Debug = UnityEngine.Debug;
 
 namespace LBoLEntitySideloader.Resources
 {
-    // janky and temporary
-    public class ResourceSource
-    {
-        public static ResourceSource resouceFromFile = new ResourceSource(SourceType.File,
-        Path.Combine(Paths.BepInExRootPath, "customAssets"));
-        public enum SourceType
-        {
-            File,
-            Manifest,
-            Bundle
-        }
-
-        public SourceType sourceType;
-
-        public string path;
-
-        public ResourceSource(SourceType sourceType, string path)
-        {
-            this.sourceType = sourceType;
-            this.path = path;
-        }
-
-        public string GetResourcePath(string name = "")
-        {
-            switch (sourceType)
-            {
-                case SourceType.File:
-                    return Path.Combine(Path.GetFullPath(path), name);
-                case SourceType.Manifest:
-                    throw new NotImplementedException();
-                case SourceType.Bundle:
-                    throw new NotImplementedException();
-                default:
-                    throw new InvalidOperationException($"No resource type: {sourceType}");
-            }
-        }
-    }
-
 
     public class ResourceLoader
     {
-
-
 
         public static Texture2D LoadTexture(string name, IResourceSource source)
         {
 
             //var resourceName = source.GetResourcePath(name);
-            Stream resource = source.Load(name);
+            using Stream resource = source.Load(name);
 
             /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
             var resource = assembly.GetManifestResourceStream(resourceName);*/
@@ -206,6 +167,18 @@ namespace LBoLEntitySideloader.Resources
             spriteTexture.LoadImage(memoryStream.ToArray());
             var sprite = Sprite.Create(spriteTexture, new Rect(0, 0, spriteTexture.width, spriteTexture.height), (Vector2)pivot, ppu);
             return sprite;
+        }
+
+
+        public static YamlMappingNode LoadYaml(string name, IResourceSource source)
+        {
+            using var stream = source.Load(name);
+
+            using var reader = new StreamReader(stream, encoding: System.Text.Encoding.UTF8);
+
+            var text = reader.ReadToEnd();
+
+            return Localization.ParseYaml(text);
         }
 
         public static byte[] ResourceBinary(string name)

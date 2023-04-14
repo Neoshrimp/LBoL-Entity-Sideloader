@@ -8,12 +8,14 @@
 	<PublicizerRuntimeStrategies>IgnoresAccessChecksTo</PublicizerRuntimeStrategies>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\ItsOverTool.png" />
-  </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ItsOverTool.png" />
+    <EmbeddedResource Include="Resources\*" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="Resources\GlockTool.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +81,9 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
 	

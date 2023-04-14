@@ -140,7 +140,7 @@ namespace CardExample
                 return nameof(TemporalGuardian);
             }
 
-            public override CardImages Load()
+            public override CardImages LoadCardImages()
             {
                 return new CardImages(ResourceLoader.LoadTexture(GetId()+".png", Plugin.directorySource));
             }

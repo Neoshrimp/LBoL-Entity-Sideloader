@@ -113,6 +113,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
@@ -154,12 +155,14 @@ namespace LBoLEntitySideloader
 
 
 
-        [HarmonyPatch(typeof(Localization), nameof(Localization.LoadTypeLocalizationTableAsync))]
+        [HarmonyPatch(typeof(GameEntry), "InitializeRestAsync")]
         class Localization_Patch
         {
-            static void Postfix()
+            static async Task Postfix(Task __result)
             {
 
+                await __result;
+                EntityManager.Instance.LoadLocalization();
             }
         }
 

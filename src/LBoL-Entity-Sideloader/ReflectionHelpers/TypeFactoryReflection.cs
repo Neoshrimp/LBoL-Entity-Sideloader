@@ -60,11 +60,14 @@ namespace LBoLEntitySideloader.ReflectionHelpers
         }
 
 
+        
+
 
         public enum TableFieldName
         {
             FullNameTypeDict,
             TypeDict
+
         }
 
 

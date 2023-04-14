@@ -118,18 +118,17 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 using static LBoLEntitySideloader.BepinexPlugin;
-
+using YamlDotNet.RepresentationModel;
+using UnityEngine.Rendering;
+using LBoLEntitySideloader.ReflectionHelpers;
 
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class CardTemplate : EntityDefinition,
         IConfigProvider<CardConfig>,
         IGameEntityProvider<Card>,
-        IResourceProvider<CardImages>,
-        IResourceProvider<TextAsset>,
-        IResourceProvider<GameObject>,
         IResourceConsumer<CardImages>,
-        IResourceConsumer<TextAsset>,
+        IResourceConsumer<YamlMappingNode>,
         IResourceConsumer<GameObject>
 
     {
@@ -232,26 +231,37 @@ namespace LBoLEntitySideloader.Entities
             
         }
 
-        public virtual void Consume(TextAsset asset) 
+        public void Consume(YamlMappingNode yaml)
         {
-            
+
+            var entityType = EntityManager.Instance.sideloaderUsers.GetEntityLogicType(assembly, GetType());
+
+            var termDic = Localization.InternalLoadTypeLocalizationTable(yaml, EntityType(), new Type[] { entityType } );
+
+            foreach (var kv in termDic)
+            {
+                TypeFactory<Card>._typeLocalizers.TryAdd(kv.Key, kv.Value);
+                // overwrite since it might have been added earlier
+                TypeFactory<Card>._typeLocalizers[kv.Key] = kv.Value;
+            }
+
         }
         public virtual void Consume(GameObject asset)
         {
             throw new NotImplementedException();
         }
 
-        public abstract CardImages Load();
+        public abstract CardImages LoadCardImages();
 
-        TextAsset IResourceProvider<TextAsset>.Load()
+
+
+        public GameObject LoadGameObject()
         {
             throw new NotImplementedException();
         }
 
-        GameObject IResourceProvider<GameObject>.Load()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract YamlMappingNode LoadYaml();
+
 
         /*        public void Load()
                 {

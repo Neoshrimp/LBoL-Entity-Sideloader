@@ -25,6 +25,9 @@ namespace LBoLEntitySideloader
         // entity factory type => concrete entity type
         public Dictionary<Type, List<EntityInfo>> entityInfos = new Dictionary<Type, List<EntityInfo>>();
 
+        // EntityDefinition type => entity type
+        public Dictionary<Type, Type> definition2EntityType = new Dictionary<Type, Type>();
+
         // definition => id
         public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
 

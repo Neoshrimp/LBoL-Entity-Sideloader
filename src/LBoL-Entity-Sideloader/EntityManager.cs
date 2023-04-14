@@ -201,8 +201,11 @@ namespace LBoLEntitySideloader
                     if (type.IsSubclassOf(typeof(EntityDefinition)))
                     {
 
-                        userInfo.definitionInfos.Add(type, (EntityDefinition)Activator.CreateInstance(type));
+                        var definition = (EntityDefinition)Activator.CreateInstance(type);
 
+                        userInfo.definitionInfos.Add(type, definition);
+
+                        definition.assembly = userInfo.assembly;
 
 
                         var overwritte = type.SingularAttribute<OverwriteVanilla>();
@@ -240,6 +243,8 @@ namespace LBoLEntitySideloader
 
                                     var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
                                     userInfo.entityInfos[facType].Add(entityInfo);
+
+                                    userInfo.definition2EntityType.Add(entityLogic.DefinitionType, entityInfo.entityType);
                                 }
 
                             }
@@ -286,6 +291,18 @@ namespace LBoLEntitySideloader
                 {
                     userInfos[assembly] = ScanAssembly(assembly);
                 }
+            }
+
+
+
+            public Type GetEntityLogicType(Assembly assembly, Type definitionType)
+            {
+                if (this.userInfos.TryGetValue(assembly, out UserInfo user) && user.definition2EntityType.TryGetValue(definitionType, out Type entityType))
+                {
+                    return entityType;
+                }
+
+                throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name}");
             }
 
         }
@@ -518,14 +535,28 @@ namespace LBoLEntitySideloader
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
-                        ct.Consume(ct.Load());
+                        ct.Consume(ct.LoadCardImages());
                     }
                 }
             }
         }
 
 
+        internal void LoadLocalization()
+        {
+            foreach (var kv in sideloaderUsers.userInfos)
+            {
+                foreach (var template in kv.Value.definitionInfos)
+                {
 
+                    var definition = template.Value;
+                    if (definition is CardTemplate ct)
+                    {
+                        ct.Consume(ct.LoadYaml());
+                    }
+                }
+            }
+        }
 
 
 
