@@ -30,7 +30,13 @@ namespace GunToolCard
         {
             var cardImages = new CardImages(ResourceLoader.LoadTexture(GetId() + ".png", manifestSource));
 
-            CardConfig.FromId(UniqueId).SubIllustrator.Do(s => cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + s + ".png", manifestSource)));
+            //CardConfig.FromId(UniqueId).SubIllustrator.Do(s => cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + s + ".png", manifestSource)));
+
+
+            foreach (var sub in CardConfig.FromId(UniqueId).SubIllustrator)
+            {
+                cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + sub + ".png", manifestSource));
+            }
             return cardImages;
         }
 

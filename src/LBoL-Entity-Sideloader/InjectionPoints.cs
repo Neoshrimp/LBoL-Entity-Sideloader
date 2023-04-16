@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using LBoL.Base;
 using LBoL.Base.Extensions;
@@ -104,6 +105,7 @@ using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader.ReflectionHelpers;
+using MonoMod.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,8 +121,10 @@ using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
+
 namespace LBoLEntitySideloader
 {
+    //2do AWAIT ALL
     internal class InjectionPoints
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
@@ -155,16 +159,52 @@ namespace LBoLEntitySideloader
 
 
 
-        [HarmonyPatch(typeof(GameEntry), "InitializeRestAsync")]
+        [HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
         class Localization_Patch
         {
-            static async Task Postfix(Task __result)
+            static async UniTask Postfix(UniTask __result)
             {
-
-                await __result;
+                await UniTask.WhenAll(new UniTask[] { __result });
                 EntityManager.Instance.LoadLocalization();
             }
         }
+
+        //[HarmonyPatch]
+        class Loc_IntrusivePatch
+        {
+
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+
+                yield return ExtraAccess.InnerMoveNext(typeof(L10nManager), nameof(L10nManager.ReloadAsync));
+            }
+
+
+
+            static void LoadLocWrap()
+            {
+                EntityManager.Instance.LoadLocalization();
+            }
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                foreach (var ci in instructions)
+                {
+                    if (ci.opcode == OpCodes.Call && (MethodInfo)ci.operand == AccessTools.Method(typeof(CrossPlatformHelper), nameof(CrossPlatformHelper.SetWindowTitle)))
+                    {
+                        yield return ci;
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Loc_IntrusivePatch), nameof(LoadLocWrap)));
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
+                }
+            }
+
+        }
+
+
 
 
 

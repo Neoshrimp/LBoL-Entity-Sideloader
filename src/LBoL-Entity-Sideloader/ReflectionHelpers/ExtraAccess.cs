@@ -10,27 +10,41 @@ namespace LBoLEntitySideloader.ReflectionHelpers
     public static class ExtraAccess
     {
 
-        public static MethodInfo CoroutineLogic(Type type, string methodName)
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
+
+        public static Type MakeGenericType(Type type, Type[] genParameters)
+        {
+            if (!type.IsGenericType)
+            {
+                log.LogWarning($"{type} is not generic");
+                return null;
+            }
+
+            return type.GetGenericTypeDefinition().MakeGenericType(genParameters);
+        }
+ 
+
+        public static MethodInfo InnerMoveNext(Type type, string methodName)
         {
             var enumType = type.GetNestedTypes(AccessTools.allDeclared).Where(t => t.Name.Contains($"<{methodName}>")).Single();
 
             return AccessTools.Method(enumType, "MoveNext");
         }
 
-        public static MethodInfo CoroutineLogic(string typeName, string methodName)
+        public static MethodInfo InnerMoveNext(string typeName, string methodName)
         {
-            return CoroutineLogic(AccessTools.TypeByName(typeName), methodName);
+            return InnerMoveNext(AccessTools.TypeByName(typeName), methodName);
         }
 
-        public static MethodInfo CoroutineLogic(string typeName, MethodInfo methodInfo)
+        public static MethodInfo InnerMoveNext(string typeName, MethodInfo methodInfo)
         {
-            return CoroutineLogic(AccessTools.TypeByName(typeName), methodInfo.Name);
+            return InnerMoveNext(AccessTools.TypeByName(typeName), methodInfo.Name);
         }
 
 
-        public static MethodInfo CoroutineLogic(Type type, MethodInfo methodInfo)
+        public static MethodInfo InnerMoveNext(Type type, MethodInfo methodInfo)
         {
-            return CoroutineLogic(type, methodInfo.Name);
+            return InnerMoveNext(type, methodInfo.Name);
         }
 
 

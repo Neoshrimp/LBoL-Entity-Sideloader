@@ -79,6 +79,9 @@
     <Reference Include="YamlDotNet">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="UniTask">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UniTask.dll</HintPath>
+    </Reference>
   </ItemGroup>
 	
 
