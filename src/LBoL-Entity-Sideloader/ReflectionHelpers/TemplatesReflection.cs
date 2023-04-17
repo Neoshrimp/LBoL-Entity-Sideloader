@@ -17,11 +17,11 @@ namespace LBoLEntitySideloader.Reflection
 
         static public HashSet<Type> AllTemplateTypes(bool refresh = false)
         { 
-                if (templateTypes.Empty() || refresh)
-                {
+            if (templateTypes.Empty() || refresh)
+            {
                 typeof(EntityDefinition).Assembly.GetExportedTypes().Where(t => t.BaseType == typeof(EntityDefinition)).Do(t => templateTypes.Add(t));
-                }
-                return templateTypes;
+            }
+            return templateTypes;
         }
 
 
