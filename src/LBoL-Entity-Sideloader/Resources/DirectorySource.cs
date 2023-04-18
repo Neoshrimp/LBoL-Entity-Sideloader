@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Resources
 {
-    public class DirectorySource : IResourceSource
+    public class DirectorySource : Source
     {
 
         UserInfo userInfo;
@@ -18,7 +18,7 @@ namespace LBoLEntitySideloader.Resources
             this.path = path;
         }
 
-        public Stream Load(string id)
+        public override Stream Load(string id)
         {
 
 

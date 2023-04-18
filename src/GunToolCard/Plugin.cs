@@ -137,7 +137,7 @@ namespace GunToolCard
 
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
-        internal static IResourceSource manifestSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
+        internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
 
         private void Awake()
         {

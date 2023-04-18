@@ -28,21 +28,21 @@ namespace GunToolCard
 
         public override CardImages LoadCardImages()
         {
-            var cardImages = new CardImages(ResourceLoader.LoadTexture(GetId() + ".png", manifestSource));
+            var cardImages = new CardImages(ResourceLoader.LoadTexture(GetId() + ".png", embeddedSource));
 
             //CardConfig.FromId(UniqueId).SubIllustrator.Do(s => cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + s + ".png", manifestSource)));
 
 
             foreach (var sub in CardConfig.FromId(UniqueId).SubIllustrator)
             {
-                cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + sub + ".png", manifestSource));
+                cardImages.subs.Add(ResourceLoader.LoadTexture(GetId() + sub + ".png", embeddedSource));
             }
             return cardImages;
         }
 
         public override YamlMappingNode LoadYaml()
         {
-            return ResourceLoader.LoadYaml(GetId() + ".yaml", manifestSource);
+            return ResourceLoader.LoadYaml(GetId() + ".yaml", embeddedSource);
         }
 
         public override CardConfig MakeConfig()
@@ -108,7 +108,6 @@ namespace GunToolCard
             {
                 EnemyUnit selectedEnemy = selector.SelectedEnemy;
                 yield return new ForceKillAction(base.Battle.Player, selectedEnemy);
-                yield break;
             }
         }
     }

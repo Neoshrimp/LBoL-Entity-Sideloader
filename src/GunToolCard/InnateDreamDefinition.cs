@@ -31,7 +31,7 @@ namespace GunToolCard
 
         public override YamlMappingNode LoadYaml()
         {
-            return ResourceLoader.LoadYaml(GetId() + ".yaml", manifestSource);
+            return ResourceLoader.LoadYaml(GetId() + ".yaml", embeddedSource);
 
         }
 
@@ -119,5 +119,7 @@ namespace GunToolCard
 
             }
         }
+
+
     }
 }

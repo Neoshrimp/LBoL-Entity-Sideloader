@@ -133,6 +133,7 @@ namespace LBoLEntitySideloader.Entities
 
     {
 
+
         public override Type ConfigType()
         {
             return typeof(CardConfig);
@@ -149,7 +150,7 @@ namespace LBoLEntitySideloader.Entities
                Index: 0,
                Id: "",
                Order: 10,
-               AutoPerform: false,
+               AutoPerform: true,
                Perform: new string[0][],
                GunName: "",
                GunNameBurst: "",
@@ -262,20 +263,6 @@ namespace LBoLEntitySideloader.Entities
 
         public abstract YamlMappingNode LoadYaml();
 
-
-        /*        public void Load()
-                {
-
-                    if (Id.IsNullOrEmpty())
-                        Id = GetConfig().Id;
-
-                    var tex = ResourceLoader.LoadTexture(Id + ".png", ResourceSource.resouceFromFile);
-
-                    GetConfig().SubIllustrator.Do(sub => ResourcesHelper.CardImages.
-                        TryAdd(Id + sub, ResourceLoader.LoadTexture(Id + sub + ".png", ResourceSource.resouceFromFile)));
-
-                    var suc = ResourcesHelper.CardImages.TryAdd(Id, tex);
-                }*/
 
     }
 }

@@ -11,7 +11,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Resources
 {
-    public class EmbeddedSource : IResourceSource
+    public class EmbeddedSource : Source
     {
         Assembly assembly;
 
@@ -20,19 +20,12 @@ namespace LBoLEntitySideloader.Resources
         public EmbeddedSource(Assembly assembly)
         {
             this.assembly = assembly;
-            //resourceManager = new ResourceManager(assembly.GetName().Name+ ".Properties.Resources", assembly);
+
         }
 
-        public Stream Load(string id)
+        public override Stream Load(string id)
         {
-            /*            var res = resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
 
-                        foreach (var r in res)
-                        {
-                            UnityEngine.Debug.Log(((DictionaryEntry)r).Key);
-                        }*/
-
-            //return resourceManager.GetStream(id);
 
 
             var fullName = assembly.GetManifestResourceNames().First(n => n.EndsWith(id));
