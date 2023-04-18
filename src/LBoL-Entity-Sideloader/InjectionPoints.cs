@@ -129,14 +129,15 @@ namespace LBoLEntitySideloader
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
-        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
+        //[HarmonyPatch(typeof(GameEntry), nameof(GameEntry.StartAsync))]
         class ConfigDataManager_Patch
         {
-            static public void Postfix()
+            static public async void Postfix(UniTask __result)
             {
+                //await UniTask.WhenAll(new UniTask[] { __result });
 
-                if(!BepinexPlugin.devModeConfig.Value)
-                    EntityManager.Instance.RegisterUsers();
+                if (!BepinexPlugin.devModeConfig.Value)
+                  EntityManager.Instance.RegisterUsers();
             }
 
         }
@@ -145,13 +146,16 @@ namespace LBoLEntitySideloader
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.InitializeAsync))]
         class ResourcesHelper_Patch
         {
-            static void Postfix()
+            static async void Postfix(UniTask __result)
             {
 
-                // delay registering after script engine has loaded the plugins
-                if (BepinexPlugin.devModeConfig.Value)
-                    EntityManager.Instance.RegisterUsers();
 
+
+                //await UniTask.WhenAll(new UniTask[] { __result });
+
+                // delay registering after script engine has loaded the plugins
+                //if (BepinexPlugin.devModeConfig.Value)
+                EntityManager.Instance.RegisterUsers();
                 EntityManager.Instance.AssetsForResourceHelper();
 
             }

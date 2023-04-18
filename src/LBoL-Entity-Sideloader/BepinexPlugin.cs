@@ -199,7 +199,15 @@ namespace LBoLEntitySideloader
 
                 ConfigDataManager.Reload();
 
-                EntityManager.Instance.RegisterUsers();
+                //EntityManager.Instance.RegisterUsers();
+                log.LogInfo($"reloading loc");
+                L10nManager.ReloadLocalization();
+                log.LogInfo($"reloading resources");
+
+                ResourcesHelper.InitializeAsync();
+
+                log.LogInfo($"resources loaded");
+
             }));
 
 

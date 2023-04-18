@@ -8,7 +8,11 @@ namespace LBoLEntitySideloader.Resources
 {
     abstract public class Source : IResourceSource
     {
+
+
         public abstract Stream Load(string id);
+
+
 
         public static string LegalizeFileName(string fileName)
         {

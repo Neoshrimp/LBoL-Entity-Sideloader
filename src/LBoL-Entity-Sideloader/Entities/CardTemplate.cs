@@ -210,24 +210,23 @@ namespace LBoLEntitySideloader.Entities
 
             if (!ResourcesHelper.CardImages.TryAdd(UniqueId, cardImages.main))
             {
-                log.LogWarning($"{UniqueId} is already used by ResourcesHelper.CardImages");
+                ResourcesHelper.CardImages[UniqueId] = cardImages.main;
+                //log.LogWarning($"{UniqueId} is already used by ResourcesHelper.CardImages");
             }
 
 
             var subNames = CardConfig.FromId(UniqueId).SubIllustrator;
             var subNameCount = subNames.Count();
-            var subCount = cardImages.subs.Count;
 
-            //if (subNameCount != cardImages.sub.Count)
-                //log.LogWarning($"{UniqueId}: {subName}");
+            if (subNameCount < cardImages.subs.Count)
+                log.LogWarning($"{UniqueId}: more subImages than subArtists' names");
 
 
-            for (int i = 0; i < Math.Min(subNameCount, subCount); i++) 
+            foreach (var kv in cardImages.subs)
             {
-                if (!ResourcesHelper.CardImages.TryAdd(UniqueId + subNames[i], cardImages.subs[i]))
-                {
-                    log.LogWarning($"{UniqueId + subNames[i]} is already used by ResourcesHelper.CardImages");
-                }
+                if(kv.Value != null)
+                    if (!ResourcesHelper.CardImages.TryAdd(kv.Key, kv.Value))
+                        ResourcesHelper.CardImages[kv.Key] = kv.Value;
             }
             
         }
@@ -241,9 +240,9 @@ namespace LBoLEntitySideloader.Entities
 
             foreach (var kv in termDic)
             {
-                TypeFactory<Card>._typeLocalizers.TryAdd(kv.Key, kv.Value);
-                // overwrite since it might have been added earlier
-                TypeFactory<Card>._typeLocalizers[kv.Key] = kv.Value;
+                if(!TypeFactory<Card>._typeLocalizers.TryAdd(kv.Key, kv.Value))
+                    // overwrite since it might have been added earlier
+                    TypeFactory<Card>._typeLocalizers[kv.Key] = kv.Value;
             }
 
         }

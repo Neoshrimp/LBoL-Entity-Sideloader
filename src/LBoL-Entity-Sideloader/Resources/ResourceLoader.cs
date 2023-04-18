@@ -130,6 +130,9 @@ namespace LBoLEntitySideloader.Resources
             //var resourceName = source.GetResourcePath(name);
             using Stream resource = source.Load(name);
 
+            if (resource == null)
+                return null;
+
             /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
             var resource = assembly.GetManifestResourceStream(resourceName);*/
             using var memoryStream = new MemoryStream();

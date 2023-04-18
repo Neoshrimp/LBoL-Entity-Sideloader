@@ -518,7 +518,7 @@ namespace LBoLEntitySideloader
             foreach (var kv in sideloaderUsers.userInfos)
             {
                 var user = kv.Value;
-                log.LogDebug(user.assembly.GetName().Name);
+                log.LogDebug($"Registering assembly:{user.assembly.GetName().Name}");
 
                 RegisterUser(user);
             }
