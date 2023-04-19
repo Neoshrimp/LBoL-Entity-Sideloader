@@ -4,6 +4,7 @@ using LBoL.Base.Extensions;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
+using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +27,18 @@ namespace LBoLEntitySideloader
         public Dictionary<Type, List<EntityInfo>> entityInfos = new Dictionary<Type, List<EntityInfo>>();
 
         // EntityDefinition type => entity type
-        public Dictionary<Type, Type> definition2EntityType = new Dictionary<Type, Type>();
+        public Dictionary<Type, Type> definition2EntityLogicType = new Dictionary<Type, Type>();
 
         // definition => id
         public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
 
+
+        public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
+
+        public void ClearTypeToLocalize() 
+        {
+            typesToLocalize = new Dictionary<Type, LocalizationInfo>();
+        }
 
     }
 
@@ -48,6 +56,13 @@ namespace LBoLEntitySideloader
             this.entityType = entityType;
             this.definitionType = definitionType;
         }
+    }
+
+    public class LocalizationInfo
+    {
+        public LocalizationFiles locFiles;
+       
+        public HashSet<Type> entityLogicTypes = new HashSet<Type>();
     }
 
 }

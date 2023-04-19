@@ -1,0 +1,11 @@
+InnateDream:
+  Description: "Deal {Damage} damage. \n|At the start of combat:| \
+     \ If {PlayerName} has 30 or less life, move this card to the hand. \
+     \ It |temporarily costs| {Mana}."
+  Name: Innate Dream
+
+GlockTool:
+  Description: '{PlayerName} has had enough. 
+   |Limited【{DeckCounter}】|'
+  Name: Glock17
+  FlavorText: '"We''re not playing by the spellcard rules anymore, bitch!"'

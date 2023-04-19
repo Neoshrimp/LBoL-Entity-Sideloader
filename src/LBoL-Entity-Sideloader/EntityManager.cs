@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using LBoL.Base;
+using LBoL.Base.Extensions;
 using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Adventures;
@@ -105,12 +106,14 @@ using LBoL.Presentation.Units;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
+using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -190,15 +193,14 @@ namespace LBoLEntitySideloader
                             log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
                         }
                     }
+                    continue;
                 }
 
 
-                // final templates need to be Sealed
-                if (type.IsSealed)
+                if (type.IsSubclassOf(typeof(EntityDefinition)))
                 {
-                    // 2do maybe more error feedback
-                    // 2do check for errors only in dev mode
-                    if (type.IsSubclassOf(typeof(EntityDefinition)))
+                    // final templates need to be Sealed
+                    if (type.IsSealed)
                     {
 
                         var definition = (EntityDefinition)Activator.CreateInstance(type);
@@ -209,7 +211,7 @@ namespace LBoLEntitySideloader
 
 
                         var overwritte = type.SingularAttribute<OverwriteVanilla>();
-                        
+
 
                         // 2do add optional DontLoad attribute filter
                         if (overwritte != null)
@@ -217,46 +219,79 @@ namespace LBoLEntitySideloader
                             throw new NotImplementedException();
                         }
                     }
-                    else
-
+                    else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
                     {
-                        var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
-                        if (facType != null)
+                        Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type} is subtype of {typeof(EntityDefinition).Name} but isn't sealed. Final entity definitions need to be sealed.");
+                    }
+                    continue;
+                }
+              
+
+                var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
+                if (facType != null)
+                {
+                    if (type.IsSealed)
+                    {
+                        userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
+
+                        var entityLogic = type.SingularAttribute<EntityLogic>();
+
+                        if (entityLogic is null)
                         {
-                            userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
-
-                            var entityLogic = type.SingularAttribute<EntityLogic>();
-
-                            if (entityLogic is null)
+                            log.LogError($"{assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity logic type. Please add {typeof(EntityLogic).Name} attribute.");
+                        }
+                        else
+                        {
+                            if (foundEntityTypesDefinitionTypes.Contains(entityLogic.DefinitionType))
                             {
-                                log.LogError($"{assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity type. Please add {typeof(EntityLogic).Name} attribute.");
+                                log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
                             }
                             else
                             {
-                                if (foundEntityTypesDefinitionTypes.Contains(entityLogic.DefinitionType))
-                                {
-                                    log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity type associated. Entity can only have type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
-                                }
-                                else
-                                {
-                                    foundEntityTypesDefinitionTypes.Add(entityLogic.DefinitionType);
+                                
+                                foundEntityTypesDefinitionTypes.Add(entityLogic.DefinitionType);
 
-                                    var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
-                                    userInfo.entityInfos[facType].Add(entityInfo);
+                                var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
+                                userInfo.entityInfos[facType].Add(entityInfo);
 
-                                    userInfo.definition2EntityType.Add(entityLogic.DefinitionType, entityInfo.entityType);
-                                }
-
+                                userInfo.definition2EntityLogicType.Add(entityLogic.DefinitionType,     entityInfo.entityType);
                             }
 
-                            // 2do errors: mismatched entitylogic and entity types expected by definition
-
                         }
+                    }
+                    else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
+                    {
+                        Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type} is subtype of {facType.Name} but isn't sealed. Final entity logic types need to be sealed");
+                    }
+                    continue;
+                }
+            }
+
+
+            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
+            {
+                // all definitions needs to be instantiated at the point of this check
+                foreach (var ed in foundEntityTypesDefinitionTypes)
+                {
+                  if(userInfo.definition2EntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
+
+                    if (!entityLogicType.IsSubclassOf(definition.EntityType()))
+                    {
+                        throw new InvalidProgramException($"(Extra Logging) {ed.Name} expects its entity logic type, {entityLogicType.Name}, to extend {definition.EntityType()}. Instead {entityLogicType.Name} extends {entityLogicType.BaseType} ");
                     }
                 }
             }
 
-            log.LogInfo($"{assembly.GetName().Name} scanned!");
+            log.LogMessage($"{assembly.GetName().Name} scanned! {userInfo.definitionInfos.Count()} Entity definition(s) found.");
+
+            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
+            {
+                log.LogInfo("(Extra logging) Entity definitions found: ");
+                userInfo.definitionInfos.Do(kv => log.LogInfo(kv.Key.Name));
+            }
+
+
+
 
             return userInfo;
         }
@@ -265,18 +300,28 @@ namespace LBoLEntitySideloader
         {
             public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
 
-
+            
             public void AddUser(Assembly assembly)
             {
                 if (userInfos.ContainsKey(assembly))
                 {
                     throw new Exception($"{assembly.GetName().Name} is already registered");
-                
+
                 }
-                userInfos.Add(assembly, ScanAssembly(assembly));
+                try
+                {
+                    userInfos.Add(assembly, ScanAssembly(assembly));
+
+                }
+                catch (Exception ex)
+                {
+
+                    log.LogError($"{assembly.GetName().Name}: {ex}");
+                }
+
             }
 
-            public void UnregisterUser(Assembly assembly)
+/*            public void UnregisterUser(Assembly assembly)
             {
                 if (userInfos.ContainsKey(assembly))
                 {
@@ -291,13 +336,13 @@ namespace LBoLEntitySideloader
                 {
                     userInfos[assembly] = ScanAssembly(assembly);
                 }
-            }
+            }*/
 
 
 
             public Type GetEntityLogicType(Assembly assembly, Type definitionType)
             {
-                if (this.userInfos.TryGetValue(assembly, out UserInfo user) && user.definition2EntityType.TryGetValue(definitionType, out Type entityType))
+                if (this.userInfos.TryGetValue(assembly, out UserInfo user) && user.definition2EntityLogicType.TryGetValue(definitionType, out Type entityType))
                 {
                     return entityType;
                 }
@@ -546,15 +591,45 @@ namespace LBoLEntitySideloader
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
-                foreach (var template in kv.Value.definitionInfos)
+
+                var user = kv.Value;
+                user.ClearTypeToLocalize();
+
+                foreach (var template in user.definitionInfos)
                 {
 
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
-                        ct.Consume(ct.LoadYaml());
+                        ct.Consume(ct.LoadText());
                     }
                 }
+
+                foreach (var kv2 in user.typesToLocalize)
+                {
+                    var facType = kv2.Key;
+                    var locInfo = kv2.Value;
+
+                    if (locInfo.locFiles.locTable.Empty())
+                    {
+                        Log.log.LogError($"{user.GUID}: no files were given for global localization option of {facType.Name}");
+                        continue;
+                    }
+
+                    var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
+
+                    if (termDic != null)
+                    { 
+                        foreach (var term in termDic)
+                        {
+                            if (term.Value.Empty())
+                                LocalizationFiles.MissingValueError(term.Key);
+                            TypeFactoryReflection.AccessTypeLocalizers(facType)().AlwaysAdd(term.Key, term.Value);
+                        }
+                    }
+                }
+
+                
             }
         }
 

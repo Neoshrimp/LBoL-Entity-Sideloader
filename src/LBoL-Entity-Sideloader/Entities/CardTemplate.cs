@@ -121,6 +121,7 @@ using static LBoLEntitySideloader.BepinexPlugin;
 using YamlDotNet.RepresentationModel;
 using UnityEngine.Rendering;
 using LBoLEntitySideloader.ReflectionHelpers;
+using System.Data;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -128,7 +129,7 @@ namespace LBoLEntitySideloader.Entities
         IConfigProvider<CardConfig>,
         IGameEntityProvider<Card>,
         IResourceConsumer<CardImages>,
-        IResourceConsumer<YamlMappingNode>,
+        IResourceConsumer<LocalizationOption>,
         IResourceConsumer<GameObject>
 
     {
@@ -202,6 +203,9 @@ namespace LBoLEntitySideloader.Entities
         }
 
         public abstract CardConfig MakeConfig();
+
+        public abstract CardImages LoadCardImages();
+
         public void Consume(CardImages cardImages)
         {
 
@@ -224,34 +228,26 @@ namespace LBoLEntitySideloader.Entities
 
             foreach (var kv in cardImages.subs)
             {
-                if(kv.Value != null)
+                if (kv.Value != null)
                     if (!ResourcesHelper.CardImages.TryAdd(kv.Key, kv.Value))
                         ResourcesHelper.CardImages[kv.Key] = kv.Value;
             }
-            
+
         }
 
-        public void Consume(YamlMappingNode yaml)
+        public abstract LocalizationOption LoadText();
+
+        public void Consume(LocalizationOption locOptions)
         {
-
-            var entityType = EntityManager.Instance.sideloaderUsers.GetEntityLogicType(assembly, GetType());
-
-            var termDic = Localization.InternalLoadTypeLocalizationTable(yaml, EntityType(), new Type[] { entityType } );
-
-            foreach (var kv in termDic)
-            {
-                if(!TypeFactory<Card>._typeLocalizers.TryAdd(kv.Key, kv.Value))
-                    // overwrite since it might have been added earlier
-                    TypeFactory<Card>._typeLocalizers[kv.Key] = kv.Value;
-            }
+            ProcessLocalization(locOptions, (string key, Dictionary<string, object> value) => { TypeFactory<Card>._typeLocalizers.AlwaysAdd(key, value); });
 
         }
-        public virtual void Consume(GameObject asset)
+
+        public void Consume(GameObject asset)
         {
             throw new NotImplementedException();
         }
 
-        public abstract CardImages LoadCardImages();
 
 
 
@@ -259,8 +255,6 @@ namespace LBoLEntitySideloader.Entities
         {
             throw new NotImplementedException();
         }
-
-        public abstract YamlMappingNode LoadYaml();
 
 
     }

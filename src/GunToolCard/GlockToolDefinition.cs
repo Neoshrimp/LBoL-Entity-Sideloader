@@ -16,6 +16,7 @@ using static GunToolCard.Plugin;
 using System.Reflection;
 using YamlDotNet.RepresentationModel;
 using HarmonyLib;
+using LBoL.Core.StatusEffects;
 
 namespace GunToolCard
 {
@@ -35,9 +36,26 @@ namespace GunToolCard
             return cardImages;
         }
 
-        public override YamlMappingNode LoadYaml()
+        public override LocalizationOption LoadText()
         {
-            return ResourceLoader.LoadYaml(GetId() + ".yaml", embeddedSource);
+
+            var locFiles = new LocalizationFiles(embeddedSource);
+
+            //locFiles.AddLocaleFile(Locale.En, GetId() + "En");
+
+            //locFiles.AddLocaleFile(Locale.ZhHans, GetId() + "ZhHans");
+
+
+            locFiles.AddLocaleFile(Locale.En, "CardsEn");
+
+
+            locFiles.AddLocaleFile(Locale.ZhHans, "CardsZhHans");
+
+
+            var globalLoc = new GlobalLocalization(locFiles);
+
+
+            return globalLoc;
         }
 
         public override CardConfig MakeConfig()
@@ -46,7 +64,7 @@ namespace GunToolCard
                Index: sequenceTable.Next(typeof(CardConfig)),
                Id: GetId(),
                Order: 10,
-               AutoPerform: false,
+               AutoPerform: true,
                Perform: new string[0][],
                GunName: "Simple1",
                GunNameBurst: "Simple1",
@@ -96,6 +114,7 @@ namespace GunToolCard
             return cardConfig;
         }
 
+
         [EntityLogic(typeof(GlockToolDefinition))]
         public sealed class GlockTool : Card
         {
@@ -105,5 +124,8 @@ namespace GunToolCard
                 yield return new ForceKillAction(base.Battle.Player, selectedEnemy);
             }
         }
+
+
+
     }
 }

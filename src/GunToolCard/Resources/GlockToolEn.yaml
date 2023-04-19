@@ -1,0 +1,5 @@
+GlockTool:
+  Description: '{PlayerName} has had enough. 
+   |Limited【{DeckCounter}】|'
+  Name: Glock17
+  FlavorText: '"We''re not playing by the spellcard rules anymore, bitch!"'

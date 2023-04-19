@@ -103,6 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -116,6 +117,8 @@ using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
+using YamlDotNet.RepresentationModel;
+using static LBoLEntitySideloader.BepinexPlugin;
 using Debug = UnityEngine.Debug;
 
 
@@ -153,6 +156,51 @@ namespace LBoLEntitySideloader.Entities
         public abstract Type ConfigType();
 
         public abstract Type EntityType();
+
+
+        public void ProcessLocalization(LocalizationOption locOption, Action<string, Dictionary<string, object>> factoryAction)
+        {
+            if (locOption == null) return;
+
+            var entityLogicType = EntityManager.Instance.sideloaderUsers.GetEntityLogicType(assembly, GetType());
+
+            if (locOption is GlobalLocalization globalLoc)
+            {
+                var typesToLocalize = EntityManager.Instance.sideloaderUsers.userInfos[assembly].typesToLocalize;
+
+                typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());
+                var locInfo = typesToLocalize[EntityType()];
+
+                if (globalLoc.LocalizationFiles != null) 
+                {
+                    if (locInfo.locFiles == null)
+                        locInfo.locFiles = globalLoc.LocalizationFiles;
+                    else
+                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files again");
+                }
+                locInfo.entityLogicTypes.Add(entityLogicType);
+                    
+            }
+
+            if (locOption is LocalizationFiles locFiles)
+            {
+
+                var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
+
+
+                if (termDic != null)
+                {
+                    foreach (var kv in termDic)
+                    {
+                        if (kv.Value.Empty())
+                            LocalizationFiles.MissingValueError(kv.Key);
+
+                        factoryAction(kv.Key, kv.Value);
+                    }
+                }
+            }
+
+        }
 
     }
 

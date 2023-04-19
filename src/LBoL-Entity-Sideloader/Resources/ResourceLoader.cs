@@ -117,6 +117,7 @@ using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using YamlDotNet.RepresentationModel;
 using Debug = UnityEngine.Debug;
+using static LBoLEntitySideloader.BepinexPlugin;
 
 namespace LBoLEntitySideloader.Resources
 {
@@ -181,7 +182,19 @@ namespace LBoLEntitySideloader.Resources
 
             var text = reader.ReadToEnd();
 
-            return Localization.ParseYaml(text);
+            try
+            {
+                var yaml = Localization.ParseYaml(text);
+                return yaml;
+            }
+            catch (Exception ex)
+            {
+
+                log.LogWarning($"illegal yaml while loading {name}:");
+                log.LogWarning($"{ex}");
+                return null;
+            }
+
         }
 
         public static byte[] ResourceBinary(string name)

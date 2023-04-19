@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using YamlDotNet.RepresentationModel;
 using static GunToolCard.Plugin;
-
+using LBoL.Core.StatusEffects;
 
 namespace GunToolCard
 {
@@ -29,9 +29,13 @@ namespace GunToolCard
             return null;
         }
 
-        public override YamlMappingNode LoadYaml()
+        public override LocalizationOption LoadText()
         {
-            return ResourceLoader.LoadYaml(GetId() + ".yaml", embeddedSource);
+/*            var locFiles = new LocalizationFiles(embeddedSource);
+
+            locFiles.AddLocaleFile(Locale.En, GetId());*/
+
+            return new GlobalLocalization();
 
         }
 

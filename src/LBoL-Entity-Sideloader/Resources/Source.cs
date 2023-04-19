@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,7 +10,7 @@ namespace LBoLEntitySideloader.Resources
     abstract public class Source : IResourceSource
     {
 
-
+        
         public abstract Stream Load(string id);
 
 

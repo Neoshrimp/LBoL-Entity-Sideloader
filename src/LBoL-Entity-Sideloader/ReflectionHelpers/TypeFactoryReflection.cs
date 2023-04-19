@@ -59,14 +59,38 @@ namespace LBoLEntitySideloader.ReflectionHelpers
         
         }
 
-
-        
-
-
         public enum TableFieldName
         {
             FullNameTypeDict,
             TypeDict
+
+        }
+
+        static Dictionary<Type, AccessTools.FieldRef<object, Dictionary<string, Dictionary<string, object>>>> typeLocalizerCache = new Dictionary<Type, AccessTools.FieldRef<object, Dictionary<string, Dictionary<string, object>>>>();
+
+
+        public static AccessTools.FieldRef<object, Dictionary<string, Dictionary<string, object>>> AccessTypeLocalizers(Type facType)
+        {
+            if (!factoryTypes.Contains(facType))
+            {
+                log.LogWarning($"AccessTypeLocalizers: {facType} is not a type used by TypeFactory");
+                return null;
+            }
+
+            if (typeLocalizerCache.TryGetValue(facType, out AccessTools.FieldRef<object, Dictionary<string, Dictionary<string, object>>> result))
+            {
+                return result;
+            }
+
+
+            var typeFactoryType = genericTypeFactoryType.MakeGenericType(new Type[] { facType });
+
+
+            var fieldRef = AccessTools.FieldRefAccess<Dictionary<string, Dictionary<string, object>>> (typeFactoryType, nameof(TypeFactory<object>._typeLocalizers));
+
+            typeLocalizerCache.TryAdd(facType, fieldRef);
+            return fieldRef;
+
 
         }
 

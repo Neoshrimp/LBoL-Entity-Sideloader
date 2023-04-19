@@ -136,6 +136,9 @@ namespace LBoLEntitySideloader
         
         public static ConfigEntry<bool> devModeConfig;
 
+        public static ConfigEntry<bool> devExtraLoggingConfig;
+
+
         public static ConfigEntry<KeyboardShortcut> reloadKeyConfig;
 
 
@@ -149,7 +152,9 @@ namespace LBoLEntitySideloader
 
             devModeConfig = Config.Bind("DevMode", "DevMode", false, "Enables mod developer mode for extra functionality and error feedback");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities");
+            devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled");
+
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities (requires scriptengine)");
             harmony.PatchAll();
 
         }
@@ -172,7 +177,7 @@ namespace LBoLEntitySideloader
                 }
                 else
                 {
-                    log.LogInfo($"BePinEx scriptengine is needed to use  ");
+                    log.LogInfo($"BePinEx scriptengine is needed to use runtime reload");
                 }
             }
         }

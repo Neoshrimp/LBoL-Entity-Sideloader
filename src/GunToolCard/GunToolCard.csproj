@@ -15,6 +15,9 @@
 
 
   <ItemGroup>
+    <None Remove="Resources\CardsEn.yaml" />
+    <None Remove="Resources\CardsZhHans.yaml" />
+    <None Remove="Resources\GlockToolZhHans.yaml" />
     <None Remove="Resources\InnateDream.yaml" />
   </ItemGroup>
 
