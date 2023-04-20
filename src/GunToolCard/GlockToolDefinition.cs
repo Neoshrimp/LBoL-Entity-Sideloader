@@ -71,6 +71,7 @@ namespace GunToolCard
                DebugLevel: 0,
                Revealable: false,
                IsPooled: true,
+               HideMesuem: false,
                IsUpgradable: false,
                Rarity: Rarity.Rare,
                Type: CardType.Tool,

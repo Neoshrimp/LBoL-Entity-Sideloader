@@ -29,11 +29,16 @@ namespace LBoLEntitySideloader
         // EntityDefinition type => entity type
         public Dictionary<Type, Type> definition2EntityLogicType = new Dictionary<Type, Type>();
 
-        // definition => id
-        public Dictionary<Type, string> entitiesToModify = new Dictionary<Type, string>();
+        // definition type => attribute
+        public Dictionary<Type, ModificationInfo> entitiesToOverwrite = new Dictionary<Type, ModificationInfo>();
 
 
         public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
+
+        public bool IsForOverwriting(Type definitinoType)
+        {
+            return entitiesToOverwrite.ContainsKey(definitinoType);
+        }
 
         public void ClearTypeToLocalize() 
         {
@@ -63,6 +68,11 @@ namespace LBoLEntitySideloader
         public LocalizationFiles locFiles;
        
         public HashSet<Type> entityLogicTypes = new HashSet<Type>();
+    }
+
+    public class ModificationInfo
+    {
+        public OverwriteVanilla attribute;
     }
 
 }

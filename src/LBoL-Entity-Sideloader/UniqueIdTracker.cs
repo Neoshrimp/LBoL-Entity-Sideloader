@@ -38,8 +38,11 @@ namespace LBoLEntitySideloader
         // EntityDefinition type 
         public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
-        
-        
+        public Dictionary<Type, Dictionary<IdContainer, int>> id2ConfigListIndex = new Dictionary<Type, Dictionary<IdContainer, int>>();
+
+        private TemplateSequenceTable tempConfigIndexTable = new TemplateSequenceTable();
+
+
         Sequence uIdSalt = new Sequence();
 
         Sequence uIntId = new Sequence(1394);
@@ -55,13 +58,16 @@ namespace LBoLEntitySideloader
 
         static internal void TrackVanillaConfig(object config, bool allowDuplicateIndex = false )
         {
+            // 2do build id 2 index cache
             Instance.configIds.TryAdd(config.GetType(), new HashSet<IdContainer>());
             Instance.configIds.TryGetValue(config.GetType(), out HashSet<IdContainer> ids);
 
             var f_id = ConfigReflection.GetIdField(config.GetType());
 
-
             IdContainer id = IdContainer.CastFromObject(f_id.GetValue(config));
+
+
+
 
 
             if (ids.Contains(id))
@@ -92,6 +98,11 @@ namespace LBoLEntitySideloader
                     indexes.Add(index);
                 }
             }
+
+            Instance.id2ConfigListIndex.TryAdd(config.GetType(), new Dictionary<IdContainer, int>());
+            Instance.id2ConfigListIndex[config.GetType()].Add(id, Instance.tempConfigIndexTable.Next(config.GetType()));
+            
+
         }
 
 

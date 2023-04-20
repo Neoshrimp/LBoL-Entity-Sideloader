@@ -210,13 +210,14 @@ namespace LBoLEntitySideloader
                         definition.assembly = userInfo.assembly;
 
 
-                        var overwritte = type.SingularAttribute<OverwriteVanilla>();
+                        var overwrite = type.SingularAttribute<OverwriteVanilla>();
 
 
                         // 2do add optional DontLoad attribute filter
-                        if (overwritte != null)
+                        // 2do make sure same component isn't overwritten twice
+                        if (overwrite != null)
                         {
-                            throw new NotImplementedException();
+                            userInfo.entitiesToOverwrite.Add(type, new ModificationInfo() { attribute = overwrite});
                         }
                     }
                     else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
@@ -388,7 +389,7 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, EntityDefinition entityDefinition = null) where C : class
+        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
             if (entityDefinition == null)
@@ -431,39 +432,43 @@ namespace LBoLEntitySideloader
 
                 log.LogInfo($"Registering config: {f_Id.GetValue(newConfig)},  type:{entityDefinition.ConfigType().Name}");
 
-                //var m_FromId = ConfigReflection.GetFromIdMethod(configType);
 
-                //var config = m_FromId.Invoke(null, new object[] { Id});
-
-                /*                if (config == null)
-                                {*/
 
                 // Add config to array
                 var f_Data = ConfigReflection.GetArrayField(configType);
                 // cache maybe
+                // 2do overwriting means double configs
                 var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-                ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+                
                 // Add config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
-                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
 
-/*                }
+                if (!user.IsForOverwriting(entityDefinition.GetType()))
+                {
+
+                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                    ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+                }
                 else
                 {
-                    log.LogInfo($"secondary config reload for {Id}");
-                    config = newConfig;
-                }*/
+                    var i = UniqueIdTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                        ref_Data()[i] = newConfig;
+
+                }
+
+
 
             }
             catch (Exception ex)
             {
-                log.LogError($"Exception registering {entityDefinition}: {ex}");
+                log.LogError($"Exception registering config of {entityDefinition}: {ex}");
             }
         }
 
        
 
-
+        // THIS SHIT HAPPENS BEFORE VANILLA TYPES ARE LOADED
         internal static void RegisterTypes(Type facType, UserInfo user)
         {
            
@@ -475,10 +480,20 @@ namespace LBoLEntitySideloader
                 {
                     log.LogDebug($"TypeFactory<{facType.Name}>, id: {ei.entityType.Name} from {user.assembly.GetName().Name}");
 
-                    if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
+                    // 2do replace type. full name dictionary might be irrelevant anyway
+                    if (!user.IsForOverwriting(ei.definitionType))
                     {
-                        log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
+                        if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
+                        {
+                            log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
+                        }
                     }
+                    else
+                    {
+                        //REEEEEEEEEEEEEEEEEE
+                        //TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[typeof(SuikaBigball).FullName] = ei.entityType;
+                    }
+
 
                     // should be type.name for now
                     var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
@@ -488,8 +503,11 @@ namespace LBoLEntitySideloader
 
                         log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
                     }
+                    if (!user.IsForOverwriting(ei.definitionType))
 
-                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().TryAdd(uId, ei.entityType);
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
+                    else
+                     TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().AlwaysAdd(uId, ei.entityType);
                 }
             }
         }
@@ -515,7 +533,7 @@ namespace LBoLEntitySideloader
 
         internal void RegisterUser(UserInfo user)
         {
-
+            bool validForRegistration = true;
 
             foreach (var kv in user.definitionInfos)
             {
@@ -525,23 +543,40 @@ namespace LBoLEntitySideloader
 
 
 
-                if (!RegisterId(user, entityDefinition))
-                    continue;
+                if (!user.entitiesToOverwrite.ContainsKey(type) && !RegisterId(user, entityDefinition))
+                { 
+                    validForRegistration = false;
+                }
 
-                if (entityDefinition is CardTemplate ct)
+                // not a vanilla id
+                if (user.entitiesToOverwrite.ContainsKey(type) && !UniqueIdTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
                 {
-                    RegisterConfig(ct);
+                    validForRegistration = false;
                 }
-                else if (entityDefinition is StatusEffectTemplate st)
-                {
-                    RegisterConfig(st);
+                else
+                { 
+                    log.LogError($"RegisterConfig: overwriting is not supported for non vanilla ids");
+
                 }
+
+
+                if (validForRegistration)
+                    if (entityDefinition is CardTemplate ct)
+                    {
+                        RegisterConfig(ct, user);
+                    }
+                    else if (entityDefinition is StatusEffectTemplate st)
+                    {
+                        RegisterConfig(st, user);
+                    }
             }
 
-            foreach (var kv in user.entityInfos)
-            {
-                RegisterTypes(kv.Key, user);
-            }
+            // 2do user definition failure table
+            if(validForRegistration)
+                foreach (var kv in user.entityInfos)
+                {
+                    RegisterTypes(kv.Key, user);
+                }
 
         }
 

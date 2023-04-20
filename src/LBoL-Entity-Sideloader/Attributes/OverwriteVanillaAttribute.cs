@@ -7,16 +7,13 @@ namespace LBoLEntitySideloader.Attributes
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class OverwriteVanilla : Attribute
     {
-        readonly IdContainer idToOverwrite;
+        private string idToOverwrite;
 
         private bool overideAllComponents = false;
 
-        public OverwriteVanilla(IdContainer orginalId)
-        {
-            idToOverwrite = orginalId;
-        }
+        public OverwriteVanilla() { }
 
-        public IdContainer IdToOverride => idToOverwrite;
+        public string IdToOverwrite { get => idToOverwrite; set => idToOverwrite = value; }
 
         public bool OverideAllComponents { get => overideAllComponents; set => overideAllComponents = value; }
     }

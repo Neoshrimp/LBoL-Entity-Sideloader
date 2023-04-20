@@ -158,6 +158,7 @@ namespace LBoLEntitySideloader.Entities
                DebugLevel: 0,
                Revealable: false,
                IsPooled: false,
+               HideMesuem: false,
                IsUpgradable: false,
                Rarity: default,
                Type: default,
