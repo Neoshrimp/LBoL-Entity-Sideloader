@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LBoL.Base;
+using LBoL.Base.Extensions;
 using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Battle;
@@ -11,16 +12,21 @@ using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resources;
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using static GunToolCard.Plugin;
 using static UnityEngine.GraphicsBuffer;
 
 namespace GunToolCard
 {
+
+
+
     [OverwriteVanilla]
     public sealed class SuikaBigballDefinition : CardTemplate
     {
@@ -38,7 +44,7 @@ namespace GunToolCard
 
         public override LocalizationOption LoadText()
         {
-            return null;
+            return new GlobalLocalization();
         }
 
         public override CardConfig MakeConfig()
@@ -46,15 +52,50 @@ namespace GunToolCard
             return CardConfig.FromId(GetId());
         }
 
+
+        [HarmonyPatch(typeof(Card.CardFormatWrapper), "FormatArgument")]
+        class Card_Patch
+        {
+            static void Postfix(object arg, string format, ref string __result, Card.CardFormatWrapper __instance)
+            {
+                if (arg is DamageInfo dmgInfo && __instance._card is SuikaBigball suika && suika.Battle != null)
+                {
+                    //int num2 = __instance._card.Battle.CalculateDamage(__instance._card, __instance._card.Battle.Player, null, dmgInfo);
+                    // 2do mirror ui colour issue
+                    __result = GameEntityFormatWrapper.WrappedFormatNumber((int)suika.Damage.Damage, (int)dmgInfo.Damage, format);
+                }
+            }
+        }
+
+
+
         [EntityLogic(typeof(SuikaBigballDefinition))]
         public sealed class SuikaBigball : Card
         {
+            public DamageInfo UIDamage
+            { 
+                get
+                {
+                    var dmgInfo = base.Damage;
+                    dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, PendingTarget, dmgInfo);
+                    return dmgInfo;
+
+                }
+            }
+
             public DamageInfo HalfDamage
             {
                 get
                 {
-                    // 2do inaccurate with negative fire power
-                    return this.Damage.MultiplyBy(mult);
+
+
+                    var dmgInfo = UIDamage;
+                        
+                    dmgInfo = dmgInfo.MultiplyBy(mult);
+
+                    dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, null, dmgInfo);
+                    
+                    return  dmgInfo;
                 }
             }
 
@@ -70,14 +111,13 @@ namespace GunToolCard
 
             private IEnumerable<BattleAction> OnPlayerlDamageDealt(DamageEventArgs args)
             {
-                if (args.ActionSource == this && args.DamageInfo.DamageType == DamageType.Attack && !showaveTriggered)
+                if (args.ActionSource == this && args.DamageInfo.DamageType == DamageType.Attack && !canTriggerShockwave)
                 {
                     NotifyActivating();
-                    log.LogDebug(args.DamageInfo.Amount);
 
                     var shockwaveTargets = base.Battle.EnemyGroup.Alives.Where((EnemyUnit enemy) => enemy != originalTarget).Cast<Unit>().ToList<Unit>();
                     originalTarget = null;
-                    showaveTriggered = true;
+                    canTriggerShockwave = true;
                     var dmgInfo = args.DamageInfo;
 
                     yield return base.AttackAction(shockwaveTargets, "Instant", new DamageInfo(dmgInfo.Damage * mult, dmgInfo.DamageType, false, this.IsAccuracy));
@@ -91,7 +131,7 @@ namespace GunToolCard
 
                 yield return PerformAction.Chat(Battle.Player, "SUIKA DEEEEEZ!!!", 3f, 0.5f, 0f, true);
                 originalTarget = selector.GetEnemy(base.Battle);
-                showaveTriggered = false;
+                canTriggerShockwave = false;
                 yield return base.AttackAction(selector);
                 yield return base.DebuffAction<FirepowerNegative>(base.Battle.Player, base.Value1, 0, 0, 0, true, 0.2f);
 
@@ -99,7 +139,7 @@ namespace GunToolCard
             }
 
             Unit originalTarget;
-            bool showaveTriggered = false;
+            bool canTriggerShockwave = false;
             float mult = 0.5f;
 
         }

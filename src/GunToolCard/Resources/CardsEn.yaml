@@ -9,3 +9,10 @@ GlockTool:
    |Limited【{DeckCounter}】|'
   Name: Glock17
   FlavorText: '"We''re not playing by the spellcard rules anymore, bitch!"'
+
+SuikaBigball:
+  NonbattleDescription: "Deal {UIDamage} damage. Then, deal half that much damage to\
+    \ each other enemy.\nLose {Value1} |Firepower|."
+  Description: "Deal {UIDamage} damage. Then, deal {HalfDamage} damage to each other\
+    \ enemy.\nLose {Value1} |Firepower|."
+  Name: Oni Spirit Bomb
