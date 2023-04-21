@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using static GunToolCard.Plugin;
 using static UnityEngine.GraphicsBuffer;
@@ -52,49 +53,98 @@ namespace GunToolCard
             return CardConfig.FromId(GetId());
         }
 
-
-        [HarmonyPatch(typeof(Card.CardFormatWrapper), "FormatArgument")]
-        class Card_Patch
+        public class StringWrap
         {
-            static void Postfix(object arg, string format, ref string __result, Card.CardFormatWrapper __instance)
+            public string s;
+        }
+
+        public static ConditionalWeakTable<GameEntityFormatWrapper, StringWrap> wt_PropertyName = new ConditionalWeakTable<GameEntityFormatWrapper, StringWrap>();
+
+        // bunch of bullshit to make tooltip damage number display correctly
+        // removes general damage calculation for SuikaBigball since it's already done in the properties
+        [HarmonyPatch(typeof(Card.CardFormatWrapper), "FormatArgument")]
+        class CardFormatWrapper_Patch
+        {
+            static bool Prefix(object arg, string format, ref string __result, Card.CardFormatWrapper __instance)
             {
                 if (arg is DamageInfo dmgInfo && __instance._card is SuikaBigball suika && suika.Battle != null)
                 {
-                    //int num2 = __instance._card.Battle.CalculateDamage(__instance._card, __instance._card.Battle.Player, null, dmgInfo);
-                    // 2do mirror ui colour issue
-                    __result = GameEntityFormatWrapper.WrappedFormatNumber((int)suika.Damage.Damage, (int)dmgInfo.Damage, format);
+                    if (!wt_PropertyName.TryGetValue(__instance, out StringWrap stringWrap))
+                    {
+                        log.LogWarning($"SuikaBigball: {__instance} does not have property name associated for description formatting");
+                    }
+                    var propName = stringWrap?.s;
+                    log.LogDebug($"propName: {propName}");
+
+                    // getter name is required to know if formatter is formatting main or shochwave dmg number. Depending on difference between base dmg and actual damage number will be coloured differently
+                    var baseDmg = propName == null || propName == nameof(SuikaBigball.UIDamage) ? (int)suika.Damage.Damage : (int)(suika.Damage.Damage * suika.mult);
+
+
+                    __result = GameEntityFormatWrapper.WrappedFormatNumber(baseDmg, (int)dmgInfo.Damage, format);
+                    return false;
                 }
+                return true;
             }
         }
+
+
+
+        // passes the getter name information down the call chain
+        [HarmonyPatch]
+        class GameEntityFormatWrapper_Patch
+        {
+
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                yield return AccessTools.Method(typeof(Card.CardFormatWrapper), "Format");
+            }
+
+
+            [HarmonyPrefix]
+            static void FormatPrefix(string key, Card.CardFormatWrapper __instance)
+            {
+
+                if (__instance._card is SuikaBigball suika && suika.Battle != null)
+                {
+
+                    wt_PropertyName.AddOrUpdate(__instance, new StringWrap() { s = key});
+                    
+                }
+
+            }
+        }
+
+
 
 
 
         [EntityLogic(typeof(SuikaBigballDefinition))]
         public sealed class SuikaBigball : Card
         {
+            // only for being displayed in description
             public DamageInfo UIDamage
             { 
                 get
                 {
                     var dmgInfo = base.Damage;
-                    dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, PendingTarget, dmgInfo);
+                    // this method predicts what the damage would be given all player modifiers (firepower, burst etc) AND target modifiers like cammo or vuln
+                    if(Battle != null)
+                        dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, PendingTarget, dmgInfo);
                     return dmgInfo;
 
                 }
             }
 
+            // only for being displayed in description
             public DamageInfo HalfDamage
             {
                 get
                 {
-
-
                     var dmgInfo = UIDamage;
-                        
                     dmgInfo = dmgInfo.MultiplyBy(mult);
-
-                    dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, null, dmgInfo);
-                    
+                    // this only takes player modifiers into account. Exact damage of shockwave cannot be displayed as a single number as it targets many units and they all could have different modifiers. Hence, the target modifiers should not be considered.
+                    if (Battle != null)
+                        dmgInfo.Damage = Battle.CalculateDamage(this, Battle.Player, null, dmgInfo);
                     return  dmgInfo;
                 }
             }
@@ -140,7 +190,7 @@ namespace GunToolCard
 
             Unit originalTarget;
             bool canTriggerShockwave = true;
-            float mult = 0.5f;
+            public readonly float mult = 0.5f;
 
         }
 
