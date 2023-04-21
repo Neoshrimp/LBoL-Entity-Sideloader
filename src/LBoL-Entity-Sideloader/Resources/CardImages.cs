@@ -12,7 +12,13 @@ namespace LBoLEntitySideloader.Resources
 {
     public class CardImages : IResourceProvider<Texture2D>
     {
+
+        public readonly static string upgradeString = "Upgrade";
+
         public Texture2D main;
+
+        public Texture2D upgrade;
+
 
         public Dictionary<string, Texture2D> subs = new Dictionary<string, Texture2D>();
 
@@ -37,22 +43,27 @@ namespace LBoLEntitySideloader.Resources
             this.subs = subs;
         }
 
-        public void AutoLoad(CardTemplate cardTemplate, string extension)
+        public void AutoLoad(CardTemplate cardTemplate, string extension, bool hasUpgradeImage = false)
         {
-            AutoLoad(cardTemplate.GetId(), extension, (List<string>)CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator);
+
+            AutoLoad(cardTemplate.GetId(), extension, CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator as List<string>, hasUpgradeImage);
             
         }
 
-        public void AutoLoad(string mainId, string extension, List<string> subIds = null)
+        public void AutoLoad(string mainId, string extension, List<string> subIds = null, bool hasUpgradeImage = false)
         {
 
             main = loadingAction(mainId + extension);
-            
-            if(subIds != null)
+
+            if (hasUpgradeImage)
+                upgrade = loadingAction(mainId + upgradeString + extension);
+
+            if (subIds != null)
                 foreach (var sub in subIds)
                 {
                     subs.Add(mainId + sub, loadingAction(mainId + sub + extension));
                 }
+            
         }
 
         public Texture2D Load() => main;

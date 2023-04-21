@@ -29,7 +29,11 @@ namespace LBoLEntitySideloader
                     lookUpDic.Add(tt, configType.Name);
                     lookUpDic.Add(configType, configType.Name);
 
-                }            
+                }
+                foreach (var configType in ConfigReflection.AllConfigTypes())
+                {
+                    lookUpDic.TryAdd(configType, configType.Name);
+                }
             }
 
             foreach (var kv in lookUpDic)

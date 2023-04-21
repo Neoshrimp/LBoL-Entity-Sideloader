@@ -213,12 +213,10 @@ namespace LBoLEntitySideloader.Entities
             if (cardImages == null)
                 return;
 
-            if (!ResourcesHelper.CardImages.TryAdd(UniqueId, cardImages.main))
-            {
-                ResourcesHelper.CardImages[UniqueId] = cardImages.main;
-                //log.LogWarning($"{UniqueId} is already used by ResourcesHelper.CardImages");
-            }
+            ResourcesHelper.CardImages.AlwaysAdd(UniqueId, cardImages.main);
 
+            if (cardImages.upgrade != null)
+                ResourcesHelper.CardImages.AlwaysAdd(UniqueId + CardImages.upgradeString, cardImages.upgrade);
 
             var subNames = CardConfig.FromId(UniqueId).SubIllustrator;
             var subNameCount = subNames.Count();
@@ -227,11 +225,11 @@ namespace LBoLEntitySideloader.Entities
                 log.LogWarning($"{UniqueId}: more subImages than subArtists' names");
 
 
+
             foreach (var kv in cardImages.subs)
             {
                 if (kv.Value != null)
-                    if (!ResourcesHelper.CardImages.TryAdd(kv.Key, kv.Value))
-                        ResourcesHelper.CardImages[kv.Key] = kv.Value;
+                    ResourcesHelper.CardImages.AlwaysAdd(kv.Key, kv.Value);
             }
 
         }

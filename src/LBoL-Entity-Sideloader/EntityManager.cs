@@ -374,6 +374,18 @@ namespace LBoLEntitySideloader
         {
             try
             {
+                var definitionType = entityDefinition.GetType();
+                if (user.entitiesToOverwrite.ContainsKey(definitionType))
+                {
+                    if (!UniqueIdTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
+
+                    {
+                        log.LogError($"RegisterId: {entityDefinition.GetId()} is non-vanilla id. Overwriting is not supported for non-vanilla ids");
+                        return false;
+                    }
+                    return true;
+                }
+
                 UniqueIdTracker.AddUniqueId(entityDefinition, user);
             }
             catch (Exception ex)
@@ -421,15 +433,6 @@ namespace LBoLEntitySideloader
                 
 
 
-                var f_Index = ConfigReflection.HasIndex(configType);
-
-                if (f_Index != null)
-                {
-                    f_Index.SetValue(newConfig, UniqueIdTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
-                }
-
-
-
                 log.LogInfo($"Registering config: {f_Id.GetValue(newConfig)},  type:{entityDefinition.ConfigType().Name}");
 
 
@@ -445,7 +448,11 @@ namespace LBoLEntitySideloader
 
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
                 {
-
+                    var f_Index = ConfigReflection.HasIndex(configType);
+                    if (f_Index != null)
+                    {
+                        f_Index.SetValue(newConfig, UniqueIdTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
+                    }
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
                     ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                 }
@@ -542,22 +549,9 @@ namespace LBoLEntitySideloader
                 var entityDefinition = kv.Value;
 
 
+                validForRegistration = RegisterId(user, entityDefinition);
 
-                if (!user.entitiesToOverwrite.ContainsKey(type) && !RegisterId(user, entityDefinition))
-                { 
-                    validForRegistration = false;
-                }
 
-                // not a vanilla id
-                if (user.entitiesToOverwrite.ContainsKey(type) && !UniqueIdTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
-                {
-                    validForRegistration = false;
-                }
-                else
-                { 
-                    log.LogError($"RegisterConfig: overwriting is not supported for non vanilla ids");
-
-                }
 
 
                 if (validForRegistration)
@@ -572,7 +566,7 @@ namespace LBoLEntitySideloader
             }
 
             // 2do user definition failure table
-            if(validForRegistration)
+            //if(validForRegistration)
                 foreach (var kv in user.entityInfos)
                 {
                     RegisterTypes(kv.Key, user);

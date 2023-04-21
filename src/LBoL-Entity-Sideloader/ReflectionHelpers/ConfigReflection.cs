@@ -183,7 +183,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             return mFromId;
         }
 
-        public static IEnumerable<Type> AllConfigTypes(IEnumerable<Assembly> assemblies = null, bool exclude = true, bool refresh = false)
+        public static IEnumerable<Type> AllConfigTypes(IEnumerable<Assembly> assemblies = null, bool exclude = false, bool refresh = false)
         {
             if (assemblies == null)
                 assemblies = configAssemblies;
