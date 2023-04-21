@@ -111,13 +111,13 @@ namespace GunToolCard
 
             private IEnumerable<BattleAction> OnPlayerlDamageDealt(DamageEventArgs args)
             {
-                if (args.ActionSource == this && args.DamageInfo.DamageType == DamageType.Attack && !canTriggerShockwave)
+                if (args.ActionSource == this && args.DamageInfo.DamageType == DamageType.Attack && canTriggerShockwave)
                 {
                     NotifyActivating();
 
                     var shockwaveTargets = base.Battle.EnemyGroup.Alives.Where((EnemyUnit enemy) => enemy != originalTarget).Cast<Unit>().ToList<Unit>();
                     originalTarget = null;
-                    canTriggerShockwave = true;
+                    canTriggerShockwave = false;
                     var dmgInfo = args.DamageInfo;
 
                     yield return base.AttackAction(shockwaveTargets, "Instant", new DamageInfo(dmgInfo.Damage * mult, dmgInfo.DamageType, false, this.IsAccuracy));
@@ -131,7 +131,7 @@ namespace GunToolCard
 
                 yield return PerformAction.Chat(Battle.Player, "SUIKA DEEEEEZ!!!", 3f, 0.5f, 0f, true);
                 originalTarget = selector.GetEnemy(base.Battle);
-                canTriggerShockwave = false;
+                canTriggerShockwave = true;
                 yield return base.AttackAction(selector);
                 yield return base.DebuffAction<FirepowerNegative>(base.Battle.Player, base.Value1, 0, 0, 0, true, 0.2f);
 
@@ -139,7 +139,7 @@ namespace GunToolCard
             }
 
             Unit originalTarget;
-            bool canTriggerShockwave = false;
+            bool canTriggerShockwave = true;
             float mult = 0.5f;
 
         }
