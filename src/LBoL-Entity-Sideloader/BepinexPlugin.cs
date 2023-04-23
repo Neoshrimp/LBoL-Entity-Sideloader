@@ -141,9 +141,11 @@ namespace LBoLEntitySideloader
 
         public static ConfigEntry<KeyboardShortcut> reloadKeyConfig;
 
-
+        public static BepinexPlugin Instance;
         private void Awake()
         {
+            Instance = this;
+
             log = Logger;
 
             // very important. Without it the entry point MonoBehaviour gets destroyed
@@ -209,7 +211,8 @@ namespace LBoLEntitySideloader
                 L10nManager.ReloadLocalization();
                 log.LogInfo($"reloading resources");
 
-                ResourcesHelper.InitializeAsync();
+                EntityManager.Instance.RegisterUsers();
+                EntityManager.Instance.AssetsForResourceHelper();
 
                 log.LogInfo($"resources loaded");
 

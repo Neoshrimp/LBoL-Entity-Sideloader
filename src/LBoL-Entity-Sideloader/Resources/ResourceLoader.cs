@@ -128,14 +128,11 @@ namespace LBoLEntitySideloader.Resources
         public static Texture2D LoadTexture(string name, IResourceSource source)
         {
 
-            //var resourceName = source.GetResourcePath(name);
             using Stream resource = source.Load(name);
 
             if (resource == null)
                 return null;
 
-            /*var resourceName = assembly.GetManifestResourceNames().First(r => r.Contains(name));
-            var resource = assembly.GetManifestResourceStream(resourceName);*/
             using var memoryStream = new MemoryStream();
             var buffer = new byte[16384];
             int count;

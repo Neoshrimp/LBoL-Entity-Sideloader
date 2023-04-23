@@ -9,8 +9,6 @@ namespace LBoLEntitySideloader.Resources
     public class DirectorySource : Source
     {
 
-        UserInfo userInfo;
-
         string path;
 
         public DirectorySource(string path)
@@ -29,4 +27,5 @@ namespace LBoLEntitySideloader.Resources
             return stream;
         }
     }
+
 }

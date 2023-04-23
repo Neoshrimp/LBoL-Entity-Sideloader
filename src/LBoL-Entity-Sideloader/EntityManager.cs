@@ -173,25 +173,9 @@ namespace LBoLEntitySideloader
 
                     var bepinDependencies = type.MultiAttribute<BepInDependency>(attributes);
 
-                    if (bepinDependencies is null)
+                    if (bepinDependencies == null || !bepinDependencies.Any(bd => bd.DependencyGUID == PluginInfo.GUID && bd.Flags == BepInDependency.DependencyFlags.HardDependency))
                     {
-                        log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute");
-                    }
-                    else
-                    {
-                        bool depFound = false;
-                        foreach (var bd in bepinDependencies)
-                        {
-                            if (bd.DependencyGUID == PluginInfo.GUID && bd.Flags == BepInDependency.DependencyFlags.HardDependency)
-                            {
-                                depFound = true;
-                                break;
-                            }
-                        }
-                        if (!depFound)
-                        {
-                            log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency");
-                        }
+                        log.LogWarning($"{assembly.GetName().Name}: {type} does not have a {typeof(BepInDependency).Name} attribute with {PluginInfo.GUID} as hard dependency.");
                     }
                     continue;
                 }
@@ -372,15 +356,16 @@ namespace LBoLEntitySideloader
 
         internal bool RegisterId(UserInfo user, EntityDefinition entityDefinition)
         {
+            var definitionType = entityDefinition.GetType();
             try
             {
-                var definitionType = entityDefinition.GetType();
                 if (user.entitiesToOverwrite.ContainsKey(definitionType))
                 {
                     if (!UniqueIdTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
 
                     {
-                        log.LogError($"RegisterId: {entityDefinition.GetId()} is non-vanilla id. Overwriting is not supported for non-vanilla ids");
+                        log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (yet, maybe).");
+                        UniqueIdTracker.Instance.invalidRegistrations.Add(definitionType);
                         return false;
                     }
                     return true;
@@ -392,6 +377,7 @@ namespace LBoLEntitySideloader
             {
 
                 log.LogError(ex);
+                UniqueIdTracker.Instance.invalidRegistrations.Add(definitionType);
                 return false;
             }
 
@@ -407,7 +393,6 @@ namespace LBoLEntitySideloader
             if (entityDefinition == null)
             {
                 entityDefinition = (EntityDefinition)configProvider;
-
             }
 
 
@@ -433,17 +418,16 @@ namespace LBoLEntitySideloader
                 
 
 
-                log.LogInfo($"Registering config: {f_Id.GetValue(newConfig)},  type:{entityDefinition.ConfigType().Name}");
+                Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId},  id: type:{entityDefinition.ConfigType().Name}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
 
 
 
-                // Add config to array
+                // For adding config to array
                 var f_Data = ConfigReflection.GetArrayField(configType);
-                // cache maybe
-                // 2do overwriting means double configs
+
                 var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
                 
-                // Add config to dictionary
+                // For adding config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
 
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
@@ -475,7 +459,6 @@ namespace LBoLEntitySideloader
 
        
 
-        // THIS SHIT HAPPENS BEFORE VANILLA TYPES ARE LOADED
         internal static void RegisterTypes(Type facType, UserInfo user)
         {
            
@@ -483,9 +466,27 @@ namespace LBoLEntitySideloader
 
             if (hasTypes)
             {
+                Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
                 foreach (var ei in typesToRegister)
                 {
-                    log.LogDebug($"TypeFactory<{facType.Name}>, id: {ei.entityType.Name} from {user.assembly.GetName().Name}");
+                    Log.LogDev()?.LogDebug($"Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, with id: {user.definitionInfos[ei.definitionType].GetId()} (these should match)");
+
+                    if (UniqueIdTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
+                    {
+                        log.LogError($"TypeFactory<{facType.Name}>: Cannot register entity logic {ei.entityType.Name} because template {ei.definitionType.Name} was not properly loaded.");
+                        continue;
+                    }
+
+                    // should be type.name for now
+                    var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
+
+                    if (uId != ei.entityType.Name)
+                    {
+
+                        log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
+                        continue;
+                    }
+
 
                     // 2do replace type. full name dictionary might be irrelevant anyway
                     if (!user.IsForOverwriting(ei.definitionType))
@@ -497,19 +498,15 @@ namespace LBoLEntitySideloader
                     }
                     else
                     {
+                        var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[user.definitionInfos[ei.definitionType].GetId()];
                         //REEEEEEEEEEEEEEEEEE
-                        //TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[typeof(SuikaBigball).FullName] = ei.entityType;
+                        
+
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
                     }
 
 
-                    // should be type.name for now
-                    var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
 
-                    if(uId != ei.entityType.Name )
-                    {
-
-                        log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
-                    }
                     if (!user.IsForOverwriting(ei.definitionType))
 
                         TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
@@ -540,7 +537,6 @@ namespace LBoLEntitySideloader
 
         internal void RegisterUser(UserInfo user)
         {
-            bool validForRegistration = true;
 
             foreach (var kv in user.definitionInfos)
             {
@@ -549,7 +545,7 @@ namespace LBoLEntitySideloader
                 var entityDefinition = kv.Value;
 
 
-                validForRegistration = RegisterId(user, entityDefinition);
+                var validForRegistration = RegisterId(user, entityDefinition);
 
 
 
@@ -565,8 +561,6 @@ namespace LBoLEntitySideloader
                     }
             }
 
-            // 2do user definition failure table
-            //if(validForRegistration)
                 foreach (var kv in user.entityInfos)
                 {
                     RegisterTypes(kv.Key, user);
@@ -592,7 +586,7 @@ namespace LBoLEntitySideloader
             foreach (var kv in sideloaderUsers.userInfos)
             {
                 var user = kv.Value;
-                log.LogDebug($"Registering assembly:{user.assembly.GetName().Name}");
+                log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
 
                 RegisterUser(user);
             }

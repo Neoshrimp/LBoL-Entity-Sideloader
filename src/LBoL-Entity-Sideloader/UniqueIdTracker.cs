@@ -10,7 +10,7 @@ using System.Text;
 namespace LBoLEntitySideloader
 {
 
-    // 2do index tracking is a bit of a mess
+    // 2do index tracking relies on the fact that MakeConfig
     public class UniqueIdTracker
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
@@ -42,6 +42,9 @@ namespace LBoLEntitySideloader
 
         private TemplateSequenceTable tempConfigIndexTable = new TemplateSequenceTable();
 
+        // definition ids
+        public HashSet<Type> invalidRegistrations = new HashSet<Type>();
+
 
         Sequence uIdSalt = new Sequence();
 
@@ -58,7 +61,6 @@ namespace LBoLEntitySideloader
 
         static internal void TrackVanillaConfig(object config, bool allowDuplicateIndex = false )
         {
-            // 2do build id 2 index cache
             Instance.configIds.TryAdd(config.GetType(), new HashSet<IdContainer>());
             Instance.configIds.TryGetValue(config.GetType(), out HashSet<IdContainer> ids);
 
@@ -135,7 +137,7 @@ namespace LBoLEntitySideloader
             if (ids.Contains(Id))
             {
 
-                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {Id} which already used");
+                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {entityDefinition.EntityType().Name} type with id '{Id}' which already used by either vanilla entities or other mods.");
 
                 if (!Instance.entity2uniqueIds.ContainsKey(entityDefinition.GetType()))
                 {
@@ -185,7 +187,7 @@ namespace LBoLEntitySideloader
             var indexes = Instance.configIndexes[entityDefinition.ConfigType()];
             while (indexes.Contains(index + i))
             {
-                log.LogDebug($"MakeUniqueIndex: duplicate index{index + i} of {entityDefinition.ConfigType()}");
+                Log.LogDevExtra()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
                 i = Instance.indexTable.Next(entityDefinition.ConfigType());
             }
 

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using LBoL.Base;
 using LBoL.Base.Extensions;
@@ -103,149 +104,147 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
-using LBoLEntitySideloader;
-using LBoLEntitySideloader.Attributes;
-using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.ReflectionHelpers;
+using MonoMod.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
-
-namespace CardExample2
+namespace LBoLEntitySideloader
 {
-    [BepInPlugin(GUID, "CardExample2", version)]
-    [BepInProcess("LBoL.exe")]
-    public class Plugin : BaseUnityPlugin
+
+    internal class HookPoints
     {
-        public const string GUID = "neo.lbol.test.CardExample2";
-        public const string version = "1.0.0";
+        private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
-        private static readonly Harmony harmony = new Harmony(GUID);
 
-        internal static BepInEx.Logging.ManualLogSource log;
 
-        internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
-        private void Awake()
+
+
+        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.InitializeRestAsync))]
+        class GameEntry_Patch
         {
-            log = Logger;
+            static public async void Postfix(Task __result)
+            {
+                await __result;
 
-            // very important. Without this the entry point MonoBehaviour gets destroyed
-            DontDestroyOnLoad(gameObject);
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
-            
-            EntityManager.RegisterSelf();
-            harmony.PatchAll();
+                EntityManager.Instance.RegisterUsers();
+                EntityManager.Instance.AssetsForResourceHelper();
+                EntityManager.Instance.LoadLocalization();
+
+
+            }
 
         }
 
-        private void OnDestroy()
+
+
+
+
+
+        //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
+        [HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
+        class Localization_Patch
         {
-            if (harmony != null)
-                harmony.UnpatchSelf();
+            static async UniTask Postfix(UniTask __result)
+            {
+                await UniTask.WhenAll(new UniTask[] { __result });
+                log.LogDebug("loc reload");
+                EntityManager.Instance.LoadLocalization();
+            }
         }
 
-
-        public sealed class DeeznutsDefinition : CardTemplate
+        //[HarmonyPatch]
+        class Loc_IntrusivePatch
         {
-            public override IdContainer GetId()
-            {
-                return nameof(Deeznuts);
-            }
 
-            public override CardConfig ReturnConfig()
+            static IEnumerable<MethodBase> TargetMethods()
             {
-                var cardConfig = DefaultConfig();
-                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
-                cardConfig.Id = GetId();
-                cardConfig.Type = CardType.Status;
-                return cardConfig;
+
+                yield return ExtraAccess.InnerMoveNext(typeof(L10nManager), nameof(L10nManager.ReloadAsync));
             }
 
 
-            [EntityLogic(typeof(DeeznutsDefinition))]
-            public sealed class Deeznuts : Card
+
+            static void LoadLocWrap()
             {
-                public override IEnumerable<BattleAction> OnDraw()
+                EntityManager.Instance.LoadLocalization();
+            }
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                foreach (var ci in instructions)
                 {
-                    log.LogInfo("Deez");
-                    return base.OnDraw();   
+                    if (ci.opcode == OpCodes.Call && (MethodInfo)ci.operand == AccessTools.Method(typeof(CrossPlatformHelper), nameof(CrossPlatformHelper.SetWindowTitle)))
+                    {
+                        yield return ci;
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Loc_IntrusivePatch), nameof(LoadLocWrap)));
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
                 }
             }
+
         }
 
 
-        // mismatched id and type name
-        public sealed class NutsDefinition : CardTemplate
+
+
+
+
+
+        [HarmonyPatch]
+        class ReadVanillaConfigIds_Patch
         {
-            public override IdContainer GetId()
+
+            static IEnumerable<MethodBase> TargetMethods()
             {
-                return "Nuts";
-            }
-
-            public override CardConfig ReturnConfig()
-            {
-                var cardConfig = DefaultConfig();
-                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
-                cardConfig.Id = "Nuts";
-                cardConfig.Type = CardType.Misfortune;
-                return cardConfig;
-            }
-
-
-
-            [EntityLogic(typeof(NutsDefinition))]
-            public sealed class DeeeeeeezNuts : Card
-            {
-                public override IEnumerable<BattleAction> OnDraw()
+                foreach (var t in ConfigReflection.AllConfigTypes(exclude: false))
                 {
-                    log.LogInfo("Nuts");
-                    return base.OnDraw();
+                    yield return AccessTools.Method(t, "Load");
                 }
             }
-        }
 
 
-        // duplicate id and type name
-
-        // 2do no unique id enforcing inside a plugin
-        public sealed class DeezDefinition : CardTemplate
-        {
-            public override IdContainer GetId()
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return nameof(Deeznuts);
-            }
-
-            public override CardConfig ReturnConfig()
-            {
-                var cardConfig = DefaultConfig();
-                cardConfig.Index = 42020;
-                cardConfig.Id = GetId();
-                cardConfig.Type = CardType.Misfortune;
-                return cardConfig;
-            }
-
-
-
-            [EntityLogic(typeof(DeezDefinition))]
-            public sealed class Deeznuts : Card
-            {
-                public override IEnumerable<BattleAction> OnDraw()
+                foreach (var ci in instructions)
                 {
-                    log.LogInfo("Deeznuts the second");
-                    return base.OnDraw();
+                    if (ci.Is(OpCodes.Newobj, AccessTools.FirstConstructor(original.DeclaringType, c => c.GetParameters().Count() > 0)))
+                    {
+                        //log.LogDebug($"injected at {original.DeclaringType.Name}");
+
+                        yield return ci;
+                        yield return new CodeInstruction(OpCodes.Dup);
+                        yield return new CodeInstruction(OpCodes.Ldc_I4_1);
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueIdTracker), nameof(UniqueIdTracker.TrackVanillaConfig)));
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
                 }
             }
+
+
         }
+
+
 
     }
 }

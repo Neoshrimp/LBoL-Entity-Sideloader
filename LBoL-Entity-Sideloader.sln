@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LBoL-Entity-Sideloader", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card-example", "src\card-example\card-example.csproj", "{9E2E182E-832F-4156-8EBA-B5A141BBCEB1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card-example2", "src\card-example2\card-example2.csproj", "{630A0608-7CDC-47DC-BC71-49F153C5DAF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadExamples", "src\BadExamples\BadExamples.csproj", "{630A0608-7CDC-47DC-BC71-49F153C5DAF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GunToolCard", "src\GunToolCard\GunToolCard.csproj", "{5DE28A5A-BA1D-40F0-879B-6F016063284D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GunToolCard", "src\GunToolCard\GunToolCard.csproj", "{5DE28A5A-BA1D-40F0-879B-6F016063284D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
