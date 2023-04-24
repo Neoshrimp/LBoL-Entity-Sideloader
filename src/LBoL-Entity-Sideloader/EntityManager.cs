@@ -8,6 +8,7 @@ using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resources;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 
@@ -120,6 +121,10 @@ namespace LBoLEntitySideloader
                             if (foundEntityLogicForDefinitionTypes.Contains(entityLogic.DefinitionType))
                             {
                                 log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
+                            }
+                            else if(BepinexPlugin.devModeConfig.Value && !TemplatesReflection.IsTemplateType(entityLogic.DefinitionType))
+                            {
+                                log.LogError($"{entityLogic.DefinitionType.Name} type provided to {typeof(EntityLogic).Name} attribute on {type.Name} is not an {typeof(EntityDefinition).Name}. Entity definition must extend one of the entity templates.");
                             }
                             else
                             {

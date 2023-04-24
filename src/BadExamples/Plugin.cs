@@ -155,12 +155,11 @@ namespace BadExamples
                 harmony.UnpatchSelf();
         }
 
-        // all good
-        public sealed class DeeznutsDefinition : CardTemplate
+        public sealed class AllGoodDefinition : CardTemplate
         {
             public override IdContainer GetId()
             {
-                return nameof(Deeznuts);
+                return nameof(AllGood);
             }
 
             public override CardImages LoadCardImages()
@@ -183,12 +182,12 @@ namespace BadExamples
             }
 
 
-            [EntityLogic(typeof(DeeznutsDefinition))]
-            public sealed class Deeznuts : Card
+            [EntityLogic(typeof(AllGoodDefinition))]
+            public sealed class AllGood : Card
             {
                 public override IEnumerable<BattleAction> OnDraw()
                 {
-                    log.LogInfo("Deeznuts");
+                    log.LogInfo("All good");
                     return base.OnDraw();   
                 }
             }
@@ -223,6 +222,45 @@ namespace BadExamples
 
 
         }
+
+        public sealed class WrongTypeInEntityLogicAttributeDefinition : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(WrongTypeInEntityLogicAttribute);
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadText()
+            {
+                return null;
+            }
+
+            public override CardConfig MakeConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
+                cardConfig.Id = "";
+                cardConfig.Type = CardType.Status;
+                return cardConfig;
+            }
+
+
+            [EntityLogic(typeof(Card))]
+            public sealed class WrongTypeInEntityLogicAttribute : Card
+            {
+                public override IEnumerable<BattleAction> OnDraw()
+                {
+                    log.LogInfo("WrongTypeInEntityLogicAttribute");
+                    return base.OnDraw();
+                }
+            }
+        }
+
 
 
 

@@ -43,5 +43,10 @@ namespace LBoLEntitySideloader.Reflection
             return templatesExpectingEntityLogic.Any(t => template.IsSubclassOf(t) || t == template);
         }
 
+        static public bool IsTemplateType(Type type)
+        {
+            return AllTemplateTypes().Any(t => type.IsSubclassOf(t));
+        }
+
     }
 }
