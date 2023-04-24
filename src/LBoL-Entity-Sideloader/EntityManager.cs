@@ -1,129 +1,15 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using HarmonyLib;
-using LBoL.Base;
 using LBoL.Base.Extensions;
-using LBoL.ConfigData;
-using LBoL.Core;
-using LBoL.Core.Adventures;
-using LBoL.Core.Attributes;
-using LBoL.Core.Battle;
-using LBoL.Core.Battle.BattleActionRecord;
-using LBoL.Core.Battle.BattleActions;
-using LBoL.Core.Battle.Interactions;
-using LBoL.Core.Cards;
-using LBoL.Core.Dialogs;
-using LBoL.Core.GapOptions;
-using LBoL.Core.Helpers;
-using LBoL.Core.Intentions;
-using LBoL.Core.JadeBoxes;
-using LBoL.Core.PlatformHandlers;
-using LBoL.Core.Randoms;
-using LBoL.Core.SaveData;
-using LBoL.Core.Stations;
-using LBoL.Core.Stats;
-using LBoL.Core.StatusEffects;
-using LBoL.Core.Units;
-using LBoL.EntityLib.Adventures;
-using LBoL.EntityLib.Adventures.Common;
-using LBoL.EntityLib.Adventures.FirstPlace;
-using LBoL.EntityLib.Adventures.Shared12;
-using LBoL.EntityLib.Adventures.Shared23;
-using LBoL.EntityLib.Adventures.Stage1;
-using LBoL.EntityLib.Adventures.Stage2;
-using LBoL.EntityLib.Adventures.Stage3;
-using LBoL.EntityLib.Cards.Character.Cirno;
-using LBoL.EntityLib.Cards.Character.Cirno.FairySupport;
-using LBoL.EntityLib.Cards.Character.Koishi;
-using LBoL.EntityLib.Cards.Character.Marisa;
-using LBoL.EntityLib.Cards.Character.Reimu;
-using LBoL.EntityLib.Cards.Character.Sakuya;
-using LBoL.EntityLib.Cards.Devel;
-using LBoL.EntityLib.Cards.Neutral;
-using LBoL.EntityLib.Cards.Neutral.Black;
-using LBoL.EntityLib.Cards.Neutral.Blue;
-using LBoL.EntityLib.Cards.Neutral.Green;
-using LBoL.EntityLib.Cards.Neutral.MultiColor;
-using LBoL.EntityLib.Cards.Neutral.NoColor;
-using LBoL.EntityLib.Cards.Neutral.Red;
-using LBoL.EntityLib.Cards.Neutral.TwoColor;
-using LBoL.EntityLib.Cards.Neutral.White;
-using LBoL.EntityLib.Cards.Other.Adventure;
-using LBoL.EntityLib.Cards.Other.Enemy;
-using LBoL.EntityLib.Cards.Other.Misfortune;
-using LBoL.EntityLib.Cards.Other.Tool;
-using LBoL.EntityLib.Devel;
-using LBoL.EntityLib.Dolls;
-using LBoL.EntityLib.EnemyUnits.Character;
-using LBoL.EntityLib.EnemyUnits.Character.DreamServants;
-using LBoL.EntityLib.EnemyUnits.Lore;
-using LBoL.EntityLib.EnemyUnits.Normal;
-using LBoL.EntityLib.EnemyUnits.Normal.Bats;
-using LBoL.EntityLib.EnemyUnits.Normal.Drones;
-using LBoL.EntityLib.EnemyUnits.Normal.Guihuos;
-using LBoL.EntityLib.EnemyUnits.Normal.Maoyus;
-using LBoL.EntityLib.EnemyUnits.Normal.Ravens;
-using LBoL.EntityLib.EnemyUnits.Opponent;
-using LBoL.EntityLib.Exhibits;
-using LBoL.EntityLib.Exhibits.Adventure;
-using LBoL.EntityLib.Exhibits.Common;
-using LBoL.EntityLib.Exhibits.Mythic;
-using LBoL.EntityLib.Exhibits.Seija;
-using LBoL.EntityLib.Exhibits.Shining;
-using LBoL.EntityLib.JadeBoxes;
-using LBoL.EntityLib.Mixins;
-using LBoL.EntityLib.PlayerUnits;
-using LBoL.EntityLib.Stages;
-using LBoL.EntityLib.Stages.NormalStages;
-using LBoL.EntityLib.StatusEffects.Basic;
-using LBoL.EntityLib.StatusEffects.Cirno;
-using LBoL.EntityLib.StatusEffects.Enemy;
-using LBoL.EntityLib.StatusEffects.Enemy.SeijaItems;
-using LBoL.EntityLib.StatusEffects.Marisa;
-using LBoL.EntityLib.StatusEffects.Neutral;
-using LBoL.EntityLib.StatusEffects.Neutral.Black;
-using LBoL.EntityLib.StatusEffects.Neutral.Blue;
-using LBoL.EntityLib.StatusEffects.Neutral.Green;
-using LBoL.EntityLib.StatusEffects.Neutral.Red;
-using LBoL.EntityLib.StatusEffects.Neutral.TwoColor;
-using LBoL.EntityLib.StatusEffects.Neutral.White;
-using LBoL.EntityLib.StatusEffects.Others;
-using LBoL.EntityLib.StatusEffects.Reimu;
-using LBoL.EntityLib.StatusEffects.Sakuya;
-using LBoL.EntityLib.UltimateSkills;
-using LBoL.Presentation;
-using LBoL.Presentation.Animations;
-using LBoL.Presentation.Bullet;
-using LBoL.Presentation.Effect;
-using LBoL.Presentation.I10N;
-using LBoL.Presentation.UI;
-using LBoL.Presentation.UI.Dialogs;
-using LBoL.Presentation.UI.ExtraWidgets;
-using LBoL.Presentation.UI.Panels;
-using LBoL.Presentation.UI.Transitions;
-using LBoL.Presentation.UI.Widgets;
-using LBoL.Presentation.Units;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Reflection;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resources;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using UnityEngine;
-using Untitled;
-using Untitled.ConfigDataBuilder;
-using Untitled.ConfigDataBuilder.Base;
-using Debug = UnityEngine.Debug;
 
 namespace LBoLEntitySideloader
 {
@@ -146,15 +32,18 @@ namespace LBoLEntitySideloader
         public static UserInfo ScanAssembly(Assembly assembly)
         {
 
+
+
             var userInfo = new UserInfo();
             userInfo.assembly = assembly;
 
+            Log.LogDev()?.LogInfo($"Scanning {assembly.GetName().Name}...");
 
             var exportedTypes = assembly.GetExportedTypes();
 
             userInfo.assembly = assembly;
 
-            var foundEntityTypesDefinitionTypes = new HashSet<Type>();
+            var foundEntityLogicForDefinitionTypes = new HashSet<Type>();
 
             foreach (var type in exportedTypes)
             {
@@ -228,19 +117,19 @@ namespace LBoLEntitySideloader
                         }
                         else
                         {
-                            if (foundEntityTypesDefinitionTypes.Contains(entityLogic.DefinitionType))
+                            if (foundEntityLogicForDefinitionTypes.Contains(entityLogic.DefinitionType))
                             {
                                 log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
                             }
                             else
                             {
                                 
-                                foundEntityTypesDefinitionTypes.Add(entityLogic.DefinitionType);
+                                foundEntityLogicForDefinitionTypes.Add(entityLogic.DefinitionType);
 
                                 var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
                                 userInfo.entityInfos[facType].Add(entityInfo);
 
-                                userInfo.definition2EntityLogicType.Add(entityLogic.DefinitionType,     entityInfo.entityType);
+                                userInfo.definition2EntityLogicType.Add(entityLogic.DefinitionType, entityInfo.entityType);
                             }
 
                         }
@@ -257,13 +146,24 @@ namespace LBoLEntitySideloader
             if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
             {
                 // all definitions needs to be instantiated at the point of this check
-                foreach (var ed in foundEntityTypesDefinitionTypes)
+                foreach (var ed in foundEntityLogicForDefinitionTypes)
                 {
                   if(userInfo.definition2EntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
 
                     if (!entityLogicType.IsSubclassOf(definition.EntityType()))
                     {
                         throw new InvalidProgramException($"(Extra Logging) {ed.Name} expects its entity logic type, {entityLogicType.Name}, to extend {definition.EntityType()}. Instead {entityLogicType.Name} extends {entityLogicType.BaseType} ");
+                    }
+                }
+
+                foreach (var kv in userInfo.definitionInfos)
+                {
+                    var defType = kv.Key;
+                    var defVal = kv.Value;
+
+                    if (!userInfo.IsForOverwriting(defType) && TemplatesReflection.ExpectsEntityLogic(defType) && !foundEntityLogicForDefinitionTypes.Contains(defType))
+                    {
+                        log.LogError($"(Extra logging) {defType.Name} needs entity logic type extending {defVal.EntityType().Name} but none was found. Did you define public sealed entity logic class with {typeof(EntityLogic).Name} attribute?");
                     }
                 }
             }
@@ -275,9 +175,6 @@ namespace LBoLEntitySideloader
                 log.LogInfo("(Extra logging) Entity definitions found: ");
                 userInfo.definitionInfos.Do(kv => log.LogInfo(kv.Key.Name));
             }
-
-
-
 
             return userInfo;
         }
@@ -357,6 +254,9 @@ namespace LBoLEntitySideloader
 
         internal bool RegisterId(UserInfo user, EntityDefinition entityDefinition)
         {
+
+            Log.LogDev()?.LogDebug($"Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
+
             var definitionType = entityDefinition.GetType();
             try
             {
@@ -419,7 +319,7 @@ namespace LBoLEntitySideloader
                 
 
 
-                Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId},  id: type:{entityDefinition.ConfigType().Name}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
+                Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
 
 
 
@@ -448,7 +348,6 @@ namespace LBoLEntitySideloader
                     ref_Data()[i] = newConfig;
 
                 }
-
 
 
             }
@@ -576,6 +475,9 @@ namespace LBoLEntitySideloader
         internal void RegisterUser(UserInfo user)
         {
 
+            log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
+
+
             foreach (var kv in user.definitionInfos)
             {
                 var type = kv.Key;
@@ -625,7 +527,6 @@ namespace LBoLEntitySideloader
             foreach (var kv in sideloaderUsers.userInfos)
             {
                 var user = kv.Value;
-                log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
 
                 RegisterUser(user);
             }

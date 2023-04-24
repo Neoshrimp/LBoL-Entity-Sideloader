@@ -195,6 +195,37 @@ namespace BadExamples
         }
 
 
+        public sealed class NoEntityLogicDefinition : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return "NoEntityLogic";
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadText()
+            {
+                return null;
+            }
+
+            public override CardConfig MakeConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
+                cardConfig.Id = "";
+                cardConfig.Type = CardType.Status;
+                return cardConfig;
+            }
+
+
+        }
+
+
+
         // mismatched id and type name
         public sealed class NutsDefinition : CardTemplate
         {
@@ -397,7 +428,7 @@ namespace BadExamples
 
 
         [OverwriteVanilla]
-        public sealed class DuplicateOverwrite3Definition : CardTemplate
+        public class DuplicateOverwrite3Definition : CardTemplate
         {
             public override IdContainer GetId()
             {
