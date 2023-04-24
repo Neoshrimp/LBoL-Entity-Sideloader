@@ -232,7 +232,7 @@ namespace LBoLEntitySideloader
                         yield return ci;
                         yield return new CodeInstruction(OpCodes.Dup);
                         yield return new CodeInstruction(OpCodes.Ldc_I4_1);
-                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueIdTracker), nameof(UniqueIdTracker.TrackVanillaConfig)));
+                        yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UniqueTracker), nameof(UniqueTracker.TrackVanillaConfig)));
                     }
                     else
                     {

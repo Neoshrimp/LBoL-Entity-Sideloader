@@ -202,7 +202,7 @@ namespace LBoLEntitySideloader
             //ensures plugins are reloaded first
             StartCoroutine(DoubleDelayAction(() =>
             {
-                UniqueIdTracker.Destroy();
+                UniqueTracker.Destroy();
 
                 ConfigDataManager.Reload();
 

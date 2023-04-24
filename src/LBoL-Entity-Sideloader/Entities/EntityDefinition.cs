@@ -148,7 +148,7 @@ namespace LBoLEntitySideloader.Entities
         {
             get 
             { 
-                return UniqueIdTracker.GetUniqueId(this);
+                return UniqueTracker.GetUniqueId(this);
             }
         }
         public abstract IdContainer GetId();

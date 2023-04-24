@@ -32,6 +32,8 @@ namespace LBoLEntitySideloader
         // definition type => attribute
         public Dictionary<Type, ModificationInfo> entitiesToOverwrite = new Dictionary<Type, ModificationInfo>();
 
+        public Dictionary<string, Type> typeName2VanillaType = new Dictionary<string, Type>();
+
 
         public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
 
@@ -55,6 +57,9 @@ namespace LBoLEntitySideloader
 
         public Type definitionType;
 
+        // used when overwriting vanilla type
+        public Type originalType;
+
         public EntityInfo(Type factoryType, Type entityType, Type definitionType)
         {
             this.factoryType = factoryType;
@@ -73,6 +78,9 @@ namespace LBoLEntitySideloader
     public class ModificationInfo
     {
         public OverwriteVanilla attribute;
+
+
+
     }
 
 }

@@ -396,5 +396,44 @@ namespace BadExamples
         }
 
 
+        [OverwriteVanilla]
+        public sealed class DuplicateOverwrite3Definition : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(OpenUniverse);
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadText()
+            {
+                return null;
+            }
+
+            public override CardConfig MakeConfig()
+            {
+
+                return CardConfig.FromId(GetId());
+            }
+
+
+
+        }
+
+        [EntityLogic(typeof(DuplicateOverwrite3Definition))]
+        public sealed class OpenUniverse : Card
+        {
+            public override IEnumerable<BattleAction> OnDraw()
+            {
+                log.LogInfo("Open3");
+                return base.OnDraw();
+            }
+        }
+
+
     }
 }

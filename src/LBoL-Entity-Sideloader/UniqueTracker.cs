@@ -10,19 +10,20 @@ using System.Text;
 namespace LBoLEntitySideloader
 {
 
-    // 2do index tracking relies on the fact that MakeConfig
-    public class UniqueIdTracker
+    // 2do index tracking relies on the fact that MakeConfig is called only once. but indexing is only for visual ordering anyway 
+    public class UniqueTracker
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
-        private static UniqueIdTracker _instance;
+        private static UniqueTracker _instance;
 
-        public static UniqueIdTracker Instance
+
+        public static UniqueTracker Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new UniqueIdTracker();
+                    _instance = new UniqueTracker();
                 return _instance;
             }
         }
@@ -67,10 +68,6 @@ namespace LBoLEntitySideloader
             var f_id = ConfigReflection.GetIdField(config.GetType());
 
             IdContainer id = IdContainer.CastFromObject(f_id.GetValue(config));
-
-
-
-
 
             if (ids.Contains(id))
             {
@@ -187,7 +184,7 @@ namespace LBoLEntitySideloader
             var indexes = Instance.configIndexes[entityDefinition.ConfigType()];
             while (indexes.Contains(index + i))
             {
-                Log.LogDevExtra()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
+                Log.LogDevExtra()?.LogDebug($"(Extra Logging) MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
                 i = Instance.indexTable.Next(entityDefinition.ConfigType());
             }
 

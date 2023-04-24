@@ -117,6 +117,7 @@ using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using UnityEngine;
 using Untitled;
@@ -206,7 +207,7 @@ namespace LBoLEntitySideloader
                     }
                     else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
                     {
-                        Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type} is subtype of {typeof(EntityDefinition).Name} but isn't sealed. Final entity definitions need to be sealed.");
+                        Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type} is subtype of {typeof(EntityDefinition).Name} but isn't sealed. Final entity templates need to be sealed.");
                     }
                     continue;
                 }
@@ -361,23 +362,23 @@ namespace LBoLEntitySideloader
             {
                 if (user.entitiesToOverwrite.ContainsKey(definitionType))
                 {
-                    if (!UniqueIdTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
+                    if (!UniqueTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
 
                     {
                         log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (yet, maybe).");
-                        UniqueIdTracker.Instance.invalidRegistrations.Add(definitionType);
+                        UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
                         return false;
                     }
                     return true;
                 }
 
-                UniqueIdTracker.AddUniqueId(entityDefinition, user);
+                UniqueTracker.AddUniqueId(entityDefinition, user);
             }
             catch (Exception ex)
             {
 
                 log.LogError(ex);
-                UniqueIdTracker.Instance.invalidRegistrations.Add(definitionType);
+                UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
                 return false;
             }
 
@@ -435,16 +436,16 @@ namespace LBoLEntitySideloader
                     var f_Index = ConfigReflection.HasIndex(configType);
                     if (f_Index != null)
                     {
-                        f_Index.SetValue(newConfig, UniqueIdTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
+                        f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
                     }
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
                     ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                 }
                 else
                 {
-                    var i = UniqueIdTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
-                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
-                        ref_Data()[i] = newConfig;
+                    var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                    ref_Data()[i] = newConfig;
 
                 }
 
@@ -469,49 +470,63 @@ namespace LBoLEntitySideloader
                 Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
                 foreach (var ei in typesToRegister)
                 {
-                    Log.LogDev()?.LogDebug($"Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, with id: {user.definitionInfos[ei.definitionType].GetId()} (these should match)");
-
-                    if (UniqueIdTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
+                    try
                     {
-                        log.LogError($"TypeFactory<{facType.Name}>: Cannot register entity logic {ei.entityType.Name} because template {ei.definitionType.Name} was not properly loaded.");
-                        continue;
-                    }
+                        Log.LogDev()?.LogDebug($"Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
 
-                    // should be type.name for now
-                    var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
-
-                    if (uId != ei.entityType.Name)
-                    {
-
-                        log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
-                        continue;
-                    }
-
-
-                    // 2do replace type. full name dictionary might be irrelevant anyway
-                    if (!user.IsForOverwriting(ei.definitionType))
-                    {
-                        if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
+                        if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
                         {
-                            log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
+                            log.LogError($"TypeFactory<{facType.Name}>: Cannot register entity logic {ei.entityType.Name} because template {ei.definitionType.Name} was not properly loaded.");
+                            // entity could be removed from typesToRegister
+                            continue;
                         }
-                    }
-                    else
-                    {
-                        var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[user.definitionInfos[ei.definitionType].GetId()];
-                        //REEEEEEEEEEEEEEEEEE
+                        // should be type.name for now
+                        var definition = user.definitionInfos[ei.definitionType];
+                        var uId = definition.UniqueId;
+
+                        if (uId != ei.entityType.Name)
+                        {
+
+                            log.LogError($"{user.GUID} entity id, {uId}, mismatches entity type name, {ei.entityType.Name}");
+                            continue;
+                        }
+
+
                         
+                        if (!user.IsForOverwriting(ei.definitionType))
+                        {
+                            if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
+                            {
+                                log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
+                            }
+                        }
+                        else
+                        {
 
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
+
+                            var id = definition.GetId();
+
+                            var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
+
+                            user.typeName2VanillaType.Add(id, originalType);
+
+                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
+
+                        }
+
+
+
+                        if (!user.IsForOverwriting(ei.definitionType))
+
+                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
+                        else
+                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().AlwaysAdd(uId, ei.entityType);
                     }
+                    catch (Exception ex)
+                    {
 
-
-
-                    if (!user.IsForOverwriting(ei.definitionType))
-
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
-                    else
-                     TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().AlwaysAdd(uId, ei.entityType);
+                        log.LogError(ex);
+                    }
                 }
             }
         }
@@ -525,11 +540,34 @@ namespace LBoLEntitySideloader
                 foreach (var ei in typesToRegister)
                 {
 
-                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().Remove(ei.entityType.FullName);
+                    if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
+                        continue;
 
-                    var uId = UniqueIdTracker.GetUniqueId(user.definitionInfos[ei.definitionType]);
+                    var definition = user.definitionInfos[ei.definitionType];
+                    var uId = definition.UniqueId;
 
-                    TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Remove(uId);
+                    if (!user.IsForOverwriting(ei.definitionType))
+                    {
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().Remove(ei.entityType.FullName);
+
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Remove(uId);
+
+                    }
+                    else
+                    {
+
+                        var originalType = user.typeName2VanillaType[uId];
+                        // restore original types
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[ei.entityType.FullName] = originalType;
+
+                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId] = originalType;
+
+
+
+                    }
+
+
+
                 }
             }
 
@@ -561,13 +599,14 @@ namespace LBoLEntitySideloader
                     }
             }
 
-                foreach (var kv in user.entityInfos)
-                {
-                    RegisterTypes(kv.Key, user);
-                }
+            foreach (var kv in user.entityInfos)
+            {
+                RegisterTypes(kv.Key, user);
+            }
 
         }
 
+        // full unregistration in 
         internal void UnregisterUser(UserInfo user)
         {
             foreach (var kv in user.entityInfos)
