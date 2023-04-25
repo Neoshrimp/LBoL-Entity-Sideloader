@@ -136,6 +136,8 @@ namespace BadExamples
 
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
+        internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
+
         private void Awake()
         {
             log = Logger;
@@ -392,7 +394,7 @@ namespace BadExamples
 
 
         [OverwriteVanilla]
-        public sealed class DuplicateOverwrite1Definition : CardTemplate
+        public sealed class ModifyOpenUniverseDefinition : CardTemplate
         {
             public override IdContainer GetId()
             {
@@ -404,6 +406,7 @@ namespace BadExamples
                 return null;
             }
 
+            [DontOverwrite]
             public override LocalizationOption LoadText()
             {
                 return null;
@@ -416,7 +419,7 @@ namespace BadExamples
             }
 
 
-            [EntityLogic(typeof(DuplicateOverwrite1Definition))]
+            [EntityLogic(typeof(ModifyOpenUniverseDefinition))]
             public sealed class OpenUniverse : Card
             {
                 public override IEnumerable<BattleAction> OnDraw()
@@ -429,55 +432,52 @@ namespace BadExamples
 
 
         [OverwriteVanilla]
-        public  class DuplicateOverwrite2Definition : CardTemplate
+        public sealed class OverwriteTextOnlyDefinition : CardTemplate
         {
             public override IdContainer GetId()
             {
-                return nameof(OpenUniverse);
+                return "OpenUniverse";
             }
 
+            [DontOverwrite]
             public override CardImages LoadCardImages()
             {
                 return null;
             }
 
+
             public override LocalizationOption LoadText()
             {
+                var locFiles = new LocalizationFiles(embeddedSource);
                 return null;
             }
 
+            [DontOverwrite]
             public override CardConfig MakeConfig()
             {
 
-                return CardConfig.FromId(GetId());
+                return null;
             }
 
 
-            [EntityLogic(typeof(DuplicateOverwrite2Definition))]
-            public sealed class OpenUniverse : Card
-            {
-                public override IEnumerable<BattleAction> OnDraw()
-                {
-                    log.LogInfo("Open2");
-                    return base.OnDraw();
-                }
-            }
         }
 
 
         [OverwriteVanilla]
-        public class DuplicateOverwrite3Definition : CardTemplate
+        public sealed class DuplicateOverwriteDefinition : CardTemplate
         {
             public override IdContainer GetId()
             {
                 return nameof(OpenUniverse);
             }
 
+            [DontOverwrite]
             public override CardImages LoadCardImages()
             {
                 return null;
             }
 
+            [DontOverwrite]
             public override LocalizationOption LoadText()
             {
                 return null;
@@ -493,7 +493,7 @@ namespace BadExamples
 
         }
 
-        [EntityLogic(typeof(DuplicateOverwrite3Definition))]
+        [EntityLogic(typeof(DuplicateOverwriteDefinition))]
         public sealed class OpenUniverse : Card
         {
             public override IEnumerable<BattleAction> OnDraw()

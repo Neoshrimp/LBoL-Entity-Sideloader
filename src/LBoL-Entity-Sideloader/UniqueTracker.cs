@@ -47,7 +47,7 @@ namespace LBoLEntitySideloader
         public HashSet<Type> invalidRegistrations = new HashSet<Type>();
 
         // factype =>+ id =>+ OverwiteInfo(component, defType, userInfo) 
-        public Dictionary<Type, Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>>();
+        public Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>>();
 
         Sequence uIdSalt = new Sequence();
 
@@ -61,11 +61,11 @@ namespace LBoLEntitySideloader
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
 
-        public static bool IsOverwriten(Type facType, IdContainer id, ComponentName component, Type definitionType, UserInfo user)
+        public static bool IsOverwriten(Type facType, IdContainer id, string component, Type definitionType, UserInfo user)
         {
-            Instance.overwriteTracker.TryAdd(facType, new Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>());
+            Instance.overwriteTracker.TryAdd(facType, new Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>());
             var idDic = Instance.overwriteTracker[facType];
-            if (idDic.TryGetValue(id, out Dictionary<ComponentName, OverwriteInfo> oiDic))
+            if (idDic.TryGetValue(id, out Dictionary<string, OverwriteInfo> oiDic))
             {
                 if (oiDic.TryGetValue(component, out OverwriteInfo oi))
                 {
@@ -80,7 +80,7 @@ namespace LBoLEntitySideloader
             }
             else
             {
-                idDic.Add(id, new Dictionary<ComponentName, OverwriteInfo>());
+                idDic.Add(id, new Dictionary<string, OverwriteInfo>());
                 return false;
             }
         }

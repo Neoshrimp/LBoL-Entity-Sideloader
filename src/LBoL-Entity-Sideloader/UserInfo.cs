@@ -86,7 +86,7 @@ namespace LBoLEntitySideloader
 
         public IdContainer entityId;
 
-        public ComponentName componentName;
+        public string componentName;
 
         public Type defType;
 

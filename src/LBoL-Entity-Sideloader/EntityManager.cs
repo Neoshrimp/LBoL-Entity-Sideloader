@@ -315,20 +315,8 @@ namespace LBoLEntitySideloader
                 var configType = entityDefinition.ConfigType();
                 var newConfig = configProvider.MakeConfig();
 
-                var f_Id = ConfigReflection.GetIdField(configType);
 
-                switch (entityDefinition.UniqueId.idType)
-                {
-                    case IdContainer.IdType.String:
-                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
-                        break;
-                    case IdContainer.IdType.Int:
-                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
-                        break;
-                    default:
-                        log.LogWarning("RegisterConfig: you shouldn't be here");
-                        break;
-                }
+                var f_Id = ConfigReflection.GetIdField(configType);
 
 
 
@@ -346,35 +334,42 @@ namespace LBoLEntitySideloader
 
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
                 {
+
+                    switch (entityDefinition.UniqueId.idType)
+                    {
+                        case IdContainer.IdType.String:
+                            f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
+                            break;
+                        case IdContainer.IdType.Int:
+                            f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
+                            break;
+                        default:
+                            log.LogWarning("RegisterConfig: you shouldn't be here");
+                            break;
+                    }
+
+
                     var f_Index = ConfigReflection.HasIndex(configType);
                     if (f_Index != null)
                     {
                         f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
                     }
+
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
                     ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
                 }
                 else
                 {
 
-                    
-
-/*                    if (!UniqueTracker.IsOverwriten(typeof(C), entityDefinition.UniqueId, ComponentName.Config, entityDefinition.GetType(), user) && TemplatesReflection.DoOverwrite(configProvider.GetType(), nameof(configProvider.MakeConfig)))
-                    {
-                        var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
-                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
-                        ref_Data()[i] = newConfig;
-                    }*/
-
                     HandleOvewriteWrap(() =>
                     {
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;
-                    }, entityDefinition, ComponentName.Config, nameof(configProvider.MakeConfig), user);
-
+                    }, entityDefinition, nameof(configProvider.MakeConfig), user);
 
                 }
+
 
 
             }
@@ -432,7 +427,7 @@ namespace LBoLEntitySideloader
 
                             var id = definition.GetId();
 
-                            if (!UniqueTracker.IsOverwriten(facType, id, ComponentName.EntityLogic, ei.definitionType, user))
+                            if (!UniqueTracker.IsOverwriten(facType, id, "EntityLogic", ei.definitionType, user))
                             {
                                 var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
 
@@ -492,12 +487,7 @@ namespace LBoLEntitySideloader
                         TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[ei.entityType.FullName] = originalType;
 
                         TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId] = originalType;
-
-
-
                     }
-
-
 
                 }
             }
@@ -562,6 +552,8 @@ namespace LBoLEntitySideloader
 
                 RegisterUser(user);
             }
+
+            log.LogInfo($"All sideloader users registered!");
         }
 
         internal void LoadAssetsForResourceHelper()
@@ -576,27 +568,13 @@ namespace LBoLEntitySideloader
                     var definition = kv2.Value;
                     if (definition is CardTemplate ct)
                     {
-                        HandleOvewriteWrap(() => ct.Consume(ct.LoadCardImages()), definition, ComponentName.Images, nameof(ct.LoadCardImages), user);
+                        HandleOvewriteWrap(() => ct.Consume(ct.LoadCardImages()), definition,  nameof(ct.LoadCardImages), user);
                     }
                 }
             }
         }
 
-        static internal void HandleOvewriteWrap(Action action, EntityDefinition definition, ComponentName component, string methodName, UserInfo user)
-        {
-            var defType = definition.GetType();
-            if (!user.IsForOverwriting(defType))
-            {
-                action();
-            }
-            else
-            {
-                if (!UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, component, defType, user) && TemplatesReflection.DoOverwrite(defType, methodName))
-                {
-                    action();
-                }
-            }
-        }
+
 
         internal void LoadLocalization()
         {
@@ -612,7 +590,8 @@ namespace LBoLEntitySideloader
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
-                        ct.Consume(ct.LoadText());
+                        HandleOvewriteWrap(() => ct.Consume(ct.LoadText()), definition, nameof(ct.LoadText), user);
+
                     }
                 }
 
@@ -645,7 +624,21 @@ namespace LBoLEntitySideloader
             }
         }
 
-
+        static internal void HandleOvewriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
+        {
+            var defType = definition.GetType();
+            if (!user.IsForOverwriting(defType))
+            {
+                action();
+            }
+            else
+            {
+                if (!UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, methodName, defType, user) && TemplatesReflection.DoOverwrite(defType, methodName))
+                {
+                    action();
+                }
+            }
+        }
 
     }
 }

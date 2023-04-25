@@ -76,7 +76,6 @@ namespace GunToolCard
                         log.LogWarning($"SuikaBigball: {__instance} does not have property name associated for description formatting");
                     }
                     var propName = stringWrap?.s;
-                    log.LogDebug($"propName: {propName}");
 
                     // getter name is required to know if formatter is formatting main or shochwave dmg number. Depending on difference between base dmg and actual damage number will be coloured differently
                     var baseDmg = propName == null || propName == nameof(SuikaBigball.UIDamage) ? (int)suika.Damage.Damage : (int)(suika.Damage.Damage * suika.mult);
