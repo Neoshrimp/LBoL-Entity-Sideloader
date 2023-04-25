@@ -212,7 +212,7 @@ namespace LBoLEntitySideloader
                 log.LogInfo($"reloading resources");
 
                 EntityManager.Instance.RegisterUsers();
-                EntityManager.Instance.AssetsForResourceHelper();
+                EntityManager.Instance.LoadAssetsForResourceHelper();
 
                 log.LogInfo($"resources loaded");
 

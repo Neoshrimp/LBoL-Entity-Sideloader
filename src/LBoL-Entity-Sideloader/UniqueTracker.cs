@@ -46,6 +46,8 @@ namespace LBoLEntitySideloader
         // definition ids
         public HashSet<Type> invalidRegistrations = new HashSet<Type>();
 
+        // factype =>+ id =>+ OverwiteInfo(component, defType, userInfo) 
+        public Dictionary<Type, Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>>();
 
         Sequence uIdSalt = new Sequence();
 
@@ -58,6 +60,30 @@ namespace LBoLEntitySideloader
 
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
+
+        public static bool IsOverwriten(Type facType, IdContainer id, ComponentName component, Type definitionType, UserInfo user)
+        {
+            Instance.overwriteTracker.TryAdd(facType, new Dictionary<IdContainer, Dictionary<ComponentName, OverwriteInfo>>());
+            var idDic = Instance.overwriteTracker[facType];
+            if (idDic.TryGetValue(id, out Dictionary<ComponentName, OverwriteInfo> oiDic))
+            {
+                if (oiDic.TryGetValue(component, out OverwriteInfo oi))
+                {
+                    log.LogError($"{user.assembly.GetName().Name} definition {definitionType.Name} is trying to change {component} of {id} but it's already modified by {oi.user.assembly.GetName().Name} defintition {oi.defType.Name}.");
+                    return true;
+                }
+                else
+                {
+                    oiDic.Add(component, new OverwriteInfo() { defType = definitionType, user = user });
+                    return false;
+                }
+            }
+            else
+            {
+                idDic.Add(id, new Dictionary<ComponentName, OverwriteInfo>());
+                return false;
+            }
+        }
 
 
         static internal void TrackVanillaConfig(object config, bool allowDuplicateIndex = false )
@@ -170,8 +196,6 @@ namespace LBoLEntitySideloader
 
             }
 
-
-
             if (id.idType == IdContainer.IdType.Int)
                 throw new NotImplementedException();
             throw new NotImplementedException();
@@ -193,6 +217,6 @@ namespace LBoLEntitySideloader
 
         }
 
-
+        
     }
 }

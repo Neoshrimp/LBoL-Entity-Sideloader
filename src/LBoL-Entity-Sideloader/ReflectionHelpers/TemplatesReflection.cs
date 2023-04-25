@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LBoL.Base.Extensions;
+using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,13 @@ namespace LBoLEntitySideloader.Reflection
         static public bool IsTemplateType(Type type)
         {
             return AllTemplateTypes().Any(t => type.IsSubclassOf(t));
+        }
+
+
+        public static bool DoOverwrite(Type definitionType, string methodName)
+        {
+            var method = AccessTools.Method(definitionType, methodName);
+            return method.GetCustomAttribute<DontOverwriteAttribute>(inherit: true) == null;
         }
 
     }

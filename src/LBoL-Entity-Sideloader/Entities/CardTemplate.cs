@@ -202,7 +202,7 @@ namespace LBoLEntitySideloader.Entities
 
             return cardConfig;
         }
-
+       
         public abstract CardConfig MakeConfig();
 
         public abstract CardImages LoadCardImages();

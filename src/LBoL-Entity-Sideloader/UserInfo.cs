@@ -78,8 +78,19 @@ namespace LBoLEntitySideloader
     public class ModificationInfo
     {
         public OverwriteVanilla attribute;
+    }
 
 
+    public class OverwriteInfo
+    {
+
+        public IdContainer entityId;
+
+        public ComponentName componentName;
+
+        public Type defType;
+
+        public UserInfo user;
 
     }
 

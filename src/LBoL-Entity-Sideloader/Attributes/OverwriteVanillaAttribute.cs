@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public sealed class OverwriteVanilla : Attribute
     {
         private string idToOverwrite;

@@ -36,6 +36,7 @@ namespace GunToolCard
             return nameof(LBoL.EntityLib.Cards.Neutral.Red.SuikaBigball);
         }
 
+        [DontOverwrite]
         public override CardImages LoadCardImages()
         {
             var cardImages = new CardImages(embeddedSource);
@@ -48,9 +49,10 @@ namespace GunToolCard
             return new GlobalLocalization();
         }
 
+        [DontOverwrite]
         public override CardConfig MakeConfig()
         {
-            return CardConfig.FromId(GetId());
+            return null;
         }
 
         public class StringWrap

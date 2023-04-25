@@ -33,8 +33,6 @@ namespace LBoLEntitySideloader
         public static UserInfo ScanAssembly(Assembly assembly)
         {
 
-
-
             var userInfo = new UserInfo();
             userInfo.assembly = assembly;
 
@@ -52,7 +50,7 @@ namespace LBoLEntitySideloader
                 if (type.IsSubclassOf(typeof(BaseUnityPlugin)))
                 {
                     var attributes = type.GetCustomAttributes(inherit: false);
-                    
+
                     if (type.SingularAttribute<BepInPlugin>(attributes) is BepInPlugin bp)
                     {
                         userInfo.GUID = bp.GUID;
@@ -92,7 +90,7 @@ namespace LBoLEntitySideloader
                         // 2do make sure same component isn't overwritten twice
                         if (overwrite != null)
                         {
-                            userInfo.entitiesToOverwrite.Add(type, new ModificationInfo() { attribute = overwrite});
+                            userInfo.entitiesToOverwrite.Add(type, new ModificationInfo() { attribute = overwrite });
                         }
                     }
                     else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
@@ -101,7 +99,7 @@ namespace LBoLEntitySideloader
                     }
                     continue;
                 }
-              
+
 
                 var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
                 if (facType != null)
@@ -122,13 +120,13 @@ namespace LBoLEntitySideloader
                             {
                                 log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
                             }
-                            else if(BepinexPlugin.devModeConfig.Value && !TemplatesReflection.IsTemplateType(entityLogic.DefinitionType))
+                            else if (BepinexPlugin.devModeConfig.Value && !TemplatesReflection.IsTemplateType(entityLogic.DefinitionType))
                             {
                                 log.LogError($"{entityLogic.DefinitionType.Name} type provided to {typeof(EntityLogic).Name} attribute on {type.Name} is not an {typeof(EntityDefinition).Name}. Entity definition must extend one of the entity templates.");
                             }
                             else
                             {
-                                
+
                                 foundEntityLogicForDefinitionTypes.Add(entityLogic.DefinitionType);
 
                                 var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
@@ -153,12 +151,12 @@ namespace LBoLEntitySideloader
                 // all definitions needs to be instantiated at the point of this check
                 foreach (var ed in foundEntityLogicForDefinitionTypes)
                 {
-                  if(userInfo.definition2EntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
+                    if (userInfo.definition2EntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
 
-                    if (!entityLogicType.IsSubclassOf(definition.EntityType()))
-                    {
-                        throw new InvalidProgramException($"(Extra Logging) {ed.Name} expects its entity logic type, {entityLogicType.Name}, to extend {definition.EntityType()}. Instead {entityLogicType.Name} extends {entityLogicType.BaseType} ");
-                    }
+                        if (!entityLogicType.IsSubclassOf(definition.EntityType()))
+                        {
+                            throw new InvalidProgramException($"(Extra Logging) {ed.Name} expects its entity logic type, {entityLogicType.Name}, to extend {definition.EntityType()}. Instead {entityLogicType.Name} extends {entityLogicType.BaseType} ");
+                        }
                 }
 
                 foreach (var kv in userInfo.definitionInfos)
@@ -188,7 +186,7 @@ namespace LBoLEntitySideloader
         {
             public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
 
-            
+
             public void AddUser(Assembly assembly)
             {
                 if (userInfos.ContainsKey(assembly))
@@ -209,23 +207,33 @@ namespace LBoLEntitySideloader
 
             }
 
-/*            public void UnregisterUser(Assembly assembly)
-            {
-                if (userInfos.ContainsKey(assembly))
-                {
-                    userInfos[assembly] = new UserInfo();
-                }
+            /*            public void UnregisterUser(Assembly assembly)
+                        {
+                            if (userInfos.ContainsKey(assembly))
+                            {
+                                userInfos[assembly] = new UserInfo();
+                            }
 
+                        }
+
+                        public void ReRegisterUser(Assembly assembly)
+                        {
+                            if (userInfos.ContainsKey(assembly)) 
+                            {
+                                userInfos[assembly] = ScanAssembly(assembly);
+                            }
+                        }*/
+
+
+            public UserInfo GetDefinitionUser(EntityDefinition entityDefinition)
+            {
+                if (userInfos.TryGetValue(entityDefinition.assembly, out UserInfo user))
+                {
+                    return user;
+                }
+                log.LogWarning($"{entityDefinition.assembly.GetName().Name} was not found among registered users");
+                return null;
             }
-
-            public void ReRegisterUser(Assembly assembly)
-            {
-                if (userInfos.ContainsKey(assembly)) 
-                {
-                    userInfos[assembly] = ScanAssembly(assembly);
-                }
-            }*/
-
 
 
             public Type GetEntityLogicType(Assembly assembly, Type definitionType)
@@ -243,7 +251,7 @@ namespace LBoLEntitySideloader
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
 
 
-        
+
 
         static public void RegisterSelf()
         {
@@ -321,7 +329,7 @@ namespace LBoLEntitySideloader
                         log.LogWarning("RegisterConfig: you shouldn't be here");
                         break;
                 }
-                
+
 
 
                 Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
@@ -332,7 +340,7 @@ namespace LBoLEntitySideloader
                 var f_Data = ConfigReflection.GetArrayField(configType);
 
                 var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-                
+
                 // For adding config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
 
@@ -348,9 +356,23 @@ namespace LBoLEntitySideloader
                 }
                 else
                 {
-                    var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
-                    ref_Data()[i] = newConfig;
+
+                    
+
+/*                    if (!UniqueTracker.IsOverwriten(typeof(C), entityDefinition.UniqueId, ComponentName.Config, entityDefinition.GetType(), user) && TemplatesReflection.DoOverwrite(configProvider.GetType(), nameof(configProvider.MakeConfig)))
+                    {
+                        var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                        ref_Data()[i] = newConfig;
+                    }*/
+
+                    HandleOvewriteWrap(() =>
+                    {
+                        var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                        ref_Data()[i] = newConfig;
+                    }, entityDefinition, ComponentName.Config, nameof(configProvider.MakeConfig), user);
+
 
                 }
 
@@ -362,11 +384,11 @@ namespace LBoLEntitySideloader
             }
         }
 
-       
+
 
         internal static void RegisterTypes(Type facType, UserInfo user)
         {
-           
+
             var hasTypes = user.entityInfos.TryGetValue(facType, out List<EntityInfo> typesToRegister);
 
             if (hasTypes)
@@ -396,9 +418,10 @@ namespace LBoLEntitySideloader
                         }
 
 
-                        
+
                         if (!user.IsForOverwriting(ei.definitionType))
                         {
+
                             if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
                             {
                                 log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
@@ -407,14 +430,18 @@ namespace LBoLEntitySideloader
                         else
                         {
 
-
                             var id = definition.GetId();
 
-                            var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
+                            if (!UniqueTracker.IsOverwriten(facType, id, ComponentName.EntityLogic, ei.definitionType, user))
+                            {
+                                var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
 
-                            user.typeName2VanillaType.Add(id, originalType);
+                                user.typeName2VanillaType.Add(id, originalType);
 
-                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
+                                TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
+                            }
+
+
 
                         }
 
@@ -435,7 +462,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void UnRegisterTypes(Type facType, UserInfo user) 
+        internal static void UnRegisterTypes(Type facType, UserInfo user)
         {
 
             var hasTypes = user.entityInfos.TryGetValue(facType, out List<EntityInfo> typesToRegister);
@@ -537,23 +564,39 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal void AssetsForResourceHelper()
+        internal void LoadAssetsForResourceHelper()
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
-                foreach (var template in kv.Value.definitionInfos)
+                var user = kv.Value;
+                foreach (var kv2 in kv.Value.definitionInfos)
                 {
+                    var defType = kv2.Key;
 
-
-                    var definition = template.Value;
+                    var definition = kv2.Value;
                     if (definition is CardTemplate ct)
                     {
-                        ct.Consume(ct.LoadCardImages());
+                        HandleOvewriteWrap(() => ct.Consume(ct.LoadCardImages()), definition, ComponentName.Images, nameof(ct.LoadCardImages), user);
                     }
                 }
             }
         }
 
+        static internal void HandleOvewriteWrap(Action action, EntityDefinition definition, ComponentName component, string methodName, UserInfo user)
+        {
+            var defType = definition.GetType();
+            if (!user.IsForOverwriting(defType))
+            {
+                action();
+            }
+            else
+            {
+                if (!UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, component, defType, user) && TemplatesReflection.DoOverwrite(defType, methodName))
+                {
+                    action();
+                }
+            }
+        }
 
         internal void LoadLocalization()
         {
@@ -573,6 +616,7 @@ namespace LBoLEntitySideloader
                     }
                 }
 
+                // load global localization
                 foreach (var kv2 in user.typesToLocalize)
                 {
                     var facType = kv2.Key;
@@ -587,7 +631,7 @@ namespace LBoLEntitySideloader
                     var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
 
                     if (termDic != null)
-                    { 
+                    {
                         foreach (var term in termDic)
                         {
                             if (term.Value.Empty())
@@ -597,7 +641,7 @@ namespace LBoLEntitySideloader
                     }
                 }
 
-                
+
             }
         }
 

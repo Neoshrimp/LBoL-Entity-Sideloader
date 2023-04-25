@@ -142,7 +142,7 @@ namespace LBoLEntitySideloader
                 await __result;
 
                 EntityManager.Instance.RegisterUsers();
-                EntityManager.Instance.AssetsForResourceHelper();
+                EntityManager.Instance.LoadAssetsForResourceHelper();
                 EntityManager.Instance.LoadLocalization();
 
 

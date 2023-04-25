@@ -3,12 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LBoLEntitySideloader.Attributes
 {
-    public static class TypeAttributeExtensions
+    public static class AttributeExtensions
     {
 
         public static AT SingularAttribute<AT>(this Type type, object[] allAttributes = null) where AT : Attribute
@@ -33,6 +34,9 @@ namespace LBoLEntitySideloader.Attributes
 
             return null;
         }
+
+
+
     }
 
 

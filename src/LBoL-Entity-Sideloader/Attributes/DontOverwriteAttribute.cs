@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace LBoLEntitySideloader.Attributes
 {
-    [System.AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    sealed class DontOverwriteAttribute : Attribute
+    [System.AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+    public sealed class DontOverwriteAttribute : Attribute
     {
 
-        // This is a positional argument
         public DontOverwriteAttribute()
         {
+
         }
+
 
 
     }
