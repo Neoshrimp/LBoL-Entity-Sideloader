@@ -415,7 +415,7 @@ namespace BadExamples
             public override CardConfig MakeConfig()
             {
                 
-                return CardConfig.FromId(GetId());
+                return CardConfig.FromId(UniqueId);
             }
 
 
@@ -471,13 +471,11 @@ namespace BadExamples
                 return nameof(OpenUniverse);
             }
 
-            [DontOverwrite]
             public override CardImages LoadCardImages()
             {
                 return null;
             }
 
-            [DontOverwrite]
             public override LocalizationOption LoadText()
             {
                 return null;
@@ -486,7 +484,7 @@ namespace BadExamples
             public override CardConfig MakeConfig()
             {
 
-                return CardConfig.FromId(GetId());
+                return CardConfig.FromId(UniqueId);
             }
 
 

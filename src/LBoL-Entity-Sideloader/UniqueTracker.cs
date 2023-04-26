@@ -81,6 +81,7 @@ namespace LBoLEntitySideloader
             else
             {
                 idDic.Add(id, new Dictionary<string, OverwriteInfo>());
+                idDic[id].Add(component, new OverwriteInfo() { defType = definitionType, user = user });
                 return false;
             }
         }

@@ -361,7 +361,7 @@ namespace LBoLEntitySideloader
                 else
                 {
 
-                    HandleOvewriteWrap(() =>
+                    HandleOverwriteWrap(() =>
                     {
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
@@ -568,7 +568,7 @@ namespace LBoLEntitySideloader
                     var definition = kv2.Value;
                     if (definition is CardTemplate ct)
                     {
-                        HandleOvewriteWrap(() => ct.Consume(ct.LoadCardImages()), definition,  nameof(ct.LoadCardImages), user);
+                        HandleOverwriteWrap(() => ct.Consume(ct.LoadCardImages()), definition,  nameof(ct.LoadCardImages), user);
                     }
                 }
             }
@@ -590,7 +590,7 @@ namespace LBoLEntitySideloader
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
-                        HandleOvewriteWrap(() => ct.Consume(ct.LoadText()), definition, nameof(ct.LoadText), user);
+                        HandleOverwriteWrap(() => ct.Consume(ct.LoadText()), definition, nameof(ct.LoadText), user);
 
                     }
                 }
@@ -624,20 +624,23 @@ namespace LBoLEntitySideloader
             }
         }
 
-        static internal void HandleOvewriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
+        static internal void HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
         {
             var defType = definition.GetType();
-            if (!user.IsForOverwriting(defType))
+
+            if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType))
             {
-                action();
-            }
-            else
-            {
-                if (!UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, methodName, defType, user) && TemplatesReflection.DoOverwrite(defType, methodName))
+                if (!user.IsForOverwriting(defType))
                 {
                     action();
                 }
+                else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, methodName, defType, user))
+                {
+                
+                   action();
+                }            
             }
+
         }
 
     }

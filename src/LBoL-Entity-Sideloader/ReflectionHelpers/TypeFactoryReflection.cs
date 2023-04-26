@@ -13,6 +13,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
 using UnityEngine;
+using System.Linq;
+using System.IO;
+using System.Text;
 
 namespace LBoLEntitySideloader.ReflectionHelpers
 {
@@ -94,24 +97,45 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         }
 
+        static public void OutputVirtualMembers()
+        {
+            var types = new HashSet<Type>();
 
-        /*        static HashSet<Type> _isSubclass = new HashSet<Type>(new AssignabilityComparer());
+            factoryTypes.Do(t =>
+            {
+                types.Add(t);
+                var tempT = t;
+                while (tempT != typeof(object))
+                {
+                    types.Add(tempT);
+                    tempT = tempT.BaseType;
 
-                public static HashSet<Type> IsSubclass 
-                { 
-                    get 
+                }
+            });
+
+            var output = new List<MemberInfo>();
+
+            types.Do(t => {
+
+                AccessTools.GetDeclaredMethods(t).Do(m =>
+                {
+                    if (m.IsVirtual)
+                        output.Add(m);
+                });
+            });
+
+            using (FileStream fileStream = File.Open("VirtualMembers.txt", FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8))
+                {
+                    foreach (var m in output)
                     {
-                        if (_isSubclass.Empty())
-                        {
-                            factoryTypes.Do(t => _isSubclass.Add(t));
-
-                            _isSubclass.Do(t => UnityEngine.Debug.Log(t.Name));
-                        }
-
-                        return _isSubclass;
+                        streamWriter.WriteLine($"{m.DeclaringType.FullName}.{m.Name}");
                     }
+                }
+            }
+        }
 
-                }*/
     }
 
 

@@ -138,14 +138,14 @@ namespace LBoLEntitySideloader
         class GameEntry_Patch
         {
             static public async void Postfix(Task __result)
-            {
+            {   
                 await __result;
 
                 EntityManager.Instance.RegisterUsers();
                 EntityManager.Instance.LoadAssetsForResourceHelper();
                 EntityManager.Instance.LoadLocalization();
 
-
+                log.LogInfo("Finished loading custom resources.");
             }
 
         }
