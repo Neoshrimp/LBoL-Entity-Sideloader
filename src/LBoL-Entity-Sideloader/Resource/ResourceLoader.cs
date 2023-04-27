@@ -119,7 +119,7 @@ using YamlDotNet.RepresentationModel;
 using Debug = UnityEngine.Debug;
 using static LBoLEntitySideloader.BepinexPlugin;
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
 
     public class ResourceLoader

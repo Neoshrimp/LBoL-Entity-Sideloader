@@ -103,7 +103,7 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
-using LBoLEntitySideloader.Resources;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Reflection;
 using LBoLEntitySideloader.ReflectionHelpers;
-using LBoLEntitySideloader.Resources;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace LBoLEntitySideloader
 {
-    public class EntityManager
+    public partial class EntityManager
     {
         static private EntityManager _instance;
 
@@ -30,11 +30,18 @@ namespace LBoLEntitySideloader
             }
         }
 
+        public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
+
         public static UserInfo ScanAssembly(Assembly assembly)
         {
 
             var userInfo = new UserInfo();
             userInfo.assembly = assembly;
+
+            if (BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
+            {
+                Instance.loadedFromDisk.Add(assembly);
+            }
 
             Log.LogDev()?.LogInfo($"Scanning {assembly.GetName().Name}...");
 
@@ -180,72 +187,6 @@ namespace LBoLEntitySideloader
             }
 
             return userInfo;
-        }
-
-        internal class SideloaderUsers
-        {
-            public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
-
-
-            public void AddUser(Assembly assembly)
-            {
-                if (userInfos.ContainsKey(assembly))
-                {
-                    throw new Exception($"{assembly.GetName().Name} is already registered");
-
-                }
-                try
-                {
-                    userInfos.Add(assembly, ScanAssembly(assembly));
-
-                }
-                catch (Exception ex)
-                {
-
-                    log.LogError($"{assembly.GetName().Name}: {ex}");
-                }
-
-            }
-
-            /*            public void UnregisterUser(Assembly assembly)
-                        {
-                            if (userInfos.ContainsKey(assembly))
-                            {
-                                userInfos[assembly] = new UserInfo();
-                            }
-
-                        }
-
-                        public void ReRegisterUser(Assembly assembly)
-                        {
-                            if (userInfos.ContainsKey(assembly)) 
-                            {
-                                userInfos[assembly] = ScanAssembly(assembly);
-                            }
-                        }*/
-
-
-            public UserInfo GetDefinitionUser(EntityDefinition entityDefinition)
-            {
-                if (userInfos.TryGetValue(entityDefinition.assembly, out UserInfo user))
-                {
-                    return user;
-                }
-                log.LogWarning($"{entityDefinition.assembly.GetName().Name} was not found among registered users");
-                return null;
-            }
-
-
-            public Type GetEntityLogicType(Assembly assembly, Type definitionType)
-            {
-                if (this.userInfos.TryGetValue(assembly, out UserInfo user) && user.definition2EntityLogicType.TryGetValue(definitionType, out Type entityType))
-                {
-                    return entityType;
-                }
-
-                throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name}");
-            }
-
         }
 
         internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
@@ -622,6 +563,16 @@ namespace LBoLEntitySideloader
 
 
             }
+        }
+
+
+        internal void LoadAll()
+        {
+            Instance.RegisterUsers();
+            Instance.LoadAssetsForResourceHelper();
+            Instance.LoadLocalization();
+
+            log.LogInfo("Finished loading custom resources.");
         }
 
         static internal void HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)

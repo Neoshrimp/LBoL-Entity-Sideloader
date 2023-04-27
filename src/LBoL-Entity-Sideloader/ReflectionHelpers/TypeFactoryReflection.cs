@@ -97,6 +97,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         }
 
+        // close enough
         static public void OutputVirtualMembers()
         {
             var types = new HashSet<Type>();
@@ -130,7 +131,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
                 {
                     foreach (var m in output)
                     {
-                        streamWriter.WriteLine($"{m.DeclaringType.FullName}.{m.Name}");
+                        streamWriter.WriteLine($"<DoNotPublicize Include=\"{m.DeclaringType.Assembly.GetName().Name}:{m.DeclaringType.FullName}.{m.Name}\"/>");
                     }
                 }
             }

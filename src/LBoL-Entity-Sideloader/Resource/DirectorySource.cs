@@ -1,10 +1,10 @@
-﻿using LBoLEntitySideloader.Resources;
+﻿using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
     public class DirectorySource : Source
     {

@@ -106,7 +106,7 @@ using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
-using LBoLEntitySideloader.Resources;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections;
 using System.Collections.Generic;

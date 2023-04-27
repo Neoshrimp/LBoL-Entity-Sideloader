@@ -141,15 +141,11 @@ namespace LBoLEntitySideloader
             {   
                 await __result;
 
-                EntityManager.Instance.RegisterUsers();
-                EntityManager.Instance.LoadAssetsForResourceHelper();
-                EntityManager.Instance.LoadLocalization();
+                EntityManager.Instance.LoadAll();
 
-                log.LogInfo("Finished loading custom resources.");
             }
 
         }
-
 
 
 

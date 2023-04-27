@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
     public class LocalizationFiles : LocalizationOption, IResourceProvider<YamlMappingNode>
     {

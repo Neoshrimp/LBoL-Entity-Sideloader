@@ -8,7 +8,7 @@ using System.Text;
 using System.Xml;
 using UnityEngine;
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
     public class CardImages : IResourceProvider<Texture2D>
     {

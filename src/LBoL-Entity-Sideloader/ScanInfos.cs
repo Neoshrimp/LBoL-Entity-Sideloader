@@ -4,7 +4,7 @@ using LBoL.Base.Extensions;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
-using LBoLEntitySideloader.Resources;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.Linq;

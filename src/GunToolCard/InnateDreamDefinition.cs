@@ -7,7 +7,7 @@ using LBoL.Core.Cards;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
-using LBoLEntitySideloader.Resources;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.Text;

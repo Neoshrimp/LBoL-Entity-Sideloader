@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
     public interface IResourceSource
     {

@@ -11,7 +11,7 @@ using System.Text;
 using static LBoLEntitySideloader.BepinexPlugin;
 
 
-namespace LBoLEntitySideloader.Resources
+namespace LBoLEntitySideloader.Resource
 {
     public class EmbeddedSource : Source
     {

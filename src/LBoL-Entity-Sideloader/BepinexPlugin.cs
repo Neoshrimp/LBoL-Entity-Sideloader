@@ -185,7 +185,7 @@ namespace LBoLEntitySideloader
         }
 
 
-
+        // strictly debugging developing functionality.
         public void HardReload(BepInEx.PluginInfo scriptEngineInfo)
         {
 
@@ -204,17 +204,12 @@ namespace LBoLEntitySideloader
             {
                 UniqueTracker.Destroy();
 
+                EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+
                 ConfigDataManager.Reload();
 
-                //EntityManager.Instance.RegisterUsers();
-                log.LogInfo($"reloading loc");
-                L10nManager.ReloadLocalization();
-                log.LogInfo($"reloading resources");
+                EntityManager.Instance.LoadAll();
 
-                EntityManager.Instance.RegisterUsers();
-                EntityManager.Instance.LoadAssetsForResourceHelper();
-
-                log.LogInfo($"resources loaded");
 
             }));
 
