@@ -196,6 +196,45 @@ namespace BadExamples
         }
 
 
+        public sealed class DuplicateAllGoodDefinition : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(AllGood);
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadText()
+            {
+                return null;
+            }
+
+            public override CardConfig MakeConfig()
+            {
+                var cardConfig = DefaultConfig();
+                cardConfig.Index = sequenceTable.Next(typeof(CardConfig));
+                cardConfig.Id = "";
+                cardConfig.Type = CardType.Status;
+                return cardConfig;
+            }
+
+
+            [EntityLogic(typeof(DuplicateAllGoodDefinition))]
+            public sealed class AllGood : Card
+            {
+                public override IEnumerable<BattleAction> OnDraw()
+                {
+                    log.LogInfo("All good");
+                    return base.OnDraw();
+                }
+            }
+        }
+
+
         public sealed class NoEntityLogicDefinition : CardTemplate
         {
             public override IdContainer GetId()
@@ -498,6 +537,33 @@ namespace BadExamples
             {
                 log.LogInfo("Open3");
                 return base.OnDraw();
+            }
+        }
+
+
+        public sealed class VanillaIdWithoutOverwrite : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(TianziMana);
+            }
+
+            [DontOverwrite]
+            public override CardImages LoadCardImages()
+            {
+                throw new NotImplementedException();
+            }
+
+            [DontOverwrite]
+            public override LocalizationOption LoadText()
+            {
+                throw new NotImplementedException();
+            }
+
+            [DontOverwrite]
+            public override CardConfig MakeConfig()
+            {
+                throw new NotImplementedException();
             }
         }
 

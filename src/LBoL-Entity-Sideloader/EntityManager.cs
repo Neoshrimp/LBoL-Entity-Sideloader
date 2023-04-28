@@ -93,8 +93,6 @@ namespace LBoLEntitySideloader
                         var overwrite = type.SingularAttribute<OverwriteVanilla>();
 
 
-                        // 2do add optional DontLoad attribute filter
-                        // 2do make sure same component isn't overwritten twice
                         if (overwrite != null)
                         {
                             userInfo.entitiesToOverwrite.Add(type, new ModificationInfo() { attribute = overwrite });
@@ -254,7 +252,6 @@ namespace LBoLEntitySideloader
             try
             {
                 var configType = entityDefinition.ConfigType();
-                var newConfig = configProvider.MakeConfig();
 
 
                 var f_Id = ConfigReflection.GetIdField(configType);
@@ -275,6 +272,7 @@ namespace LBoLEntitySideloader
 
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
                 {
+                    var newConfig = configProvider.MakeConfig();
 
                     switch (entityDefinition.UniqueId.idType)
                     {
@@ -304,6 +302,7 @@ namespace LBoLEntitySideloader
 
                     HandleOverwriteWrap(() =>
                     {
+                        var newConfig = configProvider.MakeConfig();
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;
@@ -509,8 +508,13 @@ namespace LBoLEntitySideloader
                     var definition = kv2.Value;
                     if (definition is CardTemplate ct)
                     {
-                        HandleOverwriteWrap(() => ct.Consume(ct.LoadCardImages()), definition,  nameof(ct.LoadCardImages), user);
+                        HandleOverwriteWrap(() => ct.Consume(ct.LoadCardImages()), definition, nameof(ct.LoadCardImages), user);
                     }
+                    else if (definition is StatusEffectTemplate st)
+                    {
+                        HandleOverwriteWrap(() => st.Consume(st.LoadSprite()), definition, nameof(st.LoadSprite), user);
+                    }
+
                 }
             }
         }
@@ -534,6 +538,11 @@ namespace LBoLEntitySideloader
                         HandleOverwriteWrap(() => ct.Consume(ct.LoadText()), definition, nameof(ct.LoadText), user);
 
                     }
+                    else if (definition is StatusEffectTemplate st)
+                    {
+                        HandleOverwriteWrap(() => st.Consume(st.LoadText()), definition, nameof(st.LoadText), user);
+                    }
+
                 }
 
                 // load global localization
@@ -541,6 +550,12 @@ namespace LBoLEntitySideloader
                 {
                     var facType = kv2.Key;
                     var locInfo = kv2.Value;
+
+                    if (locInfo.locFiles == null)
+                    {
+                        Log.log.LogError($"{user.GUID}: localization files parameter was never initialized for global localization option of {facType.Name}");
+                        continue;
+                    }
 
                     if (locInfo.locFiles.locTable.Empty())
                     {

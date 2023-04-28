@@ -30,7 +30,6 @@ namespace LBoLEntitySideloader.Resource
         public override Stream Load(string id)
         {
 
-            //c#, regex to check if file name ends with common picture file extension 
 
             id = LegalizeFileName(id);
 

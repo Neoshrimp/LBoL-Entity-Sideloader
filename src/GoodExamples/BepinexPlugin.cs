@@ -22,6 +22,7 @@ using LBoL.Core.Randoms;
 using LBoL.Core.SaveData;
 using LBoL.Core.Stations;
 using LBoL.Core.Stats;
+using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Adventures;
 using LBoL.EntityLib.Adventures.Common;
@@ -102,145 +103,59 @@ using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader;
 using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEngine;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
-using static LBoLEntitySideloader.BepinexPlugin;
-using YamlDotNet.RepresentationModel;
-using UnityEngine.Rendering;
-using LBoLEntitySideloader.ReflectionHelpers;
-using System.Data;
 
-namespace LBoLEntitySideloader.Entities
+
+namespace GoodExamples
 {
-    public abstract class CardTemplate : EntityDefinition,
-        IConfigProvider<CardConfig>,
-        IGameEntityProvider<Card>,
-        IResourceConsumer<CardImages>,
-        IResourceConsumer<LocalizationOption>
+    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.version)]
+    [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency(AddWatermark.API.GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInProcess("LBoL.exe")]
+    public class BepinexPlugin : BaseUnityPlugin
     {
 
+        private static readonly Harmony harmony = PluginInfo.harmony;
 
-        public override Type ConfigType()
+        internal static BepInEx.Logging.ManualLogSource log;
+
+        internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
+
+
+        private void Awake()
         {
-            return typeof(CardConfig);
+            log = Logger;
+
+            // very important. Without this the entry point MonoBehaviour gets destroyed
+            DontDestroyOnLoad(gameObject);
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+            EntityManager.RegisterSelf();
+
+            harmony.PatchAll();
+
+            if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
+                WatermarkWrapper.ActivateWatermark();
         }
 
-        public override Type EntityType()
+        private void OnDestroy()
         {
-            return typeof(Card);
+            if (harmony != null)
+                harmony.UnpatchSelf();
         }
-
-        public CardConfig DefaultConfig()
-        {
-            var cardConfig = new CardConfig(
-               Index: 0,
-               Id: "",
-               /// default priority for reactors/handlers. priority argument on reactors/handlers can be used instead
-               Order: 10,
-               AutoPerform: true,
-               Perform: new string[0][],
-               GunName: "",
-               GunNameBurst: "",
-               DebugLevel: 0,
-               Revealable: false,
-               IsPooled: false,
-               HideMesuem: false,
-               IsUpgradable: false,
-               Rarity: default,
-               Type: default,
-               TargetType: null,
-               Colors: new List<ManaColor>() { },
-               IsXCost: false,
-               Cost: new ManaGroup() { },
-               UpgradedCost: null,
-               MoneyCost: null,
-               Damage: null,
-               UpgradedDamage: null,
-               Block: null,
-               UpgradedBlock: null,
-               Shield: null,
-               UpgradedShield: null,
-               Value1: null,
-               UpgradedValue1: null,
-               Value2: null,
-               UpgradedValue2: null,
-               Mana: null,
-               UpgradedMana: null,
-               Scry: null,
-               UpgradedScry: null,
-               ToolPlayableTimes: null,
-
-               Keywords: default,
-               UpgradedKeywords: default,
-               EmptyDescription: false,
-               RelativeKeyword: default,
-               UpgradedRelativeKeyword: default,
-
-               RelativeEffects: new List<string>() { },
-               UpgradedRelativeEffects: new List<string>() { },
-               RelativeCards: new List<string>() { },
-               UpgradedRelativeCards: new List<string>() { },
-               Owner: null,
-               Unfinished: false,
-               Illustrator: null,
-               SubIllustrator: new List<string>() { }
-            );
-
-            return cardConfig;
-        }
-       
-        public abstract CardConfig MakeConfig();
-
-        public abstract CardImages LoadCardImages();
-
-        public void Consume(CardImages cardImages)
-        {
-
-            if (cardImages == null)
-                return;
-
-            ResourcesHelper.CardImages.AlwaysAdd(UniqueId, cardImages.main);
-
-            if (cardImages.upgrade != null)
-                ResourcesHelper.CardImages.AlwaysAdd(UniqueId + CardImages.upgradeString, cardImages.upgrade);
-
-            var subNames = CardConfig.FromId(UniqueId).SubIllustrator;
-            var subNameCount = subNames.Count();
-
-            if (subNameCount < cardImages.subs.Count)
-                log.LogWarning($"{UniqueId}: more subImages than subArtists' names");
-
-
-
-            foreach (var kv in cardImages.subs)
-            {
-                if (kv.Value != null)
-                    ResourcesHelper.CardImages.AlwaysAdd(kv.Key, kv.Value);
-            }
-
-        }
-
-        public abstract LocalizationOption LoadText();
-
-        public void Consume(LocalizationOption locOptions)
-        {
-            ProcessLocalization(locOptions, (string key, Dictionary<string, object> value) => { TypeFactory<Card>._typeLocalizers.AlwaysAdd(key, value); });
-
-        }
-
 
 
     }

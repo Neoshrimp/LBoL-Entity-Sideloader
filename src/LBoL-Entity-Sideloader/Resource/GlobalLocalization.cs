@@ -11,6 +11,12 @@ namespace LBoLEntitySideloader.Resource
 
         public GlobalLocalization()
         {
+        
+        }
+
+        public GlobalLocalization(IResourceSource source)
+        {
+            LocalizationFiles = new LocalizationFiles(source);
         }
 
         public GlobalLocalization(LocalizationFiles localizationFiles)

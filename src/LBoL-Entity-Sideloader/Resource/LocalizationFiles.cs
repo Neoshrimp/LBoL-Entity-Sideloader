@@ -33,10 +33,11 @@ namespace LBoLEntitySideloader.Resource
         public void AddLocaleFile(Locale locale, string fileName)
         {
 
+            fileName = Source.AddExtension(fileName, ".yaml");
 
-            if (!locTable.TryAdd(locale, () => loadingAction(fileName + ".yaml")))
+            if (!locTable.TryAdd(locale, () => loadingAction(fileName)))
             {
-                Log.LogDev()?.LogWarning($"{fileName + ".yaml"}: LocalizationFiles already have {locale} registered");
+                Log.LogDev()?.LogWarning($"{fileName}: LocalizationFiles already have {locale} registered");
             }
         }
 

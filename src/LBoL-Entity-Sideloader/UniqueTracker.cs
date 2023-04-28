@@ -1,4 +1,5 @@
-﻿using LBoL.Presentation.UI.Widgets;
+﻿using LBoL.ConfigData;
+using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using System;
@@ -69,7 +70,7 @@ namespace LBoLEntitySideloader
             {
                 if (oiDic.TryGetValue(component, out OverwriteInfo oi))
                 {
-                    log.LogError($"{user.assembly.GetName().Name} definition {definitionType.Name} is trying to change {component} of {id} but it's already modified by {oi.user.assembly.GetName().Name} defintition {oi.defType.Name}.");
+                    log.LogError($"{user.assembly.GetName().Name} definition {definitionType.Name} is trying to change {component} of {id} but it's already modified by {oi.user.assembly.GetName().Name} definition {oi.defType.Name}.");
                     return true;
                 }
                 else
@@ -90,7 +91,8 @@ namespace LBoLEntitySideloader
         static internal void TrackVanillaConfig(object config, bool allowDuplicateIndex = false )
         {
             Instance.configIds.TryAdd(config.GetType(), new HashSet<IdContainer>());
-            Instance.configIds.TryGetValue(config.GetType(), out HashSet<IdContainer> ids);
+            var ids = Instance.configIds[config.GetType()];
+
 
             var f_id = ConfigReflection.GetIdField(config.GetType());
 
@@ -103,7 +105,7 @@ namespace LBoLEntitySideloader
             }
             else
             {
-                ids.Add($"id: {id}");
+                ids.Add(id);
             }
 
             var f_index = ConfigReflection.HasIndex(config.GetType());
@@ -126,6 +128,7 @@ namespace LBoLEntitySideloader
             }
 
             Instance.id2ConfigListIndex.TryAdd(config.GetType(), new Dictionary<IdContainer, int>());
+            // assumes this method is only being called in config loading loop
             Instance.id2ConfigListIndex[config.GetType()].Add(id, Instance.tempConfigIndexTable.Next(config.GetType()));
             
 
@@ -157,6 +160,8 @@ namespace LBoLEntitySideloader
             Instance.configIds.TryAdd(configType, new HashSet<IdContainer>());
             var ids = Instance.configIds[configType];
 
+
+            log.LogDebug($"DEEEEEEEZ {UniqueTracker.Instance.configIds[typeof(CardConfig)].Contains("TianziMana")}");
 
             if (ids.Contains(Id))
             {

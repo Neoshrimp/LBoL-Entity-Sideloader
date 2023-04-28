@@ -1,0 +1,310 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
+        <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+        <PackageReference Include="HarmonyX" Version="2.9.0" />
+        <PackageReference Include="Krafs.Publicizer" Version="2.2.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+        <PublicizerLogFilePath>.\Krafs.publicizer.log</PublicizerLogFilePath>
+        <PublicizerRuntimeStrategies>IgnoresAccessChecksTo</PublicizerRuntimeStrategies>
+    </PropertyGroup>
+    
+    <!--Don't publicize virtual members which are meant to be overwritten in concrete entity logic types-->
+    <ItemGroup>
+        <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.Core;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="true" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.get_Name" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.InitExtraFlags" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.InitBoss" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.CreateMap" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.SetBoss" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetAdventure" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetShopNormalCards" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetShopToolCards" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetShopExhibit" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetEliteEnemyExhibit" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetSupplyExhibit" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetNeutralShiningExhibit" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.RollExhibitInAdventure" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetBossExhibits" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetDrinkTeaCardReward" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetEnemyCardReward" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetEliteEnemyCardReward" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetBossCardReward" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetEnemies" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetEliteEnemies" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Stage.GetBoss" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.get_DebugName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.GetBaseDescription" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.get_Name" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.get_PlayerName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.get_Description" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.add_PropertyChanged" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.remove_PropertyChanged" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GameEntity.NotifyChanged" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_OnDrawVisual" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnDraw" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_OnDiscardVisual" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnDiscard" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_OnExileVisual" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnExile" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_OnMoveVisual" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnMove" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_OnRetainVisual" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnRetain" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnRemove" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnLeaveHand" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.AfterUseAction" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Upgrade" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnEnterBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.OnLeaveBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Precondition" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Actions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.SetGuns" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_Damage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalDamage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_RawBlock" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalBlock" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalShield" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalValue1" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalValue2" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.GetBaseDescription" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.GetXCostFromPooled" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_AdditionalCost" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_Triggered" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_CanUpgrade" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_IsUpgraded" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_UpgradeReplaceImage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_CanUse" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_Description" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Verify" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.NotifyActivating" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.ShouldPreventOtherCardUsage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_PreventCardUsageMessage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.get_DebugName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.get_Name" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.get_Damage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.UltimateSkill.Actions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.GetBaseDescription" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.get_Description" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.get_IconName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.get_OverrideIconName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.get_ShowCounter" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnAdding" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnAdded" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnRemoving" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnRemoved" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.SpecialGain" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnGain" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnLose" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnEnterBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.OnLeaveBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.NotifyActivating" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.EnumerateDisplayWords" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Exhibit.EnumerateRelativeCards" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.GetName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.SetView" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.GetName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.get_Name" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.EnterGameRun" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.OnEnterGameRun" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.OnLeaveGameRun" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.OnEnterBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.OnLeaveBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.Die" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.OnDie" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.SetView" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Unit.GetView" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.GetName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.get_MovePriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.EnterGameRun" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.OnSpawn" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.Die" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.Actions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.GetTurnMoves" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.UpdateMoveCounters" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.AttackActions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.GetIntentions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.SetView" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_Name" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.LBoL.Core.IDisplayWord.get_Description" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.LBoL.Core.IDisplayWord.get_IsVerbose" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_IconName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_OverrideIconName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_ForceNotShowNumber" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.Stack" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.OnAdding" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.OnAdded" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.OnRemoving" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.OnRemoved" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.NotifyActivating" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.NotifyChanged" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.StackAction" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.ShouldPreventCardUsage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_PreventCardUsageMessage" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.StatusEffects.StatusEffect.get_UnitEffectName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.get_UpCounter" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.get_UpCounterColor" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.get_DownCounter" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.get_DownCounterColor" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.OnAdding" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.OnAdded" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.OnRemoving" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.OnRemoved" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.PassiveActions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Doll.ActiveActions" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GapOptions.GapOption.get_Type" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.GapOptions.GapOption.GetBaseDescription" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Intention.get_Type" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Intention.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Intention.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Intention.CreateFormatWrapper" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Units.Intention.get_PlayerName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Adventures.Adventure.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Adventures.Adventure.get_DialogName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Adventures.Adventure.InitVariables" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.LocalizeProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.LocalizeListProperty" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.get_Description" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.get_IconName" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.get_DefaultEventPriority" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.Initialize" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.OnGain" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.OnAdded" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.OnEnterBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.OnLeaveBattle" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.React" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.EnumerateDisplayWords" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.JadeBox.EnumerateRelativeCards" />
+    </ItemGroup>
+
+
+
+
+    <ItemGroup>
+        <Reference Include="LBoL.Base">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Base.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL.ConfigData">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.ConfigData.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL.Core">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL.EntityLib">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.EntityLib.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL.Presentation">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Presentation.dll</HintPath>
+        </Reference>
+        <Reference Include="Untitled.ConfigDataBuilder.Base">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\Untitled.ConfigDataBuilder.Base.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.Addressables">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\Unity.Addressables.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.InputSystem">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\Unity.InputSystem.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL-Entity-Sideloader">
+            <HintPath>$(BepInExFolder)\plugins\LBoL-Entity-Sideloader.dll</HintPath>
+        </Reference>
+        <Reference Include="LBoL-AddWatermark">
+            <HintPath>$(BepInExFolder)\plugins\LBoL-AddWatermark.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\*" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="Resources\" />
+    </ItemGroup>
+
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
+    </Target>
+
+
+</Project>
+
+

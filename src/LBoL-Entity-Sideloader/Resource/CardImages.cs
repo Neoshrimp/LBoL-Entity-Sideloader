@@ -10,16 +10,27 @@ using UnityEngine;
 
 namespace LBoLEntitySideloader.Resource
 {
+    /// <summary>
+    /// Container class for storing any Texture2D a card might use
+    /// </summary>
     public class CardImages : IResourceProvider<Texture2D>
     {
 
         public readonly static string upgradeString = "Upgrade";
 
+        /// <summary>
+        /// primary card image. Any aspect ratio of 452x312 will do. The card image will be scaled to 452x312 no matter the original size. 743x512 is the size vanilla images are using so there's not much point using larger ones.
+        /// </summary>
         public Texture2D main;
 
+        /// <summary>
+        /// [optional] card image after upgrading the card
+        /// </summary>
         public Texture2D upgrade;
 
-
+        /// <summary>
+        /// [optional] dictionary subArtistName => alternativeImage
+        /// </summary>
         public Dictionary<string, Texture2D> subs = new Dictionary<string, Texture2D>();
 
 
