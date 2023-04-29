@@ -169,7 +169,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -208,7 +208,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -247,7 +247,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -276,7 +276,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -318,7 +318,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -361,7 +361,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }   
@@ -404,7 +404,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -446,7 +446,7 @@ namespace BadExamples
             }
 
             [DontOverwrite]
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -485,7 +485,7 @@ namespace BadExamples
             }
 
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 var locFiles = new LocalizationFiles(embeddedSource);
                 return null;
@@ -515,7 +515,7 @@ namespace BadExamples
                 return null;
             }
 
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 return null;
             }
@@ -555,7 +555,7 @@ namespace BadExamples
             }
 
             [DontOverwrite]
-            public override LocalizationOption LoadText()
+            public override LocalizationOption LoadLocalization()
             {
                 throw new NotImplementedException();
             }

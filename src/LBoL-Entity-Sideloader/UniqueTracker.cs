@@ -161,7 +161,6 @@ namespace LBoLEntitySideloader
             var ids = Instance.configIds[configType];
 
 
-            log.LogDebug($"DEEEEEEEZ {UniqueTracker.Instance.configIds[typeof(CardConfig)].Contains("TianziMana")}");
 
             if (ids.Contains(Id))
             {

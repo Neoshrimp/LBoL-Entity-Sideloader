@@ -73,7 +73,7 @@ namespace LBoLEntitySideloader.Entities
             ResourcesHelper.Sprites[typeof(StatusEffect)].AlwaysAdd(UniqueId, sprite);
         }
 
-        public abstract LocalizationOption LoadText();
+        public abstract LocalizationOption LoadLocalization();
 
 
         public void Consume(LocalizationOption locOptions)

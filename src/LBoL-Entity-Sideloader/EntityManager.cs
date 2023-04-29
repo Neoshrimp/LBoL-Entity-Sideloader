@@ -461,6 +461,11 @@ namespace LBoLEntitySideloader
                     {
                         RegisterConfig(st, user);
                     }
+                    else if (entityDefinition is ExhibitTemplate et)
+                    {
+                        RegisterConfig(et, user);
+                    }
+
             }
 
             foreach (var kv in user.entityInfos)
@@ -514,6 +519,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => st.Consume(st.LoadSprite()), definition, nameof(st.LoadSprite), user);
                     }
+                    else if (definition is ExhibitTemplate et)
+                    {
+                        HandleOverwriteWrap(() => et.Consume(et.LoadSprite()), definition, nameof(et.LoadSprite), user);
+                    }
 
                 }
             }
@@ -535,12 +544,16 @@ namespace LBoLEntitySideloader
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
-                        HandleOverwriteWrap(() => ct.Consume(ct.LoadText()), definition, nameof(ct.LoadText), user);
+                        HandleOverwriteWrap(() => ct.Consume(ct.LoadLocalization()), definition, nameof(ct.LoadLocalization), user);
 
                     }
                     else if (definition is StatusEffectTemplate st)
                     {
-                        HandleOverwriteWrap(() => st.Consume(st.LoadText()), definition, nameof(st.LoadText), user);
+                        HandleOverwriteWrap(() => st.Consume(st.LoadLocalization()), definition, nameof(st.LoadLocalization), user);
+                    }
+                    else if (definition is ExhibitTemplate et)
+                    {
+                        HandleOverwriteWrap(() => et.Consume(et.LoadLocalization()), definition, nameof(et.LoadLocalization), user);
                     }
 
                 }

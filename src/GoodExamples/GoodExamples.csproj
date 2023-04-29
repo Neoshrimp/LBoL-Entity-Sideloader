@@ -296,7 +296,8 @@
 
 
     <ItemGroup>
-      <Folder Include="Resources\" />
+      <None Remove="resources\CardsEn.yaml" />
+      <None Remove="resources\ExhibitsEn.yaml" />
     </ItemGroup>
 
 

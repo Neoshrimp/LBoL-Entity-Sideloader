@@ -29,7 +29,7 @@ namespace GunToolCard
             return null;
         }
 
-        public override LocalizationOption LoadText()
+        public override LocalizationOption LoadLocalization()
         {
 /*            var locFiles = new LocalizationFiles(embeddedSource);
 
