@@ -82,7 +82,8 @@ namespace LBoLEntitySideloader.Entities
 
             foreach (var kv in sprites.LoadMany())
             {
-                ResourcesHelper.Sprites[typeof(Exhibit)].AlwaysAdd(UniqueId + kv.Key, kv.Value);
+                if(kv.Value != null)
+                    ResourcesHelper.Sprites[typeof(Exhibit)].AlwaysAdd(UniqueId + kv.Key, kv.Value);
             }
 
 

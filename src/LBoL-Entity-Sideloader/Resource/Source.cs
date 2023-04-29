@@ -18,7 +18,7 @@ namespace LBoLEntitySideloader.Resource
 
         public static string LegalizeFileName(string fileName)
         {
-            string illegalCharsPattern = @"[\|\>\<:""\\/\\\?\*]";
+            string illegalCharsPattern = @"[\|\>\<:""\?\*]";
             Regex regex = new Regex(illegalCharsPattern);
             string validFileName = regex.Replace(fileName, "");
             return validFileName;

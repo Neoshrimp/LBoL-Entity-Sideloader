@@ -13,6 +13,9 @@ using LBoL.Core;
 using LBoL.Base;
 using LBoL.Core.Battle;
 using LBoL.Core.Battle.BattleActions;
+using LBoL.Base.Extensions;
+using System.Collections;
+using LBoL.Presentation;
 
 namespace GoodExamples.Exhibits
 {
@@ -33,8 +36,24 @@ namespace GoodExamples.Exhibits
 
         public override ExhibitSprites LoadSprite()
         {
+            // embedded resource folders are separated by a dot
+            var folder = "FistOfTheFreeFairies.";
             var exhibitSprites = new ExhibitSprites();
-            exhibitSprites.main = ResourceLoader.LoadSprite(GetId()+".png", embeddedSource);
+
+            Func<string, Sprite> wrap = (s) => ResourceLoader.LoadSprite((folder + GetId() + s + ".png"), embeddedSource);
+
+            exhibitSprites.main = wrap("");
+
+
+            exhibitSprites.customSprites.Add("none", wrap("_none"));
+            exhibitSprites.customSprites.Add("luna", wrap("_luna"));
+            exhibitSprites.customSprites.Add("-luna", wrap("_-luna"));
+            exhibitSprites.customSprites.Add("star", wrap("_star"));
+            exhibitSprites.customSprites.Add("-star", wrap("_-star"));
+            exhibitSprites.customSprites.Add("sunny", wrap("_sunny"));
+            exhibitSprites.customSprites.Add("-sunny", wrap("_-sunny"));
+
+
             return exhibitSprites;
         }
 
@@ -72,6 +91,46 @@ namespace GoodExamples.Exhibits
         [EntityLogic(typeof(FistOfTheThreeFairiesExDefinition))]
         public sealed class FistOfTheThreeFairiesEx : Exhibit
         {
+
+            public override string OverrideIconName
+            {
+                get
+                {
+                    if (Battle == null)
+                        return Id;
+
+                    if (triggered)
+                        return Id;
+
+                    if (cardTracker.Empty())
+                        return Id + "none";
+                    if (cardTracker.Count == 1)
+                    { 
+                        if(cardTracker.Contains(CardType.Attack))
+                            return Id + "sunny";
+                        if (cardTracker.Contains(CardType.Defense))
+                            return Id + "star";
+                        if (cardTracker.Contains(CardType.Skill))
+                            return Id + "luna";
+                    }
+                    if (cardTracker.Count == 2)
+                    {
+                        if (!cardTracker.Contains(CardType.Attack))
+                            return Id + "-sunny";
+                        if (!cardTracker.Contains(CardType.Defense))
+                            return Id + "-star";
+                        if (!cardTracker.Contains(CardType.Skill))
+                            return Id + "-luna";
+                    }
+
+
+                    return Id;
+                }
+            
+            }
+
+
+
             protected override void OnEnterBattle()
             {
                 ReactBattleEvent(Battle.CardUsed, new EventSequencedReactor<CardUsingEventArgs>(OnCardUsed));
@@ -81,16 +140,32 @@ namespace GoodExamples.Exhibits
             private IEnumerable<BattleAction> OnCardUsed(CardUsingEventArgs args)
             {
 
-                if (!cardTracker.Contains(args.Card.CardType))
-                {
-                    cardTracker.Add(args.Card.CardType);
-                    Counter++;
+                var cardType = args.Card.CardType;
 
-                    if (Counter == 3)
+
+                if ((CardType.Attack | CardType.Defense | CardType.Defense).HasFlag(cardType))
+                {
+
+                    if (!cardTracker.Contains(cardType))
                     {
-                        Counter = 0;
+                        cardTracker.Add(cardType);
+                        Counter++;
+
+                        if (Counter == 3)
+                        {
+                            NotifyActivating();
+                            Counter = 0;
+                            cardTracker.Clear();
+                            triggered = true;
+                            GameMaster.Instance.StartCoroutine(ResetTrigger());
+                            yield return new AddCardsToHandAction(Library.CreateCards<FistOfTheThreeFairiesBigAttack>(1));
+                        }
+                    }
+                    else
+                    {
+                        Counter = 1;
                         cardTracker.Clear();
-                        yield return new AddCardsToHandAction(Library.CreateCards<FistOfTheThreeFairiesBigAttack>(1));
+                        cardTracker.Add(cardType);
                     }
 
                 }
@@ -100,11 +175,18 @@ namespace GoodExamples.Exhibits
                     cardTracker.Clear();
                 }
 
-
-
             }
+            // 2do this is shit
+            IEnumerator ResetTrigger()
+            {
+                yield return new WaitForSeconds(2);
+                triggered = false;
+            }
+            
 
             private HashSet<CardType> cardTracker = new HashSet<CardType>();
+
+            private bool triggered;
         }
     }
 
@@ -147,7 +229,7 @@ namespace GoodExamples.Exhibits
                    Rarity: default,
                    Type: CardType.Attack,
                    TargetType: TargetType.SingleEnemy,
-                   Colors: new List<ManaColor>() { ManaColor.Colorless },
+                   Colors: new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White },
                    IsXCost: false,
                    Cost: new ManaGroup() { Any  = 3 },
                    UpgradedCost: null,
@@ -168,8 +250,8 @@ namespace GoodExamples.Exhibits
                    UpgradedScry: null,
                    ToolPlayableTimes: null,
 
-                   Keywords: Keyword.Exile,
-                   UpgradedKeywords: Keyword.Exile | Keyword.Retain,
+                   Keywords: Keyword.Exile | Keyword.Replenish,
+                   UpgradedKeywords: Keyword.Exile | Keyword.Replenish | Keyword.Retain | Keyword.Accuracy,
                    EmptyDescription: false,
                    RelativeKeyword: default,
                    UpgradedRelativeKeyword: default,
@@ -188,6 +270,7 @@ namespace GoodExamples.Exhibits
         }
 
     }
+
     [EntityLogic(typeof(FistOfTheThreeFairiesBigAttackDefinition))]
     public sealed class FistOfTheThreeFairiesBigAttack : Card
     {

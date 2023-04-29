@@ -1,5 +1,5 @@
 FistOfTheThreeFairiesEx:
-  Description: "Whenever attack, defense and skill cards are played one after the other in any order,\
-    add {FistOfTheThreeFairiesBigAttack} to the hand."
+  Description: "Whenever the last 3 cards played, regardless of order, are Attack, Defense and Skill, \
+    add |Big Attack| to the hand."
   Name: Fist Of The Three Fairies
   FlavorText: "Too adorable."
