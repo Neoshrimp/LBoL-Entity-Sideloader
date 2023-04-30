@@ -57,6 +57,8 @@ namespace GoodExamples.Exhibits
             return exhibitSprites;
         }
 
+
+
         public override ExhibitConfig MakeConfig()
         {
             var exhibitConfig = new ExhibitConfig(
@@ -134,7 +136,19 @@ namespace GoodExamples.Exhibits
             protected override void OnEnterBattle()
             {
                 ReactBattleEvent(Battle.CardUsed, new EventSequencedReactor<CardUsingEventArgs>(OnCardUsed));
+                Counter = 0;
+                cardTracker.Clear();
+                // notify changed raises event to check if the icon needs changing (essentially, makes ExhibitWidget call OverideIconName). It's purely for visual effects.
+                NotifyChanged();
+                log.LogDebug("milky mliky deeznuts");
+            }
 
+            protected override void OnLeaveBattle()
+            {
+                base.OnLeaveBattle();
+                Counter = 0;
+                cardTracker.Clear();
+                NotifyChanged();
             }
 
             private IEnumerable<BattleAction> OnCardUsed(CardUsingEventArgs args)
@@ -176,11 +190,13 @@ namespace GoodExamples.Exhibits
                 }
 
             }
-            // 2do this is shit
+
+
             IEnumerator ResetTrigger()
             {
                 yield return new WaitForSeconds(2);
                 triggered = false;
+                NotifyChanged();
             }
             
 
@@ -232,7 +248,7 @@ namespace GoodExamples.Exhibits
                    Colors: new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White },
                    IsXCost: false,
                    Cost: new ManaGroup() { Any  = 3 },
-                   UpgradedCost: null,
+                   UpgradedCost: new ManaGroup() { Any = 1 },
                    MoneyCost: null,
                    Damage: 33,
                    UpgradedDamage: null,
@@ -250,8 +266,8 @@ namespace GoodExamples.Exhibits
                    UpgradedScry: null,
                    ToolPlayableTimes: null,
 
-                   Keywords: Keyword.Exile | Keyword.Replenish,
-                   UpgradedKeywords: Keyword.Exile | Keyword.Replenish | Keyword.Retain | Keyword.Accuracy,
+                   Keywords: Keyword.Exile | Keyword.TempRetain,
+                   UpgradedKeywords: Keyword.Exile | Keyword.Retain,
                    EmptyDescription: false,
                    RelativeKeyword: default,
                    UpgradedRelativeKeyword: default,
