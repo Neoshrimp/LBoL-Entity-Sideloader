@@ -10,7 +10,9 @@ using System.Xml.Linq;
 
 namespace LBoLEntitySideloader.ReflectionHelpers
 {
-
+    /// <summary>
+    /// Reflection methods for work with Config types
+    /// </summary>
     public class ConfigReflection
     {
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
@@ -100,7 +102,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static FieldInfo GetIdField(Type configType) => GetFieldInfo(configType, potentialIdNames, idFieldCache);
 
-        public static FieldInfo GetFieldInfo(Type configType, string[] potentialNames, Dictionary<Type, FieldInfo> cache)
+        private static FieldInfo GetFieldInfo(Type configType, string[] potentialNames, Dictionary<Type, FieldInfo> cache)
         {
             if (cache.TryGetValue(configType, out FieldInfo result))
                 return result;

@@ -16,17 +16,7 @@ namespace LBoLEntitySideloader.Resource
 
 
         /// <summary>
-        /// [optional] alternative image when some condition has triggered. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji.
-        /// </summary>
-        public Sprite overrideSprite;
-
-        /// <summary>
-        /// [optional] suffix used to specify alternative icon key. The resulting key will be UniqueId + overrideSuffix and will need to be specified in OverrideIconName.
-        /// </summary>
-        public string overrideSuffix = "Override";
-
-        /// <summary>
-        /// [optional] additional sprites to cache to ResourcesHelper.Sprites dictionary. Requires custom patches to make use of. UniqueId will be prefixed for each of the keys in this dictionary when caching.
+        /// [optional] alternative images when some conditions have beenmet. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji. Additional sprites will cached to ResourcesHelper.Sprites dictionary. UniqueId will be prefixed for each of the keys in this dictionary when caching which will be needed when OverrideIconName tries to set a sprite
         /// </summary>
         public Dictionary<string, Sprite> customSprites = new Dictionary<string, Sprite>();
 
@@ -37,11 +27,6 @@ namespace LBoLEntitySideloader.Resource
             this.main = main;
         }
 
-        public ExhibitSprites(Sprite main, Sprite overrideSprite, string overrideSuffix = "Override") : this(main)
-        {
-            this.overrideSprite = overrideSprite;
-            this.overrideSuffix = overrideSuffix;
-        }
 
         public Sprite Load()
         {
@@ -50,7 +35,7 @@ namespace LBoLEntitySideloader.Resource
 
         public Dictionary<string, Sprite> LoadMany()
         {
-            var dic = new Dictionary<string, Sprite> { { overrideSuffix, overrideSprite } };
+            var dic = new Dictionary<string, Sprite>();
 
             customSprites.Do(kv => dic.TryAdd(kv.Key, kv.Value));
 

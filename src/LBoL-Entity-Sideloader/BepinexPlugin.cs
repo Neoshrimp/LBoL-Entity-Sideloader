@@ -184,7 +184,6 @@ namespace LBoLEntitySideloader
             }
         }
 
-        // 2do does not reload exhibit type?
         /// <summary>
         /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and developing. Requires scriptengine. 
         /// </summary>

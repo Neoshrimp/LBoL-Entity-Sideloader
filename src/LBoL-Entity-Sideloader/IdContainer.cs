@@ -6,7 +6,10 @@ using System.Text;
 
 namespace LBoLEntitySideloader
 {
-
+    /// <summary>
+    /// Can be either string or int and switch between the two (almost) seamlessly.
+    /// However, almost all entities use string as Id except for Piece and Exp 
+    /// </summary>
     public struct IdContainer : IEquatable<IdContainer>
     {
         private string sId;

@@ -16,6 +16,7 @@ using LBoL.Core.Battle.BattleActions;
 using LBoL.Base.Extensions;
 using System.Collections;
 using LBoL.Presentation;
+using LBoL.EntityLib.Cards.Neutral.Blue;
 
 namespace GoodExamples.Exhibits
 {
@@ -140,7 +141,6 @@ namespace GoodExamples.Exhibits
                 cardTracker.Clear();
                 // notify changed raises event to check if the icon needs changing (essentially, makes ExhibitWidget call OverideIconName). It's purely for visual effects.
                 NotifyChanged();
-                log.LogDebug("milky mliky deeznuts");
             }
 
             protected override void OnLeaveBattle()
@@ -206,6 +206,9 @@ namespace GoodExamples.Exhibits
         }
     }
 
+
+
+
     public sealed class FistOfTheThreeFairiesBigAttackDefinition : CardTemplate
     {
         public override IdContainer GetId()
@@ -234,9 +237,11 @@ namespace GoodExamples.Exhibits
                    Id: "",
                    Order: 10,
                    AutoPerform: true,
-                   Perform: new string[0][],
-                   GunName: "Simple1",
-                   GunNameBurst: "Simple1",
+                   // perform CameraFlash effect, player unit does spellcard animation, play NuclearBomb sfx
+                   Perform: new string[3][] { new string []{ "2", "CameraFlash" }, new string[] { "3", "spell" }, new string[] { "4", "Nuclearbomb" } },
+                   // SuikaBigball gun
+                   GunName: "元鬼玉",
+                   GunNameBurst: "元鬼玉B",
                    DebugLevel: 0,
                    Revealable: false,
                    IsPooled: false,
@@ -248,7 +253,7 @@ namespace GoodExamples.Exhibits
                    Colors: new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White },
                    IsXCost: false,
                    Cost: new ManaGroup() { Any  = 3 },
-                   UpgradedCost: new ManaGroup() { Any = 1 },
+                   UpgradedCost: new ManaGroup() { Any = 3 },
                    MoneyCost: null,
                    Damage: 33,
                    UpgradedDamage: null,
@@ -278,7 +283,7 @@ namespace GoodExamples.Exhibits
                    UpgradedRelativeCards: new List<string>() { },
                    Owner: null,
                    Unfinished: false,
-                   Illustrator: "chamaruk",
+                   Illustrator: "@chamaruk",
                    SubIllustrator: new List<string>() { }
                 );
 

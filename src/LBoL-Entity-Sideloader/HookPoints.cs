@@ -133,8 +133,11 @@ namespace LBoLEntitySideloader
 
 
 
-
+        /// <summary>
+        /// hook after all the vanilla configs, entities, assets and localization have been loaded. Can be used to specifically modify vanilla properties
+        /// </summary>
         [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.InitializeRestAsync))]
+        [HarmonyPriority(Priority.First)]
         class GameEntry_Patch
         {
             static public async void Postfix(Task __result)
@@ -153,6 +156,7 @@ namespace LBoLEntitySideloader
 
         //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
         [HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
+        [HarmonyPriority(Priority.First)]
         class Localization_Patch
         {
             static async UniTask Postfix(UniTask __result)
