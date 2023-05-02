@@ -11,11 +11,11 @@ using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using YamlDotNet.RepresentationModel;
-using static GunToolCard.Plugin;
+using static GoodExamples.BepinexPlugin;
 using LBoL.Core.StatusEffects;
+using UnityEngine;
 
-namespace GunToolCard
+namespace GoodExamples
 {
     public sealed class InnateDreamDefinition : CardTemplate
     {
@@ -26,17 +26,14 @@ namespace GunToolCard
 
         public override CardImages LoadCardImages()
         {
-            return null;
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png");
+            return imgs;
         }
 
         public override LocalizationOption LoadLocalization()
         {
-/*            var locFiles = new LocalizationFiles(embeddedSource);
-
-            locFiles.AddLocaleFile(Locale.En, GetId());*/
-
             return new GlobalLocalization();
-
         }
 
         public override CardConfig MakeConfig()
@@ -47,8 +44,8 @@ namespace GunToolCard
                Order: 10,
                AutoPerform: true,
                Perform: new string[0][],
-               GunName: "TSakuyaKnife",
-               GunNameBurst: "TSakuyaKnifeB",
+               GunName: "梦之御札",
+               GunNameBurst: "梦之御札B",
                DebugLevel: 0,
                Revealable: true,
                IsPooled: true,
@@ -88,9 +85,9 @@ namespace GunToolCard
                UpgradedRelativeEffects: new List<string>() { },
                RelativeCards: new List<string>() { },
                UpgradedRelativeCards: new List<string>() { },
-               Owner: "Reimu",
+               Owner: VanillaCharNames.Reimu,
                Unfinished: false,
-               Illustrator: null,
+               Illustrator: "petas",
                SubIllustrator: new List<string>() { }
             );
 
@@ -103,15 +100,14 @@ namespace GunToolCard
         {
             protected override void OnEnterBattle(BattleController battle)
             {
-                base.ReactBattleEvent<GameEventArgs>(base.Battle.BattleStarted, new EventSequencedReactor<GameEventArgs>(this.OnBattleStarted));
+                ReactBattleEvent(Battle.BattleStarted, new EventSequencedReactor<GameEventArgs>(OnFirstTunStarted));
             }
 
-            private IEnumerable<BattleAction> OnBattleStarted(GameEventArgs args)
+            private IEnumerable<BattleAction> OnFirstTunStarted(GameEventArgs args)
             {
-
-
-                if (Battle?.Player.Hp <= 30)
+                if (Battle?.Player.Hp <= 30 && this.Zone != CardZone.Hand)
                 {
+                    NotifyActivating();
 
                     yield return new MoveCardAction(this, CardZone.Hand);
 

@@ -1,5 +1,5 @@
 ﻿FistOfTheThreeFairiesBigAttack:
-  Name: Big Attack
+  Name: Triple Fist of Death
   Description: 'Deal {Damage} damage.'
 
 StupidFlashbangTool:
@@ -8,3 +8,9 @@ StupidFlashbangTool:
    Cancel enemy intentions. |Overdraft| {Value1}. End the turn.\n\
    |Limited【{DeckCounter}】|"
   FlavorText: '"Hey you. You''re finally awake."'
+
+InnateDream:
+  Description: "Deal {Damage} damage. \n|At the start of combat:| \
+     \ If {PlayerName} has 30 or less life, move this card to the hand. \
+     \ It |temporarily costs| {Mana}."
+  Name: Innate Dream

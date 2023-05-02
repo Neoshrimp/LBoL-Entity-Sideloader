@@ -218,7 +218,9 @@ namespace GoodExamples.Exhibits
 
         public override CardImages LoadCardImages()
         {
-            return null;
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png");
+            return imgs;
         }
 
         public override LocalizationOption LoadLocalization()
@@ -237,8 +239,8 @@ namespace GoodExamples.Exhibits
                    Id: "",
                    Order: 10,
                    AutoPerform: true,
-                   // perform CameraFlash effect, player unit does spellcard animation, play NuclearBomb sfx
-                   Perform: new string[3][] { new string []{ "2", "CameraFlash" }, new string[] { "3", "spell" }, new string[] { "4", "Nuclearbomb" } },
+                   // play NuclearBomb sfx 3 times
+                   Perform: new string[3][] { new string[] { "4", "Nuclearbomb" }, new string[] { "4", "Nuclearbomb", "0.4"}, new string[] { "4", "Nuclearbomb", "0.8" }, },
                    // SuikaBigball gun
                    GunName: "元鬼玉",
                    GunNameBurst: "元鬼玉B",
@@ -272,7 +274,7 @@ namespace GoodExamples.Exhibits
                    ToolPlayableTimes: null,
 
                    Keywords: Keyword.Exile | Keyword.TempRetain,
-                   UpgradedKeywords: Keyword.Exile | Keyword.Retain,
+                   UpgradedKeywords: Keyword.Exile | Keyword.Retain | Keyword.Accuracy,
                    EmptyDescription: false,
                    RelativeKeyword: default,
                    UpgradedRelativeKeyword: default,
@@ -283,7 +285,7 @@ namespace GoodExamples.Exhibits
                    UpgradedRelativeCards: new List<string>() { },
                    Owner: null,
                    Unfinished: false,
-                   Illustrator: "@chamaruk",
+                   Illustrator: "neo",
                    SubIllustrator: new List<string>() { }
                 );
 

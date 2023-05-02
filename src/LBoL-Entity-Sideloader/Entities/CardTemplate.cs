@@ -33,11 +33,11 @@ namespace LBoLEntitySideloader.Entities
 
         public static class VanillaCharNames
         {
-            public static string Reimu = "Reimu";
-            public static string Marisa = "Marisa";
-            public static string Sakuya = "Sakuya";
-            public static string Cirno = "Cirno";
-            public static string Koishi = "Koishi";
+            public const string Reimu = "Reimu";
+            public const string Marisa = "Marisa";
+            public const string Sakuya = "Sakuya";
+            public const string Cirno = "Cirno";
+            public const string Koishi = "Koishi";
         }
 
 

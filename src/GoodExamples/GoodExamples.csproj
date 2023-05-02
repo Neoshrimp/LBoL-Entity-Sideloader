@@ -298,6 +298,8 @@
     <ItemGroup>
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\ExhibitsEn.yaml" />
+      <None Remove="Resources\FistOfTheFreeFairies\FistOfTheThreeFairiesBigAttack.png" />
+      <None Remove="Resources\InnateDream.png" />
       <None Remove="Resources\StupidFlashbangTool.png" />
     </ItemGroup>
 
