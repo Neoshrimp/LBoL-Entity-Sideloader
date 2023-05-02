@@ -33,7 +33,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         static Dictionary<Type, Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>>> entityDicCache = new Dictionary<Type, Dictionary<TableFieldName, AccessTools.FieldRef<object, Dictionary<string, Type>>>>();
 
-        public static AccessTools.FieldRef<object, Dictionary<string, Type>> GetAccessRef(Type facType, TableFieldName tableFieldName)
+        public static AccessTools.FieldRef<object, Dictionary<string, Type>> AccessTypeDicts(Type facType, TableFieldName tableFieldName)
         {
 
             if (!factoryTypes.Contains(facType))

@@ -245,6 +245,45 @@ namespace LBoLEntitySideloader
         }
 
 
+        /// <summary>
+        /// Makes vfx and sfx optionally delayed in perform array
+        /// </summary>
+        [HarmonyPatch(typeof(Card), nameof(Card.CardPerformAction))]
+        class CardPerformAction_Patch
+        {
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                int i = 0;
+                var ciList = instructions.ToList();
+                var c = ciList.Count();
+                CodeInstruction prevCi = null;
+                foreach (var ci in instructions)
+                {
+                    if (ci.Is(OpCodes.Ldc_R4, 0f) && (ciList.ElementAtOrDefault(i + 5)?.Is(OpCodes.Call, AccessTools.Method(typeof(PerformAction), nameof(PerformAction.Effect))) ?? false))
+                    {
+                        yield return new CodeInstruction(OpCodes.Ldloc_2);
+                    }
+
+                    else if (ci.Is(OpCodes.Ldc_R4, 0f) && (ciList.ElementAtOrDefault(i + 1)?.Is(OpCodes.Call, AccessTools.Method(typeof(PerformAction), nameof(PerformAction.Sfx))) ?? false))
+                    {
+                    
+                        yield return new CodeInstruction(OpCodes.Ldloc_2);
+
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
+                    prevCi = ci;
+                    i++;
+                }
+            }
+
+            }
+
+
+
 
     }
 }

@@ -1,3 +1,10 @@
 ﻿FistOfTheThreeFairiesBigAttack:
   Name: Big Attack
   Description: 'Deal {Damage} damage.'
+
+StupidFlashbangTool:
+  Name: Flashbang
+  Description: "Deal {Damage} damage to |everyone|.\n\
+   Cancel enemy intentions. |Overdraft| {Value1}. End the turn.\n\
+   |Limited【{DeckCounter}】|"
+  FlavorText: '"Hey you. You''re finally awake."'

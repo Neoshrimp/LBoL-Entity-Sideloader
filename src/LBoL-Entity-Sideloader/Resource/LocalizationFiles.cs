@@ -74,7 +74,7 @@ namespace LBoLEntitySideloader.Resource
 
         public static void MissingValueError(string enityLogicId)
         {
-            Log.log.LogWarning($"{enityLogicId} was registered but localization file contains no values for it. Did you forget to add \"{enityLogicId}:\" entry to .yaml file?");
+            Log.log.LogWarning($"{enityLogicId} entity was registered but localization file contains no values for {enityLogicId}. Did you forget to add \"{enityLogicId}:\" entry to .yaml file?");
         }
 
         public YamlMappingNode LoadFallback() => Load();

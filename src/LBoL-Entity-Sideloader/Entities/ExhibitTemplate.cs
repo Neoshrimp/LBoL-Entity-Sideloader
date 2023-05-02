@@ -15,6 +15,8 @@ using static LBoLEntitySideloader.BepinexPlugin;
 
 namespace LBoLEntitySideloader.Entities
 {
+
+    // 2do TEST ExhibitInfoAttribute for custom exhibits (same for adventures)
     public abstract class ExhibitTemplate : EntityDefinition,
         IConfigProvider<ExhibitConfig>,
         IGameEntityProvider<Exhibit>,

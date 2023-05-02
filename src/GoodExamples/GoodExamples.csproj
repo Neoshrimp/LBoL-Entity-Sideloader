@@ -298,6 +298,7 @@
     <ItemGroup>
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\ExhibitsEn.yaml" />
+      <None Remove="Resources\StupidFlashbangTool.png" />
     </ItemGroup>
 
 

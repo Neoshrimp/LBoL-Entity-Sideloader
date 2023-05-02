@@ -11,7 +11,7 @@ using System.Xml.Linq;
 namespace LBoLEntitySideloader.ReflectionHelpers
 {
     /// <summary>
-    /// Reflection methods for work with Config types
+    /// Reflection methods for working with Config types.
     /// </summary>
     public class ConfigReflection
     {
@@ -26,7 +26,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
         static readonly HashSet<Type> intAsIdTypes = new HashSet<Type>() { typeof(PieceConfig), typeof(ExpConfig) };
 
 
-        static public string BackingWrap(string s) { return $"<{s}>k__BackingField";  }
+        static public string BackingWrap(string s) { return $"<{s}>k__BackingField"; }
 
         static Dictionary<Type, FieldInfo> indexFields = new Dictionary<Type, FieldInfo>()
         {
@@ -78,6 +78,33 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             if (indexFields.TryGetValue(configType, out var fieldInfo))
                 return fieldInfo;
             return null;    
+        }
+
+
+        static Dictionary<Type, Type> config2FactoryType = new Dictionary<Type, Type>();
+
+        public static Dictionary<Type, Type> GetConfig2FactoryType(bool debug = false, bool refresh = false) { 
+
+            if (config2FactoryType.Empty() || refresh)
+            {
+                foreach (var factype in TypeFactoryReflection.factoryTypes)
+                {
+                    var potentialConfig = factype.Name + "Config";
+                    var config = AllConfigTypes().FirstOrDefault(t => t.Name == potentialConfig);
+                    if (config != null)
+                    {
+                        config2FactoryType.Add(config, factype);
+                    }
+                    else
+                    {
+                        if(debug)
+                            log.LogDebug($"{factype.Name} doesn't have corresponding config");
+                    }
+
+                }
+            }
+            return config2FactoryType;
+            
         }
 
 
@@ -137,6 +164,8 @@ namespace LBoLEntitySideloader.ReflectionHelpers
         static string[] potentialFromIdNames = new string[] { "FromId", "FromName", "FromLevel", "FromID" };
 
         static Dictionary<Type, MethodInfo> fromIdCache = new Dictionary<Type, MethodInfo>();
+
+
 
         public static MethodInfo GetFromIdMethod(Type configType, bool verify = true)
         {

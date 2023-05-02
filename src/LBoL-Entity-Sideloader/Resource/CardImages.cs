@@ -54,25 +54,25 @@ namespace LBoLEntitySideloader.Resource
             this.subs = subs;
         }
 
-        public void AutoLoad(CardTemplate cardTemplate, string extension, bool hasUpgradeImage = false)
+        public void AutoLoad(CardTemplate cardTemplate, string extension, string relativePath = "", bool hasUpgradeImage = false)
         {
 
-            AutoLoad(cardTemplate.GetId(), extension, CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator as List<string>, hasUpgradeImage);
+            AutoLoad(cardTemplate.GetId(), extension, relativePath, CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator as List<string>, hasUpgradeImage);
             
         }
 
-        public void AutoLoad(string mainId, string extension, List<string> subIds = null, bool hasUpgradeImage = false)
+        public void AutoLoad(string mainId, string extension, string relativePath, List<string> subIds = null, bool hasUpgradeImage = false)
         {
 
-            main = loadingAction(mainId + extension);
+            main = loadingAction(relativePath + mainId + extension);
 
             if (hasUpgradeImage)
-                upgrade = loadingAction(mainId + upgradeString + extension);
+                upgrade = loadingAction(relativePath + mainId + upgradeString + extension);
 
             if (subIds != null)
                 foreach (var sub in subIds)
                 {
-                    subs.Add(mainId + sub, loadingAction(mainId + sub + extension));
+                    subs.Add(mainId + sub, loadingAction(relativePath + mainId + sub + extension));
                 }
             
         }

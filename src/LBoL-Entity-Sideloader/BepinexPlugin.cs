@@ -141,6 +141,9 @@ namespace LBoLEntitySideloader
 
         public static ConfigEntry<KeyboardShortcut> reloadKeyConfig;
 
+        public static ConfigEntry<bool> autoRestartLevelConfig;
+
+
         public static BepinexPlugin Instance;
         private void Awake()
         {
@@ -152,11 +155,15 @@ namespace LBoLEntitySideloader
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            devModeConfig = Config.Bind("DevMode", "DevMode", false, "Enables mod developer mode for extra functionality and error feedback");
+            devModeConfig = Config.Bind("DevMode", "DevMode", false, "Enables mod developer mode for extra functionality and error feedback.");
 
-            devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled");
+            devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled.");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities (requires scriptengine)");
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities (requires scriptengine).");
+
+            autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
+
+
             harmony.PatchAll();
 
         }
@@ -212,6 +219,11 @@ namespace LBoLEntitySideloader
 
                 EntityManager.Instance.LoadAll();
 
+
+                if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
+                {
+                    UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
+                }
 
             }));
 

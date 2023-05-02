@@ -19,12 +19,22 @@ namespace LBoLEntitySideloader.Resource
         public override Stream Load(string id)
         {
 
+            id = LegalizeFileName(id);
 
             var filePath = Path.Combine(path, id);
-            FileStream stream = new FileStream(filePath, FileMode.Open);
+
+            try
+            {
+                FileStream stream = new FileStream(filePath, FileMode.Open);
+                return stream;
+            }
+            catch (IOException ex)
+            {
+                Log.log.LogError(ex);
+                return null;
+            }
 
 
-            return stream;
         }
     }
 

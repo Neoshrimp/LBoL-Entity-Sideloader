@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using LBoL.Base.Extensions;
+using LBoL.Core;
+using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Reflection;
@@ -357,7 +359,7 @@ namespace LBoLEntitySideloader
                         if (!user.IsForOverwriting(ei.definitionType))
                         {
 
-                            if (!TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
+                            if (!TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().TryAdd(ei.entityType.FullName, ei.entityType))
                             {
                                 log.LogError($"RegisterType: {ei.entityType.Name} matches an already registered type. Please change plugin namespace.");
                             }
@@ -369,11 +371,11 @@ namespace LBoLEntitySideloader
 
                             if (!UniqueTracker.IsOverwriten(facType, id, "EntityLogic", ei.definitionType, user))
                             {
-                                var originalType = TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
+                                var originalType = TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
 
                                 user.typeName2VanillaType.Add(id, originalType);
 
-                                TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
+                                TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[originalType.FullName] = ei.entityType;
                             }
 
 
@@ -383,10 +385,14 @@ namespace LBoLEntitySideloader
 
 
                         if (!user.IsForOverwriting(ei.definitionType))
-
-                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
+                            TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Add(uId, ei.entityType);
                         else
-                            TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().AlwaysAdd(uId, ei.entityType);
+                            TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)().AlwaysAdd(uId, ei.entityType);
+
+
+                        ProcessWeighterAttribute(facType, ei.entityType);
+
+
                     }
                     catch (Exception ex)
                     {
@@ -394,6 +400,25 @@ namespace LBoLEntitySideloader
                         log.LogError(ex);
                     }
                 }
+            }
+        }
+
+        // since custom entities are loaded later than vanilla their weighter attribute never gets processed
+        private static void ProcessWeighterAttribute(Type facType, Type entityType)
+        {
+            if (facType == typeof(Exhibit))
+            {
+                var exInfo = entityType.GetCustomAttribute<ExhibitInfoAttribute>();
+                var weighter = exInfo?.CreateWeighter();
+
+                if (weighter != null)
+                {
+                    Library._exhibitWeighterTable.AlwaysAdd(entityType, weighter);
+                }
+            }
+            else if (facType == typeof(Adventure))
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -414,19 +439,29 @@ namespace LBoLEntitySideloader
 
                     if (!user.IsForOverwriting(ei.definitionType))
                     {
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().Remove(ei.entityType.FullName);
+                        TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)().Remove(ei.entityType.FullName);
 
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Remove(uId);
+                        TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)().Remove(uId);
 
+                        if (facType == typeof(Exhibit))
+                        {
+                            Library._exhibitWeighterTable.Remove(ei.entityType);
+                        }
+                        else if (facType == typeof(Adventure))
+                        {
+                            Library._adventureWeighterTable.Remove(ei.entityType);
+                        }
                     }
                     else
                     {
 
                         var originalType = user.typeName2VanillaType[uId];
                         // restore original types
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[ei.entityType.FullName] = originalType;
+                        TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.FullNameTypeDict)()[ei.entityType.FullName] = originalType;
 
-                        TypeFactoryReflection.GetAccessRef(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId] = originalType;
+                        TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId] = originalType;
+
+                        ProcessWeighterAttribute(facType, originalType);
                     }
 
                 }
@@ -615,9 +650,9 @@ namespace LBoLEntitySideloader
                 }
                 else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, methodName, defType, user))
                 {
-                
-                   action();
-                }            
+
+                    action();
+                }
             }
 
         }
