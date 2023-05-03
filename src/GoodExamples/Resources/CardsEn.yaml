@@ -14,3 +14,9 @@ InnateDream:
      \ If {PlayerName} has 30 or less life, move this card to the hand. \
      \ It |temporarily costs| {Mana}."
   Name: Innate Dream
+
+
+RedCycleAbilityCard:
+  Name: Red Colorless Cycle
+  Description: Whenever |Basic| card is played deal {Value1} damage to each enemy. 
+  FlavorText: 'No idea why these are called Cycle'

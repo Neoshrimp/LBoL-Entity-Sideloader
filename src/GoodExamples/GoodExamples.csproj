@@ -297,9 +297,12 @@
 
     <ItemGroup>
       <None Remove="resources\CardsEn.yaml" />
+      <None Remove="Resources\CycleAbilities\RedCycleAbilityCard.png" />
+      <None Remove="Resources\CycleAbilities\RedCycleAbilitySe.png" />
       <None Remove="resources\ExhibitsEn.yaml" />
       <None Remove="Resources\FistOfTheFreeFairies\FistOfTheThreeFairiesBigAttack.png" />
       <None Remove="Resources\InnateDream.png" />
+      <None Remove="resources\RedCycleAbilitySe.yaml" />
       <None Remove="Resources\StupidFlashbangTool.png" />
     </ItemGroup>
 

@@ -55,7 +55,7 @@ namespace LBoLEntitySideloader.Entities
                Revealable: false,
                IsPooled: false,
                HideMesuem: false,
-               IsUpgradable: false,
+               IsUpgradable: true,
                Rarity: Rarity.Common,
                Type: CardType.Unknown,
                TargetType: null,

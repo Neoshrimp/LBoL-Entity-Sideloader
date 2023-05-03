@@ -330,7 +330,6 @@ namespace LBoLEntitySideloader
 
             if (hasTypes)
             {
-                Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
                 foreach (var ei in typesToRegister)
                 {
                     try
@@ -503,6 +502,8 @@ namespace LBoLEntitySideloader
 
             }
 
+
+            Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}"); 
             foreach (var kv in user.entityInfos)
             {
                 RegisterTypes(kv.Key, user);
