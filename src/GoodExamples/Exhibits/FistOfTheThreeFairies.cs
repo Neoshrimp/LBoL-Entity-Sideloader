@@ -29,6 +29,7 @@ namespace GoodExamples.Exhibits
 
         public override LocalizationOption LoadLocalization()
         {
+            // creates global localization for exhibits. Each entity type needs to have their own global localization
             var globalLoc = new GlobalLocalization(embeddedSource);
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.En, "ExhibitsEn");
 
@@ -45,7 +46,7 @@ namespace GoodExamples.Exhibits
 
             exhibitSprites.main = wrap("");
 
-
+            // loads many custom sprites for futher use
             exhibitSprites.customSprites.Add("none", wrap("_none"));
             exhibitSprites.customSprites.Add("luna", wrap("_luna"));
             exhibitSprites.customSprites.Add("-luna", wrap("_-luna"));
@@ -85,6 +86,7 @@ namespace GoodExamples.Exhibits
                 InitialCounter: 0,
                 Keywords: Keyword.None,
                 RelativeEffects: new List<string>() { },
+                // example of referring to UniqueId of an entity without calling MakeConfig
                 RelativeCards: new List<string>() { new FistOfTheThreeFairiesBigAttackDefinition().UniqueId }
                 );
 
@@ -94,7 +96,9 @@ namespace GoodExamples.Exhibits
         [EntityLogic(typeof(FistOfTheThreeFairiesExDefinition))]
         public sealed class FistOfTheThreeFairiesEx : Exhibit
         {
-
+            // Changes the icon according to last three cards played 
+            // Sunny = attack, Star = defense, Luna = skill
+            // this is where the keys of custom sprites are used
             public override string OverrideIconName
             {
                 get
@@ -145,6 +149,7 @@ namespace GoodExamples.Exhibits
 
             protected override void OnLeaveBattle()
             {
+                // reset counter, cardTracker and refresh icon on ending battle
                 base.OnLeaveBattle();
                 Counter = 0;
                 cardTracker.Clear();
@@ -194,7 +199,8 @@ namespace GoodExamples.Exhibits
 
             IEnumerator ResetTrigger()
             {
-                yield return new WaitForSeconds(2);
+                // keeps the exhibits icon fully lit for 1.5 sec after it has activated
+                yield return new WaitForSeconds(1.5f);
                 triggered = false;
                 NotifyChanged();
             }
@@ -227,6 +233,7 @@ namespace GoodExamples.Exhibits
         {
             var loc = new GlobalLocalization(embeddedSource);
 
+            // global localization files need to be specified only once
             loc.LocalizationFiles.AddLocaleFile(Locale.En, "CardsEn");
 
             return loc;
@@ -294,6 +301,9 @@ namespace GoodExamples.Exhibits
 
     }
 
+
+    // the Triple Fist of Death a simple attack card, therefore, no complex behavior is necessary
+    // However, since it's a Card it still must have an entity logic type defined
     [EntityLogic(typeof(FistOfTheThreeFairiesBigAttackDefinition))]
     public sealed class FistOfTheThreeFairiesBigAttack : Card
     {

@@ -8,12 +8,6 @@ namespace LBoLEntitySideloader.Resource
     {
         public readonly LocalizationFiles LocalizationFiles;
 
-
-        public GlobalLocalization()
-        {
-        
-        }
-
         public GlobalLocalization(IResourceSource source)
         {
             LocalizationFiles = new LocalizationFiles(source);

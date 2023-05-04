@@ -24,29 +24,49 @@ using LBoL.Core.Units;
 
 namespace GoodExamples.CycleAbilities
 {
-
+    // to make Sideloader load a custom entity a public sealed class extending one of the templates must be created.
+    // Currently implemented templates are CardTemplate, StatusEffectTemplate and ExhibitTemplate
     public sealed class RedCycleAbilityCardDefinition : CardTemplate
     {
+        // Must return Id of the entity. All currently implemented templates use string as Id.
+        // Id should be the same as the entity logic type name, hence, it's best to use nameof identifier
         public override IdContainer GetId()
         {
             return nameof(RedCycleAbilityCard);
         }
 
+        // Create CardImages object. CardImages contain main and, optionally, sub and upgraded images for the card
         public override CardImages LoadCardImages()
         {
+
             var imgs = new CardImages(embeddedSource);
+            // AutoLoad set and load images automatically if certain file naming criteria are met
+            // main image must be named same as Id+<fileFormat>
+            // [optional] sub images are name Id+<subIllustratorName>+fileFormat>
+            // [optional] upgraded image Id+"Upgrade+<fileFormat>"
+            // all images must have the same file extension and be in the same folder
+
+            // relative path = path to image folder. In embeddedSource folders are separated by '.'
             imgs.AutoLoad(this, ".png", relativePath: "CycleAbilities.");
+
+            // alternatively, CardImages.main, CardImages.subs etc. can be initialized manually using ResourceLoader.LoadTexture()
             return imgs;
         }
 
         public override LocalizationOption LoadLocalization()
         {
-            return new GlobalLocalization();
+            // use global localization file. Global file for cards was already specified in FistOfTheThreeFairies.cs
+            // so it's sufficient to return empty GlobalLocalization() to indicate that global localizations is used
+            return new GlobalLocalization(embeddedSource);
         }
 
+        // defines basic information for the card. Should never be called manually. 
+        // if some information is needed from this config it can be accessed by calling
+        // CardConfig.FromId(new RedCycleAbilityCardDefinition().UniqueId) 
         public override CardConfig MakeConfig()
         {
             CardConfig config = new CardConfig(
+                // get the next number from CardConfig index sequence
                 Index: sequenceTable.Next(typeof(CardConfig)),
                 Id: "",
                 Order: 10,
@@ -102,41 +122,33 @@ namespace GoodExamples.CycleAbilities
             return config;
         }
 
-
+        // card behavior. Ability card behavior are usually is very simple, they add ability StatusEffect.
+        // The actual behavior of the ability is implemented as StatusEffect.
+        // Entity logic type must be specified by adding EntityLogic attribute on public sealed class
+        // extending the correct base entity type. In this case it's a card.
         [EntityLogic(typeof(RedCycleAbilityCardDefinition))]
         public sealed class RedCycleAbilityCard : Card
         {
             protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
             {
-                yield return BuffAction<RedCycleAbilitySe>(Value1);
+                // it's important (particularly when overwriting vanilla entities) to make sure that
+                // BuffAction refers to your own implementation of StatusEffect.
+                // Full type name can be specified to prevent human error.
+                yield return BuffAction<GoodExamples.CycleAbilities.RedCycleAbilitySeDefinition.RedCycleAbilitySe>(Value1);
 
             }
         }
 
     }
 
-    [EntityLogic(typeof(RedCycleAbilitySeDefinition))]
-    public sealed class RedCycleAbilitySe : StatusEffect
-    {
-        protected override void OnAdded(Unit unit)
-        {
-            ReactOwnerEvent(Battle.CardUsed, new EventSequencedReactor<CardUsingEventArgs>(OnCardPlayed));
-        }
 
-        private IEnumerable<BattleAction> OnCardPlayed(CardUsingEventArgs args)
-        {
-            if (args.Card.Keywords.HasFlag(Keyword.Basic))
-            {
-                NotifyActivating();
-                // reaction dmg = attack damage which doesn't scale with firepower, status modifiers etc., fire of Ena gun vfx
-                yield return new DamageAction(Battle.Player, Battle.EnemyGroup.Alives, DamageInfo.Reaction(Level), "秽火", GunType.Single);
-            }
-        }
-    }
 
 
     public sealed class RedCycleAbilitySeDefinition : StatusEffectTemplate
     {
+
+        // Must return Id of the entity. All currently implemented templates use string as Id.
+        // Id should be the same as the entity logic type name, hence, it's best to use nameof identifier
         public override IdContainer GetId()
         {
             return nameof(RedCycleAbilitySe);
@@ -144,7 +156,8 @@ namespace GoodExamples.CycleAbilities
 
         public override LocalizationOption LoadLocalization()
         {
-            // LocalizationOption allows to return LocalizationFiles directly, however, then only one entity localization can be contained in a the file.
+            // LocalizationOption allows to return LocalizationFiles directly, however,
+            // then only single entity localization can be contained within a the file.
             var locFiles = new LocalizationFiles(embeddedSource);
             // folders in embedded source are separated by '.'
             locFiles.AddLocaleFile(Locale.En, "CycleAbilities.RedCycleAbilitySeEn.yaml");
@@ -158,6 +171,10 @@ namespace GoodExamples.CycleAbilities
             return ResourceLoader.LoadSprite("RedCycleAbilitySe.png", embeddedSource);
         }
 
+
+        // defines basic information for the card. Should never be called manually. 
+        // if some information is needed from this config it can be accessed by calling
+        // StatusEffectConfig.FromId(new RedCycleAbilitySeDefinition().UniqueId) 
         public override StatusEffectConfig MakeConfig()
         {
             var statusEffectConfig = new StatusEffectConfig(
@@ -181,8 +198,32 @@ namespace GoodExamples.CycleAbilities
                 VFX: "Default",
                 VFXloop: "Default",
                 SFX: "Default"
-    );
+            );
             return statusEffectConfig;
         }
+
+
+
+        [EntityLogic(typeof(RedCycleAbilitySeDefinition))]
+        public sealed class RedCycleAbilitySe : StatusEffect
+        {
+            protected override void OnAdded(Unit unit)
+            {
+                ReactOwnerEvent(Battle.CardUsed, new EventSequencedReactor<CardUsingEventArgs>(OnCardPlayed));
+            }
+
+            private IEnumerable<BattleAction> OnCardPlayed(CardUsingEventArgs args)
+            {
+                if (args.Card.Keywords.HasFlag(Keyword.Basic))
+                {
+                    // makes status icon flash
+                    NotifyActivating();
+                    // reaction dmg = attack damage which doesn't scale with firepower, status modifiers etc., fire of Ena gun vfx
+                    yield return new DamageAction(Battle.Player, Battle.EnemyGroup.Alives, DamageInfo.Reaction(Level), "秽火", GunType.Single);
+                }
+            }
+        }
     }
+
+
 }

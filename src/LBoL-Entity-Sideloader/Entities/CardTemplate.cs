@@ -40,7 +40,10 @@ namespace LBoLEntitySideloader.Entities
             public const string Koishi = "Koishi";
         }
 
-
+        /// <summary>
+        /// Common default values for CardConfig. The values which are safe to be left as a null are left as null.
+        /// </summary>
+        /// <returns></returns>
         public CardConfig DefaultConfig()
         {
             var cardConfig = new CardConfig(

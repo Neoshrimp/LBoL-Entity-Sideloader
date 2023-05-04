@@ -39,7 +39,7 @@ namespace GoodExamples
 
         public override LocalizationOption LoadLocalization()
         {
-            return new GlobalLocalization();
+            return new GlobalLocalization(embeddedSource);
         }
 
         public override CardConfig MakeConfig()

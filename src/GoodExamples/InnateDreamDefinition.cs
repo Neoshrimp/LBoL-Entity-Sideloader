@@ -33,7 +33,7 @@ namespace GoodExamples
 
         public override LocalizationOption LoadLocalization()
         {
-            return new GlobalLocalization();
+            return new GlobalLocalization(embeddedSource);
         }
 
         public override CardConfig MakeConfig()
@@ -44,6 +44,7 @@ namespace GoodExamples
                Order: 10,
                AutoPerform: true,
                Perform: new string[0][],
+               // some amulet shooting vfx
                GunName: "梦之御札",
                GunNameBurst: "梦之御札B",
                DebugLevel: 0,
@@ -100,10 +101,10 @@ namespace GoodExamples
         {
             protected override void OnEnterBattle(BattleController battle)
             {
-                ReactBattleEvent(Battle.BattleStarted, new EventSequencedReactor<GameEventArgs>(OnFirstTunStarted));
+                ReactBattleEvent(Battle.BattleStarted, new EventSequencedReactor<GameEventArgs>(OnBattleStarted));
             }
 
-            private IEnumerable<BattleAction> OnFirstTunStarted(GameEventArgs args)
+            private IEnumerable<BattleAction> OnBattleStarted(GameEventArgs args)
             {
                 if (Battle?.Player.Hp <= 30 && this.Zone != CardZone.Hand)
                 {
