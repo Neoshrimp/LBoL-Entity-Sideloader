@@ -193,12 +193,12 @@ namespace LBoLEntitySideloader.Entities
                 typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());
                 var locInfo = typesToLocalize[EntityType()];
 
-                if (globalLoc.LocalizationFiles != null) 
+                if (globalLoc.LocalizationFiles.locTable.NotEmpty()) 
                 {
                     if (locInfo.locFiles == null)
                         locInfo.locFiles = globalLoc.LocalizationFiles;
                     else
-                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files again");
+                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files  they've already been set.");
                 }
                 locInfo.entityLogicTypes.Add(entityLogicType);
                     
