@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card-example(old)", "src\ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadExamples", "src\BadExamples\BadExamples.csproj", "{630A0608-7CDC-47DC-BC71-49F153C5DAF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GunToolCard", "src\GunToolCard\GunToolCard.csproj", "{5DE28A5A-BA1D-40F0-879B-6F016063284D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodExamples", "src\GoodExamples\GoodExamples.csproj", "{ED64EDAF-39E8-4111-B626-FCBC96AF737C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodExamples", "src\GoodExamples\GoodExamples.csproj", "{ED64EDAF-39E8-4111-B626-FCBC96AF737C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{630A0608-7CDC-47DC-BC71-49F153C5DAF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DE28A5A-BA1D-40F0-879B-6F016063284D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DE28A5A-BA1D-40F0-879B-6F016063284D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DE28A5A-BA1D-40F0-879B-6F016063284D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DE28A5A-BA1D-40F0-879B-6F016063284D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED64EDAF-39E8-4111-B626-FCBC96AF737C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED64EDAF-39E8-4111-B626-FCBC96AF737C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED64EDAF-39E8-4111-B626-FCBC96AF737C}.Release|Any CPU.ActiveCfg = Release|Any CPU
