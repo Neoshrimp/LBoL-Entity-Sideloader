@@ -14,12 +14,16 @@ namespace FirstCard
     {
         public override IdContainer GetId()
         {
-            throw new NotImplementedException();
+            return nameof(FirstCard);   
         }
-
+        
         public override CardImages LoadCardImages()
         {
-            throw new NotImplementedException();
+            var imgs = new CardImages(BepinexPlugin.embeddedSource);
+
+            imgs.AutoLoad(this, extension: ".png");
+
+            return imgs;
         }
 
         public override LocalizationOption LoadLocalization()

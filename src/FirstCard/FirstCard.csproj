@@ -296,7 +296,7 @@
 
 
     <ItemGroup>
-      <Folder Include="Resources\" />
+      <None Remove="Resources\FirstCard.png" />
     </ItemGroup>
 
 
