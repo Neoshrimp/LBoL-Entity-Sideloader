@@ -38,7 +38,7 @@ Entity manager/loader for modding [Lost Branch of Legend](https://store.steampow
     |-- Modded Adventure pooling system
 |-- Create JadeBox challenges
 
-*Sideloader features and maitenance*
+*Sideloader features and maintenance*
 |-- Better docs/tutorials/wikis..
 |-- Sideloader usage API improvements and polish
 |-- Support Localization ☑️
@@ -51,12 +51,15 @@ Entity manager/loader for modding [Lost Branch of Legend](https://store.steampow
 |-- Support loading from AssetBundles
 |-- main/beta double branch support (maybe)
 |-- Handle duplicate entity Ids
-|-- Performace and profiling
+|-- Performance and profiling
   |-- async loading
-  |-- Addresables
+  |-- Addressables
   |-- whatever else..
 |-- Rewritting and refactoring Sideloader backend..
 </pre>
+
+
+
 
 [_Yarn script problem_]((https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime))
 
