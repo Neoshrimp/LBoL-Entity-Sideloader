@@ -1,10 +1,26 @@
 # LBoL-Entity-Sideloader
-Entity manager/loader for modding [Lost Branch of Legend](https://store.steampowered.com/app/1140150/Touhou_Lost_Branch_of_Legend/)
+Entity manager/loader for modding [Lost Branch of Legend](https://store.steampowered.com/app/1140150/Touhou_Lost_Branch_of_Legend/). \
+Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https://github.com/BepInEx/BepInEx).
 
+## Important! Currently requires latest beta branch to work!
+*[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
+## The Mods
+*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/edit/master/README.md#roadmap))*
+- [Good Examples]()
+- [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
+- [Gun]()
+
+### Installation
+
+Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and put in `BepInEx/plugins` folder.
+
+### For mod creators
+This modding framework attempts to streamline, simplify and stadartize common game entity (Card, Enemy etc.) creation and loading.
 
 
 ### Roadmap
+
 
 <pre>
 *Game Entity loading*
@@ -58,12 +74,12 @@ Entity manager/loader for modding [Lost Branch of Legend](https://store.steampow
 |-- Rewritting and refactoring Sideloader backend..
 </pre>
 
+[_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
 
 
 
-[_Yarn script problem_]((https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime))
+### [Game Entities reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md)
+Mini wiki detailing game entity and config specifics.
 
-### Game Entity reference
 
-#### Card
 
