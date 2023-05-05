@@ -15,15 +15,41 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 
 Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and put in `BepInEx/plugins` folder.
 
-[*Detailed Installation guide*]()
+[*Detailed Installation guide*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md)
 
 ### For mod creators
 This modding framework attempts to streamline, simplify and standardize common game entity (Card, Enemy etc.) creation and loading.
 
+The general idea is that the Sideloader provides abstract [template](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/Entities) types which should be extended and implemented concretely in your own plugin. Each abstract template method corresponds to one component of the game entity. For example, `CardTemplate` expects `LoadCardImages` to load CardImages, `MakeConfig` to define CardConfig. Additionally, entity logic type should be written and marked with [`EntityLogic`]() attribute. In case of a card, entity logic will be extending a `Card` type and defining its behavior in the same manner as a vanilla card would. That is, overriding `Actions` adding custom triggers (reactors/handlers) and so on.
 
+Sideloader has many convenience methods and types designed to reduce clutter and speed up development. Examples include `ResourceLoader`, `CardImages.AutoLoad`, `GlobalLocalization`. It also provides thorough error feedback to help define templates correctly and feature to [reload mods]() while the game is running.
+
+
+#### Modding guides
+
+
+##### Essential tools
+
+1. [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/)(or any other IDE ofc) with .NET development package.
+2. [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate). Has tons of configuration preset.
+3. [dnSpyEx](https://github.com/dnSpyEx/dnSpy). For reading game's code and understanding how to code entity behavior.
+4. [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll). For hot reload. My fork has a bug fix for LBoL.
+
+##### [My first card]()
+*tutorial and introduction to Sideloader*
+
+
+##### Hot reload
+
+1. In `BepInEx/config/neo.lbol.frameworks.entitySideloader.cfg` change `DevMode = false` to `DevMode = true`.
+2. Download and put [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) to `plugins` folder.
+3. Create `BepInEx/scripts` folder. This from where scriptengine will load the plugins. Sideloader mods which are being developed should go there. If [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate) is used it will copy dlls to `scripts` folder automatically after building.
+4. In-game, press F3 to reload the mods. If in-run level will need to be restarted for changes to take effects. By default, that will be done automatically.There might some odd issues with Collection.
 
 
 ### Roadmap
+
+Suggestions, contributions, issues, bug reports/fixes and critique are all very welcome.
 
 
 <pre>
