@@ -20,9 +20,9 @@ Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/bl
 ### For mod creators
 This modding framework attempts to streamline, simplify and standardize common game entity (Card, Enemy etc.) creation and loading.
 
-The general idea is that the Sideloader provides abstract [template](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/Entities) types which should be extended and implemented concretely in your own plugin. Each abstract template method corresponds to one component of the game entity. For example, `CardTemplate` expects `LoadCardImages` to load CardImages, `MakeConfig` to define CardConfig. Additionally, entity logic type should be written and marked with [`EntityLogic`]() attribute. In case of a card, entity logic will be extending a `Card` type and defining its behavior in the same manner as a vanilla card would. That is, overriding `Actions` adding custom triggers (reactors/handlers) and so on.
+The general idea is that the Sideloader provides abstract [template](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/Entities) types which should be extended and implemented concretely in your own plugin. Each abstract template method corresponds to one component of the game entity. For example, `CardTemplate` expects `LoadCardImages` to load CardImages, `MakeConfig` to define CardConfig. Additionally, entity logic type should be written and marked with [`EntityLogic`](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/Attributes/EntityLogicAttribute.cs) attribute. In case of a card, entity logic will be extending a `Card` type and defining its behavior in the same manner as a vanilla card would. That is, overriding `Actions` adding custom triggers (reactors/handlers) and so on.
 
-Sideloader has many convenience methods and types designed to reduce clutter and speed up development. Examples include `ResourceLoader`, `CardImages.AutoLoad`, `GlobalLocalization`. It also provides thorough error feedback to help define templates correctly and feature to [reload mods]() while the game is running.
+Sideloader has many convenience methods and types designed to reduce clutter and speed up development. Examples include `ResourceLoader`, `CardImages.AutoLoad`, `GlobalLocalization`. It also provides thorough error feedback to help define templates correctly and feature to [reload mods](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md) while the game is running.
 
 
 #### Modding guides
@@ -35,7 +35,7 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 3. [dnSpyEx](https://github.com/dnSpyEx/dnSpy). For reading game's code and understanding how to code entity behavior.
 4. [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll). For hot reload. My fork has a bug fix for LBoL.
 
-##### [My first card]()
+##### [First card](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
 *tutorial and introduction to Sideloader*
 
 
@@ -46,6 +46,14 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 3. Create `BepInEx/scripts` folder. This from where scriptengine will load the plugins. Sideloader mods which are being developed should go there. If [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate) is used it will copy dlls to `scripts` folder automatically after building.
 4. In-game, press F3 to reload the mods. If in-run level will need to be restarted for changes to take effects. By default, that will be done automatically.There might some odd issues with Collection.
 
+
+##### Examples
+- [Changing already existing entities](https://github.com/Neoshrimp/LBoL-Gameplay-mods/blob/master/src/VanillaTweaks/FairyTree.cs)
+- [Overcommented examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/CycleAbilities/RedCycleAbility.cs) and [this](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs)
+
+
+##### [Game Entities reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md)
+Mini wiki detailing game entity and config specifics.
 
 ### Roadmap
 
@@ -100,6 +108,7 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Performance and profiling
   |-- async loading
   |-- Addressables
+  |-- size reduction/compression
   |-- whatever else..
 |-- Rewritting and refactoring Sideloader backend..
 </pre>
@@ -107,9 +116,6 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 [_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
 
 
-
-### [Game Entities reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md)
-Mini wiki detailing game entity and config specifics.
 
 
 
