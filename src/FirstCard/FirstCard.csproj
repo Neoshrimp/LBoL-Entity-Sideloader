@@ -296,6 +296,7 @@
 
 
     <ItemGroup>
+      <None Remove="resources\CardsEn.yaml" />
       <None Remove="Resources\FirstCard.png" />
     </ItemGroup>
 

@@ -1,0 +1,4 @@
+FirstCard:
+    Name: Busted Buster
+    Description: Deal {Damage} damage |3| times.
+    UpgradedDescription: Deal {Damage} damage |4| times.

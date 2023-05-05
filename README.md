@@ -34,6 +34,7 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 2. [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate). Has tons of configuration preset.
 3. [dnSpyEx](https://github.com/dnSpyEx/dnSpy). For reading game's code and understanding how to code entity behavior.
 4. [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll). For hot reload. My fork has a bug fix for LBoL.
+5. [DebugMode](https://github.com/Neoshrimp/LBoL-ModdingTools#debugmode). For quickly spawning in cards and enemies.
 
 ##### [First card](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
 *tutorial and introduction to Sideloader*
@@ -45,6 +46,8 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 2. Download and put [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) to `plugins` folder.
 3. Create `BepInEx/scripts` folder. This from where scriptengine will load the plugins. Sideloader mods which are being developed should go there. If [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate) is used it will copy dlls to `scripts` folder automatically after building.
 4. In-game, press F3 to reload the mods. If in-run level will need to be restarted for changes to take effects. By default, that will be done automatically.There might some odd issues with Collection.
+
+Sometimes the game freezes and crashes at the moment of reloading plugins. This is probably related to pc resource usage.
 
 
 ##### Examples
