@@ -1,4 +1,6 @@
 ### Good Examples
+[**Download**](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/raw/master/src/GoodExamples/GoodExamples.dll)
+
 Intended to have been a collection of example entities using Sideloader it turned to be a fully fledged, albeit very small gameplay mod. It still serves a purpose of hands-on introduction to Sideloader but can be used as a mod since the new content is (hopefully) within the game's power balance.
 
 Sideloader templates are implemented in classes contained within `<EntityIdDefiniton.cs>` files. `CycleAbilities/RedCycleAbility.cs` and `Exhibits/FistOfTheThreeFairies.cs` overly verbose comments explaining each component loading method of the template.
