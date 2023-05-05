@@ -7,16 +7,20 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 
 ## The Mods
 *very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/edit/master/README.md#roadmap))*
-- [Good Examples]()
+- [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
 - [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
-- [Gun]()
+- [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
 
 ### Installation
 
 Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and put in `BepInEx/plugins` folder.
 
+[*Detailed Installation guide*]()
+
 ### For mod creators
-This modding framework attempts to streamline, simplify and stadartize common game entity (Card, Enemy etc.) creation and loading.
+This modding framework attempts to streamline, simplify and standardize common game entity (Card, Enemy etc.) creation and loading.
+
+
 
 
 ### Roadmap
