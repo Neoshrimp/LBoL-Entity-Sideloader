@@ -55,8 +55,8 @@ Sometimes the game freezes and crashes at the moment of reloading plugins. This 
 - [Overcommented examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/CycleAbilities/RedCycleAbility.cs) and [this](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs)
 
 
-##### [Game Entities reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md)
-Mini wiki detailing game entity and config specifics.
+##### Game Entity reference
+[Mini wiki](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md) detailing game entity and config specifics.
 
 ### Roadmap
 
