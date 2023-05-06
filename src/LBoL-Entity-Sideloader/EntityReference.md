@@ -1,7 +1,7 @@
 ### Card
 
 #### CardImages
-Optimal card image size is 743x512. It can be smaller as ultimately card image gets scaled down to 454x313.
+Optimal card image size is `743x512`. It can be smaller as ultimately card image gets scaled down to `454x313`.
 
 #### CardConfig
 
@@ -73,7 +73,7 @@ The colors are important for pooling rules. In the example, Colors = new List<Ma
 ### StatusEffect
 
 #### Sprite
-A 128x128 icon for status effect.
+A `128x128` icon for status effect.
 
 #### StatusEffectConfig
 *so far the most cryptic of configs*
@@ -114,7 +114,7 @@ A 128x128 icon for status effect.
 ### Exhibit
 
 #### ExhibitSprites
-A 512x512 icon. `Dictionary<string, Sprite> customSprites` can be specified for switching icons on `Exhibit.OverrideIconName`. See [FistOfTheThreeFairies.cs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/272169d6e952902096c5f27a7b18b91048c978ff/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs#L99)
+A `512x512` icon. `Dictionary<string, Sprite> customSprites` can be specified for switching icons on `Exhibit.OverrideIconName`. See [FistOfTheThreeFairies.cs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/272169d6e952902096c5f27a7b18b91048c978ff/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs#L99)
 
 #### ExhibitConfig
 *to be added*
