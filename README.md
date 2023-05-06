@@ -6,7 +6,7 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
 ## The Mods
-*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/edit/master/README.md#roadmap))*
+*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/master/README.md#roadmap))*
 - [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
 - [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
 - [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
