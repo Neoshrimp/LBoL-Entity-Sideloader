@@ -36,8 +36,8 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 4. [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll). For hot reload. My fork has a bug fix for LBoL.
 5. [DebugMode](https://github.com/Neoshrimp/LBoL-ModdingTools#debugmode). For quickly building decks and fighting enemies.
 
-##### [First card](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
-*tutorial and introduction to Sideloader*
+##### First card
+[*tutorial and introduction to Sideloader*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
 
 
 ##### Hot reload
