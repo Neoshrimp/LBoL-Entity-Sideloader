@@ -112,8 +112,8 @@ namespace GoodExamples.Exhibits
                     if (cardTracker.Empty())
                         return Id + "none";
                     if (cardTracker.Count == 1)
-                    { 
-                        if(cardTracker.Contains(CardType.Attack))
+                    {
+                        if (cardTracker.Contains(CardType.Attack))
                             return Id + "sunny";
                         if (cardTracker.Contains(CardType.Defense))
                             return Id + "star";
@@ -133,7 +133,7 @@ namespace GoodExamples.Exhibits
 
                     return Id;
                 }
-            
+
             }
 
 
@@ -204,7 +204,7 @@ namespace GoodExamples.Exhibits
                 triggered = false;
                 NotifyChanged();
             }
-            
+
 
             private HashSet<CardType> cardTracker = new HashSet<CardType>();
 
@@ -242,58 +242,68 @@ namespace GoodExamples.Exhibits
         public override CardConfig MakeConfig()
         {
             var cardConfig = new CardConfig(
-                   Index: sequenceTable.Next(typeof(CardConfig)),
-                   Id: "",
-                   Order: 10,
-                   AutoPerform: true,
-                   // play NuclearBomb sfx 3 times
-                   Perform: new string[3][] { new string[] { "4", "Nuclearbomb" }, new string[] { "4", "Nuclearbomb", "0.4"}, new string[] { "4", "Nuclearbomb", "0.8" }, },
-                   // SuikaBigball gun
-                   GunName: "元鬼玉",
-                   GunNameBurst: "元鬼玉B",
-                   DebugLevel: 0,
-                   Revealable: false,
-                   IsPooled: false,
-                   HideMesuem: false,
-                   IsUpgradable: true,
-                   Rarity: default,
-                   Type: CardType.Attack,
-                   TargetType: TargetType.SingleEnemy,
-                   Colors: new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White },
-                   IsXCost: false,
-                   Cost: new ManaGroup() { Any  = 3 },
-                   UpgradedCost: new ManaGroup() { Any = 3 },
-                   MoneyCost: null,
-                   Damage: 33,
-                   UpgradedDamage: null,
-                   Block: null,
-                   UpgradedBlock: null,
-                   Shield: null,
-                   UpgradedShield: null,
-                   Value1: null,
-                   UpgradedValue1: null,
-                   Value2: null,
-                   UpgradedValue2: null,
-                   Mana: null,
-                   UpgradedMana: null,
-                   Scry: null,
-                   UpgradedScry: null,
-                   ToolPlayableTimes: null,
+                    Index: sequenceTable.Next(typeof(CardConfig)),
+                    Id: "",
+                    Order: 10,
+                    AutoPerform: true,
+                    // play NuclearBomb sfx 3 times
+                    Perform: new string[3][] { new string[] { "4", "Nuclearbomb" }, new string[] { "4", "Nuclearbomb", "0.4" }, new string[] { "4", "Nuclearbomb", "0.8" }, },
+                    // SuikaBigball gun
+                    GunName: "元鬼玉",
+                    GunNameBurst: "元鬼玉B",
+                    DebugLevel: 0,
+                    Revealable: false,
+                    IsPooled: false,
+                    HideMesuem: false,
+                    IsUpgradable: true,
+                    Rarity: default,
+                    Type: CardType.Attack,
+                    TargetType: TargetType.SingleEnemy,
+                    Colors: new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White },
+                    IsXCost: false,
+                    Cost: new ManaGroup() { Any = 3 },
+                    UpgradedCost: new ManaGroup() { Any = 3 },
+                    MoneyCost: null,
+                    Damage: 33,
+                    UpgradedDamage: null,
+                    Block: null,
+                    UpgradedBlock: null,
+                    Shield: null,
+                    UpgradedShield: null,
+                    Value1: null,
+                    UpgradedValue1: null,
+                    Value2: null,
+                    UpgradedValue2: null,
+                    Mana: null,
+                    UpgradedMana: null,
+                    Scry: null,
+                    UpgradedScry: null,
+                    ToolPlayableTimes: null,
 
-                   Keywords: Keyword.Exile | Keyword.TempRetain,
-                   UpgradedKeywords: Keyword.Exile | Keyword.Retain | Keyword.Accuracy,
-                   EmptyDescription: false,
-                   RelativeKeyword: default,
-                   UpgradedRelativeKeyword: default,
 
-                   RelativeEffects: new List<string>() { },
-                   UpgradedRelativeEffects: new List<string>() { },
-                   RelativeCards: new List<string>() { },
-                   UpgradedRelativeCards: new List<string>() { },
-                   Owner: null,
-                   Unfinished: false,
-                   Illustrator: "neo",
-                   SubIllustrator: new List<string>() { }
+                    Loyalty: null,
+                    UpgradedLoyalty: null,
+                    PassiveCost: null,
+                    UpgradedPassiveCost: null,
+                    ActiveCost: null,
+                    UpgradedActiveCost: null,
+                    UltimateCost: null,
+                    UpgradedUltimateCost: null,
+
+                    Keywords: Keyword.Exile | Keyword.TempRetain,
+                    UpgradedKeywords: Keyword.Exile | Keyword.Retain | Keyword.Accuracy,
+                    EmptyDescription: false,
+                    RelativeKeyword: default,
+                    UpgradedRelativeKeyword: default,
+
+                    RelativeEffects: new List<string>() { },
+                    UpgradedRelativeEffects: new List<string>() { },
+                    RelativeCards: new List<string>() { },
+                    UpgradedRelativeCards: new List<string>() { },
+                    Owner: null,
+                    Unfinished: false,
+                    Illustrator: "neo",
+                    SubIllustrator: new List<string>() { }
                 );
 
             return cardConfig;
@@ -307,6 +317,6 @@ namespace GoodExamples.Exhibits
     [EntityLogic(typeof(FistOfTheThreeFairiesBigAttackDefinition))]
     public sealed class FistOfTheThreeFairiesBigAttack : Card
     {
-            
+
     }
 }

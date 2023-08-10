@@ -83,6 +83,16 @@ namespace GoodExamples
                     UpgradedScry: null,
                     ToolPlayableTimes: 1,
 
+
+                    Loyalty: null,
+                    UpgradedLoyalty: null,
+                    PassiveCost: null,
+                    UpgradedPassiveCost: null,
+                    ActiveCost: null,
+                    UpgradedActiveCost: null,
+                    UltimateCost: null,
+                    UpgradedUltimateCost: null,
+
                     Keywords: Keyword.Replenish | Keyword.Exile | Keyword.Accuracy,
                     UpgradedKeywords: Keyword.Replenish | Keyword.Exile | Keyword.Accuracy,
                     EmptyDescription: false,

@@ -76,6 +76,15 @@ namespace GoodExamples
                UpgradedScry: null,
                ToolPlayableTimes: null,
 
+               Loyalty: null,
+                UpgradedLoyalty: null,
+                PassiveCost: null,
+                UpgradedPassiveCost: null,
+                ActiveCost: null,
+                UpgradedActiveCost: null,
+                UltimateCost: null,
+                UpgradedUltimateCost: null,
+
                Keywords: Keyword.Ethereal,
                UpgradedKeywords: Keyword.Ethereal,
                EmptyDescription: false,

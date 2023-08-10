@@ -304,6 +304,11 @@
     </ItemGroup>
 
 
+    <ItemGroup>
+      <ProjectReference Include="..\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj" />
+    </ItemGroup>
+
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
     </Target>

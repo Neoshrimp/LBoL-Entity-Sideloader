@@ -103,6 +103,15 @@ namespace GoodExamples.CycleAbilities
                 UpgradedScry: null,
                 ToolPlayableTimes: null,
 
+                Loyalty: null,
+                UpgradedLoyalty: null,
+                PassiveCost: null,
+                UpgradedPassiveCost: null,
+                ActiveCost: null,
+                UpgradedActiveCost: null,
+                UltimateCost: null,
+                UpgradedUltimateCost: null,
+
                 Keywords: Keyword.None,
                 UpgradedKeywords: Keyword.None,
                 EmptyDescription: false,

@@ -46,6 +46,7 @@ namespace LBoLEntitySideloader.Entities
         /// <returns></returns>
         public CardConfig DefaultConfig()
         {
+
             var cardConfig = new CardConfig(
                Index: 0,
                Id: "",
@@ -81,7 +82,17 @@ namespace LBoLEntitySideloader.Entities
                UpgradedMana: null,
                Scry: null,
                UpgradedScry: null,
+               
                ToolPlayableTimes: null,
+
+               Loyalty: null,
+               UpgradedLoyalty: null,
+               PassiveCost : null,
+               UpgradedPassiveCost : null,
+               ActiveCost : null,
+               UpgradedActiveCost : null,
+               UltimateCost : null,
+               UpgradedUltimateCost : null,
 
                Keywords: Keyword.None,
                UpgradedKeywords: Keyword.None,
@@ -98,6 +109,7 @@ namespace LBoLEntitySideloader.Entities
                Illustrator: null,
                SubIllustrator: new List<string>() { }
             );
+
 
             return cardConfig;
         }
