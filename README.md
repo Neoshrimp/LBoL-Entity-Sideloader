@@ -6,14 +6,15 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
 ## The Mods
-*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/edit/master/README.md#roadmap))*
+*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/README.md#roadmap))*
 - [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
 - [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
 - [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
+- [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
 
 ### Installation
 
-Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and put in `BepInEx/plugins` folder.
+Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and place it in `BepInEx/plugins` folder.
 
 [*Detailed Installation guide*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md)
 
@@ -36,8 +37,8 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 4. [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll). For hot reload. My fork has a bug fix for LBoL.
 5. [DebugMode](https://github.com/Neoshrimp/LBoL-ModdingTools#debugmode). For quickly building decks and fighting enemies.
 
-##### [First card](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
-*tutorial and introduction to Sideloader*
+##### First card
+[*tutorial and introduction to Sideloader*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
 
 
 ##### Hot reload
@@ -45,7 +46,7 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 1. In `BepInEx/config/neo.lbol.frameworks.entitySideloader.cfg` change `DevMode = false` to `DevMode = true`.
 2. Download and put [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) to `plugins` folder.
 3. Create `BepInEx/scripts` folder. This from where scriptengine will load the plugins. Sideloader mods which are being developed should go there. If [Sideloader mod template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate) is used it will copy dlls to `scripts` folder automatically after building.
-4. In-game, press F3 to reload the mods. If in-run level will need to be restarted for changes to take effects. By default, that will be done automatically.There might some odd issues with Collection.
+4. In-game, press F3 to reload the mods. If in-run level will need to be restarted for changes to take effects. By default, that will be done automatically. There might some odd issues with Collection.
 
 Sometimes the game freezes and crashes at the moment of reloading plugins. This is probably related to pc resource usage.
 
@@ -55,8 +56,8 @@ Sometimes the game freezes and crashes at the moment of reloading plugins. This 
 - [Overcommented examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/CycleAbilities/RedCycleAbility.cs) and [this](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs)
 
 
-##### [Game Entities reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md)
-Mini wiki detailing game entity and config specifics.
+##### Game Entity reference
+[Mini wiki](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md) detailing game entity and config specifics.
 
 ### Roadmap
 

@@ -1,7 +1,7 @@
 ### Card
 
 #### CardImages
-Optimal card image size is 743x512. It can be smaller as ultimately card image gets scaled down to 454x313.
+Optimal card image size is `743x512`. It can be smaller as ultimately card image gets scaled down to `454x313`.
 
 #### CardConfig
 
@@ -68,12 +68,12 @@ Optimal card image size is 743x512. It can be smaller as ultimately card image g
 
 #### Colors
 
-The colors are important for pooling rules. In the example, Colors = new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White }, the card could only be found if the player has permanent source of Red, Blue and White mana regardless of the card's cost. If the list is left empty (Colors = new List<ManaColor>() {}) the card won't have any color, for example, Tools don't have any color. This should not be confused with ManaColor.Colorless. Card having ManaColor.Colorless color means that the card cannot be found unless the player has source of Colorless mana i.e. Magic Mallet. Filthless World would be an example of a Colorless card. Technically, it's ok for a card to be Colorless and have some other colors like List<ManaColor>() {ManaColor.Colorless, ManaColor.Red}. This would require a source of Red and Colorless mana for the card to be pooled. ManaColor options ManaColor.Any and ManaColor.Philosophy should never be used here and will result in error if used.
+The colors are important for pooling rules. In the example, `Colors = new List<ManaColor>() { ManaColor.Red, ManaColor.Blue, ManaColor.White }`, the card could only be found if the player has permanent source of Red, Blue and White mana regardless of the card's cost. If the list is left empty (`Colors = new List<ManaColor>() {}`) the card won't have any color, for example, Tools don't have any color. This should not be confused with `ManaColor.Colorless`. Card having `ManaColor.Colorless` color means that the card cannot be found unless the player has source of Colorless mana i.e. Magic Mallet. Filthless World would be an example of a Colorless card. Technically, it's ok for a card to be Colorless and have some other colors like `List<ManaColor>() {ManaColor.Colorless, ManaColor.Red}`. This would require a source of Red and Colorless mana for the card to be pooled. ManaColor options `ManaColor.Any` and `ManaColor.Philosophy` should never be used here and will result in error if used.
 
 ### StatusEffect
 
 #### Sprite
-A 128x128 icon for status effect.
+A `128x128` icon for status effect.
 
 #### StatusEffectConfig
 *so far the most cryptic of configs*
@@ -114,7 +114,7 @@ A 128x128 icon for status effect.
 ### Exhibit
 
 #### ExhibitSprites
-A 512x512 icon. `Dictionary<string, Sprite> customSprites` can be specified for switching icons on `Exhibit.OverrideIconName`. See [FistOfTheThreeFairies.cs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/272169d6e952902096c5f27a7b18b91048c978ff/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs#L99)
+A `512x512` icon. `Dictionary<string, Sprite> customSprites` can be specified for switching icons on `Exhibit.OverrideIconName`. See [FistOfTheThreeFairies.cs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/272169d6e952902096c5f27a7b18b91048c978ff/src/GoodExamples/Exhibits/FistOfTheThreeFairies.cs#L99)
 
 #### ExhibitConfig
 *to be added*

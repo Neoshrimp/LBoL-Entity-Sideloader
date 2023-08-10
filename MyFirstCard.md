@@ -12,7 +12,7 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 - [One time] Setup [VS project template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate).
 
-- Create new template project. Wait a moment for nuget packages to finish downloading. If GameFolder was set correctly there should be no errors. Else adjust the GameFolder and clean the project.
+- Create new project using Sidleoader template. Wait a moment for nuget packages to finish downloading. If GameFolder was set correctly there should be no errors. Else adjust the GameFolder and clean the project.
 
 ![image](https://user-images.githubusercontent.com/89428565/236564583-ab780602-6dc5-4eab-86b1-a9e00c8be472.png)
 
@@ -32,7 +32,7 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 
 
-- This should have generated a bunch of methods. Disregard them for a moment. Create a new class, for convenience, in the same file `public sealed class FirstCard : Card`. This class is going to define card's behavior.
+- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment. Create a new class, for convenience, placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
 
 ![image](https://user-images.githubusercontent.com/89428565/236564867-650faa7f-a875-4300-ba7b-2ca92fa46962.png)
 
@@ -41,7 +41,7 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 ![image](https://user-images.githubusercontent.com/89428565/236564921-e8ff78d5-57c0-45d3-9034-e5833e5ecb46.png)
 
-- Now come back to the generated methods. Make `GetId()` return name of the entity logic class `return nameof(FirstCard)` (string). For now it's a strict requirement that Id is the same as the logic type name.
+- Now come back to the generated methods. Make `GetId()` return name of the entity logic class `return nameof(FirstCard)` (string). For now it's a strict requirement that **Id is the same as the logic type name**.
 
 ![image](https://user-images.githubusercontent.com/89428565/236586953-58ee8e80-160f-403c-9615-e69036e465fb.png)
 
@@ -49,9 +49,9 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 ![image](https://user-images.githubusercontent.com/89428565/236586980-ebb19bef-e87f-4f88-be2d-b73b7154616b.png)
 
-- In `LoadCardImages` method create a new instance of `CardImages` specifying the embedded source. It acts as container to hold any images a card might need and eventually be passed to Sideloader.
+- In `LoadCardImages` method create a new instance of `CardImages` specifying the embedded source. It acts as container to hold any images a card might need and eventually will be passed to Sideloader.
 
-- Call `imgs.AutoLoad` method and specify ".png" extension. AutoLoad is possible because the card image is named the same as the Id. Return images. Alternatively, `return null` can be used skip loading images for now and leave the card without image.
+- Call `imgs.AutoLoad` method and specify ".png" extension. AutoLoad is possible because the card image is named the same as the Id. Return images. Alternatively, `return null` can be used skip loading images for now and leave the card without an image.
 
 ```csharp
 public override CardImages LoadCardImages()
@@ -96,7 +96,7 @@ CardId:
 
 - If BepInEx has [Logging.Console] enabled in  `BepInEx\config\BepInEx.cfg` you should see various messages (or errors) related to sideloader.
 
-- In game, go to collection, scroll to the very bottom without filtering and there should be your card, sitting not doing much.
+- In game, go to collection, scroll to the very bottom without filtering and there should be your card, sitting, not doing much.
 
 ![image](https://user-images.githubusercontent.com/89428565/236587228-255beb99-b807-4b56-ad26-d0e7e1d11c55.png)
 
@@ -104,11 +104,9 @@ CardId:
 
 - Go back to `FirstCardDef.MakeConig`. You don't have to close the game just close the collection.
 
-![image](https://user-images.githubusercontent.com/89428565/236587270-0d66f1a2-e384-45d3-99c5-f69cfc63a06b.png)
-
 - Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/ae2ef3c77ef28da9035603b182640c711dd55d06/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L47).
 
-- The more detailed explanation of each config property can be found in [Entity Reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md). For now change `Index`,  `GunName`, `GunNameBurst`, `Type`, `IsPooled`, `TargetType`, `Colors`, `Cost` and `Damage`. `sequenceTable.Next` is convenient way to keep indexes different but a positive number can be assigned as index as well.
+- The more detailed explanation of each config property can be found in [Entity Reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md). For now change `Index`,  `GunName`, `GunNameBurst`, `Type`, `IsPooled`, `TargetType`, `Colors`, `Cost` and `Damage`. `sequenceTable.Next` is convenient way to keep track of indexes but any positive number can be assigned as index as well.
 ```
 Index: BepinexPlugin.sequenceTable.Next(typeof(CardConfig)),
 ...
@@ -129,7 +127,9 @@ Damage: 7,
 
 ```
 
-- Compile the project again and go back to the game. Close Collection, press F3 to refresh the mods. The card should be considered an attack and have cost and colors.
+- Compile the project again and go back to the game. Close Collection, press F3 to refresh the mods. The card should be an `Attack` and have cost and colors.
+
+![image](https://user-images.githubusercontent.com/89428565/236587270-0d66f1a2-e384-45d3-99c5-f69cfc63a06b.png)
 
 - [One time] Create 'Debug' profile in-game for testing stuff. 
 
@@ -139,7 +139,7 @@ Damage: 7,
 
 ![image](https://user-images.githubusercontent.com/89428565/236587299-d8ee5fae-c5e5-4e79-8906-9c7ff7a45068.png)
 
-- Find the Id of Youkai Buster. To do that either search Card.yaml localization files or use DebugMode menu option Output All Config and check CardConfig.txt. Id of Youkai Buster is `YaoguaiBuster`.
+- Find the Id of Youkai Buster. To do that either search Card.yaml localization files or use DebugMode menu option `Output All Config` and check `CardConfig.txt`. Id of Youkai Buster is `YaoguaiBuster`.
 
 - In dnSpy search for a Type named `YaoguaiBuster`. Make sure Files in Same Folder option is selected.
 
@@ -150,27 +150,31 @@ Damage: 7,
 - Let's increase number of hits performed to 3/4 by adding an item to each array.
 
 ```csharp
-            protected override void SetGuns()
+[EntityLogic(typeof(FirstCardDef))]
+public sealed class FirstCard : Card
+{
+    protected override void SetGuns()
+    {
+        if (this.IsUpgraded)
+        {
+            CardGuns = new Guns(new string[]
             {
-                if (this.IsUpgraded)
-                {
-                    CardGuns = new Guns(new string[]
-                    {
-                    Config.GunNameBurst,
-                    Config.GunName,
-                    Config.GunNameBurst,
-                    Config.GunName,
-                    });
-                    return;
-                }
-                CardGuns = new Guns(new string[]
-                {
-                    Config.GunName,
-                    Config.GunNameBurst,
-                    Config.GunName,
+            Config.GunNameBurst,
+            Config.GunName,
+            Config.GunNameBurst,
+            Config.GunName,
+            });
+            return;
+        }
+        CardGuns = new Guns(new string[]
+        {
+            Config.GunName,
+            Config.GunNameBurst,
+            Config.GunName,
 
-                });
-            }
+        });
+    }
+}
 ```
 
 - Time to test it! Compile the project, reload mods and start a debug run with F5 (while in main menu). After adding the cards to the deck, giving yourself some shining exhibits you can click one of these buttons to quickly advance the map node. This will save the game and you won't have to redo your setup when restarting the level.
