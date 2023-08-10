@@ -281,9 +281,6 @@
         <Reference Include="UnityEngine.UIModule">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UIModule.dll</HintPath>
         </Reference>
-        <Reference Include="LBoL-Entity-Sideloader">
-            <HintPath>$(BepInExFolder)\plugins\LBoL-Entity-Sideloader.dll</HintPath>
-        </Reference>
         <Reference Include="LBoL-AddWatermark">
             <HintPath>$(BepInExFolder)\plugins\LBoL-AddWatermark.dll</HintPath>
         </Reference>
