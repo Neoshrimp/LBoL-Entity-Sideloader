@@ -3,6 +3,14 @@
 Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug errors ~~(and ability to read the bloody error messages)~~.
 
 - [One time] Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/).
+    - Open Visual Studio Installer and make sure you have .NET desktop development packages
+      
+      ![image](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/assets/89428565/1463d658-95c6-47fa-9d94-53915456ed3b)
+
+    - You don't need all of them, these should be enough
+      
+      ![image](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/assets/89428565/1b6417b3-e605-426a-8d55-0502c093662e)
+
 
 - [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll).
 

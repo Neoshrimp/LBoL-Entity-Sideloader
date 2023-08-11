@@ -38,10 +38,18 @@ Optimal card image size is `743x512`. It can be smaller as ultimately card image
 |Value2| additional optional value, same as Value1|
 |UpgradedValue2| upgraded Value2|
 |Mana| some mana group a card might use for its effect. It could, for example, be mana granted like Celestial Flight cost change like|
-|UpgradedMana| upgraded Mana if upgrade affects it.|
+|UpgradedMana| upgraded Mana if upgrade affects it. Else null.|
 |Scry| scry amount if the card scrys.|
 |UpgradedScry| upgraded scry.|
 |ToolPlayableTimes| number times of a Limited card can be played. Referred to as {DeckCounter} in card description.
+|Loyalty|starting loyalty of a teammate. Should be `null` for non-teammate card.|
+|UpgradedLoyalty|upgraded loyalty if upgrade affects it. Else null.|
+|PassiveCost|teammate's passive ability gen/cost. Can be negative.|
+|UpgradedPassiveCost|upgraded passive loyalty gen/cost if upgrade affects it. Else null.|
+|ActiveCost|cost of teammate's active ability. Can be positive, in theory.|
+|UpgradedActiveCost|upgraded loyalty cost if upgrade affects it. Else null.|
+|UltimateCost|cost of teammate's ultimate. Can be positive, in theory.|
+|UpgradedUltimateCost|upgraded loyalty cost if upgrade affects it. Else null.|
 |Keywords| keywords which directly affect how the card works like Exile, Replenish etc. Multiple keywords can be specified by using `|` operator, i.e., `Keyword.Replenish | Keyword.Exile | Keyword.Accuracy`|
 |UpgradedKeywords| keywords after upgrading. It's important to note that unlike other upgraded properties base card variant keywords need to respecified if they are desired to be kept in the upgraded version. Some upgrades might remove or change 'bad' keywords like Exile.|
 |EmptyDescription| does the card have NO description? Some status cards don't have a description.|
