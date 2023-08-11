@@ -27,7 +27,7 @@ namespace LBoLEntitySideloader
         public Dictionary<Type, List<EntityInfo>> entityInfos = new Dictionary<Type, List<EntityInfo>>();
 
         // EntityDefinition type => entity type
-        public Dictionary<Type, Type> definition2EntityLogicType = new Dictionary<Type, Type>();
+        public Dictionary<Type, Type> definition2customEntityLogicType = new Dictionary<Type, Type>();
 
         // definition type => attribute
         public Dictionary<Type, ModificationInfo> entitiesToOverwrite = new Dictionary<Type, ModificationInfo>();
@@ -37,12 +37,12 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
 
-        public bool IsForOverwriting(Type definitinoType)
+        public bool IsForOverwriting(Type definitionType)
         {
-            return entitiesToOverwrite.ContainsKey(definitinoType);
+            return entitiesToOverwrite.ContainsKey(definitionType);
         }
 
-        public void ClearTypeToLocalize() 
+        public void ClearTypesToLocalize() 
         {
             typesToLocalize = new Dictionary<Type, LocalizationInfo>();
         }

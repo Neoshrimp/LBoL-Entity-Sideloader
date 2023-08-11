@@ -29,7 +29,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        internal static void Destroy() { _instance = null; }
+        internal static void DestroySelf() { _instance = null; }
 
 
         // config type => used Ids
@@ -47,7 +47,7 @@ namespace LBoLEntitySideloader
         // definition ids
         public HashSet<Type> invalidRegistrations = new HashSet<Type>();
 
-        // factype =>+ id =>+ OverwiteInfo(component, defType, userInfo) 
+        // factype =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
         public Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>>();
 
         Sequence uIdSalt = new Sequence();

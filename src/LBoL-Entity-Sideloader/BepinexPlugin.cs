@@ -102,7 +102,7 @@ namespace LBoLEntitySideloader
             //ensures plugins are reloaded first
             StartCoroutine(DoubleDelayAction(() =>
             {
-                UniqueTracker.Destroy();
+                UniqueTracker.DestroySelf();
 
                 EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
 

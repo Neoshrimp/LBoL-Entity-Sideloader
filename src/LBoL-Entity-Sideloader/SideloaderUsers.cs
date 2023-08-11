@@ -1,4 +1,5 @@
 ﻿using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -63,12 +64,23 @@ namespace LBoLEntitySideloader
 
             public Type GetEntityLogicType(Assembly assembly, Type definitionType)
             {
-                if (this.userInfos.TryGetValue(assembly, out UserInfo user) && user.definition2EntityLogicType.TryGetValue(definitionType, out Type entityType))
-                {
-                    return entityType;
+                if (userInfos.TryGetValue(assembly, out UserInfo user))
+                { 
+                    if(user.definition2customEntityLogicType.TryGetValue(definitionType, out Type entityType))
+                    {
+                        return entityType;
+                    }
+                    if (user.IsForOverwriting(definitionType) && user.definitionInfos.TryGetValue(definitionType, out EntityDefinition entityDefinition))
+                    {
+                        var typeDic = TypeFactoryReflection.AccessTypeDicts(entityDefinition.EntityType(), TypeFactoryReflection.TableFieldName.TypeDict);
+
+                        if(typeDic().TryGetValue(entityDefinition.UniqueId, out Type logicType))
+                            return logicType;
+                    }
                 }
 
-                throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name}");
+
+                throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name} or {definitionType.Name} is not for overwriting");
             }
 
         }

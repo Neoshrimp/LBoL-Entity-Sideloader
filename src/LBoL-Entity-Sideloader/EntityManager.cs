@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 using LBoL.Base.Extensions;
 using LBoL.Core;
@@ -119,7 +120,7 @@ namespace LBoLEntitySideloader
 
                         if (entityLogic is null)
                         {
-                            log.LogError($"{assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity logic type. Please add {typeof(EntityLogic).Name} attribute.");
+                            Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity logic type. Please add {typeof(EntityLogic).Name} attribute.");
                         }
                         else
                         {
@@ -139,7 +140,7 @@ namespace LBoLEntitySideloader
                                 var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
                                 userInfo.entityInfos[facType].Add(entityInfo);
 
-                                userInfo.definition2EntityLogicType.Add(entityLogic.DefinitionType, entityInfo.entityType);
+                                userInfo.definition2customEntityLogicType.Add(entityLogic.DefinitionType, entityInfo.entityType);
                             }
 
                         }
@@ -158,7 +159,7 @@ namespace LBoLEntitySideloader
                 // all definitions needs to be instantiated at the point of this check
                 foreach (var ed in foundEntityLogicForDefinitionTypes)
                 {
-                    if (userInfo.definition2EntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
+                    if (userInfo.definition2customEntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
 
                         if (!entityLogicType.IsSubclassOf(definition.EntityType()))
                         {
@@ -572,7 +573,7 @@ namespace LBoLEntitySideloader
             {
 
                 var user = kv.Value;
-                user.ClearTypeToLocalize();
+                user.ClearTypesToLocalize();
 
                 foreach (var template in user.definitionInfos)
                 {
@@ -632,9 +633,17 @@ namespace LBoLEntitySideloader
 
         internal void LoadAll()
         {
-            Instance.RegisterUsers();
-            Instance.LoadAssetsForResourceHelper();
-            Instance.LoadLocalization();
+            try
+            {
+                Instance.RegisterUsers();
+                Instance.LoadAssetsForResourceHelper();
+                Instance.LoadLocalization();
+            }
+            catch (Exception e)
+            {
+
+                log.LogError(e);
+            }
 
             log.LogInfo("Finished loading custom resources.");
         }

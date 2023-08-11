@@ -21,6 +21,7 @@ using HarmonyLib;
 using LBoL.Core.StatusEffects;
 using UnityEngine.Rendering;
 using LBoL.Core.Units;
+using LBoL.EntityLib.Exhibits.Shining;
 
 namespace GoodExamples.CycleAbilities
 {
@@ -65,6 +66,11 @@ namespace GoodExamples.CycleAbilities
         // CardConfig.FromId(new RedCycleAbilityCardDefinition().UniqueId) 
         public override CardConfig MakeConfig()
         {
+
+
+            var config1 = DefaultConfig();
+            config1.Cost = new ManaGroup() { Any = 2, Black =1 };
+
             CardConfig config = new CardConfig(
                 // get the next number from CardConfig index sequence
                 Index: sequenceTable.Next(typeof(CardConfig)),

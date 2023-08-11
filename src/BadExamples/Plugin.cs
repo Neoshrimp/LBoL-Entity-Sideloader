@@ -33,12 +33,10 @@ using LBoL.EntityLib.Adventures.Stage1;
 using LBoL.EntityLib.Adventures.Stage2;
 using LBoL.EntityLib.Adventures.Stage3;
 using LBoL.EntityLib.Cards.Character.Cirno;
-using LBoL.EntityLib.Cards.Character.Cirno.FairySupport;
 using LBoL.EntityLib.Cards.Character.Koishi;
 using LBoL.EntityLib.Cards.Character.Marisa;
 using LBoL.EntityLib.Cards.Character.Reimu;
 using LBoL.EntityLib.Cards.Character.Sakuya;
-using LBoL.EntityLib.Cards.Devel;
 using LBoL.EntityLib.Cards.Neutral;
 using LBoL.EntityLib.Cards.Neutral.Black;
 using LBoL.EntityLib.Cards.Neutral.Blue;
@@ -52,7 +50,6 @@ using LBoL.EntityLib.Cards.Other.Adventure;
 using LBoL.EntityLib.Cards.Other.Enemy;
 using LBoL.EntityLib.Cards.Other.Misfortune;
 using LBoL.EntityLib.Cards.Other.Tool;
-using LBoL.EntityLib.Devel;
 using LBoL.EntityLib.Dolls;
 using LBoL.EntityLib.EnemyUnits.Character;
 using LBoL.EntityLib.EnemyUnits.Character.DreamServants;
@@ -567,6 +564,33 @@ namespace BadExamples
             }
         }
 
+        // should work
+        [OverwriteVanilla]
+        public sealed class OverwriteWithoutLogic : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(YukariAttack);
+            }
+
+            [DontOverwrite]
+            public override CardImages LoadCardImages()
+            {
+                throw new NotImplementedException();
+            }
+
+            [DontOverwrite]
+            public override LocalizationOption LoadLocalization()
+            {
+                throw new NotImplementedException();
+            }
+
+            [DontOverwrite]
+            public override CardConfig MakeConfig()
+            {
+                throw new NotImplementedException();
+            }
+        }
 
     }
 }

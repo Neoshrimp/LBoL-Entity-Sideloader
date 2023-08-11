@@ -1,0 +1,6 @@
+SuikaBigball:
+  NonbattleDescription: "deeznuts Deal {Damage} damage. Then, deal half that much damage to\
+    \ each other enemy.\nLose {Value1} |Firepower|."
+  Description: "Deal {Damage} damage. Then, deal {HalfDamage} damage to each other\
+    \ enemy.\nLose {Value1} |Firepower|."
+  Name: Oni Deeznuts Bomb

@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadExamples", "src\BadExamp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodExamples", "src\GoodExamples\GoodExamples.csproj", "{ED64EDAF-39E8-4111-B626-FCBC96AF737C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstCard", "src\FirstCard\FirstCard.csproj", "{9787A094-57CA-4406-9FC5-96821394FD67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstCard", "src\FirstCard\FirstCard.csproj", "{9787A094-57CA-4406-9FC5-96821394FD67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random-Examples", "src\Random-Examples\Random-Examples.csproj", "{10DEF153-A403-493E-A960-16B9884A4C61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{9787A094-57CA-4406-9FC5-96821394FD67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9787A094-57CA-4406-9FC5-96821394FD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9787A094-57CA-4406-9FC5-96821394FD67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10DEF153-A403-493E-A960-16B9884A4C61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10DEF153-A403-493E-A960-16B9884A4C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10DEF153-A403-493E-A960-16B9884A4C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10DEF153-A403-493E-A960-16B9884A4C61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

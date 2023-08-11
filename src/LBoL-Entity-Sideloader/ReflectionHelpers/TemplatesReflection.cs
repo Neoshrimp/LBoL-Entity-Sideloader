@@ -50,7 +50,7 @@ namespace LBoLEntitySideloader.Reflection
         }
 
 
-        public static bool DoOverwrite(Type definitionType, string methodName)
+        static public bool DoOverwrite(Type definitionType, string methodName)
         {
             var method = AccessTools.Method(definitionType, methodName);
             return method.GetCustomAttribute<DontOverwriteAttribute>(inherit: true) == null;
