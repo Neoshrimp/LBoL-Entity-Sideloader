@@ -6,6 +6,8 @@ using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Cards.Neutral.Red;
+using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
