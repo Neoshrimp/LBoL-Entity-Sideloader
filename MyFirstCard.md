@@ -110,7 +110,7 @@ CardId:
 
 - Now comes the difficult part, actually implementing the card. Let's start small and say we want to create a stronger version of Youkai Buster.
 
-- Go back to `FirstCardDef.MakeConig`. You don't have to close the game just close the collection.
+- Go back to `FirstCardDef.MakeConfig`. You don't have to close the game just close the collection.
 
 - Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/ae2ef3c77ef28da9035603b182640c711dd55d06/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L47).
 
