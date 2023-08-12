@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LBoLEntitySideloader.Reflection
+namespace LBoLEntitySideloader.ReflectionHelpers
 {
     internal class TemplatesReflection
     {

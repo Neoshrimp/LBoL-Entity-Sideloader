@@ -6,7 +6,6 @@ using LBoL.Core;
 using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
-using LBoLEntitySideloader.Reflection;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using System;
@@ -273,9 +272,15 @@ namespace LBoLEntitySideloader
                 // For adding config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
 
+                var newConfig = configProvider.MakeConfig();
+
+                if (newConfig == null)
+                {
+                    throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
+                }
+
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
                 {
-                    var newConfig = configProvider.MakeConfig();
 
                     switch (entityDefinition.UniqueId.idType)
                     {

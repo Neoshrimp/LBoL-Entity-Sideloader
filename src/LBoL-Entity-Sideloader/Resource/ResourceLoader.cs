@@ -1,5 +1,6 @@
 ﻿using LBoL.Core;
 using LBoL.Core.Battle;
+using LBoL.Presentation.Bullet;
 using System;
 using System.IO;
 using System.Linq;
@@ -93,17 +94,23 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
-        public static byte[] ResourceBinary(string name)
+        public static AudioClip LoadAudioClip(string name, IResourceSource source)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public static byte[] ResourceBinary(string name, IResourceSource source)
         {
             Assembly a = Assembly.GetExecutingAssembly();
-            var resourceName = a.GetManifestResourceNames().First(r => r.Contains(name));
-            using (Stream resFilestream = a.GetManifestResourceStream(resourceName))
-            {
-                if (resFilestream == null) return null;
-                byte[] ba = new byte[resFilestream.Length];
-                resFilestream.Read(ba, 0, ba.Length);
-                return ba;
-            }
+
+            using var stream = source.Load(name);
+            
+
+            if (stream == null) return null;
+            byte[] ba = new byte[stream.Length];
+            stream.Read(ba, 0, ba.Length);
+            return ba;
         }
     }
 }

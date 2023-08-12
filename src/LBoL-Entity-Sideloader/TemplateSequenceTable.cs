@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using LBoL.Base.Extensions;
 using LBoLEntitySideloader.Entities;
-using LBoLEntitySideloader.Reflection;
 using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections.Generic;

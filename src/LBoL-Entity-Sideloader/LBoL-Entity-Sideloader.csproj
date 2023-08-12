@@ -76,6 +76,9 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="YamlDotNet">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
     </Reference>

@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using LBoLEntitySideloader.Reflection;
+using LBoLEntitySideloader.ReflectionHelpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
