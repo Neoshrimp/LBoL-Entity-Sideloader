@@ -297,6 +297,8 @@
 
     <ItemGroup>
       <None Remove="resources\CardsEn.yaml" />
+      <None Remove="resources\CardsZhHans.yaml" />
+      <None Remove="resources\StatusEffectsEn.yaml" />
     </ItemGroup>
 
 

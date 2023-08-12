@@ -272,15 +272,14 @@ namespace LBoLEntitySideloader
                 // For adding config to dictionary
                 var f_IdTable = ConfigReflection.GetTableField(configType);
 
-                var newConfig = configProvider.MakeConfig();
 
-                if (newConfig == null)
-                {
-                    throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
-                }
 
                 if (!user.IsForOverwriting(entityDefinition.GetType()))
                 {
+
+                    var newConfig = configProvider.MakeConfig();
+                    if (newConfig == null)
+                        throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
 
                     switch (entityDefinition.UniqueId.idType)
                     {
@@ -311,6 +310,8 @@ namespace LBoLEntitySideloader
                     HandleOverwriteWrap(() =>
                     {
                         var newConfig = configProvider.MakeConfig();
+                        if (newConfig == null)
+                            throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;

@@ -592,5 +592,36 @@ namespace BadExamples
             }
         }
 
+
+        public sealed class ConfigIsNullDef : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(ConfigIsNull);
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadLocalization()
+            {
+                return null;
+            }
+
+            public override CardConfig MakeConfig()
+            {
+                return null;
+            }
+
+
+            [EntityLogic(typeof(ConfigIsNullDef))]
+            public sealed class ConfigIsNull : Card
+            { 
+            
+            }
+        }
+
     }
 }

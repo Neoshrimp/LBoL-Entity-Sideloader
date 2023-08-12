@@ -4,3 +4,7 @@ SuikaBigball:
   Description: "Deal {Damage} damage. Then, deal {HalfDamage} damage to each other\
     \ enemy.\nLose {Value1} |Firepower|."
   Name: Oni Deeznuts Bomb
+YinglangHowl:
+  Description: Apply {Value1} |Temporary Firepower Down| and {Value2} |Vulnerable|
+    to each enemy.
+  Name: Full Moon Furry
