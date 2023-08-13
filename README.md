@@ -11,6 +11,7 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 - [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
 - [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
 - [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
+- [Dayuu-Mod](https://github.com/IntoxicatedKid/Dayuu-Mod) *by Intoxicated Kid*
 
 ### Installation
 
