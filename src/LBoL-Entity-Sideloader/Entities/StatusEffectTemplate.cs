@@ -17,6 +17,11 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<Sprite>
     {
 
+        public override Type TemplateType()
+        {
+            return typeof(StatusEffectTemplate);
+        }
+
         public override Type ConfigType()
         {
             return typeof(StatusEffectConfig);

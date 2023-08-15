@@ -24,7 +24,10 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<ExhibitSprites>
     {
 
-
+        public override Type TemplateType()
+        {
+            return typeof(ExhibitTemplate);
+        }
         public override Type ConfigType()
         {
             return typeof(ExhibitConfig);

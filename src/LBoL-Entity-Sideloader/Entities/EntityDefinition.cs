@@ -57,6 +57,13 @@ namespace LBoLEntitySideloader.Entities
         /// <returns>Type</returns>
         public abstract Type ConfigType();
 
+        /// <summary>
+        /// Base template class type
+        /// </summary>
+        /// <returns>Type</returns>
+        public abstract Type TemplateType();
+
+
 
         /// <summary>
         /// Base entity logic Type (Card, Exhibit, EnemyUnit..) used by the template
@@ -83,7 +90,7 @@ namespace LBoLEntitySideloader.Entities
                     if (locInfo.locFiles == null)
                         locInfo.locFiles = globalLoc.LocalizationFiles;
                     else
-                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files  they've already been set.");
+                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
                 }
                 locInfo.entityLogicTypes.Add(entityLogicType);
                     

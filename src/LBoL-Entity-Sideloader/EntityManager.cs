@@ -378,7 +378,7 @@ namespace LBoLEntitySideloader
 
                             var id = definition.GetId();
 
-                            if (!UniqueTracker.IsOverwriten(facType, id, "EntityLogic", ei.definitionType, user))
+                            if (!UniqueTracker.IsOverwriten(definition.TemplateType(), id, "EntityLogic", ei.definitionType, user))
                             {
                                 var originalType = TypeFactoryReflection.AccessTypeDicts(facType, TypeFactoryReflection.TableFieldName.TypeDict)()[uId];
 
@@ -676,7 +676,7 @@ namespace LBoLEntitySideloader
                 {
                     action();
                 }
-                else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.EntityType(), definition.UniqueId, methodName, defType, user))
+                else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.TemplateType(), definition.UniqueId, methodName, defType, user))
                 {
 
                     action();

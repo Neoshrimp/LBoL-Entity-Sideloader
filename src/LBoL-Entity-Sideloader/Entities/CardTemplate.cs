@@ -18,7 +18,10 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<CardImages>,
         IResourceConsumer<LocalizationOption>
     {
-
+        public override Type TemplateType()
+        {
+            return typeof(CardTemplate);
+        }
 
         public override Type ConfigType()
         {

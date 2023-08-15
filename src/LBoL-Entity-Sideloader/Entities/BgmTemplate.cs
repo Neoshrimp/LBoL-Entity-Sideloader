@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static UnityEngine.UI.Image;
 using System.Xml.Linq;
 using HarmonyLib;
 using LBoL.Presentation;
@@ -14,6 +13,22 @@ namespace LBoLEntitySideloader.Entities
     public abstract class BgmTemplate : EntityDefinition,
             IConfigProvider<BgmConfig>
     {
+
+        public override Type TemplateType()
+        {
+            return typeof(BgmTemplate);
+        }
+
+        public override Type ConfigType()
+        {
+            return typeof(BgmConfig);
+        }
+
+
+        public override Type EntityType()
+        {
+            throw new InvalidDataException();
+        }
 
         public BgmConfig DefaultConfig()
         {
