@@ -59,6 +59,9 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
+        // templateType => Id => definitionType
+        public Dictionary<Type, Dictionary<string, Type>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, Type>>();
+
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
+using NLayer;
 using static LBoLEntitySideloader.BepinexPlugin;
 
 namespace LBoLEntitySideloader.Resource
@@ -60,7 +61,6 @@ namespace LBoLEntitySideloader.Resource
                 filterMode = 0
             };
 
-            // 512, 512, 
             spriteTexture.LoadImage(memoryStream.ToArray());
 
             if (rect == null)
@@ -96,13 +96,25 @@ namespace LBoLEntitySideloader.Resource
 
         public static AudioClip LoadAudioClip(string name, IResourceSource source)
         {
-            throw new NotImplementedException();
+            using var stream = source.Load(name);
+
+
+            var mpgFile = new MpegFile(stream);
+
+            var samples = new float[mpgFile.Length];
+            mpgFile.ReadSamples(samples, 0, (int)mpgFile.Length);
+
+            var clip = AudioClip.Create(name, samples.Length, mpgFile.Channels, mpgFile.SampleRate, false);
+            clip.SetData(samples, 0);
+
+            return clip;
+
         }
 
 
         public static byte[] ResourceBinary(string name, IResourceSource source)
         {
-            Assembly a = Assembly.GetExecutingAssembly();
+            
 
             using var stream = source.Load(name);
             

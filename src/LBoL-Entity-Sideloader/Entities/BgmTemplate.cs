@@ -6,13 +6,15 @@ using System.IO;
 using System.Text;
 using static UnityEngine.UI.Image;
 using System.Xml.Linq;
+using HarmonyLib;
+using LBoL.Presentation;
 
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class BgmTemplate : EntityDefinition,
-            IConfigProvider<BgmConfig>,
-            IResourceConsumer<Audio>
+            IConfigProvider<BgmConfig>
     {
+
         public BgmConfig DefaultConfig()
         {
             var config = new BgmConfig(
@@ -35,10 +37,22 @@ namespace LBoLEntitySideloader.Entities
 
         public abstract BgmConfig MakeConfig();
 
-        public void Consume(Audio resource)
+        public abstract AudioInfo LoadAudioClip();
+
+
+
+
+/*        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadBgmAsync))]
+        class BgmLoad_Patch
         {
-            throw new NotImplementedException();
-        }
+            static bool Prefix(string path)
+            {
+
+            }
+        }*/
+
+
+
     }
 
 }

@@ -242,7 +242,7 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
+        internal C RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
             if (entityDefinition == null)
@@ -303,20 +303,22 @@ namespace LBoLEntitySideloader
 
                     ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
                     ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+
+                    return newConfig;
                 }
                 else
                 {
-
+                    var newConfig = configProvider.MakeConfig();
+                    if (newConfig == null)
+                        throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
                     HandleOverwriteWrap(() =>
                     {
-                        var newConfig = configProvider.MakeConfig();
-                        if (newConfig == null)
-                            throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
+                       
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;
                     }, entityDefinition, nameof(configProvider.MakeConfig), user);
-
+                    return newConfig;
                 }
 
 
@@ -325,6 +327,7 @@ namespace LBoLEntitySideloader
             catch (Exception ex)
             {
                 log.LogError($"Exception registering config of {entityDefinition}: {ex}");
+                return null;
             }
         }
 
@@ -505,6 +508,15 @@ namespace LBoLEntitySideloader
                     else if (entityDefinition is ExhibitTemplate et)
                     {
                         RegisterConfig(et, user);
+                    }
+                    else if (entityDefinition is BgmTemplate bt)
+                    {
+                        var bgmConfig = RegisterConfig(bt, user);
+                        // pass ID to LoadBgmAsync
+                        if (bgmConfig != null)
+                        {
+                            bgmConfig.Path = bgmConfig.ID;
+                        }
                     }
 
             }

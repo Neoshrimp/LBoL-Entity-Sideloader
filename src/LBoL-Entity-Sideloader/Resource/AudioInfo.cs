@@ -5,11 +5,15 @@ using UnityEngine;
 
 namespace LBoLEntitySideloader.Resource
 {
-    public class Audio : IResourceProvider<AudioClip>
+    public class AudioInfo : IResourceProvider<AudioClip>
     {
+
+        public AudioClip main;
+
+
         public AudioClip Load()
         {
-            throw new NotImplementedException();
+            return main;
         }
 
         public Dictionary<string, AudioClip> LoadMany()
