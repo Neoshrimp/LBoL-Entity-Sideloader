@@ -57,9 +57,17 @@ namespace LBoLEntitySideloader
         {
             static async UniTask Postfix(UniTask __result)
             {
-                await UniTask.WhenAll(new UniTask[] { __result });
-                log.LogDebug("loc reload");
-                EntityManager.Instance.LoadLocalization();
+                try
+                {
+                    await UniTask.WhenAll(new UniTask[] { __result });
+                    log.LogDebug("loc reload");
+                    EntityManager.Instance.LoadLocalization();
+                }
+                catch (Exception e)
+                {
+
+                    log.LogWarning(e);
+                }
             }
         }
 
@@ -180,7 +188,6 @@ namespace LBoLEntitySideloader
 
 
         [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseCardWeight))]
-        //[HarmonyDebug]
         class UncapColorLimitation_Patch
         {
 
@@ -263,8 +270,6 @@ namespace LBoLEntitySideloader
                 {
                     if (ci.Is(OpCodes.Ldstr, "Invalid cost pattern {0} of card '{1}'") && patchCount < patchCasesTotal)
                     {
-                        log.LogInfo("string found");
-
                         skipMode = true;
                         jmpSwitchEnd = prevCi;
                         numStore = ciList[i - 2];
@@ -274,8 +279,6 @@ namespace LBoLEntitySideloader
                     }
                     else if (skipMode && ci.opcode == OpCodes.Throw && patchCount < patchCasesTotal)
                     {
-                        log.LogInfo("injected");
-
                         // trivialColorCount case 1
                         if (patchCount == 0)
                         {
@@ -287,7 +290,6 @@ namespace LBoLEntitySideloader
                             yield return new CodeInstruction(OpCodes.Ldc_R4, 1.2f);
 
                         }
-                        log.LogInfo(numStore);
                         yield return numStore;
                         yield return jmpSwitchEnd;
 

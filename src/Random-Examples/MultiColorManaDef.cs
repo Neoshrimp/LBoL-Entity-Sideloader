@@ -24,7 +24,7 @@ namespace Random_Examples
     public class MultiColorManaDef
     {
         [OverwriteVanilla]
-        public sealed class SuikaBigballLoc : CardTemplate
+        public sealed class SuikaBigballMana : CardTemplate
         {
             public override IdContainer GetId()
             {
@@ -59,7 +59,7 @@ namespace Random_Examples
 
 
         [OverwriteVanilla]
-        public sealed class YinglangHowlLoc : CardTemplate
+        public sealed class YinglangHowlMana : CardTemplate
         {
             public override IdContainer GetId()
             {

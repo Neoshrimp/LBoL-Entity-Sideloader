@@ -70,8 +70,13 @@ namespace LBoLEntitySideloader
             {
                 if (oiDic.TryGetValue(component, out OverwriteInfo oi))
                 {
-                    log.LogError($"{user.assembly.GetName().Name} definition {definitionType.Name} is trying to change {component} of {id} but it's already modified by {oi.user.assembly.GetName().Name} definition {oi.defType.Name}.");
-                    return true;
+                    // if definition type is the same it's probably a localization change
+                    if (!oi.defType.Equals(definitionType))
+                    { 
+                        log.LogError($"{user.assembly.GetName().Name} definition {definitionType.Name} is trying to change {component} of {id} but it's already modified by {oi.user.assembly.GetName().Name} definition {oi.defType.Name}.");
+                        return true;
+                    }
+                    return false;
                 }
                 else
                 {

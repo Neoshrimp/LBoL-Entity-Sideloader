@@ -6,7 +6,7 @@
     造成 {Damage} 点伤害，对其他敌人造成一半的伤害。
     失去 {Value1} |火力|。
   FlavorText: 对其他种族而言，鬼的力量还是太难掌控了。
-  Name: I don't speak Chinese
+  Name: I don't speak
 YinglangHowl:
   Description: 对所有敌人施加 {Value1} 点|暂失火力|和 {Value2} 回合|易伤|。
   FlavorText: 这次不会附送狼毛。

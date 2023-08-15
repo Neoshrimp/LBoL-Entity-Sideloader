@@ -1,9 +1,9 @@
-SuikaBigball:
-  NonbattleDescription: "deeznuts Deal {Damage} damage. Then, deal half that much damage to\
+﻿SuikaBigball:
+  NonbattleDescription: "Deal {Damage} damage. Then, deal half that much damage to\
     \ each other enemy.\nLose {Value1} |Firepower|."
   Description: "Deal {Damage} damage. Then, deal {HalfDamage} damage to each other\
     \ enemy.\nLose {Value1} |Firepower|."
-  Name: Oni Deeznuts Bomb
+  Name: Oni deeznuts Bomb
 YinglangHowl:
   Description: Apply {Value1} |Temporary Firepower Down| and {Value2} |Vulnerable|
     to each enemy.
