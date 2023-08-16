@@ -125,12 +125,13 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             { typeof(GunConfig), AccessTools.Field(typeof(GunConfig), BackingWrap(nameof(GunConfig.Name))) }
         };
 
-        static string[] potentialIdNames = new string[] { BackingWrap("Id"), BackingWrap("Level"), BackingWrap("Name"), BackingWrap("ID"), };
+        static string[] potentialIdNames = new string[] { BackingWrap("Id"), BackingWrap("ID"), BackingWrap("Level"), BackingWrap("Name"), };
 
         public static FieldInfo GetIdField(Type configType) => GetFieldInfo(configType, potentialIdNames, idFieldCache);
 
         private static FieldInfo GetFieldInfo(Type configType, string[] potentialNames, Dictionary<Type, FieldInfo> cache)
         {
+            
             if (cache.TryGetValue(configType, out FieldInfo result))
                 return result;
 
@@ -140,14 +141,20 @@ namespace LBoLEntitySideloader.ReflectionHelpers
                 return null;
             }
 
+            // 2do GunConfig will require ajustments
             FieldInfo field = null;
             foreach (var n in potentialNames)
             {
                 // avoid printing out HarmonyX warning
-                field = AccessTools.FindIncludingBaseTypes(configType, (Type t) => t.GetField(n, AccessTools.all));
-                if (field != null)
+                var newField = AccessTools.FindIncludingBaseTypes(configType, (Type t) => t.GetField(n, AccessTools.all));
+                if (newField != null)
                 {
-                    break;
+                    if (field == null)
+                        field = newField;
+                    else
+                    {
+                        Log.LogDev()?.LogWarning($"Potentially ambiguous fields found in {configType}: {field.Name}, {newField.Name}..");
+                    }
                 }
             }
 

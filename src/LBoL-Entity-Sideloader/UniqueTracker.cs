@@ -40,6 +40,7 @@ namespace LBoLEntitySideloader
         // EntityDefinition type 
         public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
+        // configType => Id => index
         public Dictionary<Type, Dictionary<IdContainer, int>> id2ConfigListIndex = new Dictionary<Type, Dictionary<IdContainer, int>>();
 
         private TemplateSequenceTable tempConfigIndexTable = new TemplateSequenceTable();
@@ -60,10 +61,27 @@ namespace LBoLEntitySideloader
         public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
         // templateType => Id => definitionType
-        public Dictionary<Type, Dictionary<string, Type>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, Type>>();
+        public Dictionary<Type, Dictionary<string, EntityDefinition>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, EntityDefinition>>();
 
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
+        public bool IsLoadedOnDemand(Type templateType, string Id, out EntityDefinition entityDefinition)
+        {
+
+            entityDefinition = null;
+            onDemandResourceTracker.TryGetValue(templateType, out var IdDic);
+            if(IdDic == null)
+                return false;
+            return IdDic.TryGetValue(Id, out entityDefinition);
+        }
+
+
+        public bool AddOnDemandResource(Type templateType, string Id, EntityDefinition definition)
+        {
+            onDemandResourceTracker.TryAdd(templateType, new Dictionary<string, EntityDefinition>());
+            // stupid might work
+            return onDemandResourceTracker[templateType].TryAdd(Id, definition);
+        }
 
         public static bool IsOverwriten(Type templateType, IdContainer id, string component, Type definitionType, UserInfo user)
         {

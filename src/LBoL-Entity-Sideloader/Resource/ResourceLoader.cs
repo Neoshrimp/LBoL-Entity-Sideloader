@@ -9,6 +9,9 @@ using UnityEngine;
 using YamlDotNet.RepresentationModel;
 using NLayer;
 using static LBoLEntitySideloader.BepinexPlugin;
+using Mono.Cecil;
+using UnityEngine.Networking;
+using System.Collections;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -96,20 +99,42 @@ namespace LBoLEntitySideloader.Resource
 
         public static AudioClip LoadAudioClip(string name, IResourceSource source)
         {
-            using var stream = source.Load(name);
+            try
+            {
+                using var stream = source.Load(name);
 
 
-            var mpgFile = new MpegFile(stream);
+                using var memoryStream = new MemoryStream();
+                var buffer = new byte[16384];
+                int count;
+                while ((count = stream!.Read(buffer, 0, buffer.Length)) > 0)
+                    memoryStream.Write(buffer, 0, count);
 
-            var samples = new float[mpgFile.Length];
-            mpgFile.ReadSamples(samples, 0, (int)mpgFile.Length);
+                var audioBytes = memoryStream.ToArray();
 
-            var clip = AudioClip.Create(name, samples.Length, mpgFile.Channels, mpgFile.SampleRate, false);
-            clip.SetData(samples, 0);
 
-            return clip;
+                //var audioBytes = ResourceBinary(name, source);
+
+                var clip = WavUtility.ToAudioClip(audioBytes);
+
+                /*            var mpgFile = new MpegFile(stream);
+
+                            var samples = new float[mpgFile.Length];
+                            mpgFile.ReadSamples(samples, 0, (int)mpgFile.Length);
+
+                            var clip = AudioClip.Create(name, samples.Length, mpgFile.Channels, mpgFile.SampleRate, false);
+                            clip.SetData(samples, 0);*/
+
+                return clip;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
         }
+
+
 
 
         public static byte[] ResourceBinary(string name, IResourceSource source)

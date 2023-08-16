@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using LBoL.Base.Extensions;
+using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
@@ -242,6 +243,76 @@ namespace LBoLEntitySideloader
         }
 
 
+
+        internal void RegisterUser(UserInfo user)
+        {
+
+            log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
+
+
+            foreach (var kv in user.definitionInfos)
+            {
+                var type = kv.Key;
+
+                var entityDefinition = kv.Value;
+
+
+                var validForRegistration = RegisterId(user, entityDefinition);
+
+                if (validForRegistration)
+                {
+                    try
+                    {
+                        if (entityDefinition is CardTemplate ct)
+                        {
+                            RegisterConfig(ct, user);
+                        }
+                        else if (entityDefinition is StatusEffectTemplate st)
+                        {
+                            RegisterConfig(st, user);
+                        }
+                        else if (entityDefinition is ExhibitTemplate et)
+                        {
+                            RegisterConfig(et, user);
+                        }
+                        else if (entityDefinition is BgmTemplate bt)
+                        {
+                            var bgmConfig = RegisterConfig(bt, user);
+
+                            // should only be the case if template is for overwrite but config was NOT overwritten. Alternative:
+                            // if (user.IsForOverwriting(bt.GetType()) && !TemplatesReflection.DoOverwrite(bt.GetType(), nameof(BgmTemplate.MakeConfig)))
+                            if (bgmConfig == null)
+                            {
+                                bgmConfig = BgmConfig.FromID(bt.UniqueId);
+                            }
+
+
+                            // pass ID to LoadBgmAsync
+                            bgmConfig.Path = bgmConfig.ID;
+                            bgmConfig.Folder = "";
+                            UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.LogError($"Exception registering config of {entityDefinition}: {ex}");
+                    }
+                }
+
+            }
+
+
+            Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
+            foreach (var kv in user.entityInfos)
+            {
+                RegisterTypes(kv.Key, user);
+            }
+
+        }
+
+        // return value is not very useful
         internal C RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
@@ -251,86 +322,123 @@ namespace LBoLEntitySideloader
             }
 
 
-            try
+            var configType = entityDefinition.ConfigType();
+            var defType = entityDefinition.GetType();
+
+
+            var f_Id = ConfigReflection.GetIdField(configType);
+
+
+
+            Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
+
+
+
+            // For adding config to array
+            var f_Data = ConfigReflection.GetArrayField(configType);
+
+            var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+
+            // For adding config to dictionary
+            var f_IdTable = ConfigReflection.GetTableField(configType);
+
+            C newConfig = null;
+
+            if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType) && (!user.IsForOverwriting(entityDefinition.GetType()) || TemplatesReflection.DoOverwrite(defType, nameof(configProvider.MakeConfig))))
             {
-                var configType = entityDefinition.ConfigType();
-
-
-                var f_Id = ConfigReflection.GetIdField(configType);
-
-
-
-                Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
-
-
-
-                // For adding config to array
-                var f_Data = ConfigReflection.GetArrayField(configType);
-
-                var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-
-                // For adding config to dictionary
-                var f_IdTable = ConfigReflection.GetTableField(configType);
-
-
-
-                if (!user.IsForOverwriting(entityDefinition.GetType()))
+                newConfig = configProvider.MakeConfig();
+                if (newConfig == null)
+                    throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
+                // should work when not overwriting
+                // 2do maybe move to method
+/*                    if (newConfig is BgmConfig bgmConfig)
                 {
-
-                    var newConfig = configProvider.MakeConfig();
-                    if (newConfig == null)
-                        throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
-
-                    switch (entityDefinition.UniqueId.idType)
-                    {
-                        case IdContainer.IdType.String:
-                            f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
-                            break;
-                        case IdContainer.IdType.Int:
-                            f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
-                            break;
-                        default:
-                            log.LogWarning("RegisterConfig: you shouldn't be here");
-                            break;
-                    }
+                    // pass ID to LoadBgmAsync
+                    bgmConfig.Path = bgmConfig.ID;
+                    bgmConfig.Folder = "";
+                    UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
+                }*/
+            }
 
 
-                    var f_Index = ConfigReflection.HasIndex(configType);
-                    if (f_Index != null)
-                    {
-                        f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
-                    }
 
-                    ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
-                    ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+            if (!user.IsForOverwriting(entityDefinition.GetType()))
+            {
 
-                    return newConfig;
+                switch (entityDefinition.UniqueId.idType)
+                {
+                    case IdContainer.IdType.String:
+                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
+                        break;
+                    case IdContainer.IdType.Int:
+                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
                 }
-                else
+
+
+                var f_Index = ConfigReflection.HasIndex(configType);
+                if (f_Index != null)
                 {
-                    var newConfig = configProvider.MakeConfig();
-                    if (newConfig == null)
-                        throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
-                    HandleOverwriteWrap(() =>
+                    f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
+                }
+
+                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
+
+            }
+            else
+            {
+
+                if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType))
+                {
+                    if (TemplatesReflection.DoOverwrite(defType, nameof(configProvider.MakeConfig)) && !UniqueTracker.IsOverwriten(entityDefinition.TemplateType(), entityDefinition.UniqueId, nameof(configProvider.MakeConfig), defType, user))
                     {
-                       
+
+
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;
-                    }, entityDefinition, nameof(configProvider.MakeConfig), user);
-                    return newConfig;
+                    }
                 }
 
+            }
 
 
-            }
-            catch (Exception ex)
-            {
-                log.LogError($"Exception registering config of {entityDefinition}: {ex}");
-                return null;
-            }
+            return newConfig;
+
+
         }
 
+
+
+
+/*        internal void ModifyOverwrittenConfig<C>(C newConfig, EntityDefinition entityDefinition) where C : class
+        {
+            var configType = newConfig.GetType();
+
+            if (!ConfigReflection.AllConfigTypes().Contains(configType))
+            {
+                throw new ArgumentException($"ModifyOverwrittenConfig: {configType} is not a config type.");
+            }
+
+            var f_Data = ConfigReflection.GetArrayField(configType);
+
+            var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
+
+            // For adding config to dictionary
+            var f_IdTable = ConfigReflection.GetTableField(configType);
+
+            var f_Id = ConfigReflection.GetIdField(configType);
+
+            var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+
+            ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+            ref_Data()[i] = newConfig;
+        }*/
 
 
         internal static void RegisterTypes(Type facType, UserInfo user)
@@ -478,57 +586,7 @@ namespace LBoLEntitySideloader
 
         }
 
-        internal void RegisterUser(UserInfo user)
-        {
 
-            log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
-
-
-            foreach (var kv in user.definitionInfos)
-            {
-                var type = kv.Key;
-
-                var entityDefinition = kv.Value;
-
-
-                var validForRegistration = RegisterId(user, entityDefinition);
-
-
-
-
-                if (validForRegistration)
-                    if (entityDefinition is CardTemplate ct)
-                    {
-                        RegisterConfig(ct, user);
-                    }
-                    else if (entityDefinition is StatusEffectTemplate st)
-                    {
-                        RegisterConfig(st, user);
-                    }
-                    else if (entityDefinition is ExhibitTemplate et)
-                    {
-                        RegisterConfig(et, user);
-                    }
-                    else if (entityDefinition is BgmTemplate bt)
-                    {
-                        var bgmConfig = RegisterConfig(bt, user);
-                        // pass ID to LoadBgmAsync
-                        if (bgmConfig != null)
-                        {
-                            bgmConfig.Path = bgmConfig.ID;
-                        }
-                    }
-
-            }
-
-
-            Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}"); 
-            foreach (var kv in user.entityInfos)
-            {
-                RegisterTypes(kv.Key, user);
-            }
-
-        }
 
         // full unregistration in 
         internal void UnregisterUser(UserInfo user)

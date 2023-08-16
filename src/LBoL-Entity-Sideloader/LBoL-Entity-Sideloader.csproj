@@ -20,7 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLayer" Version="1.14.0" />
+    <PackageReference Include="NLayer" Version="1.11.0" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -79,6 +79,12 @@
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityEngine.UnityWebRequestAudioModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
