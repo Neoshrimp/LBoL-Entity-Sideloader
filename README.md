@@ -78,9 +78,9 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Create StatusEffects (Abilities) ☑️
 |-- Create Exhibits ☑️
   |-- Display modded Exhibits in Collection
-|-- Load custom SFX
+|-- Load custom SFX ☑️
   |-- SfxConfig
-  |-- BgmConfig
+  |-- BgmConfig ☑️
 |-- Create Enemies
   |-- Load custom spine models
     |-- UnitModelConfig
@@ -105,6 +105,7 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Overwrite or modify vanilla entities ☑️
   |-- Overwrite individual entity components selectively ☑️
     |-- Merge configs overwritten by different mods (maybe)
+  |-- Make overwriting more convenient by introducing mass overwrite types
 |-- Error feedback and handling ☑️
   |-- Better error feedback and handling..
 |-- Support loading from AssetBundles
