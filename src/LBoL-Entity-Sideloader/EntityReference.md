@@ -152,3 +152,7 @@ A `512x512` icon. `Dictionary<string, Sprite> customSprites` can be specified fo
 |Keywords||
 |RelativeEffects||
 |RelativeCards||
+
+
+### BgmConfig
+*soooooon*
