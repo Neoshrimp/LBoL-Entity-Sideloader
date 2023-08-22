@@ -287,6 +287,18 @@
         <Reference Include="LBoL-AddWatermark">
             <HintPath>$(BepInExFolder)\plugins\LBoL-AddWatermark.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.AudioModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityEngine.UnityWebRequestAudioModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UniTask">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UniTask.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 
@@ -302,13 +314,8 @@
     </ItemGroup>
 
 
-    <ItemGroup>
-      <Folder Include="Resources\" />
-    </ItemGroup>
-
-
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
+        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
     </Target>
 
 

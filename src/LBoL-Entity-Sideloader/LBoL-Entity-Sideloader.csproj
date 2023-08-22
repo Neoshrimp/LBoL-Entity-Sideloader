@@ -20,7 +20,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLayer" Version="1.11.0" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -86,6 +85,9 @@
     <Reference Include="UnityEngine.UnityEngine.UnityWebRequestAudioModule">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityEngine.AssetBundleModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="YamlDotNet">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
     </Reference>
@@ -96,7 +98,7 @@
 	
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md'   -DestinationPath  '$(ProjectDir)$(AssemblyName)-thunderstore.zip' -Force&quot;&#xD;&#xA;" />
   </Target>
 	
 

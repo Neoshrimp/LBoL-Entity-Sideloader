@@ -24,7 +24,10 @@ namespace LBoLEntitySideloader
             get
             {
                 if (_instance == null)
+                { 
                     _instance = new UniqueTracker();
+                    _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
+                }
                 return _instance;
             }
         }

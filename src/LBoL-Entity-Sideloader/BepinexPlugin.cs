@@ -15,7 +15,7 @@ using UnityEngine;
 namespace LBoLEntitySideloader
 {
 
-    [BepInPlugin(PluginInfo.GUID, PluginInfo.description, PluginInfo.version)]
+    [BepInPlugin(LBoLEntitySideloader.PluginInfo.GUID, LBoLEntitySideloader.PluginInfo.description, LBoLEntitySideloader.PluginInfo.version)]
     [BepInDependency("com.bepis.bepinex.scriptengine", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("LBoL.exe")]
     public class BepinexPlugin : BaseUnityPlugin
@@ -23,7 +23,7 @@ namespace LBoLEntitySideloader
 
         internal static BepInEx.Logging.ManualLogSource log;
 
-        private static Harmony harmony = PluginInfo.harmony;
+        private static Harmony harmony = LBoLEntitySideloader.PluginInfo.harmony;
 
         
         public static ConfigEntry<bool> devModeConfig;
@@ -36,10 +36,10 @@ namespace LBoLEntitySideloader
         public static ConfigEntry<bool> autoRestartLevelConfig;
 
 
-        public static BepinexPlugin Instance;
+        public static BepinexPlugin instance;
         private void Awake()
         {
-            Instance = this;
+            instance = this;
 
             log = Logger;
 
@@ -62,6 +62,7 @@ namespace LBoLEntitySideloader
 
         private void OnDestroy()
         {
+            instance = null;
             if (harmony != null)
                 harmony.UnpatchSelf();
         }

@@ -9,6 +9,7 @@ using HarmonyLib;
 using LBoL.Presentation;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using LBoL.Base.Extensions;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -55,28 +56,29 @@ namespace LBoLEntitySideloader.Entities
 
         public abstract BgmConfig MakeConfig();
 
-        public abstract AudioInfo LoadAudioClip();
+        public abstract UniTask<AudioClip> LoadAudioClipAsync();
 
-
-        //2do INCLUDE audio lib with sideloader
 
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadBgmAsync))]
         //[HarmonyDebug]
         internal class BgmLoad_Patch
         {
+
+
             // path = ID
-            static bool Prefix(string path, ref BgmTemplate __state)
+            static bool Prefix(string path, ref UniTask<AudioClip> __result)
             {
 
-                __state = null;
 
                 var Id = path.TrimStart('/');
+                Log.log.LogDebug($"bgm to load: {Id}");
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(BgmTemplate), Id, out var entityDefinition))
                 {
-                    Log.log.LogDebug("TO load custom bgm");
+                    Log.log.LogDebug($"custom bgm");
+
                     if (entityDefinition is BgmTemplate bt)
                     {
-                        __state = bt;
+                        __result = bt.LoadAudioClipAsync();
                         return false;
 
                     }
@@ -84,23 +86,26 @@ namespace LBoLEntitySideloader.Entities
                     return true;
                 }
 
-                //Log.log.LogDebug("vanilla bgm");
+                Log.log.LogDebug($"vanilla bgm");
                 return true;
             }
 
-            static void Postfix(ref UniTask<AudioClip> __result, ref BgmTemplate __state)
+/*            static async void Postfix(UniTask<AudioClip> __result)
             {
                 Log.log.LogDebug("bgm load postfix");
 
-                if (__state != null)
+                // double await = bad
+                var rez = await UniTask.WhenAll(__result );
+
+                Log.log.LogDebug("postfix after await");
+                var clip = rez.TryGetValue(0);
+
+                if (clip == null)
                 {
-                    //Log.log.LogDebug("loadING custom bgm");
-
-                    var bt = __state;
-
-                    __result = UniTask.RunOnThreadPool(() => bt.LoadAudioClip().main);
+                    // potential fallback
                 }
-            }
+
+            }*/
         }
 
 

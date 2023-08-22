@@ -55,7 +55,7 @@ namespace LBoLEntitySideloader
         [HarmonyPriority(Priority.First)]
         class Localization_Patch
         {
-            static async UniTask Postfix(UniTask __result)
+            static async void Postfix(UniTask __result)
             {
                 try
                 {

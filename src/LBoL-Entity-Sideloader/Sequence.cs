@@ -15,6 +15,11 @@ namespace LBoLEntitySideloader
             this.counter = startingPoint;
         }
 
+        public void SetCounter(int counter)
+        {
+            this.counter = counter;
+        }
+
         public int Counter { get => counter; }
 
         public int Next()

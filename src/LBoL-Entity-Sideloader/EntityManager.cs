@@ -416,30 +416,6 @@ namespace LBoLEntitySideloader
 
 
 
-/*        internal void ModifyOverwrittenConfig<C>(C newConfig, EntityDefinition entityDefinition) where C : class
-        {
-            var configType = newConfig.GetType();
-
-            if (!ConfigReflection.AllConfigTypes().Contains(configType))
-            {
-                throw new ArgumentException($"ModifyOverwrittenConfig: {configType} is not a config type.");
-            }
-
-            var f_Data = ConfigReflection.GetArrayField(configType);
-
-            var ref_Data = AccessTools.StaticFieldRefAccess<C[]>(f_Data);
-
-            // For adding config to dictionary
-            var f_IdTable = ConfigReflection.GetTableField(configType);
-
-            var f_Id = ConfigReflection.GetIdField(configType);
-
-            var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
-
-            ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
-            ref_Data()[i] = newConfig;
-        }*/
-
 
         internal static void RegisterTypes(Type facType, UserInfo user)
         {

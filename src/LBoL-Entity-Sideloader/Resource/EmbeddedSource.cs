@@ -29,10 +29,7 @@ namespace LBoLEntitySideloader.Resource
 
         public override Stream Load(string id)
         {
-
-
             id = LegalizeFileName(id);
-
 
 
             var fullName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(id));

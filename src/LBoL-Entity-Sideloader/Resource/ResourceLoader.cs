@@ -7,11 +7,12 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using YamlDotNet.RepresentationModel;
-using NLayer;
 using static LBoLEntitySideloader.BepinexPlugin;
 using Mono.Cecil;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -97,42 +98,47 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
-        public static AudioClip LoadAudioClip(string name, IResourceSource source)
+        /// <summary>
+        /// Uses UnityWebRequestMultimedia.GetAudioClip to read file from disk. Could use http(s):// protocol to fetch file from URL.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="audioType"></param>
+        /// <param name="source"></param>
+        /// <param name="protocol"></param>
+        /// <returns></returns>
+        //2do band-aid solution with potential bad Addressables memory management
+        public async static UniTask<AudioClip> LoadAudioClip(string name, AudioType audioType, DirectorySource source, string protocol = "file://")
         {
-            try
+
+
+            var path = "";
+            if (source != null)
+                path = source.FullPath(name);
+            else
+                path = name;
+
+
+            Log.LogDev()?.LogInfo($"Loading audio from {path}");
+            using var uwr = UnityWebRequestMultimedia.GetAudioClip(protocol + path, audioType);
+
+            uwr.timeout = 20;
+
+            await uwr.SendWebRequest();
+
+            if (string.IsNullOrEmpty(uwr.error))
             {
-                using var stream = source.Load(name);
-
-
-                using var memoryStream = new MemoryStream();
-                var buffer = new byte[16384];
-                int count;
-                while ((count = stream!.Read(buffer, 0, buffer.Length)) > 0)
-                    memoryStream.Write(buffer, 0, count);
-
-                var audioBytes = memoryStream.ToArray();
-
-
-                //var audioBytes = ResourceBinary(name, source);
-
-                var clip = WavUtility.ToAudioClip(audioBytes);
-
-                /*            var mpgFile = new MpegFile(stream);
-
-                            var samples = new float[mpgFile.Length];
-                            mpgFile.ReadSamples(samples, 0, (int)mpgFile.Length);
-
-                            var clip = AudioClip.Create(name, samples.Length, mpgFile.Channels, mpgFile.SampleRate, false);
-                            clip.SetData(samples, 0);*/
-
+                // DownloadHandlerAudioClip.GetContent is slow and needs to be awaited
+                var clip = await UniTask.RunOnThreadPool<AudioClip>(() => DownloadHandlerAudioClip.GetContent(uwr));
                 return clip;
             }
-            catch (Exception)
+            else
             {
-                throw;
+                log.LogError(uwr.error);
+                return null;
             }
 
         }
+
 
 
 

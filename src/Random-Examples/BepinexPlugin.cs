@@ -110,6 +110,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Networking;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
@@ -131,7 +132,10 @@ namespace Random_Examples
 
         internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
 
+        // add this for audio loading
+        internal static DirectorySource directorySource = new DirectorySource(PluginInfo.GUID, "");
 
+       
         private void Awake()
         {
             log = Logger;
@@ -151,6 +155,7 @@ namespace Random_Examples
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
+
         }
 
 
@@ -162,6 +167,13 @@ namespace Random_Examples
             if (harmony != null)
                 harmony.UnpatchSelf();
         }
+
+
+
+
+
+  
+
 
 
     }
