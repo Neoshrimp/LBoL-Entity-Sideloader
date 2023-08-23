@@ -73,7 +73,28 @@
       <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+
 	
+    
+    
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\*" />
+    </ItemGroup>
+
+
+	
+    
+    
+    <ItemGroup>
+      <None Remove="Resources\OpenUniverse.yaml" />
+    </ItemGroup>
+
+
+	
+    
+    
+       
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />

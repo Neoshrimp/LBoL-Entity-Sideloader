@@ -100,7 +100,7 @@ namespace Random_Examples
 
         public override LocalizationOption LoadLocalization()
         {
-            var globalLoc = new GlobalLocalization(embeddedSource);
+            var globalLoc = new GlobalLocalization(embeddedSource, mergeTerms: true);
             // each type of entity needs to have their own global localization files
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.En, "StatusEffectsEn");
             return globalLoc;

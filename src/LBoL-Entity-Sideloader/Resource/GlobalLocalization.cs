@@ -13,6 +13,11 @@ namespace LBoLEntitySideloader.Resource
             LocalizationFiles = new LocalizationFiles(source);
         }
 
+        public GlobalLocalization(IResourceSource source, bool mergeTerms) : this(source)
+        {
+            LocalizationFiles.mergeTerms = mergeTerms;
+        }
+
         public GlobalLocalization(LocalizationFiles localizationFiles)
         {
             LocalizationFiles = localizationFiles;

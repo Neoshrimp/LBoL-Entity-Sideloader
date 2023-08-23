@@ -14,6 +14,10 @@ namespace LBoLEntitySideloader.Resource
 
         internal Dictionary<Locale, Func<YamlMappingNode>> locTable = new Dictionary<Locale, Func<YamlMappingNode>>();
 
+        /// <summary>
+        /// should localization terms (Name, Description etc.) should be merged
+        /// </summary>
+        public bool mergeTerms = false;
 
         IResourceSource source;
 
@@ -25,10 +29,23 @@ namespace LBoLEntitySideloader.Resource
             loadingAction = (string id) => ResourceLoader.LoadYaml(id, this.source);
         }
 
+        public LocalizationFiles(IResourceSource source, bool mergeTerms) : this(source)
+        { 
+            this.mergeTerms = mergeTerms;
+        }
+
         public LocalizationFiles(IResourceSource source, Locale fallbackLoc) : this(source)
         {
             this.fallbackLoc = fallbackLoc;
         }
+
+
+        public LocalizationFiles(IResourceSource source, Locale fallbackLoc, bool mergeTerms) : this(source, fallbackLoc)
+        { 
+            this.mergeTerms = mergeTerms;
+        }
+
+
 
         public void AddLocaleFile(Locale locale, string fileName)
         {

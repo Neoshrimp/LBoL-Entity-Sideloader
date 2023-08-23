@@ -72,7 +72,7 @@ namespace LBoLEntitySideloader.Entities
         public abstract Type EntityType();
 
 
-        internal void ProcessLocalization(LocalizationOption locOption, Action<string, Dictionary<string, object>> factoryAction)
+        internal void ProcessLocalization(LocalizationOption locOption, Type facType)
         {
             if (locOption == null) return;
 
@@ -102,16 +102,9 @@ namespace LBoLEntitySideloader.Entities
                 var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
 
 
-                if (termDic != null)
-                {
-                    foreach (var kv in termDic)
-                    {
-                        if (kv.Value.Empty())
-                            LocalizationFiles.MissingValueError(kv.Key);
+                LocalizationOption.FillLocalizationTables(termDic, facType, locFiles);
 
-                        factoryAction(kv.Key, kv.Value);
-                    }
-                }
+
             }
 
         }

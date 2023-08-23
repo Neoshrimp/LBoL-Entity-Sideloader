@@ -51,7 +51,7 @@ namespace LBoLEntitySideloader
 
 
 
-
+        // 2do fix this
         //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
         [HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
         [HarmonyPriority(Priority.First)]
@@ -67,10 +67,10 @@ namespace LBoLEntitySideloader
             {
                 try
                 {
-                    var task = __result.AsTask();
-                    await task;
+/*                    var task = __result.AsTask();
+                    await task;*/
 
-                    //await UniTask.WhenAll(new UniTask[] { __result });
+                    await UniTask.WhenAll(new UniTask[] { __result });
                     log.LogDebug("loc reload");
                     EntityManager.Instance.LoadLocalization();
                 }

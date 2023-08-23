@@ -468,7 +468,7 @@ namespace BadExamples
 
 
         [OverwriteVanilla]
-        public sealed class OverwriteTextOnlyDefinition : CardTemplate
+        public sealed class OverwriteNAMEOnlyDefinition : CardTemplate
         {
             public override IdContainer GetId()
             {
@@ -484,8 +484,9 @@ namespace BadExamples
 
             public override LocalizationOption LoadLocalization()
             {
-                var locFiles = new LocalizationFiles(embeddedSource);
-                return null;
+                var locFiles = new LocalizationFiles(embeddedSource, mergeTerms: true);
+                locFiles.AddLocaleFile(Locale.En, GetId());
+                return locFiles;
             }
 
             [DontOverwrite]

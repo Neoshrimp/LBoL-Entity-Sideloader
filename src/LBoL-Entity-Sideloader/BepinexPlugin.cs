@@ -33,6 +33,9 @@ namespace LBoLEntitySideloader
 
         public static ConfigEntry<KeyboardShortcut> reloadKeyConfig;
 
+        public static ConfigEntry<KeyboardShortcut> hardReloadKeyConfig;
+
+
         public static ConfigEntry<bool> autoRestartLevelConfig;
 
 
@@ -51,7 +54,9 @@ namespace LBoLEntitySideloader
 
             devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled.");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Hard reload all entities (requires scriptengine).");
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "[NOT IMPLEMENTED] Reload all entities (requires scriptengine).");
+
+            hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.F7), "Hard reload localization and all entities (requires scriptengine).");
 
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
 

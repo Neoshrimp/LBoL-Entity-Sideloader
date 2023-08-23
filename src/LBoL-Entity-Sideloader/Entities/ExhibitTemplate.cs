@@ -99,7 +99,9 @@ namespace LBoLEntitySideloader.Entities
 
         public void Consume(LocalizationOption locOptions)
         {
-            ProcessLocalization(locOptions, (string key, Dictionary<string, object> value) => { TypeFactory<Exhibit>._typeLocalizers.AlwaysAdd(key, value); });
+
+
+            ProcessLocalization(locOptions, EntityType());
         }
 
 

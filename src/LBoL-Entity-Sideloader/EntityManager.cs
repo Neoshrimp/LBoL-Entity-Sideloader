@@ -667,15 +667,9 @@ namespace LBoLEntitySideloader
 
                     var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
 
-                    if (termDic != null)
-                    {
-                        foreach (var term in termDic)
-                        {
-                            if (term.Value.Empty())
-                                LocalizationFiles.MissingValueError(term.Key);
-                            TypeFactoryReflection.AccessTypeLocalizers(facType)().AlwaysAdd(term.Key, term.Value);
-                        }
-                    }
+
+                    LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles);
+
                 }
 
 
