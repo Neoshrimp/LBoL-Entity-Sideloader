@@ -145,8 +145,6 @@ namespace LBoLEntitySideloader.Resource
 
         public static byte[] ResourceBinary(string name, IResourceSource source)
         {
-            
-
             using var stream = source.Load(name);
             
 

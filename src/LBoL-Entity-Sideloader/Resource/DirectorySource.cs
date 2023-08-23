@@ -40,7 +40,6 @@ namespace LBoLEntitySideloader.Resource
                 {
 
                     // assume mod is loaded through script loader
-
                     this.path = Path.Combine(Path.GetDirectoryName(Paths.PluginPath), subFolder);
                 }
                 else

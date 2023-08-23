@@ -71,10 +71,10 @@ namespace LBoLEntitySideloader.Entities
 
 
                 var Id = path.TrimStart('/');
-                Log.log.LogDebug($"bgm to load: {Id}");
+                //Log.log.LogDebug($"bgm to load: {Id}");
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(BgmTemplate), Id, out var entityDefinition))
                 {
-                    Log.log.LogDebug($"custom bgm");
+                    //Log.log.LogDebug($"custom bgm");
 
                     if (entityDefinition is BgmTemplate bt)
                     {
@@ -86,7 +86,7 @@ namespace LBoLEntitySideloader.Entities
                     return true;
                 }
 
-                Log.log.LogDebug($"vanilla bgm");
+                //Log.log.LogDebug($"vanilla bgm");
                 return true;
             }
 

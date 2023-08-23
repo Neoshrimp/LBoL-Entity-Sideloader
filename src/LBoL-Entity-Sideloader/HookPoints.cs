@@ -6,6 +6,7 @@ using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
+using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
 using LBoL.Presentation.I10N;
 using LBoLEntitySideloader.ReflectionHelpers;
@@ -36,6 +37,7 @@ namespace LBoLEntitySideloader
         [HarmonyPriority(Priority.First)]
         class GameEntry_Patch
         {
+
             static public async void Postfix(Task __result)
             {   
                 await __result;
@@ -55,11 +57,20 @@ namespace LBoLEntitySideloader
         [HarmonyPriority(Priority.First)]
         class Localization_Patch
         {
+
+/*            static async void Prefix(UniTask __result)
+            { 
+                __result.to
+            }*/
+
             static async void Postfix(UniTask __result)
             {
                 try
                 {
-                    await UniTask.WhenAll(new UniTask[] { __result });
+                    var task = __result.AsTask();
+                    await task;
+
+                    //await UniTask.WhenAll(new UniTask[] { __result });
                     log.LogDebug("loc reload");
                     EntityManager.Instance.LoadLocalization();
                 }
