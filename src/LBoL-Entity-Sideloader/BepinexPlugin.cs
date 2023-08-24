@@ -130,7 +130,6 @@ namespace LBoLEntitySideloader
                             EntityManager.Instance.LoadAssetsForResourceHelper();
                             // reloads Sideloader loc via hookpoint
                             await L10nManager.ReloadLocalization();
-                            log.LogInfo("HAAARD");
                         }
                         else
                         {
