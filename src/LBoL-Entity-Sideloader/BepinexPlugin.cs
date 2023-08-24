@@ -1,8 +1,10 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using LBoL.ConfigData;
 using LBoL.Presentation;
+using LBoL.Presentation.I10N;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using System;
@@ -10,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using UnityEngine;
 
 namespace LBoLEntitySideloader
@@ -43,7 +46,6 @@ namespace LBoLEntitySideloader
         private void Awake()
         {
             instance = this;
-
             log = Logger;
 
             // very important. Without it the entry point MonoBehaviour gets destroyed
@@ -54,7 +56,7 @@ namespace LBoLEntitySideloader
 
             devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled.");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "[NOT IMPLEMENTED] Reload all entities (requires scriptengine).");
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Reload all entities (requires scriptengine).");
 
             hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.F7), "Hard reload localization and all entities (requires scriptengine).");
 
@@ -75,12 +77,12 @@ namespace LBoLEntitySideloader
         void Update()
         {
 
-            if (devModeConfig.Value && reloadKeyConfig.Value.IsDown()) 
+            if (devModeConfig.Value && (reloadKeyConfig.Value.IsDown() || hardReloadKeyConfig.Value.IsDown())) 
             {
                 if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
 
                 {
-                    HardReload(pluginInfo);
+                    Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
                 }
                 else
                 {
@@ -89,11 +91,13 @@ namespace LBoLEntitySideloader
             }
         }
 
+        static SemaphoreSlim maBoi = new SemaphoreSlim(1);
+
         /// <summary>
         /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and developing. Requires scriptengine. 
         /// </summary>
         /// <param name="scriptEngineInfo"></param>
-        public void HardReload(BepInEx.PluginInfo scriptEngineInfo)
+        public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
         {
 
             foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
@@ -107,21 +111,49 @@ namespace LBoLEntitySideloader
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
 
             //ensures plugins are reloaded first
-            StartCoroutine(DoubleDelayAction(() =>
+            StartCoroutine(DoubleDelayAction(async () =>
             {
-                UniqueTracker.DestroySelf();
 
-                EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+                if (await maBoi.WaitAsync(0))
+                    try
+                    {
 
-                ConfigDataManager.Reload();
+                        UniqueTracker.DestroySelf();
 
-                EntityManager.Instance.LoadAll();
+                        EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+
+                        ConfigDataManager.Reload();
+
+                        if (hardReload)
+                        {
+                            EntityManager.Instance.RegisterUsers();
+                            EntityManager.Instance.LoadAssetsForResourceHelper();
+                            // reloads Sideloader loc via hookpoint
+                            await L10nManager.ReloadLocalization();
+                            log.LogInfo("HAAARD");
+                        }
+                        else
+                        {
+                            EntityManager.Instance.LoadAll();
+                        
+                        }
 
 
-                if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
-                {
-                    UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
-                }
+
+                        if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
+                        {
+                            UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                        log.LogError(ex);
+                    }
+                    finally
+                    { 
+                        maBoi.Release();
+                    }
 
             }));
 
