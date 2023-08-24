@@ -50,25 +50,41 @@ namespace LBoLEntitySideloader
 
 
 
-
-        // 2do fix this
-        //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
-        [HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
-        [HarmonyPriority(Priority.First)]
+        // temp fix?
+        [HarmonyPatch(typeof(CrossPlatformHelper), nameof(CrossPlatformHelper.SetWindowTitle))]
         class Localization_Patch
         {
 
-/*            static async void Prefix(UniTask __result)
-            { 
-                __result.to
-            }*/
+            static void Postfix()
+            {
+                try
+                {
+                    log.LogDebug("loc reload");
+                    EntityManager.Instance.LoadLocalization();
+                }
+                catch (Exception e)
+                {
+
+                    log.LogWarning(e);
+                }
+            }
+        }
+
+
+
+
+        // 2do fix this
+        //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
+        //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
+/*        [HarmonyPriority(Priority.First)]
+        class Localization_Patch
+        {
+
 
             static async void Postfix(UniTask __result)
             {
                 try
                 {
-/*                    var task = __result.AsTask();
-                    await task;*/
 
                     await UniTask.WhenAll(new UniTask[] { __result });
                     log.LogDebug("loc reload");
@@ -80,7 +96,7 @@ namespace LBoLEntitySideloader
                     log.LogWarning(e);
                 }
             }
-        }
+        }*/
 
         //[HarmonyPatch]
         class Loc_IntrusivePatch
