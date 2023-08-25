@@ -10,7 +10,7 @@ namespace LBoLEntitySideloader.Resource
 
         public GlobalLocalization(IResourceSource source)
         {
-            LocalizationFiles = new LocalizationFiles(source);
+            LocalizationFiles = new LocalizationFiles(source, mergeTerms: false);
         }
 
         public GlobalLocalization(IResourceSource source, bool mergeTerms) : this(source)
