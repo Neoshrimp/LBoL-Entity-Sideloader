@@ -5,6 +5,7 @@ using LBoL.Core;
 using LBoL.Core.Cards;
 using LBoL.Presentation;
 using LBoLEntitySideloader.Resource;
+using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,6 @@ namespace LBoLEntitySideloader.Entities
         /// <returns></returns>
         public CardConfig DefaultConfig()
         {
-
             var cardConfig = new CardConfig(
                Index: 0,
                Id: "",
@@ -182,6 +182,7 @@ namespace LBoLEntitySideloader.Entities
 
         public void Consume(CardImages cardImages)
         {
+
 
             if (cardImages == null)
                 return;

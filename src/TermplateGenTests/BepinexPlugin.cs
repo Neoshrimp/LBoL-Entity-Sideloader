@@ -102,6 +102,7 @@ using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Resource;
+using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -110,33 +111,32 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Networking;
 using Untitled;
 using Untitled.ConfigDataBuilder;
 using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
 
-namespace Random_Examples
+namespace TermplateGenTests
 {
-    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.version)]
+    [BepInPlugin(TermplateGenTests.PInfo.GUID, TermplateGenTests.PInfo.Name, TermplateGenTests.PInfo.version)]
     [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(AddWatermark.API.GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("LBoL.exe")]
     public class BepinexPlugin : BaseUnityPlugin
     {
 
-        private static readonly Harmony harmony = PluginInfo.harmony;
+        private static readonly Harmony harmony = TermplateGenTests.PInfo.harmony;
 
         internal static BepInEx.Logging.ManualLogSource log;
+
+        internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable();
 
         internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
 
         // add this for audio loading
-        internal static DirectorySource directorySource = new DirectorySource(PluginInfo.GUID, "");
+        internal static DirectorySource directorySource = new DirectorySource(TermplateGenTests.PInfo.GUID, "");
 
-
-        internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable(12000);
 
         private void Awake()
         {
@@ -146,11 +146,6 @@ namespace Random_Examples
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            // read your yaml
-            // backup og yamls
-            // overwrite og yamls with customs yamls
-
-
             EntityManager.RegisterSelf();
 
             harmony.PatchAll();
@@ -158,24 +153,37 @@ namespace Random_Examples
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
 
+
+
+
+/*            try
+            {*/
+            var cardGen = new CardGen();
+
+            Func<CardConfig> cardConfig = () => throw new NotImplementedException();
+            Func<CardImages> cardImages = () => throw new NotImplementedException();
+            Func<LocalizationOption> cardLoc = () => throw new NotImplementedException();
+
+            cardGen.QueueGen("deez1", cardConfig, cardImages, cardLoc);
+            cardGen.QueueGen("deez2", cardConfig, cardImages, cardLoc);
+
+
+            // for debug
+            cardGen.OutputCSharpCode(true);
+            cardGen.FinalizeGen();
+/*            }
+            catch (TypeLoadException e)
+            {
+
+                log.LogError(e.Message);
+            }*/
         }
-
-
 
         private void OnDestroy()
         {
-            // overwrite custom yamls
-
             if (harmony != null)
                 harmony.UnpatchSelf();
         }
-
-
-
-
-
-  
-
 
 
     }

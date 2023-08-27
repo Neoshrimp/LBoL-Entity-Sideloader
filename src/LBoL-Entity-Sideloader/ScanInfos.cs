@@ -5,6 +5,7 @@ using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
+using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace LBoLEntitySideloader
         {
             typesToLocalize = new Dictionary<Type, LocalizationInfo>();
         }
+
 
     }
 

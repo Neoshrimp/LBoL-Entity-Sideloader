@@ -190,7 +190,7 @@ namespace LBoLEntitySideloader
             return userInfo;
         }
 
-        internal SideloaderUsers sideloaderUsers = new SideloaderUsers();
+        public SideloaderUsers sideloaderUsers = new SideloaderUsers();
 
 
 

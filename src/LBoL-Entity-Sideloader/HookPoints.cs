@@ -52,6 +52,7 @@ namespace LBoLEntitySideloader
 
         // temp fix?
         [HarmonyPatch(typeof(CrossPlatformHelper), nameof(CrossPlatformHelper.SetWindowTitle))]
+        [HarmonyPriority(Priority.First)]
         class Localization_Patch
         {
 

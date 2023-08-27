@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using LBoL.ConfigData;
 using LBoL.Presentation;

@@ -92,9 +92,18 @@
     <Reference Include="YamlDotNet">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\YamlDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityEngine.AssetBundleModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UniTask">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UniTask.dll</HintPath>
     </Reference>
+    <Reference Include="mcs">
+        <HintPath>$(ProjectDir)\mcs.dll</HintPath>
+    </Reference>
+
+
+
   </ItemGroup>
     
     

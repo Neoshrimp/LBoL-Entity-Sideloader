@@ -8,7 +8,7 @@ namespace LBoLEntitySideloader
 {
     public partial class EntityManager
     {
-        internal class SideloaderUsers
+        public class SideloaderUsers
         {
             public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
 
