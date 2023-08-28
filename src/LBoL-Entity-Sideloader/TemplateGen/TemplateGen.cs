@@ -213,27 +213,22 @@ namespace LBoLEntitySideloader.TemplateGen
 
             //var rez = scriptEvaluator.Compile(OutputCSharpCode().ToString(), out var compiled);
 
-            var rez = scriptEvaluator.Run(OutputCSharpCode().ToString());
+            scriptEvaluator.Compile(OutputCSharpCode().ToString(), out _, newAssName, out var evaluationInfo);
 
 
 
-            Log.log.LogInfo(rez);
+            
 
             if (ScriptEvaluator._reportPrinter.ErrorsCount > 0)
             {
                 Log.log.LogError("Got errors.");
                 scriptEvaluator._textWriter.ToString().Split('\n').ToList().ForEach(s => Log.log.LogError(s));
+                return;
             }
 
 
-            /*            var newo = new object();
-                        compiled.Invoke(newo);
+            newAssembly = evaluationInfo.assembly;
 
-                        Log.log.LogDebug(newo);
-                        Log.log.LogDebug(newo.GetType());*/
-
-
-            Log.log.LogInfo("------------------");
 
         }
 
