@@ -14,7 +14,7 @@ namespace LBoLEntitySideloader.TemplateGen
 
 
 
-        public void QueueGen(IdContainer Id, bool overwriteVanilla = false, Func < CardConfig> makeConfig = null, Func<CardImages> loadCardImages = null, Func<LocalizationOption> loadLocalization = null)
+        public void QueueGen(IdContainer Id, bool overwriteVanilla, Func < CardConfig> makeConfig = null, Func<CardImages> loadCardImages = null, Func<LocalizationOption> loadLocalization = null)
         {
             var defClass = InnitDefintionType(Id, overwriteVanilla);
 

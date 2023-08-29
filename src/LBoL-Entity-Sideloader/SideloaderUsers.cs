@@ -80,7 +80,9 @@ namespace LBoLEntitySideloader
                 }
 
 
-                throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name} or {definitionType.Name} is not for overwriting");
+                log.LogError($"{definitionType.Name} was not found in {assembly.GetName().Name} or {definitionType.Name} is not for overwriting");
+                return null;
+                //throw new ArgumentException($"{definitionType.Name} was not found in {assembly.GetName().Name} or {definitionType.Name} is not for overwriting");
             }
 
         }

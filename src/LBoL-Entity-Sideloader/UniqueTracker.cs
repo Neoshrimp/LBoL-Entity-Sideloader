@@ -1,4 +1,5 @@
 ﻿using LBoL.ConfigData;
+using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
@@ -58,6 +59,11 @@ namespace LBoLEntitySideloader
 
         // user assembly +=> generatedTemplates
         public Dictionary<Assembly, List<Assembly>> generatedAssemblies = new Dictionary<Assembly, List<Assembly>>();
+
+        // generated assembly => generating user assembly
+        public Dictionary<Assembly, Assembly> gen2User = new Dictionary<Assembly, Assembly>();
+
+        public HashSet<string> gennedAssNames = new HashSet<string>();
 
 
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();

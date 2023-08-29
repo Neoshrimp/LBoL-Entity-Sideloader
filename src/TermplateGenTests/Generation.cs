@@ -1,7 +1,9 @@
 ﻿using LBoL.ConfigData;
+using LBoL.Core.Cards;
 using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Cards.Other.Adventure;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
@@ -34,9 +36,17 @@ namespace TermplateGenTests
                 cardGen.QueueGen(nameof(MeihongAttack), overwriteVanilla: true, loadLocalization: cardLoc);
 
 
+                cardGen.QueueGen(nameof(SomeNewCard), false, cardConfig, null, cardLoc);
+
                 cardGen.OutputCSharpCode(outputToFile: true); // for debug
                 cardGen.FinalizeGen();
             });
+        }
+
+        //[EntityLogic()]
+        public sealed class SomeNewCard : Card
+        {
+
         }
 
 

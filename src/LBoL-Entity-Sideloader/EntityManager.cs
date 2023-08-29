@@ -94,7 +94,7 @@ namespace LBoLEntitySideloader
                         definition.assembly = userInfo.assembly;
 
 
-                        var overwrite = type.SingularAttribute<OverwriteVanilla>();
+                        var overwrite = type.GetCustomAttribute<OverwriteVanilla>(true);
 
 
                         if (overwrite != null)
@@ -117,7 +117,7 @@ namespace LBoLEntitySideloader
                     {
                         userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
 
-                        var entityLogic = type.SingularAttribute<EntityLogic>();
+                        var entityLogic = type.GetCustomAttribute<EntityLogic>();
 
                         if (entityLogic is null)
                         {
@@ -678,7 +678,7 @@ namespace LBoLEntitySideloader
 
                     if (locInfo.locFiles == null)
                     {
-                        Log.log.LogError($"{user.GUID}: localization files parameter was never initialized for global localization option of {facType.Name}");
+                        Log.log.LogError($"{user.assembly.GetName().Name}: localization files parameter was never initialized for global localization option of {facType.Name}");
                         continue;
                     }
 
