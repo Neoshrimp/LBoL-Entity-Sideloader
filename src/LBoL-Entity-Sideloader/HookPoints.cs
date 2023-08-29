@@ -29,20 +29,35 @@ namespace LBoLEntitySideloader
 
 
 
+        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.Awake))]
+        class GameEntry_Patch
+        {
+
+            static void Postfix()
+            {
+                UniqueTracker.Instance.RaisePreMainLoad();
+
+            }
+        }
+
+
 
         /// <summary>
         /// hook after all the vanilla configs, entities, assets and localization have been loaded. Can be used to specifically modify vanilla properties
         /// </summary>
         [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.InitializeRestAsync))]
         [HarmonyPriority(Priority.First)]
-        class GameEntry_Patch
+        class InitializeRestAsync_Patch
         {
+
 
             static public async void Postfix(Task __result)
             {   
                 await __result;
 
+
                 EntityManager.Instance.LoadAll();
+
 
             }
 

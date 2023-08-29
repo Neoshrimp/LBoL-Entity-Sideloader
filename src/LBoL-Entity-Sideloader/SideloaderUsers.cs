@@ -13,7 +13,7 @@ namespace LBoLEntitySideloader
             public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
 
 
-            public void AddUser(Assembly assembly)
+            public void AddUser(Assembly assembly, bool checkBepinex = true, bool lookForFactypes = true)
             {
                 if (userInfos.ContainsKey(assembly))
                 {

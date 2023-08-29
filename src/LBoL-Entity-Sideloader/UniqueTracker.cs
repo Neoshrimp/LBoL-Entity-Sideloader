@@ -2,6 +2,7 @@
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
+using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,24 @@ namespace LBoLEntitySideloader
 
         // templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
         public Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>>();
+
+
+        // user assembly +=> generatedTemplates
+        public Dictionary<Assembly, List<Assembly>> generatedAssemblies = new Dictionary<Assembly, List<Assembly>>();
+
+
+        public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
+
+
+        public event Action PostMainLoad;
+
+
+        public void RaisePreMainLoad()
+        { 
+            PostMainLoad();
+
+            generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.sideloaderUsers.AddUser(a, false, false)));
+        }
 
         Sequence uIdSalt = new Sequence();
 

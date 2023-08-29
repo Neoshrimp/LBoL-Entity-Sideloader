@@ -23,6 +23,8 @@ namespace LBoLEntitySideloader.TemplateGen
 
         public readonly static Assembly sideLoaderAss = typeof(BepinexPlugin).Assembly;
 
+        protected static Sequence dupNameSeq = new Sequence();
+
         static readonly StringBuilder evaluatorOutput;
         protected static readonly ScriptEvaluator scriptEvaluator = new ScriptEvaluator(new StringWriter(evaluatorOutput = new StringBuilder()));
 
@@ -48,24 +50,27 @@ namespace LBoLEntitySideloader.TemplateGen
 
         public TemplateGen(Assembly originAssembly = null)
         {
-            if(originAssembly == null )
+            if (originAssembly == null)
                 this.originAssembly = new StackTrace().GetFrame(2).GetMethod().ReflectedType.Assembly;
             else
                 this.originAssembly = originAssembly;
 
             // 2do error check
-            newAssName = $"{this.originAssembly.GetName().Name}.{typeof(ED).Name}.Dynamic";
+            newAssName = $"{this.originAssembly.GetName().Name}_{typeof(ED).Name}_Dynamic";
 
-
-
-
-
-
-/*            if (EntityManager.Instance?.sideloaderUsers?.userInfos?.TryGetValue(originAssembly, out user) == null)
+            if (UniqueTracker.Instance.methodCacheDic.ContainsKey(newAssName))
             {
-                Log.log.LogError($"{this.GetType().Name} must be instantiated after {nameof(EntityManager.RegisterSelf)} has been called.");
-                return;
-            }*/
+                newAssName = newAssName + "_" + dupNameSeq.Next().ToString();
+            }
+
+
+            Log.LogDev()?.LogDebug($"Initializing generation of: {typeof(ED).Name}, {newAssembly}");
+
+            /*            if (EntityManager.Instance?.sideloaderUsers?.userInfos?.TryGetValue(originAssembly, out user) == null)
+                        {
+                            Log.log.LogError($"{this.GetType().Name} must be instantiated after {nameof(EntityManager.RegisterSelf)} has been called.");
+                            return;
+                        }*/
 
 
 
@@ -95,7 +100,7 @@ namespace LBoLEntitySideloader.TemplateGen
             }
 
 
-            MethodCache.methodCacheDic.TryAdd(newAssName, new MethodCache());
+            UniqueTracker.Instance.methodCacheDic.TryAdd(newAssName, new MethodCache());
 
 
             properInnit = true;
@@ -119,38 +124,34 @@ namespace LBoLEntitySideloader.TemplateGen
         }
 
 
-        internal CodeMemberMethod MakeMethod<R>(string name, Func<R> func, CodeTypeDeclaration targetClass, bool dontOverwrite = false) where R : class
+        internal CodeMemberMethod MakeMethod<R>(string name, Func<R> func, CodeTypeDeclaration targetClass, bool vanillaOverwrite = false) where R : class
         {
 
-            MethodCache.methodCacheDic.TryAdd(newAssName, new MethodCache());
 
-            MethodCache.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
-
-            /*            targetClass.Members.Add(new CodeMemberField() { Name = $"{name}_payload", Type = new CodeTypeReference(typeof(MethodInfo)), Attributes = MemberAttributes.Private });*/
 
             CodeMemberMethod newMethod = new CodeMemberMethod();
             newMethod.Name = name;
-            newMethod.ReturnType = new CodeTypeReference(func.Method.ReturnType);
+            newMethod.ReturnType = new CodeTypeReference(typeof(R));
             newMethod.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
 
-            if (dontOverwrite)
+            if (vanillaOverwrite && func == null)
                 newMethod.CustomAttributes = new CodeAttributeDeclarationCollection
                 {
                     new CodeAttributeDeclaration(new CodeTypeReference(typeof(DontOverwriteAttribute)))
                 };
 
-            /*            foreach (var p in methodInfo.GetParameters())
-                        {
-                            newMethod.Parameters.Add(new CodeParameterDeclarationExpression(p.ParameterType, p.Name));
-                        }*/
 
+            UniqueTracker.Instance.methodCacheDic.TryAdd(newAssName, new MethodCache());
 
+            if (func == null)
+                func = () => null;
 
+            UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
 
             newMethod.Statements.Add(new CodeSnippetExpression(@$"
-                var method = MethodCache.methodCacheDic[this.GetType().Assembly.GetName().Name].GetMethod(this.TemplateType(), this.GetType().Name, ""{name}"");
-                return method() as {func.Method.ReturnType.FullName};
+                var method = UniqueTracker.Instance.methodCacheDic[this.GetType().Assembly.GetName().Name].GetMethod(this.TemplateType(), this.GetType().Name, ""{name}"");
+                return method() as {typeof(R).FullName};
             "));
 
 
@@ -182,7 +183,7 @@ namespace LBoLEntitySideloader.TemplateGen
 
                 targetClass.BaseTypes.Add(typeof(ED));
                 if (overwriteVanilla)
-                    targetClass.CustomAttributes.Add(new CodeAttributeDeclaration());
+                    targetClass.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(OverwriteVanilla))));
 
                 generatedTypes.Add(Id, targetClass);
 
@@ -203,6 +204,11 @@ namespace LBoLEntitySideloader.TemplateGen
 
 
 
+        public static bool CheckOverwrite(bool overwrite, Delegate action)
+        {
+            return overwrite && action == null;
+        }
+
 
         public void FinalizeGen()
         {
@@ -213,21 +219,29 @@ namespace LBoLEntitySideloader.TemplateGen
 
             //var rez = scriptEvaluator.Compile(OutputCSharpCode().ToString(), out var compiled);
 
-            scriptEvaluator.Compile(OutputCSharpCode().ToString(), out _, newAssName, out var evaluationInfo);
+            var rez = scriptEvaluator.Compile(OutputCSharpCode().ToString(), out _, newAssName, out var evaluationInfo);
 
 
-
+            if (!string.IsNullOrEmpty(rez))
+            { 
+                Log.log.LogError("Got parsing errors.");
+                Log.log.LogError(rez);
+            }
             
 
             if (ScriptEvaluator._reportPrinter.ErrorsCount > 0)
             {
-                Log.log.LogError("Got errors.");
+                Log.log.LogError("Got compile errors.");
                 scriptEvaluator._textWriter.ToString().Split('\n').ToList().ForEach(s => Log.log.LogError(s));
                 return;
             }
 
 
             newAssembly = evaluationInfo.assembly;
+
+            UniqueTracker.Instance.generatedAssemblies.TryAdd(originAssembly, new List<Assembly>());
+
+            UniqueTracker.Instance.generatedAssemblies[originAssembly].Add(newAssembly);
 
 
         }
@@ -250,7 +264,7 @@ namespace LBoLEntitySideloader.TemplateGen
                 var dir = $"generatedCode";
                 Directory.CreateDirectory(dir);
 
-                using FileStream fileStream = File.Open($"{dir}/{typeof(ED).Name}.cs", FileMode.Create, FileAccess.Write, FileShare.None);
+                using FileStream fileStream = File.Open($"{dir}/{newAssName}-{typeof(ED).Name}.cs", FileMode.Create, FileAccess.Write, FileShare.None);
 
                 using StreamWriter sourceWriter = new StreamWriter(fileStream, Encoding.UTF8) { AutoFlush = true };
 

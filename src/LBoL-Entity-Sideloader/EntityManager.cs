@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace LBoLEntitySideloader
 {
@@ -35,20 +36,20 @@ namespace LBoLEntitySideloader
 
         public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
 
-        public static UserInfo ScanAssembly(Assembly assembly)
+        public static UserInfo ScanAssembly(Assembly assembly, bool checkBepinex = true, bool lookForFactypes = true)
         {
 
             var userInfo = new UserInfo();
             userInfo.assembly = assembly;
 
-            if (BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
+            if (!assembly.IsDynamic && BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
             {
                 Instance.loadedFromDisk.Add(assembly);
             }
 
             Log.LogDev()?.LogInfo($"Scanning {assembly.GetName().Name}...");
 
-            var exportedTypes = assembly.GetExportedTypes();
+            var exportedTypes = !assembly.IsDynamic ? assembly.GetExportedTypes() : assembly.GetTypes();
 
             userInfo.assembly = assembly;
 
@@ -57,7 +58,7 @@ namespace LBoLEntitySideloader
             foreach (var type in exportedTypes)
             {
 
-                if (type.IsSubclassOf(typeof(BaseUnityPlugin)))
+                if (checkBepinex && type.IsSubclassOf(typeof(BaseUnityPlugin)))
                 {
                     var attributes = type.GetCustomAttributes(inherit: false);
 
@@ -110,7 +111,7 @@ namespace LBoLEntitySideloader
 
 
                 var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
-                if (facType != null)
+                if (lookForFactypes && facType != null)
                 {
                     if (type.IsSealed)
                     {
@@ -154,7 +155,7 @@ namespace LBoLEntitySideloader
             }
 
 
-            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
+            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value && lookForFactypes)
             {
                 // all definitions needs to be instantiated at the point of this check
                 foreach (var ed in foundEntityLogicForDefinitionTypes)
@@ -190,9 +191,31 @@ namespace LBoLEntitySideloader
             return userInfo;
         }
 
+
+
+
+
+        
+        
+        public static void AddPostLoadAction(Action action)
+        {
+
+
+            UniqueTracker.Instance.PostMainLoad += () => {
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    log.LogError($"Error while");
+                    }
+                };
+        }
+
+
         public SideloaderUsers sideloaderUsers = new SideloaderUsers();
-
-
 
 
         static public void RegisterSelf()

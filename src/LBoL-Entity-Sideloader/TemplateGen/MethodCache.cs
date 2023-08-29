@@ -10,7 +10,6 @@ namespace LBoLEntitySideloader.TemplateGen
     {
 
 
-        static public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
         // templateType +=> definition type fullname +=> func name +=> Func<>
         public Dictionary<Type, Dictionary<string, Dictionary<string, Func<object>>>> methodPayloadCache = new Dictionary<Type, Dictionary<string, Dictionary<string, Func<object>>>>();
 

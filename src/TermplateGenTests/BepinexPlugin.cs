@@ -155,28 +155,8 @@ namespace TermplateGenTests
 
 
 
+            Generation.QueueGen();
 
-/*            try
-            {*/
-            var cardGen = new CardGen();
-
-            Func<CardConfig> cardConfig = () => throw new NotImplementedException();
-            Func<CardImages> cardImages = () => throw new NotImplementedException();
-            Func<LocalizationOption> cardLoc = () => throw new NotImplementedException();
-
-            cardGen.QueueGen("deez1", cardConfig, cardImages, cardLoc);
-            cardGen.QueueGen("deez2", cardConfig, cardImages, cardLoc);
-
-
-            // for debug
-            cardGen.OutputCSharpCode(true);
-            cardGen.FinalizeGen();
-/*            }
-            catch (TypeLoadException e)
-            {
-
-                log.LogError(e.Message);
-            }*/
         }
 
         private void OnDestroy()
