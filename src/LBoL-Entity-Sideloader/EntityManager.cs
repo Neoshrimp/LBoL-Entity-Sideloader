@@ -36,7 +36,7 @@ namespace LBoLEntitySideloader
 
         public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
 
-        public static UserInfo ScanAssembly(Assembly assembly, bool checkBepinex = true, bool lookForFactypes = true)
+        public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
         {
 
             var userInfo = new UserInfo();
@@ -58,7 +58,7 @@ namespace LBoLEntitySideloader
             foreach (var type in exportedTypes)
             {
 
-                if (checkBepinex && type.IsSubclassOf(typeof(BaseUnityPlugin)))
+                if (!assembly.IsDynamic && type.IsSubclassOf(typeof(BaseUnityPlugin)))
                 {
                     var attributes = type.GetCustomAttributes(inherit: false);
 
@@ -111,39 +111,44 @@ namespace LBoLEntitySideloader
 
 
                 var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => type.IsSubclassOf(t));
-                if (lookForFactypes && facType != null)
+                if (facType != null)
                 {
                     if (type.IsSealed)
                     {
                         userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
 
-                        var entityLogic = type.GetCustomAttribute<EntityLogic>();
 
-                        if (entityLogic is null)
+
+
+                        if (type.GetCustomAttribute<EntityLogic>() is EntityLogic entityLogicAtt)
                         {
-                            Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity logic type. Please add {typeof(EntityLogic).Name} attribute.");
-                        }
-                        else
-                        {
-                            if (foundEntityLogicForDefinitionTypes.Contains(entityLogic.DefinitionType))
+                            if (foundEntityLogicForDefinitionTypes.Contains(entityLogicAtt.DefinitionType))
                             {
-                                log.LogError($"{assembly.GetName().Name}: {entityLogic.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
+                                log.LogError($"{assembly.GetName().Name}: {entityLogicAtt.DefinitionType} already has an entity logic type associated. Entity can only have one type defining its logic. Please remove {typeof(EntityLogic).Name} attribute.");
                             }
-                            else if (BepinexPlugin.devModeConfig.Value && !TemplatesReflection.IsTemplateType(entityLogic.DefinitionType))
+                            else if (BepinexPlugin.devModeConfig.Value && !TemplatesReflection.IsTemplateType(entityLogicAtt.DefinitionType))
                             {
-                                log.LogError($"{entityLogic.DefinitionType.Name} type provided to {typeof(EntityLogic).Name} attribute on {type.Name} is not an {typeof(EntityDefinition).Name}. Entity definition must extend one of the entity templates.");
+                                log.LogError($"{entityLogicAtt.DefinitionType.Name} type provided to {typeof(EntityLogic).Name} attribute on {type.Name} is not an {typeof(EntityDefinition).Name}. Entity definition must extend one of the entity templates.");
                             }
                             else
                             {
 
-                                foundEntityLogicForDefinitionTypes.Add(entityLogic.DefinitionType);
+                                foundEntityLogicForDefinitionTypes.Add(entityLogicAtt.DefinitionType);
 
-                                var entityInfo = new EntityInfo(facType, type, entityLogic.DefinitionType);
+                                var entityInfo = new EntityInfo(facType, type, entityLogicAtt.DefinitionType);
                                 userInfo.entityInfos[facType].Add(entityInfo);
 
-                                userInfo.definition2customEntityLogicType.Add(entityLogic.DefinitionType, entityInfo.entityType);
+                                userInfo.definition2customEntityLogicType.Add(entityLogicAtt.DefinitionType, entityInfo.entityType);
                             }
 
+                        }
+                        else if (type.GetCustomAttribute<ExternalEntityLogicAttribute>() is ExternalEntityLogicAttribute externalEntityLogicAtt)
+                        {
+                            // DEEZNUTS
+                        }
+                        else
+                        {
+                            Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type.Name} does not have {typeof(EntityLogic).Name} attribute despite having qualities of an entity logic type. Please add {typeof(EntityLogic).Name} attribute.");
                         }
                     }
                     else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
@@ -155,7 +160,7 @@ namespace LBoLEntitySideloader
             }
 
 
-            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value && lookForFactypes)
+            if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value && !assembly.IsDynamic)
             {
                 // all definitions needs to be instantiated at the point of this check
                 foreach (var ed in foundEntityLogicForDefinitionTypes)
@@ -175,7 +180,7 @@ namespace LBoLEntitySideloader
 
                     if (!userInfo.IsForOverwriting(defType) && TemplatesReflection.ExpectsEntityLogic(defType) && !foundEntityLogicForDefinitionTypes.Contains(defType))
                     {
-                        log.LogError($"(Extra logging) {defType.Name} needs entity logic type extending {defVal.EntityType().Name} but none was found. Did you define public sealed entity logic class with {typeof(EntityLogic).Name} attribute?");
+                        log.LogWarning($"(Extra logging) {defType.Name} needs entity logic type extending {defVal.EntityType().Name} but none was found. Did you define public sealed entity logic class with {typeof(EntityLogic).Name} attribute?");
                     }
                 }
             }
@@ -193,7 +198,15 @@ namespace LBoLEntitySideloader
 
 
 
+        public static void AddExternalDefinitionTypePromise(Type entityLogicType, Func<Type> defTypePromise, Assembly userAssembly = null)
+        {
+            if(userAssembly  == null)
+                userAssembly = Assembly.GetCallingAssembly();
 
+            UniqueTracker.Instance.typePromiseDic.TryAdd(userAssembly, new List<UniqueTracker.DefTypePromisePair>());
+            UniqueTracker.Instance.typePromiseDic[userAssembly].Add(new UniqueTracker.DefTypePromisePair() { entityLogicType = entityLogicType, defTypePromise = defTypePromise });
+
+        }
 
         
         
@@ -208,8 +221,7 @@ namespace LBoLEntitySideloader
                     }
                     catch (Exception ex)
                     {
-
-                    log.LogError($"Error while");
+                        log.LogError($"Error during template generation: {ex}");
                     }
                 };
         }
@@ -217,6 +229,8 @@ namespace LBoLEntitySideloader
 
         public SideloaderUsers sideloaderUsers = new SideloaderUsers();
 
+
+        public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
         static public void RegisterSelf()
         {
@@ -372,15 +386,6 @@ namespace LBoLEntitySideloader
                 newConfig = configProvider.MakeConfig();
                 if (newConfig == null)
                     throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
-                // should work when not overwriting
-                // 2do maybe move to method
-/*                    if (newConfig is BgmConfig bgmConfig)
-                {
-                    // pass ID to LoadBgmAsync
-                    bgmConfig.Path = bgmConfig.ID;
-                    bgmConfig.Folder = "";
-                    UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
-                }*/
             }
 
 

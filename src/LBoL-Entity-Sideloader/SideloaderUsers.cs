@@ -13,7 +13,7 @@ namespace LBoLEntitySideloader
             public Dictionary<Assembly, UserInfo> userInfos = new Dictionary<Assembly, UserInfo>();
 
 
-            public void AddUser(Assembly assembly, bool checkBepinex = true, bool lookForFactypes = true)
+            public void AddUser(Assembly assembly)
             {
                 if (userInfos.ContainsKey(assembly))
                 {
@@ -61,12 +61,30 @@ namespace LBoLEntitySideloader
                 return null;
             }
 
+            public bool TryGetUserInfoViaAssemblyMap(Assembly genAssembly, out UserInfo userInfo)
+            {
+                if (userInfos.TryGetValue(genAssembly, out userInfo))
+                    return true;
+
+                UniqueTracker.Instance.gen2User.TryGetValue(genAssembly, out var assembly);
+                if (assembly != null)
+                {
+                    if(userInfos.TryGetValue(assembly, out userInfo))
+                        return true;
+                }
+
+
+                return false;
+
+            }
+
 
             public Type GetEntityLogicType(Assembly assembly, Type definitionType)
             {
-                if (userInfos.TryGetValue(assembly, out UserInfo user))
-                { 
-                    if(user.definition2customEntityLogicType.TryGetValue(definitionType, out Type entityType))
+                //if (TryGetUserInfoViaAssemblyMap(assembly, out UserInfo user))
+                if (userInfos.TryGetValue(assembly, out var user))
+                {
+                    if (user.definition2customEntityLogicType.TryGetValue(definitionType, out Type entityType))
                     {
                         return entityType;
                     }

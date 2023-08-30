@@ -6,6 +6,7 @@ using System.CodeDom;
 using LBoLEntitySideloader.Resource;
 using LBoL.ConfigData;
 using LBoLEntitySideloader.Entities;
+using LBoL.Core.Cards;
 
 namespace LBoLEntitySideloader.TemplateGen
 {
@@ -14,7 +15,7 @@ namespace LBoLEntitySideloader.TemplateGen
 
 
 
-        public void QueueGen(IdContainer Id, bool overwriteVanilla, Func < CardConfig> makeConfig = null, Func<CardImages> loadCardImages = null, Func<LocalizationOption> loadLocalization = null)
+        public void QueueGen(IdContainer Id, bool overwriteVanilla, Func < CardConfig> makeConfig = null, Func<CardImages> loadCardImages = null, Func<LocalizationOption> loadLocalization = null, bool generateEmptyLogic = false)
         {
             var defClass = InnitDefintionType(Id, overwriteVanilla);
 
@@ -27,9 +28,12 @@ namespace LBoLEntitySideloader.TemplateGen
             MakeMethod(nameof(CardTemplate.LoadLocalization), loadLocalization, defClass, overwriteVanilla);
 
 
+            if (generateEmptyLogic)
+            {
+                MakeEntityLogic(Id, defClass, typeof(Card));
+            }
 
 
-            //2do entity type
         }
 
     }

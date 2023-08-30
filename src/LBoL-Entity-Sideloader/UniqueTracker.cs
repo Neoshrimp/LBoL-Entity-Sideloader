@@ -26,7 +26,7 @@ namespace LBoLEntitySideloader
             get
             {
                 if (_instance == null)
-                { 
+                {
                     _instance = new UniqueTracker();
                     _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
                 }
@@ -60,8 +60,20 @@ namespace LBoLEntitySideloader
         // user assembly +=> generatedTemplates
         public Dictionary<Assembly, List<Assembly>> generatedAssemblies = new Dictionary<Assembly, List<Assembly>>();
 
-        // generated assembly => generating user assembly
+        // generated assembly +=> generating user assembly
         public Dictionary<Assembly, Assembly> gen2User = new Dictionary<Assembly, Assembly>();
+
+        public class DefTypePromisePair
+        {
+            public Type entityLogicType;
+            public Func<Type> defTypePromise;
+        }
+
+        //  generating user assembly +=> 
+        public Dictionary<Assembly, List<DefTypePromisePair>> typePromiseDic = new Dictionary<Assembly, List<DefTypePromisePair>>();
+        
+
+          
 
         public HashSet<string> gennedAssNames = new HashSet<string>();
 
@@ -76,7 +88,35 @@ namespace LBoLEntitySideloader
         { 
             PostMainLoad();
 
-            generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.sideloaderUsers.AddUser(a, false, false)));
+
+
+            generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.sideloaderUsers.AddUser(a)));
+
+
+            foreach (var g2u in gen2User)
+            {
+                foreach (var dtpp in typePromiseDic[g2u.Value])
+                {
+                    var defType = dtpp.defTypePromise.Invoke();
+                    var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => dtpp.entityLogicType.IsSubclassOf(t));
+
+                    if (facType == null)
+                    {
+                        throw new ArgumentException($"{dtpp.entityLogicType} does not inherit from general entity logic types");
+                    }
+
+                    var entityInfo = new EntityInfo(facType, dtpp.entityLogicType, defType);
+
+                    var userInfo = EntityManager.Instance.sideloaderUsers.userInfos[g2u.Key];
+
+                    userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
+                    userInfo.entityInfos[facType].Add(entityInfo);
+
+
+
+                    userInfo.definition2customEntityLogicType.Add(defType, entityInfo.entityType);
+                }
+            }
         }
 
         Sequence uIdSalt = new Sequence();

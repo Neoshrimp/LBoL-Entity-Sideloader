@@ -21,6 +21,9 @@ namespace LBoLEntitySideloader
 
         public Assembly assembly;
 
+
+        // 2do refactor
+
         // EntityDefinition type => EntityDefinition
         public Dictionary<Type, EntityDefinition> definitionInfos = new Dictionary<Type, EntityDefinition>();
 
@@ -35,7 +38,6 @@ namespace LBoLEntitySideloader
 
         public Dictionary<string, Type> typeName2VanillaType = new Dictionary<string, Type>();
 
-
         public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
 
         public bool IsForOverwriting(Type definitionType)
@@ -48,6 +50,7 @@ namespace LBoLEntitySideloader
             typesToLocalize = new Dictionary<Type, LocalizationInfo>();
         }
 
+        
 
     }
 

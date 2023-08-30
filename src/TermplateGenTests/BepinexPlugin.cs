@@ -137,6 +137,7 @@ namespace TermplateGenTests
         // add this for audio loading
         internal static DirectorySource directorySource = new DirectorySource(TermplateGenTests.PInfo.GUID, "");
 
+        internal static CardGen cardGen = new CardGen();
 
         private void Awake()
         {
@@ -155,7 +156,7 @@ namespace TermplateGenTests
 
 
 
-            Generation.QueueGen();
+            Generation.InitTemplateGen();
 
         }
 

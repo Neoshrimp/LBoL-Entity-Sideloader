@@ -1,7 +1,9 @@
-﻿using LBoL.ConfigData;
+﻿using HarmonyLib;
+using LBoL.ConfigData;
 using LBoL.Core.Cards;
 using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Cards.Other.Adventure;
+using LBoL.EntityLib.Cards.Other.Misfortune;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
@@ -17,14 +19,16 @@ namespace TermplateGenTests
     internal class Generation
     {
 
-        internal static void QueueGen()
+        internal static void InitTemplateGen()
         {
+
+            EntityManager.AddExternalDefinitionTypePromise(typeof(SomeNewCard), cardGen.GetDefTypePromise(nameof(SomeNewCard)));
+
             EntityManager.AddPostLoadAction(() => {
 
-                var cardGen = new CardGen();
 
                 Func<CardConfig> cardConfig = () => (new DummyCardTemplate()).DefaultConfig();
-                Func<CardImages> cardImages = () => throw new NotImplementedException();
+                Func<CardImages> cardImages = () => null;
                 Func<LocalizationOption> cardLoc = () => new GlobalLocalization(embeddedSource, true);
 
                 cardGen.QueueGen(nameof(SuikaBigball), overwriteVanilla: true, loadLocalization: () => {
@@ -36,17 +40,30 @@ namespace TermplateGenTests
                 cardGen.QueueGen(nameof(MeihongAttack), overwriteVanilla: true, loadLocalization: cardLoc);
 
 
-                cardGen.QueueGen(nameof(SomeNewCard), false, cardConfig, null, cardLoc);
+                cardGen.QueueGen(nameof(SomeNewCard), overwriteVanilla: false, makeConfig: () => {
+                    var con = cardConfig();
+                    con.Type = LBoL.Base.CardType.Misfortune;
+                    return con;
+                },
+                loadCardImages: null, 
+                loadLocalization: cardLoc,
+                generateEmptyLogic: false);
 
                 cardGen.OutputCSharpCode(outputToFile: true); // for debug
+
                 cardGen.FinalizeGen();
             });
         }
 
-        //[EntityLogic()]
+
+        [ExternalEntityLogic]
         public sealed class SomeNewCard : Card
         {
-
+            public override void Initialize()
+            {
+                base.Initialize();
+                log.LogDebug("DEEEEEZ NUTS");
+            }
         }
 
 

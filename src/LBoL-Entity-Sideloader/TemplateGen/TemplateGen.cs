@@ -160,6 +160,25 @@ namespace LBoLEntitySideloader.TemplateGen
 
 
 
+        protected CodeTypeDeclaration MakeEntityLogic(IdContainer Id, CodeTypeDeclaration definitionClass, Type entityType)
+        { 
+            var targetClass = new CodeTypeDeclaration(Id.ToString());
+            targetClass.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+            newNameSpace.Types.Add(targetClass);
+
+            targetClass.BaseTypes.Add(entityType);
+
+            
+
+            targetClass.CustomAttributes = new CodeAttributeDeclarationCollection() {
+                new CodeAttributeDeclaration(new CodeTypeReference(typeof(EntityLogic)), new CodeAttributeArgument[] { new CodeAttributeArgument(new CodeSnippetExpression($"typeof({newNameSpace.Name}.{definitionClass.Name})"))})
+
+            };
+            
+            return targetClass;
+
+        }
+
         protected CodeTypeDeclaration InnitDefintionType(IdContainer Id, bool overwriteVanilla = false)
         {
 
@@ -244,6 +263,14 @@ namespace LBoLEntitySideloader.TemplateGen
             UniqueTracker.Instance.gen2User.Add(newAssembly, originAssembly);
 
 
+        }
+
+
+        public Func<Type> GetDefTypePromise(IdContainer Id)
+        {
+            if(generatedTypes.TryGetValue(Id, out var codeTypeDeclaration))
+                return () => newAssembly.GetType(codeTypeDeclaration.Name);
+            return () => null;
         }
 
 
