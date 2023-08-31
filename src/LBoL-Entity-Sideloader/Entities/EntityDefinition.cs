@@ -76,11 +76,14 @@ namespace LBoLEntitySideloader.Entities
         {
             if (locOption == null) return;
 
-            var entityLogicType = EntityManager.Instance.sideloaderUsers.GetEntityLogicType(assembly, GetType());
+            var entityLogicType = SideloaderUsers.GetEntityLogicType(assembly, GetType());
 
             if (locOption is GlobalLocalization globalLoc)
             {
-                var typesToLocalize = EntityManager.Instance.sideloaderUsers.userInfos[assembly].typesToLocalize;
+
+                UniqueTracker.Instance.typesToLocalize.TryAdd(assembly, new Dictionary<Type, LocalizationInfo>());
+
+                var typesToLocalize = UniqueTracker.Instance.typesToLocalize[assembly];
 
                 typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());
                 var locInfo = typesToLocalize[EntityType()];

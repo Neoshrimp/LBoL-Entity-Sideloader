@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
+using LBoL.Base;
 using LBoL.ConfigData;
+using LBoL.Core;
+using LBoL.Core.Battle;
 using LBoL.Core.Cards;
 using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Cards.Other.Adventure;
@@ -12,17 +15,21 @@ using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static TermplateGenTests.BepinexPlugin;
+using static TemplateGenTests.BepinexPlugin;
 
-namespace TermplateGenTests
+namespace TemplateGenTests
 {
     internal class Generation
     {
 
         internal static void InitTemplateGen()
         {
-
+            // binds concrete entity logic to newly generated template definitions
             EntityManager.AddExternalDefinitionTypePromise(typeof(SomeNewCard), cardGen.GetDefTypePromise(nameof(SomeNewCard)));
+
+            EntityManager.AddExternalDefinitionTypePromise(typeof(NewExhibit), exhibitGen.GetDefTypePromise(nameof(NewExhibit)));
+
+
 
             EntityManager.AddPostLoadAction(() => {
 
@@ -42,19 +49,65 @@ namespace TermplateGenTests
 
                 cardGen.QueueGen(nameof(SomeNewCard), overwriteVanilla: false, makeConfig: () => {
                     var con = cardConfig();
-                    con.Type = LBoL.Base.CardType.Misfortune;
+                    con.Type = LBoL.Base.CardType.Attack;
+                    con.Cost = new ManaGroup { Any = 0 };
+                    con.Colors = new List<ManaColor>() { ManaColor.Red, ManaColor.White };
+                    con.Rarity = Rarity.Uncommon;
+                    con.IsPooled = true;
+                    con.Damage = 10;
                     return con;
                 },
                 loadCardImages: null, 
                 loadLocalization: cardLoc,
                 generateEmptyLogic: false);
 
+
+
+
+                exhibitGen.QueueGen(nameof(NewExhibit), overwriteVanilla: false, makeConfig: () => {
+
+                    var exhibitConfig = new ExhibitConfig(
+                        Index: 0,
+                        Id: "",
+                        Order: 10,
+                        IsDebug: false,
+                        IsPooled: true,
+                        IsSentinel: false,
+                        Revealable: false,
+                        Appearance: AppearanceType.NonShop,
+                        Owner: "",
+                        LosableType: ExhibitLosableType.Losable,
+                        Rarity: Rarity.Mythic,
+                        Value1: null,
+                        Value2: null,
+                        Value3: null,
+                        Mana: null,
+                        BaseManaRequirement: null,
+                        BaseManaColor: null,
+                        BaseManaAmount: 0,
+                        HasCounter: false,
+                        InitialCounter: null,
+                        Keywords: Keyword.None,
+                        RelativeEffects: new List<string>() { },
+                        RelativeCards: new List<string>() { }
+                    );
+
+                    return exhibitConfig;
+
+                }, null, null);
+
                 cardGen.OutputCSharpCode(outputToFile: true); // for debug
 
+
+                exhibitGen.FinalizeGen();
                 cardGen.FinalizeGen();
             });
         }
 
+        [ExternalEntityLogic]
+        public sealed class NewExhibit : Exhibit
+        {
+        }
 
         [ExternalEntityLogic]
         public sealed class SomeNewCard : Card
@@ -64,6 +117,13 @@ namespace TermplateGenTests
                 base.Initialize();
                 log.LogDebug("DEEEEEZ NUTS");
             }
+
+            protected override IEnumerable<BattleAction> Actions(UnitSelector selector, ManaGroup consumingMana, Interaction precondition)
+            {
+    			yield return base.AttackAction(selector);
+            }
+
+
         }
 
 

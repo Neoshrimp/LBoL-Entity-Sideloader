@@ -44,6 +44,22 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             return templatesExpectingEntityLogic.Any(t => template.IsSubclassOf(t) || t == template);
         }
 
+
+        static public Type Template2FacType(Type template, bool refresh = false)
+        {
+            if (!ExpectsEntityLogic(template))
+                return null;
+
+
+            var interfaceType = typeof(ITypeProvider<>).GetGenericTypeDefinition();
+
+            return template.GetInterfaces().First(i => i.IsSubclassOfGeneric(interfaceType)).GetGenericArguments().First();
+
+        }
+
+
+
+
         static public bool IsTemplateType(Type type)
         {
             return AllTemplateTypes().Any(t => type.IsSubclassOf(t));

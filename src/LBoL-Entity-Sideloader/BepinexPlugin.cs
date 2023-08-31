@@ -81,7 +81,8 @@ namespace LBoLEntitySideloader
                 if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
 
                 {
-                    Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
+                    // 2do DEEEZ RELOAD
+                    Reload(pluginInfo, EntityManager.Instance.sideloaderUsers, hardReloadKeyConfig.Value.IsDown());
                 }
                 else
                 {
@@ -96,15 +97,15 @@ namespace LBoLEntitySideloader
         /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and developing. Requires scriptengine. 
         /// </summary>
         /// <param name="scriptEngineInfo"></param>
-        public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
+        public void Reload(BepInEx.PluginInfo scriptEngineInfo, SideloaderUsers sideloaderUsers, bool hardReload = false)
         {
 
-            foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
+            foreach (var user in sideloaderUsers.userInfos.Values)
             {
                 EntityManager.Instance.UnregisterUser(user);
             }
 
-            EntityManager.Instance.sideloaderUsers.userInfos = new Dictionary<Assembly, UserInfo>();
+            sideloaderUsers.userInfos = new Dictionary<Assembly, UserInfo>();
 
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
@@ -125,14 +126,14 @@ namespace LBoLEntitySideloader
 
                         if (hardReload)
                         {
-                            EntityManager.Instance.RegisterUsers();
-                            EntityManager.Instance.LoadAssetsForResourceHelper();
+                            EntityManager.Instance.RegisterUsers(sideloaderUsers);
+                            EntityManager.Instance.LoadAssetsForResourceHelper(sideloaderUsers);
                             // reloads Sideloader loc via hookpoint
                             await L10nManager.ReloadLocalization();
                         }
                         else
                         {
-                            EntityManager.Instance.LoadAll();
+                            EntityManager.Instance.LoadAll(sideloaderUsers);
                         
                         }
 

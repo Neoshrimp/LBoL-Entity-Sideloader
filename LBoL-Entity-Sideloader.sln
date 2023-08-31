@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FirstCard", "src\FirstCard\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Random-Examples", "src\Random-Examples\Random-Examples.csproj", "{10DEF153-A403-493E-A960-16B9884A4C61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermplateGenTests", "src\TermplateGenTests\TermplateGenTests.csproj", "{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateGenTests", "src\TermplateGenTests\TemplateGenTests.csproj", "{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

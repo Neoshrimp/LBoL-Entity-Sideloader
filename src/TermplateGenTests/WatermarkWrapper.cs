@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace TermplateGenTests
+namespace TemplateGenTests
 {
     internal class WatermarkWrapper
     {

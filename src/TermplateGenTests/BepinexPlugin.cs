@@ -117,16 +117,16 @@ using Untitled.ConfigDataBuilder.Base;
 using Debug = UnityEngine.Debug;
 
 
-namespace TermplateGenTests
+namespace TemplateGenTests
 {
-    [BepInPlugin(TermplateGenTests.PInfo.GUID, TermplateGenTests.PInfo.Name, TermplateGenTests.PInfo.version)]
+    [BepInPlugin(TemplateGenTests.PInfo.GUID, TemplateGenTests.PInfo.Name, TemplateGenTests.PInfo.version)]
     [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(AddWatermark.API.GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("LBoL.exe")]
     public class BepinexPlugin : BaseUnityPlugin
     {
 
-        private static readonly Harmony harmony = TermplateGenTests.PInfo.harmony;
+        private static readonly Harmony harmony = TemplateGenTests.PInfo.harmony;
 
         internal static BepInEx.Logging.ManualLogSource log;
 
@@ -135,9 +135,11 @@ namespace TermplateGenTests
         internal static IResourceSource embeddedSource = new EmbeddedSource(Assembly.GetExecutingAssembly());
 
         // add this for audio loading
-        internal static DirectorySource directorySource = new DirectorySource(TermplateGenTests.PInfo.GUID, "");
+        internal static DirectorySource directorySource = new DirectorySource(TemplateGenTests.PInfo.GUID, "");
 
         internal static CardGen cardGen = new CardGen();
+
+        internal static ExhibitGen exhibitGen = new ExhibitGen();
 
         private void Awake()
         {

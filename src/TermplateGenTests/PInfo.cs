@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace TermplateGenTests
+namespace TemplateGenTests
 {
     public static class PInfo
     {

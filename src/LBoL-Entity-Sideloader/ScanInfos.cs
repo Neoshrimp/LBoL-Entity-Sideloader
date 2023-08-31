@@ -38,17 +38,12 @@ namespace LBoLEntitySideloader
 
         public Dictionary<string, Type> typeName2VanillaType = new Dictionary<string, Type>();
 
-        public Dictionary<Type, LocalizationInfo> typesToLocalize = new Dictionary<Type, LocalizationInfo>();
 
         public bool IsForOverwriting(Type definitionType)
         {
             return entitiesToOverwrite.ContainsKey(definitionType);
         }
 
-        public void ClearTypesToLocalize() 
-        {
-            typesToLocalize = new Dictionary<Type, LocalizationInfo>();
-        }
 
         
 

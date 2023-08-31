@@ -35,7 +35,6 @@ namespace LBoLEntitySideloader
 
             static void Postfix()
             {
-                UniqueTracker.Instance.RaisePreMainLoad();
 
             }
         }
@@ -56,7 +55,12 @@ namespace LBoLEntitySideloader
                 await __result;
 
 
-                EntityManager.Instance.LoadAll();
+                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+
+                UniqueTracker.Instance.RaisePostMainLoad();
+
+
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
 
 
             }
@@ -76,7 +80,9 @@ namespace LBoLEntitySideloader
                 try
                 {
                     log.LogDebug("loc reload");
-                    EntityManager.Instance.LoadLocalization();
+                    EntityManager.Instance.LoadLocalization(EntityManager.Instance.sideloaderUsers);
+                    EntityManager.Instance.LoadLocalization(EntityManager.Instance.secondaryUsers);
+
                 }
                 catch (Exception e)
                 {
@@ -128,7 +134,7 @@ namespace LBoLEntitySideloader
 
             static void LoadLocWrap()
             {
-                EntityManager.Instance.LoadLocalization();
+                EntityManager.Instance.LoadLocalization(EntityManager.Instance.sideloaderUsers);
             }
 
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)

@@ -36,6 +36,7 @@ namespace LBoLEntitySideloader.TemplateGen
             {
                 Version = LanguageVersion.Experimental,
                 GenerateDebugInfo = false,
+                //GenerateDebugInfo = true,
                 StdLib = true,
                 Target = Mono.CSharp.Target.Library,
                 WarningLevel = 0,

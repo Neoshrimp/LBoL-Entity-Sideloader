@@ -63,17 +63,20 @@ namespace LBoLEntitySideloader
         // generated assembly +=> generating user assembly
         public Dictionary<Assembly, Assembly> gen2User = new Dictionary<Assembly, Assembly>();
 
+        public Dictionary<Assembly, Type> gen2FacType = new Dictionary<Assembly, Type>();
+
+
         public class DefTypePromisePair
         {
             public Type entityLogicType;
             public Func<Type> defTypePromise;
         }
 
-        //  generating user assembly +=> 
-        public Dictionary<Assembly, List<DefTypePromisePair>> typePromiseDic = new Dictionary<Assembly, List<DefTypePromisePair>>();
-        
+        //  generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+        public Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>> typePromiseDic = new Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>>();
 
-          
+
+        public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
         public HashSet<string> gennedAssNames = new HashSet<string>();
 
@@ -84,30 +87,27 @@ namespace LBoLEntitySideloader
         public event Action PostMainLoad;
 
 
-        public void RaisePreMainLoad()
+        public void RaisePostMainLoad()
         { 
             PostMainLoad();
 
 
 
-            generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.sideloaderUsers.AddUser(a)));
+            generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.secondaryUsers.AddUser(a)));
 
 
             foreach (var g2u in gen2User)
             {
-                foreach (var dtpp in typePromiseDic[g2u.Value])
+
+                if(gen2FacType.TryGetValue(g2u.Key, out var facType))
+
+                foreach (var dtpp in typePromiseDic[g2u.Value][facType])
                 {
                     var defType = dtpp.defTypePromise.Invoke();
-                    var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => dtpp.entityLogicType.IsSubclassOf(t));
-
-                    if (facType == null)
-                    {
-                        throw new ArgumentException($"{dtpp.entityLogicType} does not inherit from general entity logic types");
-                    }
 
                     var entityInfo = new EntityInfo(facType, dtpp.entityLogicType, defType);
 
-                    var userInfo = EntityManager.Instance.sideloaderUsers.userInfos[g2u.Key];
+                    var userInfo = EntityManager.Instance.secondaryUsers.userInfos[g2u.Key];
 
                     userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
                     userInfo.entityInfos[facType].Add(entityInfo);
@@ -117,6 +117,9 @@ namespace LBoLEntitySideloader
                     userInfo.definition2customEntityLogicType.Add(defType, entityInfo.entityType);
                 }
             }
+
+
+
         }
 
         Sequence uIdSalt = new Sequence();

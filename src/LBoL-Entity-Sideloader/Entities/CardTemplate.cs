@@ -60,7 +60,7 @@ namespace LBoLEntitySideloader.Entities
                GunNameBurst: "",
                DebugLevel: 0,
                Revealable: false,
-               IsPooled: false,
+               IsPooled: true,
                HideMesuem: false,
                IsUpgradable: true,
                Rarity: Rarity.Common,

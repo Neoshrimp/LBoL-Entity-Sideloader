@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace LBoLEntitySideloader
 {
-    public partial class EntityManager
+    public class EntityManager
     {
         static private EntityManager _instance;
 
@@ -203,8 +203,20 @@ namespace LBoLEntitySideloader
             if(userAssembly  == null)
                 userAssembly = Assembly.GetCallingAssembly();
 
-            UniqueTracker.Instance.typePromiseDic.TryAdd(userAssembly, new List<UniqueTracker.DefTypePromisePair>());
-            UniqueTracker.Instance.typePromiseDic[userAssembly].Add(new UniqueTracker.DefTypePromisePair() { entityLogicType = entityLogicType, defTypePromise = defTypePromise });
+
+
+            UniqueTracker.Instance.typePromiseDic.TryAdd(userAssembly, new Dictionary<Type, List<UniqueTracker.DefTypePromisePair>>());
+
+            var facType = TypeFactoryReflection.factoryTypes.FirstOrDefault(t => entityLogicType.IsSubclassOf(t));
+
+            if (facType == null)
+            {
+                throw new ArgumentException($"{entityLogicType} does not inherit from general entity logic types");
+            }
+
+            UniqueTracker.Instance.typePromiseDic[userAssembly].TryAdd(facType, new List<UniqueTracker.DefTypePromisePair>());
+
+            UniqueTracker.Instance.typePromiseDic[userAssembly][facType].Add(new UniqueTracker.DefTypePromisePair() { entityLogicType = entityLogicType, defTypePromise = defTypePromise });
 
         }
 
@@ -606,7 +618,7 @@ namespace LBoLEntitySideloader
 
 
 
-        internal void RegisterUsers()
+        internal void RegisterUsers(SideloaderUsers sideloaderUsers)
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
@@ -618,7 +630,7 @@ namespace LBoLEntitySideloader
             log.LogInfo($"All sideloader users registered!");
         }
 
-        internal void LoadAssetsForResourceHelper()
+        internal void LoadAssetsForResourceHelper(SideloaderUsers sideloaderUsers)
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
@@ -647,13 +659,15 @@ namespace LBoLEntitySideloader
 
 
 
-        internal void LoadLocalization()
+        internal void LoadLocalization(SideloaderUsers sideloaderUsers)
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
 
                 var user = kv.Value;
-                user.ClearTypesToLocalize();
+
+                UniqueTracker.Instance.typesToLocalize[user.assembly] = new Dictionary<Type, LocalizationInfo>();
+                //user.ClearTypesToLocalize();
 
                 foreach (var template in user.definitionInfos)
                 {
@@ -676,7 +690,7 @@ namespace LBoLEntitySideloader
                 }
 
                 // load global localization
-                foreach (var kv2 in user.typesToLocalize)
+                foreach (var kv2 in UniqueTracker.Instance.typesToLocalize[user.assembly])
                 {
                     var facType = kv2.Key;
                     var locInfo = kv2.Value;
@@ -705,13 +719,13 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void LoadAll()
+        internal void LoadAll(SideloaderUsers sideloaderUsers)
         {
             try
             {
-                Instance.RegisterUsers();
-                Instance.LoadAssetsForResourceHelper();
-                Instance.LoadLocalization();
+                Instance.RegisterUsers(sideloaderUsers);
+                Instance.LoadAssetsForResourceHelper(sideloaderUsers);
+                Instance.LoadLocalization(sideloaderUsers);
             }
             catch (Exception e)
             {

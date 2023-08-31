@@ -19,8 +19,6 @@ namespace LBoLEntitySideloader.TemplateGen
         {
             var defClass = InnitDefintionType(Id, overwriteVanilla);
 
-            //2do overwrite logic
-
             MakeMethod(nameof(CardTemplate.MakeConfig), makeConfig, defClass, overwriteVanilla);
 
             MakeMethod(nameof(CardTemplate.LoadCardImages), loadCardImages, defClass, overwriteVanilla);
