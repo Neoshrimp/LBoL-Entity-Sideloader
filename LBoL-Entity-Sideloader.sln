@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Random-Examples", "src\Rand
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateGenTests", "src\TermplateGenTests\TemplateGenTests.csproj", "{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenTests2", "src\GenTests2\GenTests2.csproj", "{5A87B12B-99E5-4579-9FDA-85753A05BE88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

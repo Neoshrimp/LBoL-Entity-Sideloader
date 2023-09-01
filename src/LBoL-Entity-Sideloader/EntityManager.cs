@@ -15,6 +15,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using UnityEngine.Events;
 
 namespace LBoLEntitySideloader
 {
@@ -35,6 +36,12 @@ namespace LBoLEntitySideloader
         }
 
         public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
+
+        public HashSet<Action> loadedFromDiskPostAction = new HashSet<Action>();
+
+        public SideloaderUsers sideloaderUsers = new SideloaderUsers();
+
+        public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
         {
@@ -222,27 +229,32 @@ namespace LBoLEntitySideloader
 
         
         
-        public static void AddPostLoadAction(Action action)
+        public static void AddPostLoadAction(Action action, Assembly callingAssembly = null)
         {
 
+            if (callingAssembly == null)
+                callingAssembly = Assembly.GetCallingAssembly();
 
-            UniqueTracker.Instance.PostMainLoad += () => {
-                    try
-                    {
-                        action();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.LogError($"Error during template generation: {ex}");
-                    }
-                };
+
+            Action postLoadAction = () => {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    log.LogError($"Error during template generation: {ex}");
+                }
+            };
+
+            if (!callingAssembly.IsDynamic && !string.IsNullOrEmpty(callingAssembly.Location))
+                EntityManager.Instance.loadedFromDiskPostAction.Add(postLoadAction);
+
+            UniqueTracker.Instance.PostMainLoad += postLoadAction;
         }
 
 
-        public SideloaderUsers sideloaderUsers = new SideloaderUsers();
 
-
-        public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
         static public void RegisterSelf()
         {
@@ -398,13 +410,6 @@ namespace LBoLEntitySideloader
                 newConfig = configProvider.MakeConfig();
                 if (newConfig == null)
                     throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
-            }
-
-
-
-            if (!user.IsForOverwriting(entityDefinition.GetType()))
-            {
-
                 switch (entityDefinition.UniqueId.idType)
                 {
                     case IdContainer.IdType.String:
@@ -417,6 +422,13 @@ namespace LBoLEntitySideloader
                         log.LogWarning("RegisterConfig: you shouldn't be here");
                         break;
                 }
+            }
+
+
+
+            if (!user.IsForOverwriting(entityDefinition.GetType()))
+            {
+
 
 
                 var f_Index = ConfigReflection.HasIndex(configType);
@@ -738,19 +750,26 @@ namespace LBoLEntitySideloader
 
         static internal void HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
         {
-            var defType = definition.GetType();
-
-            if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType))
+            try
             {
-                if (!user.IsForOverwriting(defType))
-                {
-                    action();
-                }
-                else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.TemplateType(), definition.UniqueId, methodName, defType, user))
-                {
+                var defType = definition.GetType();
 
-                    action();
+                if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType))
+                {
+                    if (!user.IsForOverwriting(defType))
+                    {
+                        action();
+                    }
+                    else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.TemplateType(), definition.UniqueId, methodName, defType, user))
+                    {
+
+                        action();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.log.LogError($"Error while processing {definition.GetType().Name}.{methodName}: {ex}");
             }
 
         }

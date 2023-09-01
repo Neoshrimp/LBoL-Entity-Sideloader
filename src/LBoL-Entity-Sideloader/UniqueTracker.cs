@@ -6,6 +6,7 @@ using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -78,19 +79,24 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
-        public HashSet<string> gennedAssNames = new HashSet<string>();
-
 
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
 
-
-        public event Action PostMainLoad;
+        [field: DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+        internal event Action PostMainLoad;
 
 
         public void RaisePostMainLoad()
-        { 
-            PostMainLoad();
+        {
 
+
+            if (PostMainLoad == null)
+            {
+                Log.LogDev()?.LogInfo("No template generation was queued.");
+                return;
+            }
+
+            PostMainLoad();
 
 
             generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.secondaryUsers.AddUser(a)));
@@ -99,23 +105,22 @@ namespace LBoLEntitySideloader
             foreach (var g2u in gen2User)
             {
 
-                if(gen2FacType.TryGetValue(g2u.Key, out var facType))
+                if(gen2FacType.TryGetValue(g2u.Key, out var facType) && typePromiseDic.TryGetValue(g2u.Value, out var promiseDic))
+                    foreach (var dtpp in promiseDic[facType])
+                    {
+                        var defType = dtpp.defTypePromise.Invoke();
 
-                foreach (var dtpp in typePromiseDic[g2u.Value][facType])
-                {
-                    var defType = dtpp.defTypePromise.Invoke();
+                        var entityInfo = new EntityInfo(facType, dtpp.entityLogicType, defType);
 
-                    var entityInfo = new EntityInfo(facType, dtpp.entityLogicType, defType);
+                        var userInfo = EntityManager.Instance.secondaryUsers.userInfos[g2u.Key];
 
-                    var userInfo = EntityManager.Instance.secondaryUsers.userInfos[g2u.Key];
-
-                    userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
-                    userInfo.entityInfos[facType].Add(entityInfo);
-
+                        userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
+                        userInfo.entityInfos[facType].Add(entityInfo);
 
 
-                    userInfo.definition2customEntityLogicType.Add(defType, entityInfo.entityType);
-                }
+
+                        userInfo.definition2customEntityLogicType.Add(defType, entityInfo.entityType);
+                    }
             }
 
 

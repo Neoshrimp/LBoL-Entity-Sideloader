@@ -81,8 +81,7 @@ namespace LBoLEntitySideloader
                 if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
 
                 {
-                    // 2do DEEEZ RELOAD
-                    Reload(pluginInfo, EntityManager.Instance.sideloaderUsers, hardReloadKeyConfig.Value.IsDown());
+                    Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
                 }
                 else
                 {
@@ -94,18 +93,28 @@ namespace LBoLEntitySideloader
         static SemaphoreSlim maBoi = new SemaphoreSlim(1);
 
         /// <summary>
-        /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and developing. Requires scriptengine. 
+        /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and development. Requires scriptengine. 
         /// </summary>
         /// <param name="scriptEngineInfo"></param>
-        public void Reload(BepInEx.PluginInfo scriptEngineInfo, SideloaderUsers sideloaderUsers, bool hardReload = false)
+        public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
         {
 
-            foreach (var user in sideloaderUsers.userInfos.Values)
+            foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
             {
                 EntityManager.Instance.UnregisterUser(user);
             }
 
-            sideloaderUsers.userInfos = new Dictionary<Assembly, UserInfo>();
+            foreach (var user in EntityManager.Instance.secondaryUsers.userInfos.Values)
+            {
+                EntityManager.Instance.UnregisterUser(user);
+            }
+
+            EntityManager.Instance.sideloaderUsers.userInfos = new Dictionary<Assembly, UserInfo>();
+
+            EntityManager.Instance.secondaryUsers.userInfos = new Dictionary<Assembly, UserInfo>();
+
+            UniqueTracker.DestroySelf();
+
 
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
@@ -118,23 +127,38 @@ namespace LBoLEntitySideloader
                     try
                     {
 
-                        UniqueTracker.DestroySelf();
+                        // doesn't really help
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                        
 
                         EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+                        EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
 
                         ConfigDataManager.Reload();
 
                         if (hardReload)
                         {
-                            EntityManager.Instance.RegisterUsers(sideloaderUsers);
-                            EntityManager.Instance.LoadAssetsForResourceHelper(sideloaderUsers);
+                            EntityManager.Instance.RegisterUsers(EntityManager.Instance.sideloaderUsers);
+                            EntityManager.Instance.LoadAssetsForResourceHelper(EntityManager.Instance.sideloaderUsers);
+
                             // reloads Sideloader loc via hookpoint
                             await L10nManager.ReloadLocalization();
+
+                            UniqueTracker.Instance.RaisePostMainLoad();
+
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
+
+
                         }
                         else
                         {
-                            EntityManager.Instance.LoadAll(sideloaderUsers);
-                        
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+
+                            UniqueTracker.Instance.RaisePostMainLoad();
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
+
                         }
 
 

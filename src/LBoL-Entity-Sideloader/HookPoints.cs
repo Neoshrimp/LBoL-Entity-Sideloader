@@ -134,7 +134,12 @@ namespace LBoLEntitySideloader
 
             static void LoadLocWrap()
             {
+
+                // untested
                 EntityManager.Instance.LoadLocalization(EntityManager.Instance.sideloaderUsers);
+                UniqueTracker.Instance.RaisePostMainLoad();
+                EntityManager.Instance.LoadLocalization(EntityManager.Instance.secondaryUsers);
+
             }
 
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
