@@ -722,7 +722,7 @@ namespace LBoLEntitySideloader
                     var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
 
 
-                    LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles);
+                    LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles.mergeTerms);
 
                 }
 

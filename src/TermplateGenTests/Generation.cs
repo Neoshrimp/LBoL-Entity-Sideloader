@@ -7,6 +7,7 @@ using LBoL.Core.Cards;
 using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Cards.Other.Adventure;
 using LBoL.EntityLib.Cards.Other.Misfortune;
+using LBoL.EntityLib.Exhibits.Shining;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
@@ -44,7 +45,7 @@ namespace TemplateGenTests
 
                     return gl;
                 });
-                cardGen.QueueGen(nameof(MeihongAttack), overwriteVanilla: true, loadLocalization: cardLoc);
+                cardGen.QueueGen(nameof(MeihongAttack), overwriteVanilla: true, loadLocalization: () => new DirectLocalization(new Dictionary<string, object>() { { "Name", "Phoenix Slap" } }, mergeTerms:true));
 
 
                 cardGen.QueueGen(nameof(SomeNewCard), overwriteVanilla: false, makeConfig: () => {

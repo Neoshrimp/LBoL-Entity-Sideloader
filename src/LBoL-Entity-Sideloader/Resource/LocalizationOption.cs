@@ -10,7 +10,7 @@ namespace LBoLEntitySideloader.Resource
     public abstract class LocalizationOption
     {
 
-        internal static void FillLocalizationTables(Dictionary<string, Dictionary<string, object>>  termDic, Type facType, LocalizationFiles locFiles)
+        internal static void FillLocalizationTables(Dictionary<string, Dictionary<string, object>>  termDic, Type facType, bool mergeTerms)
         {
             if (termDic != null)
             {
@@ -18,7 +18,7 @@ namespace LBoLEntitySideloader.Resource
                 {
                     if (term.Value.Empty())
                         LocalizationFiles.MissingValueError(term.Key);
-                    if (locFiles.mergeTerms)
+                    if (mergeTerms)
                     {
                         TypeFactoryReflection.AccessTypeLocalizers(facType)().TryAdd(term.Key, new Dictionary<string, object>());
                         TypeFactoryReflection.AccessTypeLocalizers(facType)()[term.Key].Merge(term.Value);

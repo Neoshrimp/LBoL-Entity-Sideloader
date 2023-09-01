@@ -105,8 +105,16 @@ namespace LBoLEntitySideloader.Entities
                 var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
 
 
-                LocalizationOption.FillLocalizationTables(termDic, facType, locFiles);
+                LocalizationOption.FillLocalizationTables(termDic, facType, locFiles.mergeTerms);
 
+            }
+
+            if (locOption is DirectLocalization rawLoc)
+            {
+
+                var termDic = rawLoc.WrapTermDic(UniqueId);
+
+                LocalizationOption.FillLocalizationTables(termDic, facType, rawLoc.mergeTerms);
 
             }
 
