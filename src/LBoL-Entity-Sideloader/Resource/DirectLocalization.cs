@@ -9,7 +9,6 @@ namespace LBoLEntitySideloader.Resource
 {
     public class DirectLocalization : LocalizationOption
     {
-        // only to pass mergeTerms. crap oop
         public bool mergeTerms;
 
         public Dictionary<Locale, Dictionary<string, object>> termDic = new Dictionary<Locale, Dictionary<string, object>>();

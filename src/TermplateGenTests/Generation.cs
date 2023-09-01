@@ -27,10 +27,11 @@ namespace TemplateGenTests
         {
 
 
-
+            // all template gen relate stuff goes to this action
             EntityManager.AddPostLoadAction(() => {
 
                 // binds concrete entity logic to newly generated template definitions. should be add to PostLoadAction for hot reload to work.
+                // hot reload is a bit unstable with dynamic gen
                 EntityManager.AddExternalDefinitionTypePromise(typeof(SomeNewCard), cardGen.GetDefTypePromise(nameof(SomeNewCard)));
 
                 EntityManager.AddExternalDefinitionTypePromise(typeof(NewExhibit), exhibitGen.GetDefTypePromise(nameof(NewExhibit)));
@@ -64,7 +65,7 @@ namespace TemplateGenTests
 
 
 
-
+                // QuqueGen method takes various Func<T> arguments
                 exhibitGen.QueueGen(nameof(NewExhibit), overwriteVanilla: false, makeConfig: () => {
 
                     var exhibitConfig = new ExhibitConfig(
@@ -97,15 +98,86 @@ namespace TemplateGenTests
 
                 }, null, null);
 
+
+                // actual practical application
+                // change all appearances of |Flawless| to |Hit me, bitch|
+                // also this only works if game is set to English at startup
+                foreach (var id in TypeFactory<Card>._typeLocalizers)
+                {
+                    foreach (var term in TypeFactory<Card>._typeLocalizers[id.Key])
+                    {
+                        if (term.Key == "Name")
+                            continue;
+
+                        var newTermDic = new Dictionary<string, object>();
+
+
+                        if (term.Value.ToString().Contains("|Flawless|"))
+                        {
+                            newTermDic.Add(term.Key, term.Value.ToString().Replace("|Flawless|", "|Hit me, bitch|"));
+                        }
+
+                        // or _typeLocalizers could have been modified fucking directly..
+                        if (newTermDic.Count > 0)
+                        { 
+                            
+                            cardGen.QueueGen(id.Key, overwriteVanilla: true, makeConfig: null, loadCardImages: null, loadLocalization: () => new DirectLocalization(newTermDic, mergeTerms:true));
+                        }
+
+                    }
+                }
+
+
+
+
                 cardGen.OutputCSharpCode(outputToFile: true); // for debug
 
-
+                // FinalizeGen should only
                 exhibitGen.FinalizeGen();
                 cardGen.FinalizeGen();
             });
         }
+        
 
-        [ExternalEntityLogic]
+
+
+
+        public sealed class BrandNewCardForTestDef : CardTemplate
+        {
+            public override IdContainer GetId()
+            {
+                return nameof(BrandNewCardForTest);
+            }
+
+            public override CardImages LoadCardImages()
+            {
+                return null;
+            }
+
+            public override LocalizationOption LoadLocalization()
+            {
+                return new DirectLocalization(new Dictionary<string, object>() { { "Name", "Deez" }, { "Description", "Deez" } });
+            }
+
+            public override CardConfig MakeConfig()
+            {
+                var config = DefaultConfig();
+                config.Type = CardType.Defense;
+                config.Colors = new List<ManaColor> { ManaColor.Red, ManaColor.White };
+                config.Rarity = Rarity.Rare;
+                return config;
+            }
+
+            [EntityLogic(typeof(BrandNewCardForTestDef))]
+            public sealed class BrandNewCardForTest : Card
+            { 
+            
+            }
+
+
+        }
+
+        [ExternalEntityLogic] // this attribute does nothing but suppresses warnings from Sideloader
         public sealed class NewExhibit : Exhibit
         {
         }

@@ -319,7 +319,7 @@
 
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)DirResources\*&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; &#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)DirResources\*', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md'   -DestinationPath  '$(ProjectDir)$(AssemblyName)-thunderstore.zip' -Force&quot;" />
+        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)DirResources\*&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; &#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)DirResources\*', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md'   -DestinationPath  '$(ProjectDir)$(AssemblyName)-thunderstore.zip' -Force&quot;" />
     </Target>
 
 
