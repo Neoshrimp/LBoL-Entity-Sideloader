@@ -359,6 +359,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(jt, user);
                         }
+                        else if (entityDefinition is EnemyUnitTemplate eut)
+                        {
+                            RegisterConfig(eut, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -704,6 +708,10 @@ namespace LBoLEntitySideloader
                     else if (definition is JadeBoxTemplate jt)
                     {
                         HandleOverwriteWrap(() => jt.Consume(jt.LoadLocalization()), definition, nameof(jt.LoadLocalization), user);
+                    }
+                    else if (definition is EnemyUnitTemplate eut)
+                    {
+                        HandleOverwriteWrap(() => eut.Consume(eut.LoadLocalization()), definition, nameof(eut.LoadLocalization), user);
                     }
 
                 }

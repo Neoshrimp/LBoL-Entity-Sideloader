@@ -12,6 +12,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Reflection;
 using LBoL.Presentation.UI.Panels;
+using LBoLEntitySideloader.ReflectionHelpers;
 
 namespace LBoLEntitySideloader
 {
@@ -201,6 +202,40 @@ namespace LBoLEntitySideloader
             }
         }
 
+
+
+        [HarmonyPatch]
+        class ViewConsumeMana_ErrorMessage_Patch
+        {
+
+
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                yield return ExtraAccess.InnerMoveNext(typeof(BattleManaPanel), nameof(BattleManaPanel.ViewConsumeMana));
+            }
+
+
+
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                CodeInstruction prevCi = null;
+                foreach (var ci in instructions)
+                {
+                    if (prevCi != null && ci.opcode == OpCodes.Call && prevCi.opcode == OpCodes.Ldstr && prevCi.operand.ToString() == "Cannot dequeue consuming mana, resetting all.")
+                    {
+                        Log.log.LogDebug("injected");
+                        yield return new CodeInstruction(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
+                    prevCi = ci;
+                }
+            }
+
+        }
 
 
 

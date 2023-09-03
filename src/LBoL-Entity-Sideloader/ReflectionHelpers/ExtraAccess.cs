@@ -26,8 +26,9 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
         public static MethodInfo InnerMoveNext(Type type, string methodName)
         {
+            // tries to find compiler generated type, by look through nested types
             var enumType = type.GetNestedTypes(AccessTools.allDeclared).Where(t => t.Name.Contains($"<{methodName}>")).Single();
-
+            // gets the main method with all the instructions
             return AccessTools.Method(enumType, "MoveNext");
         }
 
