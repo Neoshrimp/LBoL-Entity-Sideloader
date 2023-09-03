@@ -311,6 +311,7 @@
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />
       <None Remove="resources\ExhibitsEn.yaml" />
+      <None Remove="Resources\JadeBoxEn.yaml" />
       <None Remove="resources\StatusEffectsEn.yaml" />
     </ItemGroup>
 

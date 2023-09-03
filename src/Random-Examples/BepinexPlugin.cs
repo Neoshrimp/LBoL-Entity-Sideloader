@@ -102,6 +102,7 @@ using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Resource;
+using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,6 +139,8 @@ namespace Random_Examples
 
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable(12000);
 
+        internal static JadeBoxGen jadeBoxGen = new JadeBoxGen();
+
         private void Awake()
         {
             log = Logger;
@@ -158,6 +161,8 @@ namespace Random_Examples
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
 
+
+            JadeBoxExamples.GenJadeBoxes();
         }
 
 

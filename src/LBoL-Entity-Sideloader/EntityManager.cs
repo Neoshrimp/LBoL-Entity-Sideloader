@@ -355,6 +355,10 @@ namespace LBoLEntitySideloader
 
 
                         }
+                        else if (entityDefinition is JadeBoxTemplate jt)
+                        {
+                            RegisterConfig(jt, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -688,7 +692,6 @@ namespace LBoLEntitySideloader
                     if (definition is CardTemplate ct)
                     {
                         HandleOverwriteWrap(() => ct.Consume(ct.LoadLocalization()), definition, nameof(ct.LoadLocalization), user);
-
                     }
                     else if (definition is StatusEffectTemplate st)
                     {
@@ -697,6 +700,10 @@ namespace LBoLEntitySideloader
                     else if (definition is ExhibitTemplate et)
                     {
                         HandleOverwriteWrap(() => et.Consume(et.LoadLocalization()), definition, nameof(et.LoadLocalization), user);
+                    }
+                    else if (definition is JadeBoxTemplate jt)
+                    {
+                        HandleOverwriteWrap(() => jt.Consume(jt.LoadLocalization()), definition, nameof(jt.LoadLocalization), user);
                     }
 
                 }
