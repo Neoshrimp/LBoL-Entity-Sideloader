@@ -12,11 +12,13 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
       ![image](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/assets/89428565/1b6417b3-e605-426a-8d55-0502c093662e)
 
 
-- [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll).
+- [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader-thunderstore.zip).
 
 - [One time] Setup [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) and create `BepInEx/scripts` folder.
 
 - [One time] Get [DebugMode](https://github.com/Neoshrimp/LBoL-ModdingTools#debugmode)
+
+- [One time] Get MODDED [Watermark](https://github.com/Neoshrimp/LBoL-ModdingTools/blob/master/src/LBoL-AddWatermark/LBoL-AddWatermark.dll)
 
 - [One time] Setup [VS project template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate).
 
