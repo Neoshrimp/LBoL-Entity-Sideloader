@@ -18,6 +18,8 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 - [One time] Get [DebugMode](https://github.com/Neoshrimp/LBoL-ModdingTools#debugmode)
 
+- [One time] Get MODDED [Watermark](https://github.com/Neoshrimp/LBoL-ModdingTools/blob/master/src/LBoL-AddWatermark/LBoL-AddWatermark.dll)
+
 - [One time] Setup [VS project template](https://github.com/Neoshrimp/LBoL-ModdingTools/tree/master/src/SideloaderTemplate).
 
 - Create new project using Sidleoader template. Wait a moment for nuget packages to finish downloading. If GameFolder was set correctly there should be no errors. Else adjust the GameFolder and clean the project.
