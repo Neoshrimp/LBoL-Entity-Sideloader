@@ -9,6 +9,7 @@ using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
+using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -713,7 +714,6 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => eut.Consume(eut.LoadLocalization()), definition, nameof(eut.LoadLocalization), user);
                     }
-
                 }
 
                 // load global localization

@@ -205,6 +205,7 @@ namespace LBoLEntitySideloader
 
 
         [HarmonyPatch]
+        [HarmonyDebug]
         class ViewConsumeMana_ErrorMessage_Patch
         {
 
@@ -216,15 +217,21 @@ namespace LBoLEntitySideloader
 
 
 
-
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+
                 CodeInstruction prevCi = null;
                 foreach (var ci in instructions)
                 {
-                    if (prevCi != null && ci.opcode == OpCodes.Call && prevCi.opcode == OpCodes.Ldstr && prevCi.operand.ToString() == "Cannot dequeue consuming mana, resetting all.")
+                    // 'fix' for harmonyX bug
+                    if (ci.opcode == OpCodes.Leave)
                     {
-                        Log.log.LogDebug("injected");
+                        yield return ci;
+                        yield return new CodeInstruction(OpCodes.Nop);
+                    }
+                    else if (prevCi != null && ci.opcode == OpCodes.Call && prevCi.opcode == OpCodes.Ldstr && prevCi.operand.ToString() == "Cannot dequeue consuming mana, resetting all.")
+                    {
+
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
                     else
