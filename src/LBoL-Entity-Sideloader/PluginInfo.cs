@@ -10,7 +10,7 @@ namespace LBoLEntitySideloader
 
         public const string GUID = "neo.lbol.frameworks.entitySideloader";
         public const string description = "Entity Sideloader";
-        public const string version = "0.0.1";
+        public const string version = "0.7.6";
 
         public static readonly Harmony harmony = new Harmony(GUID);
     }
