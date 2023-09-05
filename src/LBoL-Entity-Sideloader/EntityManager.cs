@@ -364,6 +364,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(eut, user);
                         }
+                        else if (entityDefinition is UltimateSkillTemplate ust)
+                        {
+                            RegisterConfig(ust, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -673,6 +677,11 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => et.Consume(et.LoadSprite()), definition, nameof(et.LoadSprite), user);
                     }
+                    else if (definition is UltimateSkillTemplate ust)
+                    {
+                        HandleOverwriteWrap(() => ust.Consume(ust.LoadSprite()), definition, nameof(ust.LoadSprite), user);
+                    }
+
 
                 }
             }
@@ -713,6 +722,10 @@ namespace LBoLEntitySideloader
                     else if (definition is EnemyUnitTemplate eut)
                     {
                         HandleOverwriteWrap(() => eut.Consume(eut.LoadLocalization()), definition, nameof(eut.LoadLocalization), user);
+                    }
+                    else if (definition is UltimateSkillTemplate ust)
+                    {
+                        HandleOverwriteWrap(() => ust.Consume(ust.LoadLocalization()), definition, nameof(ust.LoadLocalization), user);
                     }
                 }
 
@@ -777,7 +790,6 @@ namespace LBoLEntitySideloader
                     }
                     else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.TemplateType(), definition.UniqueId, methodName, defType, user))
                     {
-
                         action();
                     }
                 }

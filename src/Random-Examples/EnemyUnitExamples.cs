@@ -75,23 +75,16 @@ namespace Random_Examples
 
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                int i = 0;
-                var ciList = instructions.ToList();
-                var c = ciList.Count();
-                CodeInstruction prevCi = null;
                 foreach (var ci in instructions)
                 {
                     if (ci.Is(OpCodes.Isinst, typeof(LBoL.EntityLib.EnemyUnits.Character.Luna)))
                     {
-                        log.LogDebug("deez");
                         yield return new CodeInstruction(OpCodes.Isinst, typeof(Luna));
                     }
                     else
                     {
                         yield return ci;
                     }
-                    prevCi = ci;
-                    i++;
                 }
             }
 
@@ -202,7 +195,6 @@ deeznuts deeznuts deeznuts"
                 {
                     // 50% roll
                     if (EnemyMoveRng.Next(1) == 1)
-
                     {
                         doCustomMoves = true;
                     }

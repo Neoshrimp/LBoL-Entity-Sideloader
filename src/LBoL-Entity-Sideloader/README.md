@@ -2,6 +2,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.7.7` added UltimateSkillTemplate.
+
 `0.7.6` added template for EnemyUnit which governs enemy behavior. For now it only makes sense to use it with `[OverwriteVanilla]`
 
 `0.7.5` added template for Jade Boxes.

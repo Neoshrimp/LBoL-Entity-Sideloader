@@ -23,8 +23,8 @@ namespace LBoLEntitySideloader.Entities
         IConfigProvider<EnemyUnitConfig>,
         IGameEntityProvider<EnemyUnit>,
         IResourceConsumer<LocalizationOption>,
-        IResourceConsumer<Sprite>,
 
+        IResourceConsumer<Sprite>,
         IResourceConsumer<SkeletonDataAsset>
         
     {
@@ -123,7 +123,7 @@ namespace LBoLEntitySideloader.Entities
                 Count1Lunatic: null,
                 Count2Lunatic: null,
                 PowerLoot: default(MinMax),
-                BluePointLoot: default(MinMax),
+                BluePointLoot: new MinMax(5, 5),
                 Gun1: new List<string>() { "Simple1" },
                 Gun2: new List<string>() { "Simple2" },
                 Gun3: new List<string>() { "Simple3" },
