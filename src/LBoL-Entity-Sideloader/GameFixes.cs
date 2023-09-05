@@ -205,7 +205,6 @@ namespace LBoLEntitySideloader
 
 
         [HarmonyPatch]
-        [HarmonyDebug]
         class ViewConsumeMana_ErrorMessage_Patch
         {
 
