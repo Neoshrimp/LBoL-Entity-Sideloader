@@ -308,7 +308,7 @@ namespace LBoLEntitySideloader
 
         internal void RegisterUser(UserInfo user)
         {
-
+            
             log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
 
 
@@ -355,6 +355,10 @@ namespace LBoLEntitySideloader
                             UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
 
 
+                        }
+                        else if (entityDefinition is SfxTemplate sfxT)
+                        {
+                            var sfxConfig = RegisterConfig(sfxT, user);
                         }
                         else if (entityDefinition is JadeBoxTemplate jt)
                         {

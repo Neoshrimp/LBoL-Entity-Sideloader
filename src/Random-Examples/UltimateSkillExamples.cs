@@ -64,7 +64,7 @@ namespace Random_Examples
 
     [EntityLogic(typeof(ReimuUltRJabDef))]
     public sealed class ReimuUltR : UltimateSkill
-    {
+    {   
         public ReimuUltR()
         {
             base.TargetType = TargetType.SingleEnemy;
