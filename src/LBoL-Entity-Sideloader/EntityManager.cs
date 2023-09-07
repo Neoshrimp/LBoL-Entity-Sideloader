@@ -358,7 +358,11 @@ namespace LBoLEntitySideloader
                         }
                         else if (entityDefinition is SfxTemplate sfxT)
                         {
-                            var sfxConfig = RegisterConfig(sfxT, user);
+                            RegisterConfig(sfxT, user);
+                        }
+                        else if (entityDefinition is UiSoundTemplate usfxT)
+                        {
+                            RegisterConfig(usfxT, user);
                         }
                         else if (entityDefinition is JadeBoxTemplate jt)
                         {
@@ -390,7 +394,6 @@ namespace LBoLEntitySideloader
 
         }
 
-        // return value is not very useful
         internal C RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
         {
 
@@ -574,7 +577,7 @@ namespace LBoLEntitySideloader
                 var weighter = exInfo?.CreateWeighter();
 
                 if (weighter != null)
-                {
+                {   
                     Library._exhibitWeighterTable.AlwaysAdd(entityType, weighter);
                 }
             }
@@ -684,6 +687,14 @@ namespace LBoLEntitySideloader
                     else if (definition is UltimateSkillTemplate ust)
                     {
                         HandleOverwriteWrap(() => ust.Consume(ust.LoadSprite()), definition, nameof(ust.LoadSprite), user);
+                    }
+                    else if (definition is SfxTemplate sfxT)
+                    {
+                        HandleOverwriteWrap(() => sfxT.Consume(sfxT.LoadSfxListAsync()), definition, nameof(sfxT.LoadSfxListAsync), user);
+                    }
+                    else if (definition is UiSoundTemplate usfxT)
+                    {
+                        HandleOverwriteWrap(() => usfxT.Consume(usfxT.LoadSfxListAsync()), definition, nameof(usfxT.LoadSfxListAsync), user);
                     }
 
 

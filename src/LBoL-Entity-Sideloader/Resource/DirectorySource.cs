@@ -15,9 +15,12 @@ namespace LBoLEntitySideloader.Resource
 
         string path;
 
+        public DirectoryInfo dirInfo;
+
         public DirectorySource(string path)
         {
             this.path = path;
+            this.dirInfo = new DirectoryInfo(path);
         }
 
         /// <summary>
@@ -32,13 +35,10 @@ namespace LBoLEntitySideloader.Resource
             {
                 var pluginInfo = BepInEx.Bootstrap.Chainloader.PluginInfos[GUID];
 
-
                 var pluginLoc = pluginInfo.Location;
-
 
                 if (pluginLoc == null)
                 {
-
                     // assume mod is loaded through script loader
                     this.path = Path.Combine(Path.GetDirectoryName(Paths.PluginPath), subFolder);
                 }
@@ -46,6 +46,9 @@ namespace LBoLEntitySideloader.Resource
                 {
                     this.path = Path.Combine(Path.GetDirectoryName(pluginLoc), subFolder);
                 }
+
+                this.dirInfo = new DirectoryInfo(path);
+
             }
             catch (Exception e)
             {

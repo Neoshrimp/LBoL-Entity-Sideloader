@@ -41,6 +41,9 @@ namespace LBoLEntitySideloader.TemplateGen
 
         protected CodeCompileUnit compileUnit;
 
+        protected CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
+
+        protected CodeGeneratorOptions codeGenOptions = new CodeGeneratorOptions();
 
 
         public Dictionary<IdContainer, CodeTypeDeclaration> generatedTypes = new Dictionary<IdContainer, CodeTypeDeclaration>();
@@ -68,7 +71,7 @@ namespace LBoLEntitySideloader.TemplateGen
                 newAssName = newAssName + "_" + dupNameSeq.Next().ToString();
             }
 
-            newAssName = newAssName.Replace('-','_').Replace(' ', '_');
+            newAssName = LegalizeTypeName(newAssName);
 
 
 
@@ -157,12 +160,10 @@ namespace LBoLEntitySideloader.TemplateGen
             UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
 
 
-
             newMethod.Statements.Add(new CodeSnippetExpression(@$"
                 var method = UniqueTracker.Instance.methodCacheDic[this.GetType().Assembly.GetName().Name].GetMethod(this.TemplateType(), this.GetType().Name, ""{name}"");
-                return method.DynamicInvoke(null) as {typeof(R).FullName};
+                return method.DynamicInvoke(null) as {provider.GetTypeOutput(newMethod.ReturnType)};
             "));
-
 
             targetClass.Members.Add(newMethod);
             return newMethod;
@@ -190,7 +191,9 @@ namespace LBoLEntitySideloader.TemplateGen
         }
 
 
-        public string MakeDefName(IdContainer Id) => $"{Id}Definition";
+        public static string MakeDefName(IdContainer Id) => $"{LegalizeTypeName(Id)}Definition";
+
+        public static string LegalizeTypeName(string name) => "_" + name.Replace('-', '_').Replace(' ', '_').Replace('.', '_');
 
         protected CodeTypeDeclaration InnitDefintionType(IdContainer Id, bool overwriteVanilla = false)
         {
@@ -306,8 +309,9 @@ namespace LBoLEntitySideloader.TemplateGen
 
         public StringBuilder OutputCSharpCode(bool outputToFile = false)
         {
-            CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
-            CodeGeneratorOptions options = new CodeGeneratorOptions();
+
+
+            var options = new CodeGeneratorOptions();
             options.BracingStyle = "C";
 
 
