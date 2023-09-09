@@ -42,7 +42,7 @@ namespace Random_Examples
             public override JadeBoxConfig MakeConfig()
             {
                 var config = DefaultConfig();
-                config.Mana = new ManaGroup() { Philosophy = 2 };
+                config.Mana = new ManaGroup() { Philosophy = 4 };
                 return config;
             }
 
@@ -62,6 +62,8 @@ namespace Random_Examples
                     { 
                         NotifyActivating();
                         yield return new GainManaAction(this.Mana);
+
+                        yield return new ApplyStatusEffectAction<Vulnerable>(Battle.Player, 1, 3);
                     }
                 }
 

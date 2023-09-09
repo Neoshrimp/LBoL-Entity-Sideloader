@@ -22,7 +22,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
 
             return type.GetGenericTypeDefinition().MakeGenericType(genParameters);
         }
- 
+
 
         public static MethodInfo InnerMoveNext(Type type, string methodName)
         {
