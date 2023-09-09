@@ -174,7 +174,10 @@ namespace LBoLEntitySideloader
                         log.LogError(ex);
                     }
                     finally
-                    { 
+                    {
+                        // reload jade boxes
+                        UiManager.GetPanel<StartGamePanel>()._jadeBoxToggles.Clear();
+                        UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
                         maBoi.Release();
                     }
 

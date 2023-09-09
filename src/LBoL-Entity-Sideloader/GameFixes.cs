@@ -294,7 +294,6 @@ namespace LBoLEntitySideloader
 
 
             [HarmonyPatch]
-            [HarmonyDebug]
             class MiniPanelFadeDelegate_Patch
             {
 
