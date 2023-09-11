@@ -60,6 +60,7 @@ namespace Random_Examples
                 {
                     if (Battle.Player.TurnCounter == 1)
                     { 
+                        
                         NotifyActivating();
                         yield return new GainManaAction(this.Mana);
 

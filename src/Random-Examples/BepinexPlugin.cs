@@ -163,6 +163,8 @@ namespace Random_Examples
 
 
             JadeBoxExamples.GenJadeBoxes();
+
+            CustomFormations.AddFormations();
         }
 
 

@@ -376,6 +376,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(ust, user);
                         }
+                        else if (entityDefinition is EnemyGroupTemplate egT)
+                        {
+                            RegisterConfig(egT, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -449,7 +453,7 @@ namespace LBoLEntitySideloader
             if (!user.IsForOverwriting(entityDefinition.GetType()))
             {
 
-
+                
 
                 var f_Index = ConfigReflection.HasIndex(configType);
                 if (f_Index != null)

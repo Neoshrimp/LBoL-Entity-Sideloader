@@ -86,6 +86,9 @@ namespace LBoLEntitySideloader
         internal event Action PostMainLoad;
 
 
+        public List<Action> formationAddActions = new List<Action>();
+
+
         public void RaisePostMainLoad()
         {
 

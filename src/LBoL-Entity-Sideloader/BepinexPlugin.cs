@@ -2,10 +2,12 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using LBoL.ConfigData;
+using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation;
 using LBoL.Presentation.I10N;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
+using LBoLEntitySideloader.Entities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,6 +64,8 @@ namespace LBoLEntitySideloader
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
 
 
+            
+
             harmony.PatchAll();
 
         }
@@ -91,7 +95,7 @@ namespace LBoLEntitySideloader
         }
 
         static SemaphoreSlim maBoi = new SemaphoreSlim(1);
-
+        static internal int doingMidRunReload = 0;
         /// <summary>
         /// Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and development. Requires scriptengine. 
         /// </summary>
@@ -113,9 +117,9 @@ namespace LBoLEntitySideloader
 
             EntityManager.Instance.secondaryUsers.userInfos = new Dictionary<Assembly, UserInfo>();
 
+
+
             UniqueTracker.DestroySelf();
-
-
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
 
@@ -126,12 +130,10 @@ namespace LBoLEntitySideloader
                 if (await maBoi.WaitAsync(0))
                     try
                     {
-
                         // doesn't really help
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        GC.Collect();
-                        
+
 
                         EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
                         EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
@@ -161,12 +163,26 @@ namespace LBoLEntitySideloader
 
                         }
 
+                        if (GameMaster.Instance.CurrentGameRun == null)
+                        { 
+                            // reload jade boxes
+                            UiManager.GetPanel<StartGamePanel>()._jadeBoxToggles.Clear();
+                            UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
+                            // formation reload moved to HookPoints.FormationsHotReload_Patch
+                            EnemyGroupTemplate.ReloadFormations();
+                        }
+
 
 
                         if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
                         {
                             UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
+                            doingMidRunReload = 1;
                         }
+
+
+
+
                     }
                     catch (Exception ex)
                     {
@@ -175,9 +191,6 @@ namespace LBoLEntitySideloader
                     }
                     finally
                     {
-                        // reload jade boxes
-                        UiManager.GetPanel<StartGamePanel>()._jadeBoxToggles.Clear();
-                        UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
                         maBoi.Release();
                     }
 

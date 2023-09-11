@@ -9,6 +9,8 @@ using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
 using LBoL.Presentation.I10N;
+using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using MonoMod.Utils;
 using System;
@@ -27,17 +29,6 @@ namespace LBoLEntitySideloader
         private static readonly BepInEx.Logging.ManualLogSource log = BepinexPlugin.log;
 
 
-
-
-        [HarmonyPatch(typeof(GameEntry), nameof(GameEntry.Awake))]
-        class GameEntry_Patch
-        {
-
-            static void Postfix()
-            {
-
-            }
-        }
 
 
 
@@ -94,31 +85,61 @@ namespace LBoLEntitySideloader
 
 
 
+        [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.Awake))]
+        [HarmonyPriority(Priority.First)]
+        class AddFormations_Patch
+        {
+            static void Postfix()
+            {
+                EnemyGroupTemplate.LoadCustomFormations();
+            }
+        }
+
+        // formation reload needs to be delayed after enemies have cleared
+        [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.InternalClearEnemies))]
+        class FormationsHotReload_Patch
+        {
+            static void Postfix()
+            {
+                if (BepinexPlugin.doingMidRunReload > 0)
+                {
+                    BepinexPlugin.doingMidRunReload--;
+                    EnemyGroupTemplate.ReloadFormations();
+                }
+
+            }
+        }
+
+
+
+
+
+
 
         // 2do fix this
         //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.ReloadAsync))]
         //[HarmonyPatch(typeof(L10nManager), nameof(L10nManager.SetLocaleAsync))]
-/*        [HarmonyPriority(Priority.First)]
-        class Localization_Patch
-        {
-
-
-            static async void Postfix(UniTask __result)
-            {
-                try
+        /*        [HarmonyPriority(Priority.First)]
+                class Localization_Patch
                 {
 
-                    await UniTask.WhenAll(new UniTask[] { __result });
-                    log.LogDebug("loc reload");
-                    EntityManager.Instance.LoadLocalization();
-                }
-                catch (Exception e)
-                {
 
-                    log.LogWarning(e);
-                }
-            }
-        }*/
+                    static async void Postfix(UniTask __result)
+                    {
+                        try
+                        {
+
+                            await UniTask.WhenAll(new UniTask[] { __result });
+                            log.LogDebug("loc reload");
+                            EntityManager.Instance.LoadLocalization();
+                        }
+                        catch (Exception e)
+                        {
+
+                            log.LogWarning(e);
+                        }
+                    }
+                }*/
 
         //[HarmonyPatch]
         class Loc_IntrusivePatch
