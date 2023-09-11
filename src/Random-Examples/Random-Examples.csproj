@@ -245,6 +245,18 @@
 
 
     <ItemGroup>
+        <Reference Include="DOTween">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTween.dll</HintPath>
+        </Reference>
+        <Reference Include="DOTween.Modules">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTween.Modules.dll</HintPath>
+        </Reference>
+        <Reference Include="DOTweenPro">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTweenPro.dll</HintPath>
+        </Reference>
+        <Reference Include="DOTweenPro.Scripts">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTweenPro.Scripts.dll</HintPath>
+        </Reference>
         <Reference Include="LBoL.Base">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Base.dll</HintPath>
         </Reference>
@@ -259,6 +271,9 @@
         </Reference>
         <Reference Include="LBoL.Presentation">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\LBoL.Presentation.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         </Reference>
         <Reference Include="Untitled.ConfigDataBuilder.Base">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\Untitled.ConfigDataBuilder.Base.dll</HintPath>

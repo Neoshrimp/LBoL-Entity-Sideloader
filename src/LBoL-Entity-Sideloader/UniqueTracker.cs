@@ -30,6 +30,8 @@ namespace LBoLEntitySideloader
                 {
                     _instance = new UniqueTracker();
                     _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
+                    _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(5);
+
                 }
                 return _instance;
             }
