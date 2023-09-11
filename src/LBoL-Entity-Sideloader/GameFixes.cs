@@ -17,6 +17,7 @@ using System.Collections;
 using UnityEngine;
 using LBoL.Core.Battle;
 using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.EntityLib.EnemyUnits.Character;
 
 namespace LBoLEntitySideloader
 {
@@ -248,6 +249,28 @@ namespace LBoLEntitySideloader
         }
 
 
+        // makes 3 fairies a bit more compatible with being grouped with another enemies
+        [HarmonyPatch(typeof(Sunny), "OnEnterBattle")]
+        class SunnyCastBug_Patch
+        {
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+
+                foreach (var ci in instructions)
+                {
+                    if (ci.Is(OpCodes.Castclass, typeof(LightFairy)))
+                    {
+                        yield return new CodeInstruction(OpCodes.Isinst, typeof(LightFairy));
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
+                }
+            }
+
+        }
 
         // patches to fix card panel 
         class CardView_Patches

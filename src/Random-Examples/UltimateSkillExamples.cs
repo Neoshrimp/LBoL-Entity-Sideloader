@@ -24,10 +24,9 @@ using static Random_Examples.BepinexPlugin;
 
 namespace Random_Examples
 {
-    [OverwriteVanilla]
     public sealed class ReimuUltRJabDef : UltimateSkillTemplate
     {
-        public override IdContainer GetId() => nameof(ReimuUltR);
+        public override IdContainer GetId() => nameof(ReimuUltJab);
 
         public override LocalizationOption LoadLocalization()
         {
@@ -63,9 +62,9 @@ namespace Random_Examples
     }
 
     [EntityLogic(typeof(ReimuUltRJabDef))]
-    public sealed class ReimuUltR : UltimateSkill
+    public sealed class ReimuUltJab : UltimateSkill
     {   
-        public ReimuUltR()
+        public ReimuUltJab()
         {
             base.TargetType = TargetType.SingleEnemy;
             base.GunName = "博丽一拳";

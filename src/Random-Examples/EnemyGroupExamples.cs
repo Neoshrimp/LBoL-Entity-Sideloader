@@ -58,6 +58,7 @@ namespace Random_Examples
                 Name: "TenguHeaven",
                 FormationName: VanillaFormations.Diamond,
                 // because of the way 3 fairies are coded they really need to stick together <3
+                // needs a slight code fix for Sunny to work but it's included in the Sideloader
                 Enemies: new List<string>() { nameof(Aya), "Sunny", "Luna", "Star" },
                 EnemyType: EnemyType.Elite,
                 DebutTime: 1f,
@@ -70,27 +71,7 @@ namespace Random_Examples
         }
 
 
-        [HarmonyPatch(typeof(Sunny), nameof(Sunny.OnEnterBattle))]
-        class SunnyCastBug_Patch
-        {
 
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-
-                foreach (var ci in instructions)
-                {
-                    if (ci.Is(OpCodes.Castclass, typeof(LightFairy)))
-                    {
-                        yield return new CodeInstruction(OpCodes.Isinst, typeof(LightFairy));
-                    }
-                    else
-                    {
-                        yield return ci;
-                    }
-                }
-            }
-
-        }
 
 
     }
@@ -99,7 +80,6 @@ namespace Random_Examples
     [OverwriteVanilla]
     public sealed class BallsAndGirlDef : EnemyGroupTemplate
     {
-        // 3 fairies
         public override IdContainer GetId() => "32";
 
 
@@ -109,7 +89,6 @@ namespace Random_Examples
                 Id: "",
                 Name: "BallsAndGirl",
                 FormationName: CustomFormations.Vedge,
-                // because of the way 3 fairies are coded they really need to stick together <3
                 Enemies: new List<string>() { "SickGirl", "YinyangyuBlue", "YinyangyuBlue", "YinyangyuRed", "YinyangyuRed" },
                 EnemyType: EnemyType.Normal,
                 DebutTime: 1f,

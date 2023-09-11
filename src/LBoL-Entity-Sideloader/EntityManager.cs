@@ -380,6 +380,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(egT, user);
                         }
+                        else if (entityDefinition is PlayerUnitTemplate puT)
+                        {
+                            RegisterConfig(puT, user);
+                        }
                     }
                     catch (Exception ex)
                     {

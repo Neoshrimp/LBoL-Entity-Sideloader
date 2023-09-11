@@ -2,6 +2,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.7.9` add EnemyGroupTemplate and custom enemy formations.
+
 `0.7.81` fixed MiniSelectCard Ui issue.
 
 `0.7.8` added Sfx and uiSounds templates. Actually works nicely with template gen.
