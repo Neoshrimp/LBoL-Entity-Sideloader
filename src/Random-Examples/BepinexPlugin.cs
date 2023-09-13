@@ -165,23 +165,55 @@ namespace Random_Examples
             JadeBoxExamples.GenJadeBoxes();
 
             CustomFormations.AddFormations();
+
+        }
+
+        private async void loadPanel()
+        {
+
+
+            try
+            {
+                GameMaster.UnloadMainMenuUi();
+                //UiManager.UnloadPanel<StartGamePanel>();
+            }
+            catch (Exception e)
+            {
+                log.LogWarning(e);
+
+            }
+
+
+            try
+            {
+
+                GameMaster.StartupEnterMainMenu(0);
+/*                await UiManager.LoadPanelAsync<StartGamePanel>("MainMenu", true);
+                log.LogInfo("DEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEZ loaded");*/
+
+            }
+            catch (Exception e)
+            {
+                log.LogWarning(e);
+            }
+            
         }
 
 
 
         private void OnDestroy()
         {
-            // overwrite custom yamls
 
             if (harmony != null)
                 harmony.UnpatchSelf();
+
         }
 
 
 
 
 
-  
+
 
 
 
