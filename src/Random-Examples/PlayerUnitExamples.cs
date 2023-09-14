@@ -15,6 +15,7 @@ using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
+using LBoLEntitySideloader.UIhelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,15 +83,29 @@ namespace Random_Examples
 
             var scrollGo = new GameObject("loadoutScroll");
             scrollGo.layer = 5; //UI
-
             scrollGo.transform.position = loadoutGo.transform.position;
-
             scrollGo.transform.SetParent(loadoutGo.transform.parent);
-
             // but why
             scrollGo.transform.localScale = new Vector3(1, 1, 1);
 
-            loadoutGo.transform.SetParent(scrollGo.transform);
+
+            var viewPort = new GameObject("viewPort");
+            viewPort.layer = 5;
+            viewPort.transform.position = scrollGo.transform.position;
+            viewPort.transform.SetParent(scrollGo.transform);
+
+            viewPort.transform.localScale = new Vector3(1, 1, 1);
+
+            loadoutGo.transform.SetParent(viewPort.transform);
+
+/*            var widgetHolder = new GameObject("widgetHolder");
+            widgetHolder.layer = 5;
+            widgetHolder.transform.position = scrollGo.transform.position;
+            widgetHolder.transform.SetParent(scrollGo.transform);
+
+            var holderRectT = widgetHolder.GetComponent<RectTransform>();*/
+            
+
 
             var scrollRectS = scrollGo.AddComponent<ScrollRect>();
 
@@ -107,24 +122,38 @@ namespace Random_Examples
             scrollGo.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
 
             scrollGo.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 20000f);
-            scrollGo.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 4000f);
+            scrollGo.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1206f);
 
             //var mask = scrollGo.AddComponent<Mask>();
 
-            //scrollRect.viewport = scrollGo.GetComponent<RectTransform>();
+            // wtf it works?
+            //scrollRectS.viewport = loadoutRectT;
+
+
+            scrollRectS.viewport = viewPort.GetComponent<RectTransform>();
             scrollRectS.content = loadoutRectT;
             scrollRectS.horizontal = true;
             scrollRectS.vertical= false;
             scrollRectS.scrollSensitivity = 20;
 
 
-            loadoutRectT.anchorMax = new Vector2(0f, 0.5f);
-            loadoutRectT.anchorMin = new Vector2(0f, 0.5f);
+            loadoutGo.transform.KeepPositionAfterAction(() =>
+            {
+                loadoutRectT.anchorMax = new Vector2(0f, 0.5f);
+                loadoutRectT.anchorMin = new Vector2(0f, 0.5f);
+/*                loadoutRectT.sizeDelta += new Vector2(1000, 0);
+                loadoutRectT.anchoredPosition += new Vector2(1000, 0);*/
+            }, true);
 
 
-            loadoutRectT.sizeDelta += new Vector2(1000, 0);
-            loadoutRectT.anchoredPosition += new Vector2(1000, 0);
+            /*loadoutRectT.sizeDelta += new Vector2(1000, 0);
+            loadoutRectT.anchoredPosition += new Vector2(1000, 0);*/
 
+            loadoutGo.transform.KeepPositionAfterAction(() =>
+            {
+                //loadoutRectT.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 20000f);
+
+            }, true);
 
             //loadoutRectT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000f);
 
@@ -134,13 +163,8 @@ namespace Random_Examples
 
 
 
-
-
             /*            var gridLayout = loadoutGo.AddComponent<GridLayoutGroup>();
                         gridLayout.constraint = GridLayoutGroup.Constraint.Flexible;*/
-
-
-
 
 
             /*            var startSetupWidgetB = __instance.characterSetupList[1].gameObject;
@@ -148,9 +172,6 @@ namespace Random_Examples
                         var newWidgetB = GameObject.Instantiate(startSetupWidgetB, startSetupWidgetB.transform.parent);
                         newWidgetB.transform.localPosition += new Vector3(-700f, 0, 0);
                         __instance.characterSetupList.Add(newWidgetB.GetComponent<StartSetupWidget>());*/
-
-
-
 
 
             var newWidgetA = GameObject.Instantiate(startSetupWidgetA, startSetupWidgetA.transform.parent);
@@ -177,25 +198,36 @@ namespace Random_Examples
             );
 
 
-
-
-/*            foreach (var o in loadoutGo.transform)
+            foreach (var o in loadoutGo.transform)
             {
                 var rt = (RectTransform)o;
-                rt.anchorMax = new Vector2(0, 1f);
-                rt.anchorMin = new Vector2(0, 1f);
-            }*/
+
+                if (rt.TryGetComponent<StartSetupWidget>(out var _))
+                {
+                    rt.KeepPositionAfterAction(() => {
+                        rt.anchorMax = new Vector2(0.5f, 1f);
+                        rt.anchorMin = new Vector2(0.5f, 1f);
+                    }, true);
+                }
+
+
+            }
+
+            loadoutRectT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 20000f);
+
+
+
 
         }
 
-/*        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-        {
-            // lol does nothing
-            return new CodeMatcher(instructions)
-                .MatchForward(true, new CodeMatch[] { new CodeMatch(new CodeInstruction(OpCodes.Ldloc_0)), new CodeMatch(new CodeInstruction(OpCodes.Ldc_I4_2)) })
-                .Set(OpCodes.Ldc_I4_2, null)
-                .InstructionEnumeration();
-        }*/
+        /*        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+                {
+                    // lol does nothing
+                    return new CodeMatcher(instructions)
+                        .MatchForward(true, new CodeMatch[] { new CodeMatch(new CodeInstruction(OpCodes.Ldloc_0)), new CodeMatch(new CodeInstruction(OpCodes.Ldc_I4_2)) })
+                        .Set(OpCodes.Ldc_I4_2, null)
+                        .InstructionEnumeration();
+                }*/
 
     }
 
