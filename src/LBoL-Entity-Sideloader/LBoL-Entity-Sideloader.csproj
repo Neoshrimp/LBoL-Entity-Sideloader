@@ -107,7 +107,21 @@
     <Reference Include="spine-unity">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\spine-unity.dll</HintPath>
     </Reference>
-
+    <Reference Include="DOTween">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween.Modules">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTween.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenPro">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenPro.Scripts">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\DOTweenPro.Scripts.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
   </ItemGroup>
     
     

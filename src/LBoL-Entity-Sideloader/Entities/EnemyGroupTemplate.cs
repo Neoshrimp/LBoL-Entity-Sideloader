@@ -31,6 +31,7 @@ namespace LBoLEntitySideloader.Entities
 
         // needs to be cleared manually
         public static HashSet<string> customFormations = new HashSet<string>();
+        // 2do cache formation loaded from disk separately 
 
 
         /// <summary>

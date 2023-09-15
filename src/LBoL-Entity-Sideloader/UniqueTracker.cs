@@ -1,4 +1,7 @@
 ﻿using LBoL.ConfigData;
+using LBoL.Core;
+using LBoL.Core.Cards;
+using LBoL.Core.Units;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
@@ -90,6 +93,20 @@ namespace LBoLEntitySideloader
 
         public List<Action> formationAddActions = new List<Action>();
 
+        // 2do cache loaded from disk separately
+        // charId +=> loadoutType +=> LoadoutInfo
+        public Dictionary<string, List<CharLoadoutInfo>> loadoutInfos = new Dictionary<string, List<CharLoadoutInfo>>();
+
+
+        public class CharLoadoutInfo
+        {
+            public string ultimateSkill;
+            public string exhibit;
+            public List<string> deck;
+            public int complexity;
+            public string typeSuffix;
+            public string typeName;
+        }
 
         public void RaisePostMainLoad()
         {
