@@ -69,7 +69,7 @@ namespace Random_Examples
                         nameof(QiqingYishi)
                 };
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
                 "Reimu",
                 new ReimuUltRJabDef().UniqueId,
                 nameof(CirnoU),
@@ -77,7 +77,7 @@ namespace Random_Examples
                 3
                 );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
                 "Reimu",
                 new ReimuUltRJabDef().UniqueId,
                 nameof(CirnoG),
@@ -86,7 +86,7 @@ namespace Random_Examples
                 );
 
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
                 "Reimu",
                 new ReimuUltRJabDef().UniqueId,
                 nameof(Tuanzi),
@@ -94,7 +94,7 @@ namespace Random_Examples
                 2
                 );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
                 "Reimu",
                 new ReimuUltRJabDef().UniqueId,
                 nameof(CirnoG),
@@ -102,7 +102,7 @@ namespace Random_Examples
                 1
                 );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
             "Reimu",
             new ReimuUltRJabDef().UniqueId,
             nameof(CirnoG),
@@ -110,7 +110,7 @@ namespace Random_Examples
             1
             );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
             "Reimu",
             new ReimuUltRJabDef().UniqueId,
             nameof(CirnoG),
@@ -118,7 +118,7 @@ namespace Random_Examples
             1
             );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
             "Reimu",
             new ReimuUltRJabDef().UniqueId,
             nameof(CirnoG),
@@ -126,7 +126,7 @@ namespace Random_Examples
             1
             );
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
             "Reimu",
             new ReimuUltRJabDef().UniqueId,
             nameof(CirnoG),
@@ -136,8 +136,16 @@ namespace Random_Examples
 
 
 
-            PlayerUnitTemplate.AddLoadout(
+            PlayerUnitTemplate.AddExtraLoadout(
                 "Marisa",
+                new ReimuUltRJabDef().UniqueId,
+                nameof(CirnoU),
+                cards,
+                3
+                );
+
+            PlayerUnitTemplate.AddExtraLoadout(
+                "Sakuya",
                 new ReimuUltRJabDef().UniqueId,
                 nameof(CirnoU),
                 cards,

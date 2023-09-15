@@ -120,8 +120,21 @@ namespace LBoLEntitySideloader
 
 
             UniqueTracker.DestroySelf();
+            // doesn't really help
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+
+            EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+            EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
+
+            UniqueTracker.Instance.formationAddActions.AddRange(EnemyGroupTemplate.loadedFromDiskCustomFormations);
+
+
+            UniqueTracker.Instance.populateLoadoutInfosActions.AddRange(EntityManager.Instance.loadedFromDiskCharLoadouts);
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
+
 
             //ensures plugins are reloaded first
             StartCoroutine(DoubleDelayAction(async () =>
@@ -130,14 +143,6 @@ namespace LBoLEntitySideloader
                 if (await maBoi.WaitAsync(0))
                     try
                     {
-                        // doesn't really help
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-
-
-                        EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
-                        EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
-
                         ConfigDataManager.Reload();
 
                         if (hardReload)
@@ -162,6 +167,9 @@ namespace LBoLEntitySideloader
                             EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
 
                         }
+
+
+                        UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
                         if (GameMaster.Instance.CurrentGameRun == null)
                         { 

@@ -22,6 +22,7 @@ using System.Linq;
 using DG.Tweening;
 using LBoLEntitySideloader.Utils;
 using LBoL.Base.Extensions;
+using System.Reflection;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -36,29 +37,45 @@ namespace LBoLEntitySideloader.Entities
 
         public override Type TemplateType() => typeof(PlayerUnitTemplate);
 
-        static public void AddLoadout(string charId, Type ultimateSkill, Type exhibit, List<Type> deck, int complexity)
+        static public void AddLoadout(string charId, Type ultimateSkill, Type exhibit, List<Type> deck, int complexity, Assembly callingAssembly = null)
         {
-            AddLoadout(charId, ultimateSkill.Name, exhibit.Name, deck.Select(t => t.Name).ToList(), complexity);
+            AddExtraLoadout(charId, ultimateSkill.Name, exhibit.Name, deck.Select(t => t.Name).ToList(), complexity, callingAssembly);
         }
 
-        static public void AddLoadout(string charId, string ultimateSkill, string exhibit, List<string> deck, int complexity)
+        static public void AddExtraLoadout(string charId, string ultimateSkill, string exhibit, List<string> deck, int complexity, Assembly callingAssembly = null)
         {
-            var loadoutInfos = UniqueTracker.Instance.loadoutInfos;
-            loadoutInfos.TryAdd(charId, new List<UniqueTracker.CharLoadoutInfo>());
 
-            var typeSuffix = Numbers.DecimalToABC(2 + loadoutInfos[charId].Count);
+            if (callingAssembly == null)
+                callingAssembly = Assembly.GetCallingAssembly();
 
-            var typeName = "Type" + typeSuffix;
+                
 
-            loadoutInfos[charId].Add(new UniqueTracker.CharLoadoutInfo()
+            Action action = () =>
             {
-                ultimateSkill = ultimateSkill,
-                exhibit = exhibit,
-                deck = deck,
-                complexity = complexity,
-                typeName = typeName,
-                typeSuffix = typeSuffix
-            });
+                var loadoutInfos = UniqueTracker.Instance.loadoutInfos;
+                loadoutInfos.TryAdd(charId, new List<UniqueTracker.CharLoadoutInfo>());
+
+                var typeSuffix = Numbers.DecimalToABC(2 + loadoutInfos[charId].Count);
+
+                var typeName = "Type" + typeSuffix;
+
+                loadoutInfos[charId].Add(new UniqueTracker.CharLoadoutInfo()
+                {
+                    ultimateSkill = ultimateSkill,
+                    exhibit = exhibit,
+                    deck = deck,
+                    complexity = complexity,
+                    typeName = typeName,
+                    typeSuffix = typeSuffix
+                });
+            };
+
+            if (callingAssembly.IsLoadedFromDisk())
+                EntityManager.Instance.loadedFromDiskCharLoadouts.Add(action);
+
+
+            UniqueTracker.Instance.populateLoadoutInfosActions.Add(action);
+
         }
 
 
@@ -182,7 +199,7 @@ namespace LBoLEntitySideloader.Entities
                     scrollRectS.content = loadoutRectT;
                     scrollRectS.horizontal = true;
                     scrollRectS.vertical = false;
-                    scrollRectS.scrollSensitivity = 20;
+                    scrollRectS.scrollSensitivity = 25f;
                     scrollRectS.elasticity = 0.08f;
                     scrollRectS.movementType = ScrollRect.MovementType.Clamped;
 
@@ -335,8 +352,8 @@ namespace LBoLEntitySideloader.Entities
                                 startGamePanel._typeCandidates = startGamePanel._typeCandidates.AddToArray(new StartGamePanel.TypeCandidate()
                                 {
                                     Name = loadoutInfo.typeName,
-                                    Us = LBoL.Core.Library.CreateUs(loadoutInfo.ultimateSkill),
-                                    Exhibit = LBoL.Core.Library.CreateExhibit(loadoutInfo.exhibit),
+                                    Us = Library.CreateUs(loadoutInfo.ultimateSkill),
+                                    Exhibit = Library.CreateExhibit(loadoutInfo.exhibit),
                                     Deck = loadoutInfo.deck.Select(c => Library.CreateCard(c)).ToArray()
 
                                 });
@@ -392,7 +409,6 @@ namespace LBoLEntitySideloader.Entities
 
 
             [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectType))]
-            [HarmonyDebug]
             class SetLoadoutComplexity_Patch
             {
 
@@ -413,12 +429,15 @@ namespace LBoLEntitySideloader.Entities
 
                 static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
                 {
-                    return new CodeMatcher(instructions)
+                    return new CodeMatcher(instructions, generator)
                         .End()
                         .MatchBack(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(StartStatusWidget), nameof(StartStatusWidget.SetSetup))))
-                        .InsertAndAdvance(new CodeInstruction(OpCodes.Pop))
+                        .CreateLabel(out var popLabel)
+                        .InsertAndAdvance(new CodeInstruction(OpCodes.Pop).WithLabels(popLabel))
                         .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
                         .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SetLoadoutComplexity_Patch), nameof(SetLoadoutComplexity_Patch.GetComplexity))))
+                        .MatchBack(false, OpCodes.Br)
+                        .Set(OpCodes.Br, popLabel)
                         .InstructionEnumeration();
                 }
 

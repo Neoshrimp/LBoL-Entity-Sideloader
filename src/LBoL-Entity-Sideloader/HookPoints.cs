@@ -54,6 +54,8 @@ namespace LBoLEntitySideloader
                 EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
 
 
+                UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
+
             }
 
         }

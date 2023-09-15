@@ -44,6 +44,9 @@ namespace LBoLEntitySideloader
 
         public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
+        public List<Action> loadedFromDiskCharLoadouts = new List<Action>();
+
+
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
         {
 
@@ -227,7 +230,7 @@ namespace LBoLEntitySideloader
             UniqueTracker.Instance.typePromiseDic[userAssembly][facType].Add(new UniqueTracker.DefTypePromisePair() { entityLogicType = entityLogicType, defTypePromise = defTypePromise });
 
         }
-
+        
         
         
         public static void AddPostLoadAction(Action action, Assembly callingAssembly = null)

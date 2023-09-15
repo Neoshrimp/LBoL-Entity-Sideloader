@@ -3,6 +3,7 @@ using LBoL.Base;
 using LBoL.ConfigData;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.Units;
+using LBoLEntitySideloader.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace LBoLEntitySideloader.Entities
 
         // needs to be cleared manually
         public static HashSet<string> customFormations = new HashSet<string>();
-        // 2do cache formation loaded from disk separately 
+        public static HashSet<Action> loadedFromDiskCustomFormations = new HashSet<Action>();
 
 
         /// <summary>
@@ -39,9 +40,15 @@ namespace LBoLEntitySideloader.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <param name="enemyLocations"></param>
-        static public void AddFormation(string name, Dictionary<int, Vector2> enemyLocations)
+        static public void AddFormation(string name, Dictionary<int, Vector2> enemyLocations, Assembly callingAssembly = null)
         {
-            UniqueTracker.Instance.formationAddActions.Add(() => {
+            if(callingAssembly == null)
+                callingAssembly = Assembly.GetCallingAssembly();
+
+
+
+                
+            Action action = () => {
 
                 
 
@@ -73,9 +80,14 @@ namespace LBoLEntitySideloader.Entities
                 {
                     Log.log.LogError($"Formation with name {name} is already present");
                 }
+            };
 
-                
-            });
+            if (callingAssembly.IsLoadedFromDisk())
+                loadedFromDiskCustomFormations.Add(action);
+
+            UniqueTracker.Instance.formationAddActions.Add(action);
+
+
         }
 
 
@@ -83,6 +95,8 @@ namespace LBoLEntitySideloader.Entities
         {
             var formationsToDestroy = EnemyGroupTemplate.FindFormationsToUnload();
             UnloadCustomFormations(formationsToDestroy);
+
+            // loadedFromDiskFormations added earlier
             LoadCustomFormations();
         }
 

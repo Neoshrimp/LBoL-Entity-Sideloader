@@ -101,6 +101,7 @@ using LBoL.Presentation.UI.Transitions;
 using LBoL.Presentation.UI.Widgets;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
 using System;
@@ -159,6 +160,18 @@ namespace GenTests2
 
 
             Generation.InitTemplateGen();
+
+            PlayerUnitTemplate.AddExtraLoadout(
+            "Sakuya",
+            nameof(CirnoUltG),
+            nameof(CirnoG),
+            new List<string>() { nameof(TimeWalk) },
+            1
+            );
+
+            EnemyGroupTemplate.AddFormation("deeznuts", new Dictionary<int, Vector2>() {
+                { 0, new Vector2 (-4, 0) },
+            });
         }
 
         private void OnDestroy()

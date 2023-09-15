@@ -97,6 +97,7 @@ namespace LBoLEntitySideloader
         // charId +=> loadoutType +=> LoadoutInfo
         public Dictionary<string, List<CharLoadoutInfo>> loadoutInfos = new Dictionary<string, List<CharLoadoutInfo>>();
 
+        public List<Action> populateLoadoutInfosActions = new List<Action>();
 
         public class CharLoadoutInfo
         {
