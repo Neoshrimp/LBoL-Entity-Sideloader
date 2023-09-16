@@ -20,7 +20,7 @@ namespace LBoLEntitySideloader.Resource
         public UniTask<SkeletonDataAsset> loadSpine;
 
         // not implemented yet
-        public IdContainer effectId;
+        public string effectName;
 
         public ModelOption(UniTask<Sprite> loadSprite)
         {
@@ -34,11 +34,10 @@ namespace LBoLEntitySideloader.Resource
             this.loadSpine = loadSpine;
         }
 
-        public ModelOption(IdContainer effectId)
+        public ModelOption(string effectName)
         {
-            throw new NotImplementedException();
             this.modelType = UnitView.ModelType.Effect;
-            this.effectId = effectId;
+            this.effectName = effectName;
         }
     }
 }
