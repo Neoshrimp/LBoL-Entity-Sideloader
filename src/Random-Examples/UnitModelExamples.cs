@@ -33,7 +33,7 @@ namespace Random_Examples
 
         public override UnitModelConfig MakeConfig()
         {
-            // deep copy config so original in uneffected
+            // deep copy config so original in unaffected
             var config = UnitModelConfig.FromName("Sunny").Copy();
             config.Flip = true;
             return config;
