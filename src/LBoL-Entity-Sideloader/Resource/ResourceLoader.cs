@@ -23,8 +23,6 @@ namespace LBoLEntitySideloader.Resource
 
         public static Texture2D LoadTexture(string name, IResourceSource source)
         {
-
-
             using Stream resource = source.Load(name);
 
             if (resource == null)
@@ -74,6 +72,11 @@ namespace LBoLEntitySideloader.Resource
 
             var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
             return sprite;
+        }
+
+        public static UniTask<Sprite> GetLoadSpriteTask(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
+        {
+            return UniTask.RunOnThreadPool<Sprite>(() => LoadSprite(name, source, rect, ppu, pivot));
         }
 
 

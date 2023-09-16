@@ -115,7 +115,7 @@ namespace LBoLEntitySideloader.Entities
                     Order : 0,
                     UnlockLevel : 0,
                     ModleName : "",
-                    NarrativeColor : "",
+                    NarrativeColor : "#f241a8",
                     IsSelectable : true,
                     MaxHp : 1,
                     InitialMana : new LBoL.Base.ManaGroup() { },

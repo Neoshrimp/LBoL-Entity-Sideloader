@@ -102,7 +102,8 @@ namespace LBoLEntitySideloader
 
                         userInfo.definitionInfos.Add(type, definition);
 
-                        definition.assembly = userInfo.assembly;
+                        definition.userAssembly = userInfo.assembly;
+                        definition.user = userInfo;
 
 
                         var overwrite = type.GetCustomAttribute<OverwriteVanilla>(true);
@@ -351,10 +352,13 @@ namespace LBoLEntitySideloader
                                 bgmConfig = BgmConfig.FromID(bt.UniqueId);
                             }
 
-
-                            // pass ID to LoadBgmAsync
-                            bgmConfig.Path = bgmConfig.ID;
-                            bgmConfig.Folder = "";
+                            // in case config is overwritten but not the bgm (dont make sense really)
+                            if (!user.IsForOverwriting(bt.GetType()) || user.IsForOverwriting(bt.GetType()) && TemplatesReflection.DoOverwrite(bt.GetType(), nameof(BgmTemplate.LoadAudioClipAsync)))
+                            { 
+                                // pass ID to LoadBgmAsync
+                                bgmConfig.Path = bgmConfig.ID;
+                                bgmConfig.Folder = "";
+                            }
                             UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
 
 
@@ -386,6 +390,11 @@ namespace LBoLEntitySideloader
                         else if (entityDefinition is PlayerUnitTemplate puT)
                         {
                             RegisterConfig(puT, user);
+                        }
+                        else if (entityDefinition is UnitModelTemplate umT)
+                        {
+                            var umTConfig = RegisterConfig(umT, user);
+                            UniqueTracker.Instance.AddOnDemandResource(umT.TemplateType(), umTConfig.Name, umT);
                         }
                     }
                     catch (Exception ex)
@@ -802,7 +811,7 @@ namespace LBoLEntitySideloader
             log.LogInfo("Finished loading custom resources.");
         }
 
-        static internal void HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
+        static internal bool HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
         {
             try
             {
@@ -813,17 +822,22 @@ namespace LBoLEntitySideloader
                     if (!user.IsForOverwriting(defType))
                     {
                         action();
+                        return true;
                     }
                     else if (TemplatesReflection.DoOverwrite(defType, methodName) && !UniqueTracker.IsOverwriten(definition.TemplateType(), definition.UniqueId, methodName, defType, user))
                     {
                         action();
+                        return true;
+
                     }
                 }
             }
             catch (Exception ex)
             {
                 Log.log.LogError($"Error while processing {definition.GetType().Name}.{methodName}: {ex}");
+
             }
+            return false;
 
         }
 

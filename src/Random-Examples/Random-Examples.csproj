@@ -314,6 +314,12 @@
         <Reference Include="UniTask">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\UniTask.dll</HintPath>
         </Reference>
+        <Reference Include="spine-csharp">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\spine-csharp.dll</HintPath>
+        </Reference>
+        <Reference Include="spine-unity">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\spine-unity.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 

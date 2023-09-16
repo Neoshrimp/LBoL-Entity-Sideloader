@@ -10,6 +10,7 @@ using LBoL.Presentation;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using LBoL.Base.Extensions;
+using UnityEngine.AddressableAssets;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -60,7 +61,6 @@ namespace LBoLEntitySideloader.Entities
 
 
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadBgmAsync))]
-        //[HarmonyDebug]
         internal class BgmLoad_Patch
         {
 
@@ -69,20 +69,18 @@ namespace LBoLEntitySideloader.Entities
             static bool Prefix(string path, ref UniTask<AudioClip> __result)
             {
 
-
                 var Id = path.TrimStart('/');
                 //Log.log.LogDebug($"bgm to load: {Id}");
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(BgmTemplate), Id, out var entityDefinition))
                 {
-                    //Log.log.LogDebug($"custom bgm");
 
-                    if (entityDefinition is BgmTemplate bt)
+                    if (entityDefinition is BgmTemplate bt && EntityManager.HandleOverwriteWrap(() => { }, bt, nameof(LoadAudioClipAsync), bt.user))
                     {
+                        //Log.log.LogDebug($"custom bgm");
                         __result = bt.LoadAudioClipAsync();
                         return false;
 
                     }
-                    Log.log.LogError($"Loading custom bgm: {entityDefinition.GetType().Name} was not of {typeof(BgmTemplate)} type but of {entityDefinition.TemplateType().Name} type instead");
                     return true;
                 }
 

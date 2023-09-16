@@ -51,11 +51,11 @@ namespace LBoLEntitySideloader
 
         public UserInfo GetDefinitionUser(EntityDefinition entityDefinition)
         {
-            if (userInfos.TryGetValue(entityDefinition.assembly, out UserInfo user))
+            if (userInfos.TryGetValue(entityDefinition.userAssembly, out UserInfo user))
             {
                 return user;
             }
-            Log.log.LogWarning($"{entityDefinition.assembly.GetName().Name} was not found among registered users");
+            Log.log.LogWarning($"{entityDefinition.userAssembly.GetName().Name} was not found among registered users");
             return null;
         }
 

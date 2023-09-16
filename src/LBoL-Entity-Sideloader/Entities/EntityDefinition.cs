@@ -27,7 +27,10 @@ namespace LBoLEntitySideloader.Entities
     public abstract class EntityDefinition
     {
         
-        internal Assembly assembly;
+        internal Assembly userAssembly;
+        internal UserInfo user;
+
+
 
         /// <summary>
         /// Returns as unique Id of the entity, should be used to when referring to the entity in your own code. For now the result is the same as GetId().
@@ -39,6 +42,8 @@ namespace LBoLEntitySideloader.Entities
                 return UniqueTracker.GetUniqueId(this);
             }
         }
+
+
 
         /// <summary>
         /// Must return the Id of the entity. Id is the element which binds all entity components, logic, localization, assets etc., together. There are two important requirements for an Id:
@@ -72,18 +77,20 @@ namespace LBoLEntitySideloader.Entities
         public abstract Type EntityType();
 
 
+
+
         internal void ProcessLocalization(LocalizationOption locOption, Type facType)
         {
             if (locOption == null) return;
 
-            var entityLogicType = SideloaderUsers.GetEntityLogicType(assembly, GetType());
+            var entityLogicType = SideloaderUsers.GetEntityLogicType(userAssembly, GetType());
 
             if (locOption is GlobalLocalization globalLoc)
             {
 
-                UniqueTracker.Instance.typesToLocalize.TryAdd(assembly, new Dictionary<Type, LocalizationInfo>());
+                UniqueTracker.Instance.typesToLocalize.TryAdd(userAssembly, new Dictionary<Type, LocalizationInfo>());
 
-                var typesToLocalize = UniqueTracker.Instance.typesToLocalize[assembly];
+                var typesToLocalize = UniqueTracker.Instance.typesToLocalize[userAssembly];
 
                 typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());
                 var locInfo = typesToLocalize[EntityType()];
@@ -93,7 +100,7 @@ namespace LBoLEntitySideloader.Entities
                     if (locInfo.locFiles == null)
                         locInfo.locFiles = globalLoc.LocalizationFiles;
                     else
-                        Log.LogDev()?.LogWarning($"{assembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
+                        Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
                 }
                 locInfo.entityLogicTypes.Add(entityLogicType);
                     
