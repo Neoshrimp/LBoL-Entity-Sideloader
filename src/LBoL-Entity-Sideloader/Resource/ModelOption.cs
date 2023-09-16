@@ -15,7 +15,7 @@ namespace LBoLEntitySideloader.Resource
         public UniTask<Sprite> loadSprite;
 
         /// <summary>
-        /// Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. Also untested
+        /// Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
         /// </summary>
         public UniTask<SkeletonDataAsset> loadSpine;
 

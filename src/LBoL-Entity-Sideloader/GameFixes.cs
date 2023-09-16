@@ -272,6 +272,30 @@ namespace LBoLEntitySideloader
 
         }
 
+
+        // might cause issues with future updates. Only ReimuR is actually using the spell cache
+        [HarmonyPatch(typeof(SpellPanel), nameof(SpellPanel.Awake))]
+        class SpellPanel_ClearSpellCache_Patch
+        {
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                return new CodeMatcher(instructions, generator)
+                    .End()
+                    .MatchBack(true, new CodeMatch[] { OpCodes.Ldloc_1, OpCodes.Ldloc_0, OpCodes.Ldlen, OpCodes.Conv_I4, OpCodes.Blt})
+                    .Advance(1)
+                    .CreateLabel(out var afterLoopLabel)
+                    .AddLabels(new Label[] { afterLoopLabel })
+                    .Start()
+                    .MatchForward(false, new CodeMatch(OpCodes.Ldstr, "UI/Panels/SpellDeclare"))
+                    .Insert(new CodeInstruction(OpCodes.Br, afterLoopLabel))
+                    .InstructionEnumeration();
+            }
+
+        }
+
+
+
         // patches to fix card panel 
         class CardView_Patches
         {

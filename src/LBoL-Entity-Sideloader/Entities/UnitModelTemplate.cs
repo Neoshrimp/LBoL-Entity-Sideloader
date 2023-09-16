@@ -188,7 +188,6 @@ namespace LBoLEntitySideloader.Entities
                 {
                     if (entityDefinition is UnitModelTemplate umT && EntityManager.HandleOverwriteWrap(() => { }, umT, nameof(LoadSpellSprite), umT.user) && umT.CheckSpellSpriteEnabled())
                     {
-                        Log.log.LogDebug("DEEEEEEEEEEEEEEEEEEEEEEEEEEEEz");
                         __result = umT.LoadSpellSprite();
                         return false;
 
