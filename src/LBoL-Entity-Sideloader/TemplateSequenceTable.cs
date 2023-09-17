@@ -50,7 +50,7 @@ namespace LBoLEntitySideloader
 
             foreach (var kv in lookUpDic)
             {
-                table.TryAdd(kv.Value, new Sequence(startingPoint));
+                this.table.TryAdd(kv.Value, new Sequence(startingPoint));
             }
                
         }

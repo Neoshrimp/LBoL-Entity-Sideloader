@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.8.3` enable exhibit dupes (thanks to IntoxicatedKid).
+
 `0.8.1` added UnitModelTemplate. Custom enemy or players models are now possible.
 
 `0.8.0` added custom starting loadouts in `PlayerUnitTemplate`
