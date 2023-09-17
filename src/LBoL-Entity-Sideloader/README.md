@@ -1,5 +1,9 @@
 Modding framework for working with LBoL entities.
 
+#### Thanks to the contributors!
+
+[IntoxicatedKid](https://github.com/IntoxicatedKid)
+
 #### Change log
 
 `0.8.1` added UnitModelTemplate. Custom enemy or players models are now possible.

@@ -379,11 +379,11 @@ namespace LBoLEntitySideloader
 
             }
 
-
-
-
         }
+
+
         [HarmonyPatch]
+        [HarmonyDebug]
         class AllowDuplicateExhibits1_Patch
         {
             static IEnumerable<MethodBase> TargetMethods()
@@ -421,6 +421,7 @@ namespace LBoLEntitySideloader
                 }
             }
         }
+
         [HarmonyPatch(typeof(PlayerUnit), nameof(PlayerUnit.AddExhibit))]
         class AllowDuplicateExhibits2_Patch
         {

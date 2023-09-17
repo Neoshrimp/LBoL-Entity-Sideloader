@@ -7,6 +7,7 @@ using System.Text;
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class StageTemplate : EntityDefinition
+        //IConfigProvider<StageConfig>
     {
         public override Type ConfigType() => typeof(StageConfig);
 

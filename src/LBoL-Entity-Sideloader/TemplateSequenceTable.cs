@@ -20,19 +20,32 @@ namespace LBoLEntitySideloader
         public TemplateSequenceTable(int startingPoint = 0) 
         {
             if (lookUpDic.Empty())
-            { 
-                foreach (var tt in TemplatesReflection.AllTemplateTypes())
-                {
-                    // mangled name lmfao
-                    var configType = tt.GetInterface($"{nameof(IConfigProvider<object>)}`1").GenericTypeArguments[0];
-                    lookUpDic.Add(tt, configType.Name);
-                    lookUpDic.Add(configType, configType.Name);
+            {
 
-                }
                 foreach (var configType in ConfigReflection.AllConfigTypes())
                 {
-                    lookUpDic.TryAdd(configType, configType.Name);
+                    lookUpDic.Add(configType, configType.Name);
                 }
+
+                foreach (var tt in TemplatesReflection.AllTemplateTypes())
+                {
+
+                    // mangled name lmfao
+                    var configType = tt.GetInterface($"{nameof(IConfigProvider<object>)}`1")?.GenericTypeArguments[0];
+                    if (configType != null)
+                    {
+                        //lookUpDic.TryAdd(configType, configType.Name);
+                        lookUpDic.Add(tt, configType.Name);
+                    }
+                    else
+                    { 
+                        // special case when template doesn't provide a config
+                        lookUpDic.Add(tt, tt.Name);
+                    }
+
+
+                }
+
             }
 
             foreach (var kv in lookUpDic)
@@ -60,6 +73,12 @@ namespace LBoLEntitySideloader
             if (!TemplatesReflection.AllTemplateTypes().Contains(type) && !ConfigReflection.AllConfigTypes().Contains(type))
             {
                 throw new ArgumentException($"TemplateSequenceTable: {type} is not a Entity definition template type or a Config type");
+            }
+
+            if (!lookUpDic.ContainsKey(type))
+            {
+                throw new ArgumentException($"TemplateSequenceTable: {type} is not in lookup dictionary. Some templates might not have an associated config type. Try using template type instead.");
+
             }
         }
     }
