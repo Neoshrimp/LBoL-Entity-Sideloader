@@ -336,6 +336,7 @@
       <None Remove="Resources\reimu_fist.png" />
       <None Remove="resources\StatusEffectsEn.yaml" />
       <None Remove="resources\UltimateSkill.yaml" />
+      <None Remove="Resources\Youmu.png" />
     </ItemGroup>
 
 
