@@ -383,7 +383,6 @@ namespace LBoLEntitySideloader
 
 
         [HarmonyPatch]
-        [HarmonyDebug]
         class AllowDuplicateExhibits1_Patch
         {
             static IEnumerable<MethodBase> TargetMethods()
@@ -394,21 +393,23 @@ namespace LBoLEntitySideloader
             {
                 CodeInstruction prevprevCi = null;
                 CodeInstruction prevCi = null;
+
+                var logErrorMethod = AccessTools.Method(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(object) });
                 foreach (var ci in instructions)
                 {
-                    if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Call && prevCi.opcode == OpCodes.Call && prevprevCi.opcode == OpCodes.Callvirt)
+                    if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Call && ((MethodInfo)ci.operand) == logErrorMethod && prevCi.opcode == OpCodes.Call && prevprevCi.opcode == OpCodes.Callvirt)
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
-                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Ret && prevCi.opcode == OpCodes.Ldc_I4_0 && prevprevCi.opcode == OpCodes.Call)
+                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Ret && prevCi.opcode == OpCodes.Ldc_I4_0 && prevprevCi.opcode == OpCodes.Call && ((MethodInfo)prevprevCi.operand) == logErrorMethod)
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
-                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Newobj && prevCi.opcode == OpCodes.Ldstr && prevprevCi.opcode == OpCodes.Ldstr)
+                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Newobj && prevCi.opcode == OpCodes.Ldstr && prevprevCi.opcode == OpCodes.Ldstr && prevprevCi.operand.ToString() == "Cannot add duplicated Exhibit.")
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
-                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Throw && prevCi.opcode == OpCodes.Newobj && prevprevCi.opcode == OpCodes.Ldstr)
+                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Throw && prevCi.opcode == OpCodes.Newobj && prevprevCi.opcode == OpCodes.Ldstr && prevprevCi.operand.ToString() == "exhibit")
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
@@ -431,11 +432,11 @@ namespace LBoLEntitySideloader
                 CodeInstruction prevCi = null;
                 foreach (var ci in instructions)
                 {
-                    if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Throw && prevCi.opcode == OpCodes.Newobj && prevprevCi.opcode == OpCodes.Ldstr)
+                    if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Throw && prevCi.opcode == OpCodes.Newobj && prevprevCi.opcode == OpCodes.Ldstr && prevprevCi.operand.ToString() == "exhibit")
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
-                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Newobj && prevCi.opcode == OpCodes.Ldstr && prevprevCi.opcode == OpCodes.Ldstr)
+                    else if (prevprevCi != null && prevCi != null && ci.opcode == OpCodes.Newobj && prevCi.opcode == OpCodes.Ldstr && prevprevCi.opcode == OpCodes.Ldstr && prevprevCi.operand.ToString() == "Cannot add duplicated Exhibit.")
                     {
                         yield return new CodeInstruction(OpCodes.Pop);
                     }
