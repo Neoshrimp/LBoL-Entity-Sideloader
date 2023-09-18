@@ -332,6 +332,7 @@
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />
       <None Remove="resources\ExhibitsEn.yaml" />
+      <None Remove="Resources\ghibli.jpg" />
       <None Remove="Resources\JadeBoxEn.yaml" />
       <None Remove="Resources\reimu_fist.png" />
       <None Remove="resources\StatusEffectsEn.yaml" />
@@ -341,12 +342,18 @@
 
 
     <ItemGroup>
+      <EmbeddedResource Include="DirResources\ghibli.jpg" />
+      <EmbeddedResource Include="DirResources\Youmu.png" />
+    </ItemGroup>
+
+
+    <ItemGroup>
       <ProjectReference Include="..\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj" />
     </ItemGroup>
 
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
+        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)DirResources\*&quot; &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot; &#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)DirResources\*'  -DestinationPath  '$(ProjectDir)$(AssemblyName).zip' -Force&quot;" />
     </Target>
 
 

@@ -14,6 +14,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
+using System.Diagnostics;
+using LBoLEntitySideloader.Resource.AsyncTextureImport;
+using System.Runtime.InteropServices;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -45,13 +48,17 @@ namespace LBoLEntitySideloader.Resource
 
         public static Sprite LoadSprite(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
         {
+            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, rect, pivot);
+        }
+
+
+        public static Sprite LoadSprite(string name, IResourceSource source, int ppu = 1, int anisoLevel = 1, FilterMode filterMode = FilterMode.Point, Rect? rect = null, Vector2? pivot = null)
+        {
             using Stream resource = source.Load(name);
 
             if (resource == null)
                 return null;
 
-            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
-            var assembly = Assembly.GetExecutingAssembly();
             using var memoryStream = new MemoryStream();
             var buffer = new byte[16384];
 
@@ -61,23 +68,65 @@ namespace LBoLEntitySideloader.Resource
 
             var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
             {
-                anisoLevel = 1,
-                filterMode = 0
+                anisoLevel = anisoLevel,
+                filterMode = filterMode
             };
 
+
+            // can't be used on background threads
             spriteTexture.LoadImage(memoryStream.ToArray());
 
             if (rect == null)
                 rect = new Rect(0, 0, spriteTexture.width, spriteTexture.height);
 
+            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
             var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
+
             return sprite;
+
         }
 
-        public static UniTask<Sprite> GetLoadSpriteTask(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
+        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 1, int anisoLevel = 1, FilterMode filterMode = FilterMode.Point, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
         {
-            return UniTask.RunOnThreadPool<Sprite>(() => LoadSprite(name, source, rect, ppu, pivot));
+
+
+            var path = "";
+            if (source != null)
+                path = source.FullPath(name);
+            else
+                path = name;
+
+
+            Log.LogDev()?.LogInfo($"Loading sprite from {path}");
+            using var uwr = UnityWebRequestTexture.GetTexture(protocol + path);
+
+            uwr.timeout = 20;
+
+            await uwr.SendWebRequest();
+
+            if (string.IsNullOrEmpty(uwr.error))
+            {
+                var spriteTexture = await UniTask.RunOnThreadPool(() => DownloadHandlerTexture.GetContent(uwr));
+
+                spriteTexture.anisoLevel = anisoLevel;
+                spriteTexture.filterMode = filterMode;
+
+                if (rect == null)
+                    rect = new Rect(0, 0, spriteTexture.width, spriteTexture.height);
+
+                if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
+                var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
+                return sprite;
+
+            }
+            else
+            {
+                log.LogError(uwr.error);
+                return null;
+            }
+
         }
+
 
 
         public static YamlMappingNode LoadYaml(string name, IResourceSource source)
@@ -102,6 +151,9 @@ namespace LBoLEntitySideloader.Resource
             }
 
         }
+
+
+
 
         /// <summary>
         /// Uses UnityWebRequestMultimedia.GetAudioClip to read file from disk. Could use http(s):// protocol to fetch file from URL.

@@ -17,7 +17,7 @@ namespace LBoLEntitySideloader.Entities
 {
     public abstract class EnemyGroupTemplate : EntityDefinition,
         IConfigProvider<EnemyGroupConfig>
-        // in theory could have custom type logic entity
+        // in theory could have custom logic entity
 
     {
         public override Type ConfigType() => typeof(EnemyGroupConfig);
