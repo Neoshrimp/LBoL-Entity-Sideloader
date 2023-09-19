@@ -63,8 +63,6 @@ namespace LBoLEntitySideloader.Entities
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadBgmAsync))]
         internal class BgmLoad_Patch
         {
-
-
             // path = ID
             static bool Prefix(string path, ref UniTask<AudioClip> __result)
             {

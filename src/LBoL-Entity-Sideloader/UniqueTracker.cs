@@ -90,7 +90,6 @@ namespace LBoLEntitySideloader
         [field: DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         internal event Action PostMainLoad;
 
-
         public List<Action> formationAddActions = new List<Action>();
 
         // 2do cache loaded from disk separately
@@ -109,10 +108,20 @@ namespace LBoLEntitySideloader
             public string typeName;
         }
 
+
+        public List<Func<List<Stage>, List<Stage>>> modifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
+
+        public List<StageModAction> modifyStageActions = new List<StageModAction>();
+
+        public class StageModAction
+        {
+            public string Id;
+            public Func<Stage, Stage> mod;
+        }
+
+
         public void RaisePostMainLoad()
         {
-
-
             if (PostMainLoad == null)
             {
                 Log.LogDev()?.LogInfo("No template generation was queued.");
@@ -121,9 +130,7 @@ namespace LBoLEntitySideloader
 
             PostMainLoad();
 
-
             generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.secondaryUsers.AddUser(a)));
-
 
             foreach (var g2u in gen2User)
             {

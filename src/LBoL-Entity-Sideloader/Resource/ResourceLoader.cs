@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
 using System.Diagnostics;
-using LBoLEntitySideloader.Resource.AsyncTextureImport;
 using System.Runtime.InteropServices;
 
 namespace LBoLEntitySideloader.Resource
@@ -52,7 +51,7 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        public static Sprite LoadSprite(string name, IResourceSource source, int ppu = 1, int anisoLevel = 1, FilterMode filterMode = FilterMode.Point, Rect? rect = null, Vector2? pivot = null)
+        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, Rect? rect = null, Vector2? pivot = null)
         {
             using Stream resource = source.Load(name);
 

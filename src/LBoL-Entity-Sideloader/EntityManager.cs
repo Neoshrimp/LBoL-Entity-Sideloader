@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine.Events;
+using static LBoLEntitySideloader.UniqueTracker;
 
 namespace LBoLEntitySideloader
 {
@@ -36,7 +37,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
+        public HashSet<Assembly> loadedFromDiskUsers = new HashSet<Assembly>();
 
         public HashSet<Action> loadedFromDiskPostAction = new HashSet<Action>();
 
@@ -45,6 +46,10 @@ namespace LBoLEntitySideloader
         public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
         public List<Action> loadedFromDiskCharLoadouts = new List<Action>();
+
+        public List<Func<List<Stage>, List<Stage>>> loadedFromDiskmodifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
+
+        public List<StageModAction> loadedFromModifyStageActions = new List<StageModAction>();
 
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
@@ -55,7 +60,7 @@ namespace LBoLEntitySideloader
 
             if (!assembly.IsDynamic && BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
             {
-                Instance.loadedFromDisk.Add(assembly);
+                Instance.loadedFromDiskUsers.Add(assembly);
             }
 
             Log.LogDev()?.LogInfo($"Scanning {assembly.GetName().Name}...");
@@ -354,7 +359,7 @@ namespace LBoLEntitySideloader
 
                             // in case config is overwritten but not the bgm (dont make sense really)
                             if (!user.IsForOverwriting(bt.GetType()) || user.IsForOverwriting(bt.GetType()) && TemplatesReflection.DoOverwrite(bt.GetType(), nameof(BgmTemplate.LoadAudioClipAsync)))
-                            { 
+                            {
                                 // pass ID to LoadBgmAsync
                                 bgmConfig.Path = bgmConfig.ID;
                                 bgmConfig.Folder = "";
@@ -395,6 +400,10 @@ namespace LBoLEntitySideloader
                         {
                             var umTConfig = RegisterConfig(umT, user);
                             UniqueTracker.Instance.AddOnDemandResource(umT.TemplateType(), umTConfig.Name, umT);
+                        }
+                        else if (entityDefinition is StageTemplate scT)
+                        {
+                            RegisterConfig(scT, user);
                         }
                     }
                     catch (Exception ex)
@@ -665,8 +674,6 @@ namespace LBoLEntitySideloader
             }
 
         }
-
-
 
 
 

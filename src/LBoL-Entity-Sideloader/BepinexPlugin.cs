@@ -57,14 +57,12 @@ namespace LBoLEntitySideloader
 
             devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled.");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Reload all entities (requires scriptengine).");
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F6), "Reload all entities (requires scriptengine).");
 
-            hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.F7), "Hard reload localization and all entities (requires scriptengine).");
+            hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.None), "Hard reload localization and all entities (requires scriptengine).");
 
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
 
-
-            
 
             harmony.PatchAll();
 
@@ -125,13 +123,16 @@ namespace LBoLEntitySideloader
             GC.WaitForPendingFinalizers();
 
 
-            EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+            EntityManager.Instance.loadedFromDiskUsers.Do(a => EntityManager.RegisterAssembly(a));
             EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
 
             UniqueTracker.Instance.formationAddActions.AddRange(EnemyGroupTemplate.loadedFromDiskCustomFormations);
-
-
             UniqueTracker.Instance.populateLoadoutInfosActions.AddRange(EntityManager.Instance.loadedFromDiskCharLoadouts);
+
+            UniqueTracker.Instance.modifyStageListFuncs.AddRange(EntityManager.Instance.loadedFromDiskmodifyStageListFuncs);
+            UniqueTracker.Instance.modifyStageActions.AddRange(EntityManager.Instance.loadedFromModifyStageActions);
+
+
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
 

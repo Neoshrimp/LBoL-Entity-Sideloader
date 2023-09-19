@@ -141,6 +141,8 @@ namespace Random_Examples
 
         internal static JadeBoxGen jadeBoxGen = new JadeBoxGen();
 
+        internal static ExhibitGen exhibitGen = new ExhibitGen();
+
         private void Awake()
         {
             log = Logger;
@@ -164,13 +166,35 @@ namespace Random_Examples
 
             JadeBoxExamples.GenJadeBoxes();
 
+/*            EntityManager.AddPostLoadAction(() =>
+            {
+                for (int i = 0; i < 14 * 80; i++)
+                {
+                    var id = "NilTestExhibit" + i.ToString();
+                    exhibitGen.QueueGen(
+                        Id: id,
+                        overwriteVanilla: false,
+                        makeConfig: () => new LunarVeilDef().DefaultConfig(),
+                        loadSprite: null,
+                        loadLocalization: () => new DirectLocalization(new Dictionary<string, object>()
+                        {
+                            { "Name", "Deez" },
+                            { "Description", "nuts" }
+                        }),
+                        generateEmptyLogic: true);
+                }
+
+                exhibitGen.FinalizeGen();
+            });*/
+
             CustomFormations.AddFormations();
 
             CustomLoadouts.AddLoadouts();
 
-        }
+            StageExamples.AddStages();
 
-    
+
+        }
 
 
 
@@ -181,12 +205,6 @@ namespace Random_Examples
                 harmony.UnpatchSelf();
 
         }
-
-
-
-
-
-
 
 
 

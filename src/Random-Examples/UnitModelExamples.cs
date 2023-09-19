@@ -6,7 +6,6 @@ using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
-using LBoLEntitySideloader.Resource.AsyncTextureImport;
 using LBoLEntitySideloader.Utils;
 using System;
 using System.Collections.Generic;
