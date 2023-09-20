@@ -15,7 +15,7 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 
 ### Installation
 
-Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip) and place it in `BepInEx/plugins` folder.
+Download [LBoL-Entity-Sideloader.zip](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip) and extract it in `BepInEx/plugins` folder.
 
 [*Detailed Installation guide*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md)
 
