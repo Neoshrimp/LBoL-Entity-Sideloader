@@ -394,7 +394,8 @@ namespace LBoLEntitySideloader
                         }
                         else if (entityDefinition is PlayerUnitTemplate puT)
                         {
-                            RegisterConfig(puT, user);
+                            var puTConfig = RegisterConfig(puT, user);
+                            UniqueTracker.Instance.AddOnDemandResource(puT.TemplateType(), puTConfig.Id, puT);
                         }
                         else if (entityDefinition is UnitModelTemplate umT)
                         {

@@ -23,6 +23,10 @@ using DG.Tweening;
 using LBoLEntitySideloader.Utils;
 using LBoL.Base.Extensions;
 using System.Reflection;
+using Cysharp.Threading.Tasks;
+using LBoL.Presentation;
+using System.Diagnostics;
+using static LBoLEntitySideloader.Entities.PlayerUnitTemplate.StartGamePanel_Patches;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -138,9 +142,40 @@ namespace LBoLEntitySideloader.Entities
         public abstract PlayerUnitConfig MakeConfig();
 
 
+        public abstract Sprite LoadStandSprite();
+
+        //public abstract Sprite LoadMuseumSprite();
 
 
-        // 2do patch hardcoded 5 players
+
+        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadCharacterAvatarSprite))]
+        class LoadCharacterAvatarSprite_Patch
+        {
+            static bool Prefix(string characterName, ref Sprite __result)
+            {
+                if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(PlayerUnitTemplate), characterName, out var entityDefinition))
+                {
+                    if (entityDefinition is PlayerUnitTemplate puT && EntityManager.HandleOverwriteWrap(() => { }, puT, nameof(LoadStandSprite), puT.user))
+                    {
+                        __result = puT.LoadStandSprite();
+                        return false;
+
+                    }
+                    return true;
+                }
+                return true;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
         public class StartGamePanel_Patches
         {
 
@@ -257,7 +292,7 @@ namespace LBoLEntitySideloader.Entities
 
 
 
-                static void TyrCreateLoadoutWidget(int index, UniqueTracker.CharLoadoutInfo loadoutInfo, StartGamePanel startGamePanel)
+                internal static void TyrCreateLoadoutWidget(int index, UniqueTracker.CharLoadoutInfo loadoutInfo, StartGamePanel startGamePanel)
                 {
 
 
@@ -326,84 +361,158 @@ namespace LBoLEntitySideloader.Entities
                     );
                 }
 
+            }
 
-                [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectPlayer))]
-                class SelectPlayer_Patch
+
+            [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectPlayer))]
+            internal class SelectPlayer_Patch
+            {
+
+                static void Expand_typeCandidates(StartGamePanel startGamePanel)
                 {
 
-                    static void Expand_typeCandidates(StartGamePanel startGamePanel)
+                    var playerId = startGamePanel._player.Id;
+                    int numberOfWidgets = 2;
+
+                    index2complexity.Clear();
+                    index2complexity.Add(startGamePanel._player.Config.DifficultyA);
+                    index2complexity.Add(startGamePanel._player.Config.DifficultyB);
+
+                    if (UniqueTracker.Instance.loadoutInfos.ContainsKey(playerId))
                     {
-
-                        var playerId = startGamePanel._player.Id;
-                        int numberOfWidgets = 2;
-
-                        index2complexity.Clear();
-                        index2complexity.Add(startGamePanel._player.Config.DifficultyA);
-                        index2complexity.Add(startGamePanel._player.Config.DifficultyB);
-
-                        if (UniqueTracker.Instance.loadoutInfos.ContainsKey(playerId))
+                        var i = 2;
+                        foreach (var loadoutInfo in UniqueTracker.Instance.loadoutInfos[playerId])
                         {
-                            var i = 2;
-                            foreach (var loadoutInfo in UniqueTracker.Instance.loadoutInfos[playerId])
+
+                            Awake_Patch.TyrCreateLoadoutWidget(i, loadoutInfo, startGamePanel);
+
+                            startGamePanel._typeCandidates = startGamePanel._typeCandidates.AddToArray(new StartGamePanel.TypeCandidate()
                             {
+                                Name = loadoutInfo.typeName,
+                                Us = Library.CreateUs(loadoutInfo.ultimateSkill),
+                                Exhibit = Library.CreateExhibit(loadoutInfo.exhibit),
+                                Deck = loadoutInfo.deck.Select(c => Library.CreateCard(c)).ToArray()
 
-                                TyrCreateLoadoutWidget(i, loadoutInfo, startGamePanel);
+                            });
 
-                                startGamePanel._typeCandidates = startGamePanel._typeCandidates.AddToArray(new StartGamePanel.TypeCandidate()
-                                {
-                                    Name = loadoutInfo.typeName,
-                                    Us = Library.CreateUs(loadoutInfo.ultimateSkill),
-                                    Exhibit = Library.CreateExhibit(loadoutInfo.exhibit),
-                                    Deck = loadoutInfo.deck.Select(c => Library.CreateCard(c)).ToArray()
-
-                                });
-
-                                index2complexity.Add(loadoutInfo.complexity);
+                            index2complexity.Add(loadoutInfo.complexity);
 
 
-                                i++;
-                            }
-
-                            numberOfWidgets += UniqueTracker.Instance.loadoutInfos[playerId].Count;
+                            i++;
                         }
 
-
-                        startGamePanel.characterSetupList.Where((w, i) => i + 1 > numberOfWidgets).Do(w => w.gameObject.SetActive(false));
-
-                        // resets pos?
-                        loadoutRectTransform.gameObject.transform.localPosition = contentLocalPos;
-                        loadoutRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectWidth + ((numberOfWidgets - 2) * 650f));
-
-                        var rs = scrollGameObject.GetComponent<ScrollRect>();
-
-                        if (numberOfWidgets > 2)
-                        {
-                            rs.movementType = ScrollRect.MovementType.Elastic;
-                        }
-                        else
-                        {
-                            rs.movementType = ScrollRect.MovementType.Clamped;
-                        }
+                        numberOfWidgets += UniqueTracker.Instance.loadoutInfos[playerId].Count;
                     }
 
-                    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+
+                    startGamePanel.characterSetupList.Where((w, i) => i + 1 > numberOfWidgets).Do(w => w.gameObject.SetActive(false));
+
+                    // resets pos?
+                    loadoutRectTransform.gameObject.transform.localPosition = contentLocalPos;
+                    loadoutRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectWidth + ((numberOfWidgets - 2) * 650f));
+
+                    var rs = scrollGameObject.GetComponent<ScrollRect>();
+
+                    if (numberOfWidgets > 2)
                     {
-
-                        return new CodeMatcher(instructions)
-                            .End()
-                            .MatchBack(false, new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(StartGamePanel), nameof(StartGamePanel._typeCandidates))))
-                            .Advance(1)
-                            .Insert(new CodeInstruction(OpCodes.Ldarg_0))
-                            .Advance(1)
-                            .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.Expand_typeCandidates))))
-                            .InstructionEnumeration();
-
+                        rs.movementType = ScrollRect.MovementType.Elastic;
                     }
-
-
+                    else
+                    {
+                        rs.movementType = ScrollRect.MovementType.Clamped;
+                    }
 
                 }
 
+
+                static void Prefix(StartGamePanel __instance)
+                {
+                    var standGo = __instance.characterStandPicList[0].gameObject;
+                    for (var i = 0; i < __instance._players.Length - __instance.characterStandPicList.Count; i++)
+                    {
+                        var newStandGo = GameObject.Instantiate(standGo, standGo.transform.parent);
+                        newStandGo.transform.localScale = Vector3.one;
+                        __instance.characterStandPicList.Add(newStandGo.GetComponent<CanvasGroup>());
+                        newStandGo.SetActive(false);
+                    }
+                }
+
+
+                static int PlayerNumber(StartGamePanel startGamePanel)
+                {
+                    return startGamePanel._players.Length;
+                }
+
+                static int PlayerNumberMinus1(StartGamePanel startGamePanel)
+                {
+                    return startGamePanel._players.Length - 1;
+                }
+
+                static internal int ModuloStandNum(int i, StartGamePanel startGamePanel)
+                {
+                    return i % startGamePanel._standPicAlpha.Length;
+                }
+
+
+
+                // 2do Matcher.Repeat sucks. pr a better one
+                static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+                {
+
+                    return new CodeMatcher(instructions)
+                        // main loop
+                        .MatchForward(false, new CodeMatch[] { OpCodes.Ldc_I4_5, OpCodes.Blt })
+                        .SetAndAdvance(OpCodes.Ldarg_0, null)
+                        .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.PlayerNumber))))
+                        // on button press
+                        .MatchBack(false, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldc_I4_4, OpCodes.Bne_Un })
+                        .Advance(1)
+                        .SetAndAdvance(OpCodes.Ldarg_0, null)
+                        .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.PlayerNumberMinus1))))
+                        //.Start()
+                        .Wrap_i(true)
+                        .Wrap_i()
+
+                        .Wrap_i(true)
+                        .Wrap_i()
+                        .Wrap_iPlusNum()
+                        .Wrap_i(true)
+                        .Wrap_i()
+                        .Wrap_iPlusNum()
+                        .Wrap_i(true)
+                        .Wrap_i()
+                        .Wrap_iPlusNum()
+                        .Wrap_i(true)
+                        .Wrap_i()
+                        .Wrap_iPlusNum()
+                        // setting _typeCandidates
+                        .End()
+                        .MatchBack(false, new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(StartGamePanel), nameof(StartGamePanel._typeCandidates))))
+                        .Advance(1)
+                        .Insert(new CodeInstruction(OpCodes.Ldarg_0))
+                        .Advance(1)
+                        .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.Expand_typeCandidates))))
+                        .InstructionEnumeration();
+
+                }
+
+
+
+            }
+
+
+            [HarmonyPatch]
+            class UpgradeDeckCardPrice_Patch
+            {
+                static IEnumerable<MethodBase> TargetMethods()
+                {
+                    yield return AccessTools.PropertyGetter(typeof(GameRunController), nameof(GameRunController.UpgradeDeckCardPrice));
+                }
+
+                static void Postfix(ref int __result)
+                {
+                    __result = 69;
+                }
             }
 
 
@@ -443,10 +552,29 @@ namespace LBoLEntitySideloader.Entities
 
             }
 
-
-
         }
 
-
     }
+
+    static internal class MiniMatcherExtension
+    {
+        static internal CodeMatcher Wrap_i(this CodeMatcher _this, bool justMatch = false)
+        {
+            _this.MatchForward(false, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldelem_R4 });
+            if(!justMatch)
+                _this.Advance(1)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.ModuloStandNum))));
+            return _this;
+        }
+
+        static internal CodeMatcher Wrap_iPlusNum(this CodeMatcher _this)
+        {
+
+            return _this.MatchForward(true, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldloc_0, OpCodes.Add, OpCodes.Ldelem_R4 })
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.ModuloStandNum))));
+        }
+    }
+
 }

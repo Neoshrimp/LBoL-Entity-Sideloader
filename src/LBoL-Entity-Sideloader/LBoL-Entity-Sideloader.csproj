@@ -31,6 +31,8 @@
 	  <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
 	  <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
 	  <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("-", ""))</RootNamespace>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <DocumentationFile>$(ProjectDir)</DocumentationFile>
   </PropertyGroup>
 
 

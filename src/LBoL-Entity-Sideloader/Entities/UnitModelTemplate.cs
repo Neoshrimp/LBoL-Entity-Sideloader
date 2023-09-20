@@ -32,7 +32,7 @@ namespace LBoLEntitySideloader.Entities
         /// Type : model type: 0 - Sprite; 1 - Spine model; 3 - effect (like spirits or Kokoro masks);
         /// EffectName : effect Id if Type=2 is used;
         /// Offset : ;
-        /// Flip : ;
+        /// Flip : player models seem to get auto flipped?;
         /// Dielevel : 0, 1 or 2 0 - "UnitDeathSmall", 1 - "UnitDeath", 2 - "UnitDeathLarge";
         /// Box : collision box size. Player sized units it's (0.80f, 1.80f);
         /// Shield : barrier? effect radius;
@@ -132,7 +132,7 @@ namespace LBoLEntitySideloader.Entities
 
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(UnitModelTemplate), characterName, out var entityDefinition))
                 {
-                    if (entityDefinition is UnitModelTemplate umT && umT.CheckModelOptions())
+                    if (entityDefinition is UnitModelTemplate umT && EntityManager.HandleOverwriteWrap(() => { }, umT, nameof(LoadModelOptions), umT.user) && umT.CheckModelOptions())
                     {
                         __result = umT.LoadModelOptions().loadSpine;
                         return false;
@@ -153,7 +153,7 @@ namespace LBoLEntitySideloader.Entities
 
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(UnitModelTemplate), characterName, out var entityDefinition))
                 {
-                    if (entityDefinition is UnitModelTemplate umT && umT.CheckModelOptions())
+                    if (entityDefinition is UnitModelTemplate umT && EntityManager.HandleOverwriteWrap(() => { }, umT, nameof(LoadModelOptions), umT.user) && umT.CheckModelOptions())
                     {
                         __result = umT.LoadModelOptions().loadSprite;
                         return false;
@@ -172,7 +172,7 @@ namespace LBoLEntitySideloader.Entities
         {
             if (!UnitModelConfig.FromName(UniqueId).HasSpellPortrait)
             {
-                Log.log.LogError($"{this.GetType().Name}: UnitModelConfig.HasSpellPortrait is false but HasSpellPortrait is being loaded anyway");
+                Log.log.LogWarning($"{this.GetType().Name}: UnitModelConfig.HasSpellPortrait is false but HasSpellPortrait is being loaded anyway");
                 return false;
             }
             return true;
