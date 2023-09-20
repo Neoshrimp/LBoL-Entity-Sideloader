@@ -2,7 +2,7 @@
 Entity manager/loader for modding [Lost Branch of Legend](https://store.steampowered.com/app/1140150/Touhou_Lost_Branch_of_Legend/). \
 Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https://github.com/BepInEx/BepInEx).
 
-## Important! Currently requires latest beta branch to work!
+### *Currently works with alpha, beta and main branches*
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
 ## The Mods
@@ -15,7 +15,7 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 
 ### Installation
 
-Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and place it in `BepInEx/plugins` folder.
+Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip) and place it in `BepInEx/plugins` folder.
 
 [*Detailed Installation guide*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md)
 
@@ -79,23 +79,24 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Create Exhibits ☑️
   |-- Display modded Exhibits in Collection
 |-- Load custom SFX ☑️
-  |-- SfxConfig
+  |-- SfxConfig ☑️
   |-- BgmConfig ☑️
-|-- Create Enemies
-  |-- Load custom spine models
-    |-- UnitModelConfig
-  |-- Create Enemy groups (Battles)
-    |-- Add modded battles to stage encounter pools
-|-- SpellCards
-  |-- Custom starting decks (if possible)
-    |-- Custom deck selection UI
+|-- Create Enemies ☑️
+  |-- Load custom spine models ☑️
+    |-- UnitModelConfig ☑️
+    |-- Spine asset packaging helper in Unity Editor
+  |-- Create Enemy groups (Battles) ☑️
+    |-- Add modded battles to stage encounter pools ☑️
+|-- SpellCards ☑️
+  |-- Custom starting decks (if possible) ☑️
+    |-- Custom deck selection UI ☑️
   |-- Inherent character mechanics (maybe)
 |-- *Playable characters at this point?*
 |-- Create GapOption
 |-- Load Yarn Spinner scripts (devs help!)
   |-- Create Adventures (Encounters)
     |-- Modded Adventure pooling system
-|-- Create JadeBox challenges
+|-- Create JadeBox challenges ☑️
 
 *Sideloader features and maintenance*
 |-- Better docs/tutorials/wikis..
@@ -105,14 +106,15 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Overwrite or modify vanilla entities ☑️
   |-- Overwrite individual entity components selectively ☑️
     |-- Merge configs overwritten by different mods (maybe)
-  |-- Make overwriting more convenient by introducing mass overwrite types
+  |-- Make overwriting more convenient by introducing mass overwrite types ☑️
+    |-- Programmatic template generation ☑️
 |-- Error feedback and handling ☑️
   |-- Better error feedback and handling..
 |-- Support loading from AssetBundles
 |-- main/beta double branch support (maybe)
 |-- Handle duplicate entity Ids
 |-- Performance and profiling
-  |-- async loading
+  |-- async loading ☑️
   |-- Addressables
   |-- size reduction/compression
   |-- whatever else..
