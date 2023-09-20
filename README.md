@@ -5,15 +5,13 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 ### *Currently works with alpha, beta and main branches*
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
-## The Mods
-*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/README.md#roadmap))*
-- [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
-- [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
-- [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
-- [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
-- [Dayuu-Mod](https://github.com/IntoxicatedKid/Dayuu-Mod) *by Intoxicated Kid*
+## **[Thunderstore](https://thunderstore.io/c/touhou-lost-branch-of-legend/) is up!**
 
 ### Installation
+
+Use [r2modman](https://thunderstore.io/c/touhou-lost-branch-of-legend/p/ebkr/r2modman/)
+
+*or*
 
 Download [LBoL-Entity-Sideloader.zip](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip) and extract it in `BepInEx/plugins` folder.
 
@@ -90,17 +88,18 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- SpellCards ☑️
   |-- Custom starting decks (if possible) ☑️
     |-- Custom deck selection UI ☑️
-  |-- Inherent character mechanics (maybe)
+|-- (New) Custom Stages ☑️
+  |-- Stage pooling ☑️
 |-- *Playable characters at this point?*
+  |-- Inherent character mechanics (maybe) 
 |-- Create GapOption
-|-- Load Yarn Spinner scripts (devs help!)
+|-- Load Yarn Spinner scripts [???](https://github.com/salyu9/YarnSpinner)
   |-- Create Adventures (Encounters)
     |-- Modded Adventure pooling system
 |-- Create JadeBox challenges ☑️
 
 *Sideloader features and maintenance*
 |-- Better docs/tutorials/wikis..
-|-- Sideloader usage API improvements and polish
 |-- Support Localization ☑️
 |-- Dynamic entity reload for development ☑️
 |-- Overwrite or modify vanilla entities ☑️
@@ -122,6 +121,16 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 </pre>
 
 [_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
+
+#### Old mod list
+
+- [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
+- [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
+- [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
+- [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
+- [Dayuu-Mod](https://github.com/IntoxicatedKid/Dayuu-Mod) *by Intoxicated Kid*
+
+
 
 
 
