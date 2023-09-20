@@ -148,33 +148,6 @@ namespace LBoLEntitySideloader.Entities
 
 
 
-        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadCharacterAvatarSprite))]
-        class LoadCharacterAvatarSprite_Patch
-        {
-            static bool Prefix(string characterName, ref Sprite __result)
-            {
-                if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(PlayerUnitTemplate), characterName, out var entityDefinition))
-                {
-                    if (entityDefinition is PlayerUnitTemplate puT && EntityManager.HandleOverwriteWrap(() => { }, puT, nameof(LoadStandSprite), puT.user))
-                    {
-                        __result = puT.LoadStandSprite();
-                        return false;
-
-                    }
-                    return true;
-                }
-                return true;
-            }
-        }
-
-
-
-
-
-
-
-
-
 
         public class StartGamePanel_Patches
         {
@@ -455,7 +428,6 @@ namespace LBoLEntitySideloader.Entities
 
 
 
-                // 2do Matcher.Repeat sucks. pr a better one
                 static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
 
@@ -498,21 +470,6 @@ namespace LBoLEntitySideloader.Entities
 
 
 
-            }
-
-
-            [HarmonyPatch]
-            class UpgradeDeckCardPrice_Patch
-            {
-                static IEnumerable<MethodBase> TargetMethods()
-                {
-                    yield return AccessTools.PropertyGetter(typeof(GameRunController), nameof(GameRunController.UpgradeDeckCardPrice));
-                }
-
-                static void Postfix(ref int __result)
-                {
-                    __result = 69;
-                }
             }
 
 

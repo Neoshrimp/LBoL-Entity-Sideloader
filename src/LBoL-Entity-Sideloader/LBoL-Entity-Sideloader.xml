@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LBoL-Entity-Sideloader</name>
+    </assembly>
+    <members>
+        <member name="T:LBoLEntitySideloader.Attributes.EntityLogic">
+            <summary>
+            Used to mark entity logic classes. Ensures that there is single entity logic per definition.
+            Currently EntityLogic type name must the same as entity Id.
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Attributes.EntityLogic.#ctor(System.Type)">
+            <summary>
+            definitionType should be specified like this `typeof(MyCardDefinition)`
+            </summary>
+            <param name="definitionType">Type of entity definition (concrete template implementation) to which this entity logic class belongs to.</param>
+        </member>
+        <member name="T:LBoLEntitySideloader.Attributes.ExternalEntityLogicAttribute">
+            <summary>
+            Suppress empty
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.BepinexPlugin.Reload(BepInEx.PluginInfo,System.Boolean)">
+            <summary>
+            Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and development. Requires scriptengine. 
+            </summary>
+            <param name="scriptEngineInfo"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.CardTemplate.DefaultConfig">
+            <summary>
+            Common default values for CardConfig. The values which are safe to be left as a null are left as null.
+            </summary>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:LBoLEntitySideloader.Entities.CardTemplate.MakeConfig" -->
+        <member name="M:LBoLEntitySideloader.Entities.EnemyGroupTemplate.AddFormation(System.String,System.Collections.Generic.Dictionary{System.Int32,UnityEngine.Vector2},System.Reflection.Assembly)">
+            <summary>
+            Numbering should start from 0. First enemy from enemy list will go to slot 0, second to slot 1 and so on. Make sure enemy act order display is consistent with the game's (left to right first, then top to bottom).
+            </summary>
+            <param name="name"></param>
+            <param name="enemyLocations"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EnemyGroupTemplate.DefaultConfig">
+            <summary>
+            Id : should be a string. In vanilla strings which look like numbers are used but any string can be used
+            Name : 
+            FormationName : preset positions for all enemy units. Must be one of available formations. Custom formations can be added with EnemyGroupTemplate.AddFormation
+            Enemies : List of enemy Ids. The list order determines enemy acting order with the first entry acting first, second acting second and so on. An entry "Empty" can be added to this list indicating that the slot is empty and can be filled with summoned unit.
+            EnemyType : 
+            DebutTime : 
+            RollBossExhibit : 
+            PlayerRoot : always Vector2(-4f, 0.5f)
+            PreBattleDialogName : no way to add dialog yet
+            PostBattleDialogName : no way to add dialog yet 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EnemyUnitTemplate.DefaultConfig">
+            <summary>
+            Id:
+            RealName: for Death Note Exhibit
+            OnlyLore: presumably for characters which don't appear as enemies. But actually don't appear to do anything.
+            BaseManaColor: For rolling boss shining boss exhibits
+            Order:
+            ModleName:
+            NarrativeColor:
+            Type:
+            IsPreludeOpponent:
+            HpLength: hp bar visual??
+            MaxHpAdd: extra max hp rolled from 0 to the specified number
+            MaxHp:
+            Damage1:
+            Damage2:
+            Damage3:
+            Damage4:
+            Power:
+            Defend: extra block/barrier?
+            Count1:
+            Count2:
+            MaxHpHard:
+            Damage1Hard:
+            Damage2Hard:
+            Damage3Hard:
+            Damage4Hard:
+            PowerHard:
+            DefendHard:
+            Count1Hard:
+            Count2Hard:
+            MaxHpLunatic:
+            Damage1Lunatic:
+            Damage2Lunatic:
+            Damage3Lunatic:
+            Damage4Lunatic:
+            PowerLunatic:
+            DefendLunatic:
+            Count1Lunatic:
+            Count2Lunatic:
+            PowerLoot:
+            BluePointLoot:
+            Gun1:
+            Gun2:
+            Gun3:
+            Gun4:
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:LBoLEntitySideloader.Entities.EntityDefinition.UniqueId">
+            <summary>
+            Returns as unique Id of the entity, should be used to when referring to the entity in your own code. For now the result is the same as GetId().
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EntityDefinition.GetId">
+            <summary>
+            Must return the Id of the entity. Id is the element which binds all entity components, logic, localization, assets etc., together. There are two important requirements for an Id:
+            First, it must be unique for its type, i.e. all cards must have unique Id but an exhibit could have the same Id as a card (as long as its unique among all exhibits).
+            Second, if an entity has a logic component defining its behavior, the Id must be the same as that type's name. Most of the interesting entities have a logic component: cards have a concrete type extending Card, exhibit extending Exhibit and so on. It's best to use nameof(EntityLogic).
+            This could result in an issue if another mod happens to use the same type name as yours. Eventually, the Sideloader might handle conflicting Ids but right now the game really expects the logic type name to be the same as the Id.
+            GetId() should never be used when referring to the entity in your own code, for example, when specifying RelativeCards config property. UniqueId should be used instead. However, GetId() can and should be used when referring to file names of resources as UniqueId can vary depending on Id conflicts.
+            If a definition is overwriting a vanilla entity, the GetId is used to specify which entity to overwrite by returning the Id of the entity being overwritten.
+            </summary>
+            <returns>IdContainer but currently it should just return a string (which will get implicitly converted to IdContainer)</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EntityDefinition.ConfigType">
+            <summary>
+            Config Type used by the template
+            </summary>
+            <returns>Type</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EntityDefinition.TemplateType">
+            <summary>
+            Base template class type
+            </summary>
+            <returns>Type</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.EntityDefinition.EntityType">
+            <summary>
+            Base entity logic Type (Card, Exhibit, EnemyUnit..) used by the template
+            </summary>
+            <returns>Type</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.DefaultConfig">
+            <summary>
+            Group: restricts JadeBox selection. Only one JadeBox per group can be selected. Empty string list = no restrictions
+            Keywords: should be RelativeKeywords. Cosmetic tooltip keywords.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.DefaultConfig">
+            <summary> 
+            Id : 
+            ShowOrder : show order in game start panel (defacto index)
+            Order : ordering priority for character's cards in collection // 2do make unique like index?
+            UnlockLevel : should be 0 to make character available right away
+            ModleName : always ""
+            NarrativeColor : color hex code
+            IsSelectable : show character filter in collection??
+            MaxHp : 
+            InitialMana : 
+            InitialMoney : 
+            InitialPower : 
+            UltimateSkillA : 
+            UltimateSkillB : 
+            ExhibitA : 
+            ExhibitB : 
+            DeckA : 
+            DeckB : 
+            DifficultyA : number from 1 to 3
+            DifficultyB : number from 1 to 3
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.SfxTemplate.DefaultConfig">
+            <summary>
+            Rep: Replay time limit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.SfxTemplate.LoadSfxListAsync">
+            <summary>
+            put a single sfx for concrete id => sfx mapping. Put more to make AudioManger of the sfx randomly
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.StageTemplate.ModifyStage(System.String,System.Func{LBoL.Core.Stage,LBoL.Core.Stage},System.Reflection.Assembly)">
+            <summary>
+            Stage RandomPools should be added or removed from rather than completely replaced
+            </summary>
+            <param name="Id"></param>
+            <param name="stageMod"></param>
+            <param name="callingAssembly"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.StageTemplate.DefaultConfig">
+            <summary>
+            Id : ,
+            Obj0 : background environment,
+            Obj1 : and so on,
+            Level1 : on which (greater or equal)stage level Obj0 background should be replaced with Obj1 background?,
+            Obj2 : and so on,
+            Level2 : and so on,
+            Obj3 : and so on,
+            Level3 : and so on,
+            Obj4 : and so on,
+            Level4 and so on: 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.StatusEffectTemplate.DefaultConfig">
+            <summary>
+            Common default values for StatusEffectConfig. The values which are safe to be left as a null are left as null.
+            </summary>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:LBoLEntitySideloader.Entities.StatusEffectTemplate.MakeConfig" -->
+        <member name="M:LBoLEntitySideloader.Entities.StatusEffectTemplate.LoadSprite">
+            <summary>
+            128x128 image
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.UltimateSkillTemplate.DefaultConfig">
+            <summary>
+            Id: 
+            Order: 
+            PowerCost:  
+            PowerPerLevel: PowerPerLevel x MaxPowerLevel = max power cap
+            MaxPowerLevel: PowerPerLevel x MaxPowerLevel = max power cap
+            RepeatableType: 
+            Damage: 
+            Value1: 
+            Value2: 
+            Keywords: Cosmetic Keywords. All Bombs have accuracy by default. Overwrite `Damage` getter to change that
+            RelativeEffects: 
+            RelativeCards: 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.UltimateSkillTemplate.LoadSprite">
+            <summary>
+            Circle centered in 280x280 canvas but not touching the edges. Refer to ultSkillSpriteTemplate.png
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.UnitModelTemplate.DefaultConfig">
+            <summary>
+            Name : Id should be the same as EnemyUnit's;
+            Type : model type: 0 - Sprite; 1 - Spine model; 3 - effect (like spirits or Kokoro masks);
+            EffectName : effect Id if Type=2 is used;
+            Offset : ;
+            Flip : player models seem to get auto flipped?;
+            Dielevel : 0, 1 or 2 0 - "UnitDeathSmall", 1 - "UnitDeath", 2 - "UnitDeathLarge";
+            Box : collision box size. Player sized units it's (0.80f, 1.80f);
+            Shield : barrier? effect radius;
+            Block : block? effect radius;
+            Hp : hp bar position;
+            HpLength : hp bar length;
+            Info : ;
+            Select : ;
+            ShootStartTime : ;
+            ShootPoint : ;
+            ShooterPoint : actual shoot position is the sum of these to point?;
+            Hit : ;
+            HitRep : ;
+            GuardRep : ;
+            Chat : ;
+            ChatPortraitXY : ;
+            ChatPortraitWH : ;
+            HasSpellPortrait : should load extra sprite for bomb cast;
+            SpellPosition : scale of this vector is in 100s;
+            SpellScale : ;
+            SpellColor : 4 color values or empty. If the list is empty UnitView.GetDefaultSpellColors will be used;
+            
+            this config is for player sized models 2do
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LBoLEntitySideloader.GameFixes.CardPerformAction_Patch">
+            <summary>
+            Makes vfx and sfx optionally delayed in perform array
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.HookPoints.InitializeRestAsync_Patch">
+            <summary>
+            hook after all the vanilla configs, entities, assets and localization have been loaded. Can be used to specifically modify vanilla properties
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.IdContainer">
+            <summary>
+            Can be either string or int and switch between the two (almost) seamlessly.
+            However, almost all entities use string as Id except for Piece and Exp 
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.ReflectionHelpers.ConfigReflection">
+            <summary>
+            Reflection methods for working with Config types.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.Resource.CardImages">
+            <summary>
+            Container class for storing any Texture2D a card might use
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.CardImages.main">
+            <summary>
+            primary card image. Any aspect ratio of 452x312 will do. The card image will be scaled to 452x312 no matter the original size. 743x512 is the size vanilla images are using so there's not much point using larger ones.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.CardImages.upgrade">
+            <summary>
+            [optional] card image after upgrading the card
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.CardImages.subs">
+            <summary>
+            [optional] dictionary subArtistName => alternativeImage
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.DirectorySource.#ctor(System.String,System.String)">
+            <summary>
+            plugin dir + path.
+            If mod is loaded with a script engine this defaults to BeInEx/plugins + subFolder
+            </summary>
+            <param name="GUID"></param>
+            <param name="subFolder"></param>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.ExhibitSprites.main">
+            <summary>
+            512x512 image
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.ExhibitSprites.customSprites">
+            <summary>
+            [optional] alternative images when some conditions have beenmet. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji. Additional sprites will cached to ResourcesHelper.Sprites dictionary. UniqueId will be prefixed for each of the keys in this dictionary when caching which will be needed when OverrideIconName tries to set a sprite
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">
+            <summary>
+            should localization terms (Name, Description etc.) should be merged
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.ModelOption.loadSpine">
+            <summary>
+            Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.ResourceLoader.LoadAudioClip(System.String,UnityEngine.AudioType,LBoLEntitySideloader.Resource.DirectorySource,System.String)">
+            <summary>
+            Uses UnityWebRequestMultimedia.GetAudioClip to read file from disk. Could use http(s):// protocol to fetch file from URL.
+            </summary>
+            <param name="name"></param>
+            <param name="audioType"></param>
+            <param name="source"></param>
+            <param name="protocol"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.Numbers.DecimalToABC(System.Int64,System.Int32)">
+            <summary>
+            Converts the given decimal number to the numeral system with the
+            specified radix (in the range [2, 36]).
+            </summary>
+            <param name="decimalNumber">The number to convert.</param>
+            <param name="radix">The radix of the destination numeral system (in the range [2, 36]).</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
