@@ -30,8 +30,6 @@ namespace LBoLEntitySideloader
 
 
 
-
-
         /// <summary>
         /// hook after all the vanilla configs, entities, assets and localization have been loaded. Can be used to specifically modify vanilla properties
         /// </summary>
@@ -46,13 +44,11 @@ namespace LBoLEntitySideloader
                 await __result;
 
 
-                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, loadLoc: false);
 
                 UniqueTracker.Instance.RaisePostMainLoad();
 
-
-                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
-
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: false);
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
@@ -79,7 +75,6 @@ namespace LBoLEntitySideloader
                 }
                 catch (Exception e)
                 {
-
                     log.LogWarning(e);
                 }
             }

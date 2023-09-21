@@ -334,9 +334,11 @@
       <None Remove="resources\ExhibitsEn.yaml" />
       <None Remove="Resources\ghibli.jpg" />
       <None Remove="Resources\JadeBoxEn.yaml" />
+      <None Remove="resources\PlayerUnitEn.yaml" />
       <None Remove="Resources\reimu_fist.png" />
       <None Remove="resources\StatusEffectsEn.yaml" />
       <None Remove="resources\UltimateSkill.yaml" />
+      <None Remove="resources\UnitModelEn.yaml" />
       <None Remove="Resources\Youmu.png" />
     </ItemGroup>
 

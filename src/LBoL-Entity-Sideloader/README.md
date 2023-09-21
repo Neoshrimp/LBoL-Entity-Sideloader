@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.8.4` better logging. Set ExtraLogging to false to avoid logging individual entities. Added documentation xml.
+
 `0.8.3` enable exhibit dupes (thanks to IntoxicatedKid).
 
 `0.8.1` added UnitModelTemplate. Custom enemy or players models are now possible.

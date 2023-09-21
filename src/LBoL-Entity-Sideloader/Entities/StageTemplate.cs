@@ -86,7 +86,7 @@ namespace LBoLEntitySideloader.Entities
         {
             var config = new StageConfig(
                 Id : "",
-                Obj0 : "BambooForest0",
+                Obj0 : VanillaEnvironments.BambooForest0,
                 Obj1 : "",
                 Level1 : 1,
                 Obj2 : "",

@@ -27,13 +27,16 @@ using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
 using System.Diagnostics;
 using static LBoLEntitySideloader.Entities.PlayerUnitTemplate.StartGamePanel_Patches;
+using LBoLEntitySideloader.Resource;
 
 namespace LBoLEntitySideloader.Entities
 {
     // soon(tm)
     public abstract class PlayerUnitTemplate : EntityDefinition,
         IConfigProvider<PlayerUnitConfig>,
-        IGameEntityProvider<PlayerUnit>
+        IGameEntityProvider<PlayerUnit>,
+        IResourceConsumer<LocalizationOption>
+
     {
         public override Type ConfigType() => typeof(PlayerUnitConfig);
 
@@ -143,6 +146,18 @@ namespace LBoLEntitySideloader.Entities
 
 
         public abstract Sprite LoadStandSprite();
+
+        public abstract LocalizationOption LoadLocalization();
+
+
+        /// <summary>
+        /// Name, Title and such
+        /// </summary>
+        /// <param name="locOptions"></param>
+        public void Consume(LocalizationOption locOptions)
+        {
+            ProcessLocalization(locOptions, EntityType());
+        }
 
         //public abstract Sprite LoadMuseumSprite();
 
@@ -483,12 +498,10 @@ namespace LBoLEntitySideloader.Entities
                     try
                     {
                         return index2complexity[index];
-
                     }
                     catch (Exception ex)
                     {
                         Log.log.LogError($"Get loadout complexity: {ex}");
-                        
                     }
                     return 2;
                 }
@@ -533,5 +546,11 @@ namespace LBoLEntitySideloader.Entities
                 .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.ModuloStandNum))));
         }
     }
+
+
+
+
+
+
 
 }

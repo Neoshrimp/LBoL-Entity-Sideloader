@@ -89,7 +89,6 @@ namespace LBoLEntitySideloader.Entities
             {
 
                 UniqueTracker.Instance.typesToLocalize.TryAdd(userAssembly, new Dictionary<Type, LocalizationInfo>());
-
                 var typesToLocalize = UniqueTracker.Instance.typesToLocalize[userAssembly];
 
                 typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());

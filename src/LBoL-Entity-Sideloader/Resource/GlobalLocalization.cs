@@ -4,6 +4,9 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Resource
 {
+    /// <summary>
+    /// Should have been called batch localization.
+    /// </summary>
     public class GlobalLocalization : LocalizationOption
     {
         public readonly LocalizationFiles LocalizationFiles;

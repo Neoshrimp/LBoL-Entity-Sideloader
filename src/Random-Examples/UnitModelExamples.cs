@@ -21,7 +21,10 @@ namespace Random_Examples
     {
         public override IdContainer GetId() => nameof(Reimu);
 
-        
+        [DontOverwrite]
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+
         public override ModelOption LoadModelOptions()
         {
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Sunny"));
@@ -46,6 +49,8 @@ namespace Random_Examples
     {
         public override IdContainer GetId() => "Marisa";
         
+        [DontOverwrite]
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
         public override ModelOption LoadModelOptions()
         {

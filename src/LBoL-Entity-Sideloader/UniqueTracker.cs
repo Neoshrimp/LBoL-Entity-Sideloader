@@ -6,6 +6,7 @@ using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
+using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
@@ -84,6 +85,8 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
+        // user => yaml file
+        public Dictionary<Assembly, LocalizationFiles> unitNamesGlobalLocalization = new Dictionary<Assembly, LocalizationFiles>();
 
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
 
@@ -343,9 +346,10 @@ namespace LBoLEntitySideloader
         {
             int i = Instance.indexTable.Next(entityDefinition.ConfigType());
             var indexes = Instance.configIndexes[entityDefinition.ConfigType()];
+            // 2do optimize this shit
             while (indexes.Contains(index + i))
             {
-                Log.LogDevExtra()?.LogDebug($"(Extra Logging) MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
+                Log.LogDev()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
                 i = Instance.indexTable.Next(entityDefinition.ConfigType());
             }
 

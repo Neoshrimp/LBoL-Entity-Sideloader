@@ -35,7 +35,8 @@ namespace Random_Examples
 
         public override LocalizationOption LoadLocalization()
         {
-            return new GlobalLocalization(embeddedSource, mergeTerms: true);
+            // merge terms does nothing here
+            return new GlobalLocalization(embeddedSource);
         }
 
         [DontOverwrite]

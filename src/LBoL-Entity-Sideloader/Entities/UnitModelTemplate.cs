@@ -15,11 +15,18 @@ using LBoLEntitySideloader.Resource;
 using HarmonyLib;
 using LBoL.Presentation;
 using Spine.Unity;
+using DG.Tweening.Plugins.Options;
+using LBoL.Base.Extensions;
+using static Mono.CSharp.Argument;
+using System.Data;
+using LBoL.EntityLib.Exhibits.Shining;
 
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class UnitModelTemplate : EntityDefinition,
-        IConfigProvider<UnitModelConfig>
+        IConfigProvider<UnitModelConfig>,
+        IResourceConsumer<LocalizationOption>
+
 
     {
         public override Type ConfigType() => typeof(UnitModelConfig);
@@ -97,6 +104,43 @@ namespace LBoLEntitySideloader.Entities
 
         // never be called if HasSpellPortrait is false
         public abstract UniTask<Sprite> LoadSpellSprite();
+
+        public abstract LocalizationOption LoadLocalization();
+
+        public void Consume(LocalizationOption locOption)
+        {
+            if (locOption == null) return;
+
+            if (locOption is GlobalLocalization globalLoc)
+            {
+                if (globalLoc.LocalizationFiles.locTable.NotEmpty())
+                {
+                    if (!UniqueTracker.Instance.unitNamesGlobalLocalization.TryAdd(userAssembly, globalLoc.LocalizationFiles))
+                    { 
+                    Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global unit name localization files but they've already been set by another {TemplateType().Name}.");
+                    }
+                }
+            }
+
+            if (locOption is LocalizationFiles locFiles)
+            {
+
+                
+                //var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
+
+
+                //LocalizationOption.FillLocalizationTables(termDic, facType, locFiles.mergeTerms);
+
+            }
+
+            if (locOption is DirectLocalization rawLoc)
+            {
+                var termDic = rawLoc.WrapTermDic(UniqueId);
+
+                //LocalizationOption.FillLocalizationTables(termDic, facType, rawLoc.mergeTerms);
+
+            }
+        }
 
 
         bool CheckModelOptions()
@@ -177,6 +221,7 @@ namespace LBoLEntitySideloader.Entities
             }
             return true;
         }
+
 
 
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadSpellPortraitAsync))]

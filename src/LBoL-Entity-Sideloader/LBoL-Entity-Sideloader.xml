@@ -170,6 +170,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.Consume(LBoLEntitySideloader.Resource.LocalizationOption)">
+            <summary>
+            Name, Title and such
+            </summary>
+            <param name="locOptions"></param>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.SfxTemplate.DefaultConfig">
             <summary>
             Rep: Replay time limit
@@ -302,7 +308,9 @@
         </member>
         <member name="F:LBoLEntitySideloader.Resource.CardImages.main">
             <summary>
-            primary card image. Any aspect ratio of 452x312 will do. The card image will be scaled to 452x312 no matter the original size. 743x512 is the size vanilla images are using so there's not much point using larger ones.
+            primary card image. Any aspect ratio of 452x312 will do. 
+            The card image will be scaled to 452x312 no matter the original size. 
+            743x512 is the size vanilla images are using so there's not much point using larger ones.
             </summary>
         </member>
         <member name="F:LBoLEntitySideloader.Resource.CardImages.upgrade">
@@ -331,6 +339,11 @@
         <member name="F:LBoLEntitySideloader.Resource.ExhibitSprites.customSprites">
             <summary>
             [optional] alternative images when some conditions have beenmet. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji. Additional sprites will cached to ResourcesHelper.Sprites dictionary. UniqueId will be prefixed for each of the keys in this dictionary when caching which will be needed when OverrideIconName tries to set a sprite
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.Resource.GlobalLocalization">
+            <summary>
+            Should have been called batch localization.
             </summary>
         </member>
         <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">

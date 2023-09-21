@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine.Events;
+using YamlDotNet.RepresentationModel;
 using static LBoLEntitySideloader.UniqueTracker;
 
 namespace LBoLEntitySideloader
@@ -204,6 +205,8 @@ namespace LBoLEntitySideloader
 
             log.LogMessage($"{assembly.GetName().Name} scanned! {userInfo.definitionInfos.Count()} Entity definition(s) found.");
 
+
+
             if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
             {
                 log.LogInfo("(Extra logging) Entity definitions found: ");
@@ -281,7 +284,7 @@ namespace LBoLEntitySideloader
         internal bool RegisterId(UserInfo user, EntityDefinition entityDefinition)
         {
 
-            Log.LogDev()?.LogDebug($"Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
+            Log.LogDevExtra()?.LogDebug($"(Extra logging) Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
 
             var definitionType = entityDefinition.GetType();
             try
@@ -319,7 +322,11 @@ namespace LBoLEntitySideloader
         {
             
             log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
+            Log.LogDev()?.LogDebug($"Adding configs..");
 
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            if (BepinexPlugin.devModeConfig.Value)
+                stopwatch.Start();
 
             foreach (var kv in user.definitionInfos)
             {
@@ -416,12 +423,21 @@ namespace LBoLEntitySideloader
             }
 
 
-            Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
+            Log.LogDev()?.LogDebug($"Adding entity logic types..");
             foreach (var kv in user.entityInfos)
             {
                 RegisterTypes(kv.Key, user);
             }
 
+            var msg = $"Registering assembly {user.assembly.GetName().Name} done!";
+            if (BepinexPlugin.devModeConfig.Value)
+            {
+                stopwatch.Stop();
+                msg += $" Elapsed time: {stopwatch.ElapsedMilliseconds}ms";
+            }
+
+
+            log.LogInfo(msg);
         }
 
         internal C RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
@@ -441,7 +457,7 @@ namespace LBoLEntitySideloader
 
 
 
-            Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
+            Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
 
 
 
@@ -478,9 +494,6 @@ namespace LBoLEntitySideloader
 
             if (!user.IsForOverwriting(entityDefinition.GetType()))
             {
-
-                
-
                 var f_Index = ConfigReflection.HasIndex(configType);
                 if (f_Index != null)
                 {
@@ -530,7 +543,7 @@ namespace LBoLEntitySideloader
                 {
                     try
                     {
-                        Log.LogDev()?.LogDebug($"Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
+                        Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
 
                         if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
                         {
@@ -725,6 +738,8 @@ namespace LBoLEntitySideloader
                         HandleOverwriteWrap(() => usfxT.Consume(usfxT.LoadSfxListAsync()), definition, nameof(usfxT.LoadSfxListAsync), user);
                     }
 
+                    
+
 
                 }
             }
@@ -770,6 +785,14 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => ust.Consume(ust.LoadLocalization()), definition, nameof(ust.LoadLocalization), user);
                     }
+                    else if (definition is UnitModelTemplate umT)
+                    {
+                        HandleOverwriteWrap(() => umT.Consume(umT.LoadLocalization()), definition, nameof(umT.LoadLocalization), user);
+                    }
+                    else if (definition is PlayerUnitTemplate puT)
+                    {
+                        HandleOverwriteWrap(() => puT.Consume(puT.LoadLocalization()), definition, nameof(puT.LoadLocalization), user);
+                    }
                 }
 
                 // load global localization
@@ -792,23 +815,60 @@ namespace LBoLEntitySideloader
 
                     var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
 
-
+                    // 2do? one merge terms parameter per global localization
                     LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles.mergeTerms);
 
                 }
+
+                if (UniqueTracker.Instance.unitNamesGlobalLocalization.TryGetValue(user.assembly, out var locfiles))
+                {
+
+                    foreach (KeyValuePair<YamlNode, YamlNode> keyValuePair in locfiles.Load(Localization.CurrentLocale))
+                    {
+                        keyValuePair.Deconstruct(out var yamlNodeKey, out var yamlNodeValue);
+                        if (!(yamlNodeKey is YamlScalarNode yamlScalarNodeKey))
+                        {
+                            log.LogError($"[Localization] UnitName key {yamlNodeKey} is not scalar");
+                        }
+                        else
+                        {
+                            if (!(yamlNodeValue is YamlMappingNode yamlMappingNodeVal))
+                            {
+                                log.LogError($"[Localization] UnitName value of {yamlScalarNodeKey.Value} is not mapping: {yamlNodeValue}");
+                            }
+                            else
+                            {
+                                if (locfiles.mergeTerms)
+                                {
+                                    log.LogDebug("MERGE DEEZ UNITS");
+                                }
+                                else
+                                {
+                                    UnitNameTable._table.AlwaysAdd(yamlScalarNodeKey.Value, new UnitName(yamlMappingNodeVal));
+                                }
+
+                            }
+                        }
+                    }
+
+
+                }
+                                    
+
 
 
             }
         }
 
 
-        internal void LoadAll(SideloaderUsers sideloaderUsers)
+        internal void LoadAll(SideloaderUsers sideloaderUsers, bool loadLoc = true)
         {
             try
             {
                 Instance.RegisterUsers(sideloaderUsers);
                 Instance.LoadAssetsForResourceHelper(sideloaderUsers);
-                Instance.LoadLocalization(sideloaderUsers);
+                if(loadLoc)
+                    Instance.LoadLocalization(sideloaderUsers);
             }
             catch (Exception e)
             {

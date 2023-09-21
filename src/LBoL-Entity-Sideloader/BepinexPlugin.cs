@@ -156,7 +156,7 @@ namespace LBoLEntitySideloader
 
                             UniqueTracker.Instance.RaisePostMainLoad();
 
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: false);
 
 
                         }

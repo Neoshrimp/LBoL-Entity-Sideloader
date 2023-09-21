@@ -226,7 +226,7 @@ namespace LBoLEntitySideloader.TemplateGen
             }
             else
             {
-                Log.log.LogWarning($"{typeof(ED)} template gen: type {MakeDefName(Id)} was already generated. (ignore this warning if hot reloading)");
+                Log.LogDevExtra()?.LogWarning($"{typeof(ED)} template gen: type {MakeDefName(Id)} was already generated. (ignore this warning if hot reloading)");
                 return generatedTypes[Id];
             }
 
