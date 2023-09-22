@@ -280,6 +280,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.UnitModelTemplate.LoadLocalization">
+            <summary>
+            Default:, Short: and Long: . Default is mandatory. 
+            For name display above model and naming playable character 
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:LBoLEntitySideloader.GameFixes.CardPerformAction_Patch">
             <summary>
             Makes vfx and sfx optionally delayed in perform array
@@ -343,8 +350,16 @@
         </member>
         <member name="T:LBoLEntitySideloader.Resource.GlobalLocalization">
             <summary>
-            Should have been called batch localization.
+            Should have been called BatchLocalization.
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.#ctor(LBoLEntitySideloader.Resource.IResourceSource,System.Boolean)">
+            <summary>
+            mergeTerms is misleading here. 
+            It will only apply if localization files are set for the first time for the type
+            </summary>
+            <param name="source"></param>
+            <param name="mergeTerms"></param>
         </member>
         <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">
             <summary>

@@ -20,6 +20,8 @@ using LBoL.Base.Extensions;
 using static Mono.CSharp.Argument;
 using System.Data;
 using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.Core;
+using YamlDotNet.RepresentationModel;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -105,6 +107,11 @@ namespace LBoLEntitySideloader.Entities
         // never be called if HasSpellPortrait is false
         public abstract UniTask<Sprite> LoadSpellSprite();
 
+        /// <summary>
+        /// Default:, Short: and Long: . Default is mandatory. 
+        /// For name display above model and naming playable character 
+        /// </summary>
+        /// <returns></returns>
         public abstract LocalizationOption LoadLocalization();
 
         public void Consume(LocalizationOption locOption)
@@ -115,31 +122,40 @@ namespace LBoLEntitySideloader.Entities
             {
                 if (globalLoc.LocalizationFiles.locTable.NotEmpty())
                 {
-                    if (!UniqueTracker.Instance.unitNamesGlobalLocalization.TryAdd(userAssembly, globalLoc.LocalizationFiles))
+                    if (!UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryAdd(userAssembly, globalLoc.LocalizationFiles))
                     { 
                     Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global unit name localization files but they've already been set by another {TemplateType().Name}.");
                     }
                 }
+                UniqueTracker.Instance.unitIdsToLocalize.TryAdd(userAssembly, new HashSet<IdContainer>());
+                UniqueTracker.Instance.unitIdsToLocalize[userAssembly].Add(GetId());
+
             }
 
             if (locOption is LocalizationFiles locFiles)
             {
 
-                
-                //var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
-
-
-                //LocalizationOption.FillLocalizationTables(termDic, facType, locFiles.mergeTerms);
-
+                var yamlMap = locFiles.Load(Localization.CurrentLocale);
+                var keyNode = new YamlScalarNode(GetId());
+                if (yamlMap.Children.TryGetValue(keyNode, out var yamlNode) && yamlNode is YamlMappingNode valuePairs)
+                {
+                    LocalizationOption.FillUnitNameTable(
+                        new YamlMappingNode( new KeyValuePair<YamlNode, YamlNode>(keyNode, valuePairs)), locFiles.mergeTerms);
+                }
+                else
+                {
+                    locFiles.fileNames.TryGetValue(locFiles.GetAvailableLocale(), out var filename);
+                    Log.log.LogWarning($"{GetId()} not found in {filename}");
+                }
             }
 
             if (locOption is DirectLocalization rawLoc)
             {
                 var termDic = rawLoc.WrapTermDic(UniqueId);
 
-                //LocalizationOption.FillLocalizationTables(termDic, facType, rawLoc.mergeTerms);
-
+                LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(termDic), rawLoc.mergeTerms);
             }
+
         }
 
 

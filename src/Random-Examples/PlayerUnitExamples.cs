@@ -189,6 +189,7 @@ namespace Random_Examples
         public override LocalizationOption LoadLocalization()
         {
             var gl = new GlobalLocalization(embeddedSource);
+            gl.LocalizationFiles.mergeTerms = true;
             gl.LocalizationFiles.AddLocaleFile(Locale.En, "UnitModelEn");
             return gl;
         }
@@ -217,7 +218,14 @@ namespace Random_Examples
 
         public override IdContainer GetId() => new BeaPlayerDef().UniqueId;
 
-        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+        public override LocalizationOption LoadLocalization() 
+        { 
+            var lf = new LocalizationFiles(embeddedSource);
+            lf.AddLocaleFile(Locale.En, "BeaModelEn");
+            lf.mergeTerms = true;
+            return lf;
+        } 
+        
 
 
         public override ModelOption LoadModelOptions()
@@ -245,7 +253,7 @@ namespace Random_Examples
     {
         public override IdContainer GetId() => new KeikiPlayerDef().UniqueId;
 
-        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+        public override LocalizationOption LoadLocalization() => new DirectLocalization(new Dictionary<string, object>() { { "Default", "Keiki Nuts"}, { "Short", "Keiki" } });
 
         public override ModelOption LoadModelOptions()
         {
@@ -267,113 +275,11 @@ namespace Random_Examples
         }
     }
 
-    public static class CustomLoadouts
-    {
-
-
-        public static void AddLoadouts()
-        {
-
-            var cards = new List<string>() {
-                        nameof(Shoot), nameof(Shoot), nameof(Boundary), nameof(Boundary),
-                        nameof(ReimuAttackR),
-                        nameof(ReimuAttackR),
-                        nameof(ReimuAttackW),
-                        nameof(ReimuBlockW),
-                        nameof(ReimuBlockW),
-                        nameof(ReimuBlockR),
-                        // sunlight prayer
-                        nameof(QiqingYishi)
-                };
-
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Reimu",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(CirnoU),
-                cards,
-                3
-                );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Reimu",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(CirnoG),
-                cards,
-                1
-                );
-
-
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Reimu",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(Tuanzi),
-                cards,
-                2
-                );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Reimu",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(CirnoG),
-                cards,
-                1
-                );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-            "Reimu",
-            new ReimuUltRJabDef().UniqueId,
-            nameof(CirnoG),
-            cards,
-            1
-            );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-            "Reimu",
-            new ReimuUltRJabDef().UniqueId,
-            nameof(CirnoG),
-            cards,
-            1
-            );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-            "Reimu",
-            new ReimuUltRJabDef().UniqueId,
-            nameof(CirnoG),
-            cards,
-            1
-            );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-            "Reimu",
-            new ReimuUltRJabDef().UniqueId,
-            nameof(CirnoG),
-            cards,
-            1
-            );
 
 
 
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Marisa",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(CirnoU),
-                cards,
-                3
-                );
-
-            PlayerUnitTemplate.AddExtraLoadout(
-                "Sakuya",
-                new ReimuUltRJabDef().UniqueId,
-                nameof(CirnoU),
-                cards,
-                3
-                );
-
-        }
+  
 
 
-
-       
-    }
   
 }

@@ -86,7 +86,9 @@ namespace LBoLEntitySideloader
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
         // user => yaml file
-        public Dictionary<Assembly, LocalizationFiles> unitNamesGlobalLocalization = new Dictionary<Assembly, LocalizationFiles>();
+        public Dictionary<Assembly, LocalizationFiles> unitNamesGlobalLocalizationFiles = new Dictionary<Assembly, LocalizationFiles>();
+
+        public Dictionary<Assembly, HashSet<IdContainer>> unitIdsToLocalize = new Dictionary<Assembly, HashSet<IdContainer>>();
 
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
 

@@ -820,40 +820,13 @@ namespace LBoLEntitySideloader
 
                 }
 
-                if (UniqueTracker.Instance.unitNamesGlobalLocalization.TryGetValue(user.assembly, out var locfiles))
+                if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var locfiles))
                 {
-
-                    foreach (KeyValuePair<YamlNode, YamlNode> keyValuePair in locfiles.Load(Localization.CurrentLocale))
-                    {
-                        keyValuePair.Deconstruct(out var yamlNodeKey, out var yamlNodeValue);
-                        if (!(yamlNodeKey is YamlScalarNode yamlScalarNodeKey))
-                        {
-                            log.LogError($"[Localization] UnitName key {yamlNodeKey} is not scalar");
-                        }
-                        else
-                        {
-                            if (!(yamlNodeValue is YamlMappingNode yamlMappingNodeVal))
-                            {
-                                log.LogError($"[Localization] UnitName value of {yamlScalarNodeKey.Value} is not mapping: {yamlNodeValue}");
-                            }
-                            else
-                            {
-                                if (locfiles.mergeTerms)
-                                {
-                                    log.LogDebug("MERGE DEEZ UNITS");
-                                }
-                                else
-                                {
-                                    UnitNameTable._table.AlwaysAdd(yamlScalarNodeKey.Value, new UnitName(yamlMappingNodeVal));
-                                }
-
-                            }
-                        }
-                    }
-
-
+                    LocalizationOption.FillUnitNameTable(locfiles.Load(Localization.CurrentLocale), locfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
                 }
-                                    
+
+
+
 
 
 

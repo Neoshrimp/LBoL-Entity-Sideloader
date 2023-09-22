@@ -47,8 +47,8 @@ namespace LBoLEntitySideloader
                 EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, loadLoc: false);
 
                 UniqueTracker.Instance.RaisePostMainLoad();
-
-                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: false);
+                // secondary users are populate after RaisePostMainLoad
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: true);
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
