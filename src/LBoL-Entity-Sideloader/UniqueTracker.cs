@@ -44,30 +44,44 @@ namespace LBoLEntitySideloader
         internal static void DestroySelf() { _instance = null; }
 
 
-        // config type => used Ids
+        /// <summary>
+        /// config type => used Ids
+        /// </summary>
         public Dictionary<Type, HashSet<IdContainer>> configIds = new Dictionary<Type, HashSet<IdContainer>>();
 
         public Dictionary<Type, HashSet<int>> configIndexes = new Dictionary<Type, HashSet<int>>();
 
-        // EntityDefinition type 
+        /// <summary>
+        /// EntityDefinition type 
+        /// </summary>
         public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
-        // configType => Id => index
+        /// <summary>
+        /// configType => Id => index
+        /// </summary>
         public Dictionary<Type, Dictionary<IdContainer, int>> id2ConfigListIndex = new Dictionary<Type, Dictionary<IdContainer, int>>();
 
         private TemplateSequenceTable tempConfigIndexTable = new TemplateSequenceTable();
 
-        // definition ids
+        /// <summary>
+        /// concrete template type
+        /// </summary>
         public HashSet<Type> invalidRegistrations = new HashSet<Type>();
 
-        // templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
+        /// <summary>
+        /// templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
+        /// </summary>
         public Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>>();
 
 
-        // user assembly +=> generatedTemplates
+        /// <summary>
+        /// user assembly +=> generatedTemplates
+        /// </summary>
         public Dictionary<Assembly, List<Assembly>> generatedAssemblies = new Dictionary<Assembly, List<Assembly>>();
 
-        // generated assembly +=> generating user assembly
+        /// <summary>
+        /// generated assembly +=> generating user assembly
+        /// </summary>
         public Dictionary<Assembly, Assembly> gen2User = new Dictionary<Assembly, Assembly>();
 
         public Dictionary<Assembly, Type> gen2FacType = new Dictionary<Assembly, Type>();
@@ -79,17 +93,24 @@ namespace LBoLEntitySideloader
             public Func<Type> defTypePromise;
         }
 
-        //  generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+        /// <summary>
+        ///  generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+        /// </summary>
         public Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>> typePromiseDic = new Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>>();
 
 
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
-        // user => yaml file
+        /// <summary>
+        /// user => yaml file
+        /// </summary>
         public Dictionary<Assembly, LocalizationFiles> unitNamesGlobalLocalizationFiles = new Dictionary<Assembly, LocalizationFiles>();
 
         public Dictionary<Assembly, HashSet<IdContainer>> unitIdsToLocalize = new Dictionary<Assembly, HashSet<IdContainer>>();
 
+        /// <summary>
+        /// assembly name => method cache
+        /// </summary>
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
 
         [field: DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
@@ -97,8 +118,9 @@ namespace LBoLEntitySideloader
 
         public List<Action> formationAddActions = new List<Action>();
 
-        // 2do cache loaded from disk separately
-        // charId +=> loadoutType +=> LoadoutInfo
+        /// <summary>
+        /// charId +=> loadoutType +=> LoadoutInfo
+        /// </summary>
         public Dictionary<string, List<CharLoadoutInfo>> loadoutInfos = new Dictionary<string, List<CharLoadoutInfo>>();
 
         public List<Action> populateLoadoutInfosActions = new List<Action>();
@@ -106,12 +128,13 @@ namespace LBoLEntitySideloader
         public class CharLoadoutInfo
         {
             public string ultimateSkill;
-            public string exhibit;
+            public string exhibit;  
             public List<string> deck;
             public int complexity;
             public string typeSuffix;
             public string typeName;
         }
+
 
 
         public List<Func<List<Stage>, List<Stage>>> modifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
@@ -124,6 +147,8 @@ namespace LBoLEntitySideloader
             public Func<Stage, Stage> mod;
         }
 
+
+        public Dictionary<Assembly, List<PlayerUnitTemplate>> user2PlayerTemplates = new Dictionary<Assembly, List<PlayerUnitTemplate>>();
 
         public void RaisePostMainLoad()
         {
@@ -171,7 +196,9 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
-        // templateType => Id => definitionType
+        /// <summary>
+        /// templateType => Id => definitionType
+        /// </summary>
         public Dictionary<Type, Dictionary<string, EntityDefinition>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, EntityDefinition>>();
 
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();

@@ -157,7 +157,8 @@ namespace LBoLEntitySideloader.TemplateGen
             if (func == null)
                 func = () => default(R);
 
-            UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
+            // 2do same delegate ref bug
+            UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, (Delegate)func.Clone());
 
 
             newMethod.Statements.Add(new CodeSnippetExpression(@$"

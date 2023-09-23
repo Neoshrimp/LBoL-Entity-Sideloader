@@ -25,7 +25,6 @@ namespace LBoLEntitySideloader.Resource
 
         /// <summary>
         /// plugin dir + path.
-        /// If mod is loaded with a script engine this defaults to BeInEx/plugins + subFolder
         /// </summary>
         /// <param name="GUID"></param>
         /// <param name="subFolder"></param>
@@ -50,10 +49,10 @@ namespace LBoLEntitySideloader.Resource
                 this.dirInfo = new DirectoryInfo(path);
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 path = "";
-                Log.log.LogError(e);
+                Log.log.LogError(ex);
             }
         }
 

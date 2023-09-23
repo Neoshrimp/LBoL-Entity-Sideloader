@@ -381,6 +381,86 @@
             <param name="protocol"></param>
             <returns></returns>
         </member>
+        <member name="F:LBoLEntitySideloader.UserInfo.definitionInfos">
+            <summary>
+            EntityDefinition type => EntityDefinition instance
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UserInfo.entityInfos">
+            <summary>
+            entity factory type => concrete entity type
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UserInfo.definition2customEntityLogicType">
+            <summary>
+            EntityDefinition type => entity logic type
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UserInfo.entitiesToOverwrite">
+            <summary>
+            definition type => attribute
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.configIds">
+            <summary>
+            config type => used Ids
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.entity2uniqueIds">
+            <summary>
+            EntityDefinition type 
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.id2ConfigListIndex">
+            <summary>
+            configType => Id => index
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.invalidRegistrations">
+            <summary>
+            concrete template type
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.overwriteTracker">
+            <summary>
+            templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.generatedAssemblies">
+            <summary>
+            user assembly +=> generatedTemplates
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.gen2User">
+            <summary>
+            generated assembly +=> generating user assembly
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.typePromiseDic">
+            <summary>
+             generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.unitNamesGlobalLocalizationFiles">
+            <summary>
+            user => yaml file
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.methodCacheDic">
+            <summary>
+            assembly name => method cache
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.loadoutInfos">
+            <summary>
+            charId +=> loadoutType +=> LoadoutInfo
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.UniqueTracker.onDemandResourceTracker">
+            <summary>
+            templateType => Id => definitionType
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Utils.Numbers.DecimalToABC(System.Int64,System.Int32)">
             <summary>
             Converts the given decimal number to the numeral system with the

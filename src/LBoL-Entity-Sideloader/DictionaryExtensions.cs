@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using LBoL.Base;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,6 +17,16 @@ namespace LBoLEntitySideloader
             if (!dictionary.TryAdd(key, value))
             {
                 dictionary[key] = value;
+                return true;
+            }
+            return false;
+        }
+
+        public static bool AlwaysAdd<K, V>(this AssociationList<K, V> associationList, K key, V value)
+        {
+            if (!associationList.TryAdd(key, value))
+            {
+                associationList[key] = value;
                 return true;
             }
             return false;

@@ -44,6 +44,8 @@ namespace Random_Examples
 
     public sealed class SuikaPlayerDef : PlayerUnitTemplate
     {
+        static DirectorySource dir = new DirectorySource(PluginInfo.GUID, "Suika");
+
         public static string name = nameof(Suika);
 
         public override IdContainer GetId() => nameof(Suika);
@@ -55,7 +57,22 @@ namespace Random_Examples
             return gl;
         }
 
-        public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("Suika.png", directorySource, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+        public override PlayerImages LoadPlayerSprites()
+        {
+            var sprites = new PlayerImages();
+            sprites.startPanelStandPic = () => ResourceLoader.LoadSprite("Suika.png", dir, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+            sprites.inRunAvatarPic = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+            sprites.collectionIcon = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+            sprites.selectionCircleIcon = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+
+            return sprites;
+        
+        }
+            
         
 
         public override PlayerUnitConfig MakeConfig()
@@ -87,6 +104,7 @@ namespace Random_Examples
             return config;
         }
 
+
         [EntityLogic(typeof(SuikaPlayerDef))]
         public sealed class Suika : PlayerUnit { }
 
@@ -94,7 +112,7 @@ namespace Random_Examples
 
 
 
-    public sealed class BeaPlayerDef : PlayerUnitTemplate
+/*    public sealed class BeaPlayerDef : PlayerUnitTemplate
     {
 
 
@@ -137,7 +155,7 @@ namespace Random_Examples
         [EntityLogic(typeof(KeikiPlayerDef))]
         public sealed class Keiki : PlayerUnit { }
 
-    }
+    }*/
 
     // 2do make generic
     [HarmonyPatch(typeof(MuseumPanel), nameof(MuseumPanel.Awake))]
@@ -146,9 +164,10 @@ namespace Random_Examples
         static void Prefix(MuseumPanel __instance)
         {
 
-            __instance.portraitList.TryAdd("Suika", __instance.portraitList["Reimu"]);
+
+/*
             __instance.portraitList.TryAdd("Bea", __instance.portraitList["Reimu"]);
-            __instance.portraitList.TryAdd("Keiki", __instance.portraitList["Reimu"]);
+            __instance.portraitList.TryAdd("Keiki", __instance.portraitList["Reimu"]);*/
 
         }
 
@@ -161,17 +180,14 @@ namespace Random_Examples
         static void Prefix(StartGamePanel __instance)
         {
 
-            var sprite = ResourceLoader.LoadSprite("Suika.png", directorySource, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            __instance.standPicList.TryAdd("Suika", sprite);
-            __instance.headPicList.TryAdd("Suika", sprite);
 
-            var sprite1 = ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+/*            var sprite1 = ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
             __instance.standPicList.TryAdd("Bea", sprite1);
             __instance.headPicList.TryAdd("Bea", sprite1);
 
             var sprite2 = ResourceLoader.LoadSprite("keiki.png", directorySource, ppu: 700, anisoLevel: 16, filterMode: FilterMode.Trilinear);
             __instance.standPicList.TryAdd("Keiki", sprite2);
-            __instance.headPicList.TryAdd("Keiki", sprite2);
+            __instance.headPicList.TryAdd("Keiki", sprite2);*/
 
 
         }
@@ -212,7 +228,7 @@ namespace Random_Examples
     }
 
 
-    public sealed class BeaModelDef : UnitModelTemplate
+/*    public sealed class BeaModelDef : UnitModelTemplate
     {
 
 
@@ -273,7 +289,7 @@ namespace Random_Examples
             config.Flip = true;
             return config;
         }
-    }
+    }*/
 
 
 

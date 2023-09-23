@@ -24,16 +24,24 @@ namespace LBoLEntitySideloader
 
         // 2do refactor
 
-        // EntityDefinition type => EntityDefinition
+        /// <summary>
+        /// EntityDefinition type => EntityDefinition instance
+        /// </summary>
         public Dictionary<Type, EntityDefinition> definitionInfos = new Dictionary<Type, EntityDefinition>();
 
-        // entity factory type => concrete entity type
+        /// <summary>
+        /// entity factory type => concrete entity type
+        /// </summary>
         public Dictionary<Type, List<EntityInfo>> entityInfos = new Dictionary<Type, List<EntityInfo>>();
 
-        // EntityDefinition type => entity type
+        /// <summary>
+        /// EntityDefinition type => entity logic type
+        /// </summary>
         public Dictionary<Type, Type> definition2customEntityLogicType = new Dictionary<Type, Type>();
 
-        // definition type => attribute
+        /// <summary>
+        /// definition type => attribute
+        /// </summary>
         public Dictionary<Type, ModificationInfo> entitiesToOverwrite = new Dictionary<Type, ModificationInfo>();
 
         public Dictionary<string, Type> typeName2VanillaType = new Dictionary<string, Type>();

@@ -18,7 +18,6 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine.Events;
 using YamlDotNet.RepresentationModel;
-using static LBoLEntitySideloader.UniqueTracker;
 
 namespace LBoLEntitySideloader
 {
@@ -50,7 +49,7 @@ namespace LBoLEntitySideloader
 
         public List<Func<List<Stage>, List<Stage>>> loadedFromDiskmodifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
 
-        public List<StageModAction> loadedFromModifyStageActions = new List<StageModAction>();
+        public List<UniqueTracker.StageModAction> loadedFromModifyStageActions = new List<UniqueTracker.StageModAction>();
 
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
@@ -134,8 +133,6 @@ namespace LBoLEntitySideloader
                     if (type.IsSealed)
                     {
                         userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
-
-
 
 
                         if (type.GetCustomAttribute<EntityLogic>() is EntityLogic entityLogicAtt)
@@ -286,16 +283,16 @@ namespace LBoLEntitySideloader
 
             Log.LogDevExtra()?.LogDebug($"(Extra logging) Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
 
-            var definitionType = entityDefinition.GetType();
+            var templateType = entityDefinition.GetType();
             try
             {
-                if (user.entitiesToOverwrite.ContainsKey(definitionType))
+                if (user.entitiesToOverwrite.ContainsKey(templateType))
                 {
                     if (!UniqueTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
 
                     {
-                        log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (yet, maybe).");
-                        UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
+                        log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (for now, maybe).");
+                        UniqueTracker.Instance.invalidRegistrations.Add(templateType);
                         return false;
                     }
                     return true;
@@ -307,7 +304,7 @@ namespace LBoLEntitySideloader
             {
 
                 log.LogError(ex);
-                UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
+                UniqueTracker.Instance.invalidRegistrations.Add(templateType);
                 return false;
             }
 
@@ -737,7 +734,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => usfxT.Consume(usfxT.LoadSfxListAsync()), definition, nameof(usfxT.LoadSfxListAsync), user);
                     }
-
+                    else if (definition is PlayerUnitTemplate puT)
+                    {
+                        puT.Consume(new PlayerImages());
+                    }
                     
 
 
@@ -825,11 +825,6 @@ namespace LBoLEntitySideloader
                     LocalizationOption.FillUnitNameTable(locfiles.Load(Localization.CurrentLocale), locfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
                 }
 
-
-
-
-
-
             }
         }
 
@@ -843,10 +838,10 @@ namespace LBoLEntitySideloader
                 if(loadLoc)
                     Instance.LoadLocalization(sideloaderUsers);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 
-                log.LogError(e);
+                log.LogError(ex);
             }
 
             log.LogInfo("Finished loading custom resources.");

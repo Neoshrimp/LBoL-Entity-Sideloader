@@ -166,9 +166,9 @@ namespace Random_Examples
 
             JadeBoxExamples.GenJadeBoxes();
 
-/*            EntityManager.AddPostLoadAction(() =>
+            EntityManager.AddPostLoadAction(() =>
             {
-                for (int i = 0; i < 14 * 80; i++)
+                for (int i = 0; i < 14 * 4; i++)
                 {
                     var id = "NilTestExhibit" + i.ToString();
                     exhibitGen.QueueGen(
@@ -176,16 +176,16 @@ namespace Random_Examples
                         overwriteVanilla: false,
                         makeConfig: () => new LunarVeilDef().DefaultConfig(),
                         loadSprite: null,
+                        // 2do same reference bug??
                         loadLocalization: () => new DirectLocalization(new Dictionary<string, object>()
                         {
-                            { "Name", "Deez" },
+                            { "Name", "Deez" + i.ToString() },
                             { "Description", "nuts" }
                         }),
                         generateEmptyLogic: true);
                 }
-
                 exhibitGen.FinalizeGen();
-            });*/
+            });
 
             CustomFormations.AddFormations();
 
