@@ -238,7 +238,13 @@ namespace LBoLEntitySideloader
         }
         
         
-        
+        /// <summary>
+        /// Add an action which will be executed after all main entities were loaded.
+        /// Should be called from BePinEx Awake injection point.
+        /// Currently used for template gen.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="callingAssembly"></param>
         public static void AddPostLoadAction(Action action, Assembly callingAssembly = null)
         {
 
@@ -736,7 +742,8 @@ namespace LBoLEntitySideloader
                     }
                     else if (definition is PlayerUnitTemplate puT)
                     {
-                        puT.Consume(new PlayerImages());
+                        // overwrite handled later
+                        puT.Consume(puT.LoadPlayerImages());
                     }
                     
 

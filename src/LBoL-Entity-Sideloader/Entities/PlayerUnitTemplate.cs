@@ -29,6 +29,7 @@ using System.Diagnostics;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.Entities.Patches;
 
+
 namespace LBoLEntitySideloader.Entities
 {
     // soon(tm)
@@ -151,6 +152,14 @@ namespace LBoLEntitySideloader.Entities
         {
             UniqueTracker.Instance.user2PlayerTemplates.TryAdd(userAssembly, new List<PlayerUnitTemplate>());
             UniqueTracker.Instance.user2PlayerTemplates[userAssembly].Add(this);
+
+            EntityManager.HandleOverwriteWrap(() => CardWidget._ownerSpriteTable.AlwaysAdd(
+                UniqueId, resource.LoadCardBack()),
+                this,
+                PlayerSpriteLoader.OverwriteName(PISuffixes.cardBack),
+                this.user
+            );
+            
         }
 
         public abstract LocalizationOption LoadLocalization();
@@ -176,9 +185,9 @@ namespace LBoLEntitySideloader.Entities
             {
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(PlayerUnitTemplate), characterName, out var entityDefinition))
                 {
-                    if (entityDefinition is PlayerUnitTemplate puT && EntityManager.HandleOverwriteWrap(() => { }, puT, PlayerSpriteList.OverwriteName(PISuffixes.avatar), puT.user))
+                    if (entityDefinition is PlayerUnitTemplate puT && EntityManager.HandleOverwriteWrap(() => { }, puT, PlayerSpriteLoader.OverwriteName(PISuffixes.avatar), puT.user))
                     {
-                        __result = puT.LoadPlayerImages().inRunAvatarPic;
+                        __result = puT.LoadPlayerImages().LoadInRunAvatarPic();
                         return false;
 
                     }

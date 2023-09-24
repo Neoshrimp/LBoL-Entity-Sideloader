@@ -19,7 +19,6 @@ namespace Random_Examples
 {
     public sealed class JojoCapExhibitDef : ExhibitTemplate
     {
-        private IResourceSource embeddedSource;
 
         public override IdContainer GetId()
         {
@@ -67,6 +66,8 @@ namespace Random_Examples
         [UsedImplicitly]
         public sealed class JojoCapEx : Exhibit, IMapModeOverrider
         {
+
+
             protected override void OnAdded(PlayerUnit player)
             {
                 base.GameRun.AddMapModeOverrider(this);
@@ -79,7 +80,7 @@ namespace Random_Examples
             {
                 get
                 {
-                    return new GameRunMapMode?(GameRunMapMode.Free);
+                    return new GameRunMapMode?(GameRunMapMode.Free | GameRunMapMode.Crossing | GameRunMapMode.TeleportBoss);
                 }
             }
             public void OnEnteredWithMode()

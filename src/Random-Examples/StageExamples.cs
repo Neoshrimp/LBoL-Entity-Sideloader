@@ -134,6 +134,15 @@ namespace Random_Examples
                 return list;
             });
 
+            StageTemplate.ModifyStageList((List<Stage> list) =>
+            {
+                list.Clear();
+                list.Add(Library.CreateStage(typeof(BambooForest)).AsNormalFinal());
+                list.Add(Library.CreateStage(typeof(FinalStage)).AsTrueEndFinal());
+
+                return list;
+            });
+
             StageTemplate.ModifyStage(nameof(BambooForest), (Stage stage) =>
             {
                 // can be new 

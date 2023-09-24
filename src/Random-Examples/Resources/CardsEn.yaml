@@ -9,6 +9,17 @@ YinglangHowl:
     to each enemy.
   Name: Full Moon Furry
 
+
+
+GoblinPunch:
+  Description: Deal {Damage}
+  Name: Goblin Punch
+
+
+GoblinPunchRare:
+  Description: Deal {Damage}
+  Name: Goblin Punch but Shiny (Wow!)
+
 RedGiantStar:
   Name: Deeznuts
 

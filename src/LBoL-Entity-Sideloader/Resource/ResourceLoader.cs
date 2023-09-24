@@ -96,7 +96,7 @@ namespace LBoLEntitySideloader.Resource
                 path = name;
 
 
-            Log.LogDev()?.LogInfo($"Loading sprite from {path}");
+            Log.LogDevExtra()?.LogInfo($"Loading sprite from {path}");
             using var uwr = UnityWebRequestTexture.GetTexture(protocol + path);
 
             uwr.timeout = 20;
@@ -174,7 +174,7 @@ namespace LBoLEntitySideloader.Resource
                 path = name;
 
 
-            Log.LogDev()?.LogInfo($"Loading audio from {path}");
+            Log.LogDevExtra()?.LogInfo($"Loading audio from {path}");
             using var uwr = UnityWebRequestMultimedia.GetAudioClip(protocol + path, audioType);
 
             uwr.timeout = 20;

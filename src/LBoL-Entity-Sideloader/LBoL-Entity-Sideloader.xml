@@ -287,6 +287,15 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.EntityManager.AddPostLoadAction(System.Action,System.Reflection.Assembly)">
+            <summary>
+            Add an action which will be executed after all main entities were loaded.
+            Should be called from BePinEx Awake injection point.
+            Currently used for template gen.
+            </summary>
+            <param name="action"></param>
+            <param name="callingAssembly"></param>
+        </member>
         <member name="T:LBoLEntitySideloader.GameFixes.CardPerformAction_Patch">
             <summary>
             Makes vfx and sfx optionally delayed in perform array
@@ -333,7 +342,6 @@
         <member name="M:LBoLEntitySideloader.Resource.DirectorySource.#ctor(System.String,System.String)">
             <summary>
             plugin dir + path.
-            If mod is loaded with a script engine this defaults to BeInEx/plugins + subFolder
             </summary>
             <param name="GUID"></param>
             <param name="subFolder"></param>
@@ -369,6 +377,13 @@
         <member name="F:LBoLEntitySideloader.Resource.ModelOption.loadSpine">
             <summary>
             Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.Resource.PlayerImages">
+            <summary>
+            Container class for loading player unit images.
+            startPanelStandPic: just works? at least with Suika.png
+            startPanelStandPic: some scale of 846x688
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.ResourceLoader.LoadAudioClip(System.String,UnityEngine.AudioType,LBoLEntitySideloader.Resource.DirectorySource,System.String)">

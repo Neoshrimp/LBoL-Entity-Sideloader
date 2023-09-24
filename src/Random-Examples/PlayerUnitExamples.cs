@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
 using HarmonyLib;
+using LBoL.Base;
 using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Cards;
@@ -38,13 +39,9 @@ using static Random_Examples.BepinexPlugin;
 
 namespace Random_Examples
 {
-
-
-
-
     public sealed class SuikaPlayerDef : PlayerUnitTemplate
     {
-        static DirectorySource dir = new DirectorySource(PluginInfo.GUID, "Suika");
+        public static DirectorySource dir = new DirectorySource(PluginInfo.GUID, "Suika");
 
         public static string name = nameof(Suika);
 
@@ -57,16 +54,32 @@ namespace Random_Examples
             return gl;
         }
 
-        public override PlayerImages LoadPlayerSprites()
+        public override PlayerImages LoadPlayerImages()
         {
             var sprites = new PlayerImages();
-            sprites.startPanelStandPic = () => ResourceLoader.LoadSprite("Suika.png", dir, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+       
 
-            sprites.inRunAvatarPic = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            // does ppu do anything here?
 
-            sprites.collectionIcon = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
-            sprites.selectionCircleIcon = ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 400, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.StartPanelStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+            sprites.DeckStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.DefeatedStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.WinStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+
+
+            sprites.InRunAvatarPic = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.CollectionIcon = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.SelectionCircleIcon = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+
+            sprites.PerfectWinIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.WinIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.DefeatedIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+            sprites.CardBack = () => ResourceLoader.LoadSprite("CardBack.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
 
             return sprites;
@@ -85,10 +98,10 @@ namespace Random_Examples
             Order: 0,
             UnlockLevel: 0,
             ModleName: "",
-            NarrativeColor: "#f241a8",
+            NarrativeColor: "#a9ad29",
             IsSelectable: true,
             MaxHp: 90,
-            InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Green = 1, White = 1 },
+            InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },
             InitialMoney: 3,
             InitialPower: 30,
             //temp
@@ -111,88 +124,134 @@ namespace Random_Examples
     }
 
 
-
-/*    public sealed class BeaPlayerDef : PlayerUnitTemplate
+    public sealed class GoblinPunchCardDef : CardTemplate
     {
-
-
-        public override IdContainer GetId() => nameof(Bea);
-
-        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
-
-        public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-
-
-        public override PlayerUnitConfig MakeConfig()
-        {
-            var config = PlayerUnitConfig.FromId("Reimu").Copy();
-            return config;
-        }
-
-        [EntityLogic(typeof(BeaPlayerDef))]
-        public sealed class Bea : PlayerUnit { }
-
-    }
+        public override IdContainer GetId() => nameof(GoblinPunch);
 
 
 
-    public sealed class KeikiPlayerDef : PlayerUnitTemplate
-    {
-        public override IdContainer GetId() => nameof(Keiki);
+        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+
+
 
         public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
 
-        public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("keiki.png", directorySource, ppu: 700, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
-
-        public override PlayerUnitConfig MakeConfig()
+        public override CardConfig MakeConfig()
         {
-            var config = PlayerUnitConfig.FromId("Reimu").Copy();
+            var config = DefaultConfig();
+
+            config.GunName = "Simple1";
+            config.Colors = new List<ManaColor>() { ManaColor.Red };
+            config.Cost = new ManaGroup() { Any = 1, Red = 1 };
+
+            config.Owner = "Suika";
+
+            config.Type = CardType.Attack;
+            config.TargetType = TargetType.SingleEnemy;
+
+            config.Damage = 13;
+            config.UpgradedDamage = 16;
+
+            config.Illustrator = "MTB";
+
             return config;
         }
 
-        [EntityLogic(typeof(KeikiPlayerDef))]
-        public sealed class Keiki : PlayerUnit { }
 
-    }*/
-
-    // 2do make generic
-    [HarmonyPatch(typeof(MuseumPanel), nameof(MuseumPanel.Awake))]
-    class MuseumPanel_Patch
-    {
-        static void Prefix(MuseumPanel __instance)
-        {
-
-
-/*
-            __instance.portraitList.TryAdd("Bea", __instance.portraitList["Reimu"]);
-            __instance.portraitList.TryAdd("Keiki", __instance.portraitList["Reimu"]);*/
-
+        [EntityLogic(typeof(GoblinPunchCardDef))]
+        public sealed class GoblinPunch : Card
+        { 
+        
         }
+
 
     }
 
 
-    [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.Awake))]
-    class StartGamePanel_Patch
+
+    public sealed class GoblinPunchRareCardDef : CardTemplate
     {
-        static void Prefix(StartGamePanel __instance)
+        public override IdContainer GetId() => nameof(GoblinPunchRare);
+
+
+
+        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+
+
+
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+
+
+        public override CardConfig MakeConfig()
         {
+            var config = new GoblinPunchCardDef().MakeConfig();
 
 
-/*            var sprite1 = ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            __instance.standPicList.TryAdd("Bea", sprite1);
-            __instance.headPicList.TryAdd("Bea", sprite1);
+            config.Rarity = Rarity.Rare;
 
-            var sprite2 = ResourceLoader.LoadSprite("keiki.png", directorySource, ppu: 700, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            __instance.standPicList.TryAdd("Keiki", sprite2);
-            __instance.headPicList.TryAdd("Keiki", sprite2);*/
 
+            return config;
+        }
+
+
+        [EntityLogic(typeof(GoblinPunchRareCardDef))]
+        public sealed class GoblinPunchRare : Card
+        {
 
         }
 
+
     }
+
+
+    /*    public sealed class BeaPlayerDef : PlayerUnitTemplate
+        {
+
+
+            public override IdContainer GetId() => nameof(Bea);
+
+            public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+            public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+
+            public override PlayerUnitConfig MakeConfig()
+            {
+                var config = PlayerUnitConfig.FromId("Reimu").Copy();
+                return config;
+            }
+
+            [EntityLogic(typeof(BeaPlayerDef))]
+            public sealed class Bea : PlayerUnit { }
+
+        }
+
+
+
+        public sealed class KeikiPlayerDef : PlayerUnitTemplate
+        {
+            public override IdContainer GetId() => nameof(Keiki);
+
+            public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+
+            public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("keiki.png", directorySource, ppu: 700, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+
+            public override PlayerUnitConfig MakeConfig()
+            {
+                var config = PlayerUnitConfig.FromId("Reimu").Copy();
+                return config;
+            }
+
+            [EntityLogic(typeof(KeikiPlayerDef))]
+            public sealed class Keiki : PlayerUnit { }
+
+        }*/
+
 
 
 
@@ -216,7 +275,7 @@ namespace Random_Examples
         }
 
 
-        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", directorySource, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", SuikaPlayerDef.dir, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
 
         public override UnitModelConfig MakeConfig()

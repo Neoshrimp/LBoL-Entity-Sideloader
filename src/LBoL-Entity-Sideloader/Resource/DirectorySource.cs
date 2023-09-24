@@ -39,6 +39,7 @@ namespace LBoLEntitySideloader.Resource
                 if (pluginLoc == null)
                 {
                     // assume mod is loaded through script loader
+                    // should never happen if scriptengine is up to date with my fork
                     this.path = Path.Combine(Path.GetDirectoryName(Paths.PluginPath), subFolder);
                 }
                 else
@@ -77,7 +78,7 @@ namespace LBoLEntitySideloader.Resource
             }
             catch (IOException ex)
             {
-                Log.log.LogError(ex);
+                Log.log.LogError($"{this.GetType()} exception while loading file {id}: {ex}");
                 return null;
             }
 

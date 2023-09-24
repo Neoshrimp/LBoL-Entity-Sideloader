@@ -151,10 +151,6 @@ namespace Random_Examples
             DontDestroyOnLoad(gameObject);
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            // read your yaml
-            // backup og yamls
-            // overwrite og yamls with customs yamls
-
 
             EntityManager.RegisterSelf();
 
@@ -166,7 +162,7 @@ namespace Random_Examples
 
             JadeBoxExamples.GenJadeBoxes();
 
-            EntityManager.AddPostLoadAction(() =>
+/*            EntityManager.AddPostLoadAction(() =>
             {
                 for (int i = 0; i < 14 * 4; i++)
                 {
@@ -186,7 +182,7 @@ namespace Random_Examples
                 }
                 exhibitGen.FinalizeGen();
             });
-
+*/
             CustomFormations.AddFormations();
 
             CustomLoadouts.AddLoadouts();

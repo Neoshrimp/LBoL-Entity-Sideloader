@@ -2,12 +2,14 @@
 using HarmonyLib;
 using LBoL.Core;
 using LBoL.Core.Units;
+using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.UIhelpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -20,32 +22,109 @@ using static LBoLEntitySideloader.Entities.Patches.StartGamePanel_Patches;
 namespace LBoLEntitySideloader.Entities.Patches
 {
 
-    internal class PlayerSpriteList
+    internal class PlayerSpriteLoader
     {
+
+        internal static void TryLoadAll()
+        {
+            //UiManager.Instance._panelTable;
+
+        }
 
         internal static void LoadForStartPanel(StartGamePanel startGamePanel)
         {
+            Log.log.LogDebug($"loading player image: {nameof(LoadForStartPanel)}");
+
+
             Wrap((PlayerUnitTemplate puT) =>
             {
                 var sprites = puT.LoadPlayerImages();
-                EntityManager.HandleOverwriteWrap(() => startGamePanel.standPicList.AlwaysAdd(puT.UniqueId, sprites.startPanelStandPic()), puT, OverwriteName(PISuffixes.stand), puT.user);
 
-                EntityManager.HandleOverwriteWrap(() => startGamePanel.headPicList.AlwaysAdd(puT.UniqueId, sprites.selectionCircleIcon), puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
+                EntityManager.HandleOverwriteWrap(async () => startGamePanel.standPicList.AlwaysAdd(puT.UniqueId, await sprites.LoadStartPanelStand()), puT, OverwriteName(PISuffixes.stand), puT.user);
+
+
+                EntityManager.HandleOverwriteWrap(() => startGamePanel.headPicList.AlwaysAdd(
+                    puT.UniqueId, sprites.LoadSelectionCircleIcon()),
+                    puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
 
 
             });
 
         }
 
-        internal static void LoadForMuseumPanel(MuseumPanel museumPanel)
+
+        internal static void LoadForHistoryPanel(HistoryPanel historyPanel)
         {
+            Log.log.LogDebug($"loading player image: {nameof(LoadForHistoryPanel)}");
+
             Wrap((PlayerUnitTemplate puT) =>
             {
                 var sprites = puT.LoadPlayerImages();
-                EntityManager.HandleOverwriteWrap(() => museumPanel.portraitList.AlwaysAdd(puT.UniqueId, sprites.collectionIcon), puT, OverwriteName(PISuffixes.collectionIcon), puT.user);
+
+                EntityManager.HandleOverwriteWrap(async () => {
+                    var avatarGroup = new HistoryPanel.AvatarGroup();
+                    avatarGroup.Failure = await sprites.LoadDefeatedIcon();
+                    avatarGroup.Normal = await sprites.LoadWinIcon();
+                    avatarGroup.TrueEnd = await sprites.LoadPerfectWinIcon();
+                    historyPanel.avatarTable.AlwaysAdd(puT.UniqueId, avatarGroup);
+
+                },
+                puT, OverwriteName("AvatarGroup"), puT.user);
 
             });
+        }
 
+
+
+
+        internal static void LoadForGameResultPanel(GameResultPanel gameResultPanel)
+        {
+
+            Log.log.LogDebug($"loading player image: {nameof(LoadForGameResultPanel)}");
+
+            Wrap((PlayerUnitTemplate puT) =>
+            {
+                var sprites = puT.LoadPlayerImages();
+                EntityManager.HandleOverwriteWrap(async () => gameResultPanel.characterPortraits.AlwaysAdd(
+                    puT.UniqueId, await sprites.LoadWinStand()),
+                    puT, OverwriteName(PISuffixes.winStand), puT.user);
+
+
+                EntityManager.HandleOverwriteWrap(async () => gameResultPanel.characterDefeatPortraits.AlwaysAdd(
+                    puT.UniqueId, await sprites.LoadDefeatedStand()),
+                    puT, OverwriteName(PISuffixes.defeatedStand), puT.user);
+            });
+        }
+
+
+
+        internal static void LoadForDeckPanel(ShowCardsPanel showCardsPanel)
+        {
+            Log.log.LogDebug($"loading player image: {nameof(LoadForDeckPanel)}");
+
+            Wrap((PlayerUnitTemplate puT) =>
+            {
+                var sprites = puT.LoadPlayerImages();
+                EntityManager.HandleOverwriteWrap(async () => showCardsPanel.characterPortraits.AlwaysAdd(
+                    puT.UniqueId, await sprites.LoadDeckStand()), 
+                    puT, OverwriteName(PISuffixes.deckStand), puT.user);
+
+            });
+        }
+
+        
+
+        internal static void LoadForMuseumPanel(MuseumPanel museumPanel)
+        {
+            Log.log.LogDebug($"loading player image: {nameof(LoadForMuseumPanel)}");
+
+            Wrap((PlayerUnitTemplate puT) =>
+            {
+                var sprites = puT.LoadPlayerImages();
+                EntityManager.HandleOverwriteWrap(() => museumPanel.portraitList.AlwaysAdd(
+                    puT.UniqueId, sprites.LoadCollectionIcon()),
+                    puT, OverwriteName(PISuffixes.collectionIcon), puT.user);
+            });
         }
 
         internal static string OverwriteName(string name) => $"{nameof(PlayerUnitTemplate.LoadPlayerImages)}.{name}";
@@ -59,12 +138,51 @@ namespace LBoLEntitySideloader.Entities.Patches
                     if (UniqueTracker.Instance.invalidRegistrations.Contains(puT.GetType()))
                         continue;
 
-                    action(puT);    
+                    var st = new Stopwatch();
+                    st.Start();
+                    action(puT);
+                    st.Stop();
+                    Log.log.LogDebug($"Loaded in: {st.ElapsedMilliseconds}ms");
                 }
 
             }
         }
         
+    }
+
+
+    [HarmonyPatch(typeof(HistoryPanel), nameof(HistoryPanel.Awake))]
+    class HistoryPanel_Patch
+    {
+        static void Prefix(HistoryPanel __instance)
+        {
+            PlayerSpriteLoader.LoadForHistoryPanel(__instance);
+        }
+        
+    }
+
+
+
+
+
+    [HarmonyPatch(typeof(GameResultPanel), nameof(GameResultPanel.Awake))]
+    class GameResultPanel_Patch
+    {
+        static void Prefix(GameResultPanel __instance)
+        {
+            PlayerSpriteLoader.LoadForGameResultPanel(__instance);
+        }
+    }
+
+
+    [HarmonyPatch(typeof(ShowCardsPanel), nameof(ShowCardsPanel.Awake))]
+    class ShowCardsPanel_Patch
+    {
+        static void Prefix(ShowCardsPanel __instance)
+        {
+            PlayerSpriteLoader.LoadForDeckPanel(__instance);
+        }
+
     }
 
 
@@ -74,7 +192,7 @@ namespace LBoLEntitySideloader.Entities.Patches
     {
         static void Prefix(MuseumPanel __instance)
         {
-            PlayerSpriteList.LoadForMuseumPanel(__instance);
+            PlayerSpriteLoader.LoadForMuseumPanel(__instance);
 
         }
     }
@@ -99,13 +217,10 @@ namespace LBoLEntitySideloader.Entities.Patches
         class Awake_Patch
         {
 
-            static public async void Prefix(StartGamePanel __instance)
+            static public void Prefix(StartGamePanel __instance)
             {
 
-                PlayerSpriteList.LoadForStartPanel(__instance);
-
-
-
+                PlayerSpriteLoader.LoadForStartPanel(__instance);
 
 
                 var loadoutGo = __instance.characterSetupRoot.gameObject;
