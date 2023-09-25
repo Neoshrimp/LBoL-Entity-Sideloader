@@ -143,6 +143,8 @@ namespace Random_Examples
 
         internal static ExhibitGen exhibitGen = new ExhibitGen();
 
+        internal static AssetBundle suikaAB;
+
         private void Awake()
         {
             log = Logger;
@@ -189,7 +191,9 @@ namespace Random_Examples
 
             StageExamples.AddStages();
 
-
+            // unload asset bundles OnDestroy
+            suikaAB = ResourceLoader.LoadAssetBundle("suikaBundle", SuikaPlayerDef.dir);
+            
         }
 
 
@@ -199,6 +203,9 @@ namespace Random_Examples
 
             if (harmony != null)
                 harmony.UnpatchSelf();
+
+            // unload asset bundles OnDestroy
+            suikaAB?.Unload(false);
 
         }
 

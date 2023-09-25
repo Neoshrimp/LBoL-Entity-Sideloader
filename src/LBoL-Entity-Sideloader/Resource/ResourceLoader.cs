@@ -14,8 +14,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using UnityEngine.PlayerLoop;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -65,12 +65,13 @@ namespace LBoLEntitySideloader.Resource
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
 
+            //var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, true)
             var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
             {
                 anisoLevel = anisoLevel,
                 filterMode = filterMode
             };
-
+            
 
             // can't be used on background threads
             spriteTexture.LoadImage(memoryStream.ToArray());
@@ -81,6 +82,7 @@ namespace LBoLEntitySideloader.Resource
             if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
             var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
 
+            //spriteTexture.Apply(true, true);
             return sprite;
 
         }
@@ -110,11 +112,14 @@ namespace LBoLEntitySideloader.Resource
                 spriteTexture.anisoLevel = anisoLevel;
                 spriteTexture.filterMode = filterMode;
 
+
                 if (rect == null)
                     rect = new Rect(0, 0, spriteTexture.width, spriteTexture.height);
 
                 if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
                 var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
+
+                //spriteTexture.Apply(true, true);
                 return sprite;
 
             }
@@ -151,6 +156,16 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
+
+        public static AssetBundle LoadAssetBundle(string name, DirectorySource source)
+        {
+            var path = "";
+            if (source != null)
+                path = source.FullPath(name);
+            else
+                path = name;
+            return AssetBundle.LoadFromFile(path);
+        }
 
 
 
@@ -202,7 +217,6 @@ namespace LBoLEntitySideloader.Resource
         public static byte[] ResourceBinary(string name, IResourceSource source)
         {
             using var stream = source.Load(name);
-            
 
             if (stream == null) return null;
             byte[] ba = new byte[stream.Length];

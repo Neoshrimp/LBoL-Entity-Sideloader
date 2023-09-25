@@ -8,6 +8,7 @@ using LBoL.Presentation.I10N;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Entities.Patches;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -116,7 +117,6 @@ namespace LBoLEntitySideloader
             EntityManager.Instance.secondaryUsers.userInfos = new Dictionary<Assembly, UserInfo>();
 
 
-
             UniqueTracker.DestroySelf();
             // doesn't really help
             GC.Collect();
@@ -179,6 +179,7 @@ namespace LBoLEntitySideloader
                             UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
                             // formation reload moved to HookPoints.FormationsHotReload_Patch
                             EnemyGroupTemplate.ReloadFormations();
+                            PlayerSpriteLoader.ReloadForMainMenu();
                         }
 
 
@@ -188,8 +189,6 @@ namespace LBoLEntitySideloader
                             UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
                             doingMidRunReload = 1;
                         }
-
-
 
 
                     }

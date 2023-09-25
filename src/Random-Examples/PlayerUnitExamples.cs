@@ -57,29 +57,23 @@ namespace Random_Examples
         public override PlayerImages LoadPlayerImages()
         {
             var sprites = new PlayerImages();
-       
-
-            // does ppu do anything here?
 
 
-            sprites.StartPanelStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+            sprites.SetDeckStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
 
-            sprites.DeckStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.DefeatedStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.WinStand = ResourceLoader.LoadSpriteAsync("Suika.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.SetDefeatedStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+            sprites.SetWinStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
 
+            sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
+            sprites.SetCollectionIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
+            sprites.SetSelectionCircleIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
 
+            sprites.SetPerfectWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
+            sprites.SetWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
+            sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
 
-            sprites.InRunAvatarPic = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.CollectionIcon = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.SelectionCircleIcon = () => ResourceLoader.LoadSprite("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-
-
-            sprites.PerfectWinIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.WinIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-            sprites.DefeatedIcon = ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-
-            sprites.CardBack = () => ResourceLoader.LoadSprite("CardBack.png", dir, ppu: 1, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+            sprites.SetCardBack(() => ResourceLoader.LoadSprite("cardBackRaw.jpg", dir));
 
 
             return sprites;
@@ -98,7 +92,7 @@ namespace Random_Examples
             Order: 0,
             UnlockLevel: 0,
             ModleName: "",
-            NarrativeColor: "#a9ad29",
+            NarrativeColor: "#e58c27",
             IsSelectable: true,
             MaxHp: 90,
             InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },

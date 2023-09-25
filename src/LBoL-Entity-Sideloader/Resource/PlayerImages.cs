@@ -31,72 +31,121 @@ namespace LBoLEntitySideloader.Resource
     /// <summary>
     /// Container class for loading player unit images.
     /// startPanelStandPic: just works? at least with Suika.png
-    /// startPanelStandPic: some scale of 846x688
     /// </summary>
     public class PlayerImages
     {
         public readonly static Sprite emptySprite = Sprite.Create(new Texture2D(0, 0, TextureFormat.ARGB32, false), new Rect(), new Vector2(0.5f, 0.5f));
 
-        public UniTask<Sprite> StartPanelStand { set => startPanelStand = value; }
-        public UniTask<Sprite> DeckStand { set => deckStand = value; }
-        public UniTask<Sprite> WinStand { set => winStand = value; }
-        public UniTask<Sprite> DefeatedStand { set => defeatedStand = value; }
-        public Func<Sprite> InRunAvatarPic { set => inRunAvatarPic = value; }
-        public UniTask<Sprite> DefeatedIcon { set => defeatedIcon = value; }
-        public UniTask<Sprite> WinIcon { set => winIcon = value; }
-        public UniTask<Sprite> PerfectWinIcon { set => perfectWinIcon = value; }
-        public Func<Sprite> CollectionIcon { set => collectionIcon = value; }
-        public Func<Sprite> SelectionCircleIcon { set => selectionCircleIcon = value; }
-        public Func<Sprite> CardBack { set => cardBack = value; }
+        public void SetStartPanelStand(UniTask<Sprite> task, Func<Sprite> func = null) { startPanelStandTask = task; startPanelStandFunc = func; }
+        public void SetDeckStand(UniTask<Sprite> task, Func<Sprite> func = null) { deckStandTask = task; deckStandFunc = func; }
+        public void SetWinStand(UniTask<Sprite> task, Func<Sprite> func = null) { winStandTask = task; winStandFunc = func; }
+        public void SetDefeatedStand(UniTask<Sprite> task, Func<Sprite> func = null) { defeatedStandTask = task; defeatedStandFunc = func; }
+
+        /// <summary>
+        /// some scale of 846x688
+        /// </summary>
+        public void SetInRunAvatarPic(Func<Sprite> func) { inRunAvatarPic = func; }
+        public void SetDefeatedIcon(UniTask<Sprite> task, Func<Sprite> func = null) { defeatedIconTask = task; defeatedIconFunc = func; }
+        public void SetWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { winIconTask = task; winIconFunc = func;  }
+        public void SetPerfectWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { perfectWinIconTask = task; perfectWinIconFunc = func; }
+        public void SetCollectionIcon(Func<Sprite> func) { collectionIcon = func; }
+        public void SetSelectionCircleIcon(Func<Sprite> func) { selectionCircleIcon = func; }
+        /// <summary>
+        /// 460x240
+        /// </summary>
+        public void SetCardBack(Func<Sprite> func) { cardBack = func; }
 
 
-        public async UniTask<Sprite> LoadStartPanelStand()
+        public Sprite LoadStartPanelStand()
         {
-            var s = await startPanelStand;
+            var s = startPanelStandFunc?.Invoke();
+            return s == null ? emptySprite : s;
+        }
+        public Sprite LoadDeckStand()
+        {
+            var s = deckStandFunc?.Invoke();
+            return s == null ? emptySprite : s;
+        }
+
+        public Sprite LoadWinStand()
+        {
+            var s = winStandFunc?.Invoke();
+            return s == null ? emptySprite : s;
+        }
+        public Sprite LoadDefeatedStand()
+        {
+            var s = defeatedStandFunc?.Invoke();
+            return s == null ? emptySprite : s;
+        }
+
+        public Sprite LoadDefeatedIcon()
+        {
+            var s = defeatedIconFunc?.Invoke();
             return s == null ? emptySprite : s;
 
         }
-        public async UniTask<Sprite> LoadDeckStand()
+        public Sprite LoadWinIcon()
         {
-            var s = await deckStand;
+            var s = winIconFunc?.Invoke();
             return s == null ? emptySprite : s;
 
         }
-        public async UniTask<Sprite> LoadWinStand()
+        public Sprite LoadPerfectWinIcon()
         {
-            var s = await winStand;
+            var s = perfectWinIconFunc?.Invoke();
             return s == null ? emptySprite : s;
 
         }
-        public async UniTask<Sprite> LoadDefeatedStand()
+        /// <summary>
+        /// ////
+        /// </summary>
+        /// <returns></returns>
+
+        public async UniTask<Sprite> LoadStartPanelStandAsync()
         {
-            var s = await defeatedStand;
+            var s = await startPanelStandTask;
+            return s == null ? emptySprite : s;
+        }
+        public async UniTask<Sprite> LoadDeckStandAsync()
+        {
+            var s = await deckStandTask;
+            return s == null ? emptySprite : s;
+        }
+
+        public async UniTask<Sprite> LoadWinStandAsync()
+        {
+            var s = await winStandTask;
+            return s == null ? emptySprite : s;
+        }
+        public async UniTask<Sprite> LoadDefeatedStandAsync()
+        {
+            var s = await defeatedStandTask;
+            return s == null ? emptySprite : s;
+        }
+
+        public async UniTask<Sprite> LoadDefeatedIconAsync()
+        {
+            var s = await defeatedIconTask;
             return s == null ? emptySprite : s;
 
         }
+        public async UniTask<Sprite> LoadWinIconAsync()
+        {
+            var s = await winIconTask;
+            return s == null ? emptySprite : s;
+
+        }
+        public async UniTask<Sprite> LoadPerfectWinIconAsync()
+        {
+            var s = await perfectWinIconTask;
+            return s == null ? emptySprite : s;
+
+        }
+
         public Sprite LoadInRunAvatarPic()
         {
             var s = inRunAvatarPic?.Invoke();
             return s == null ? emptySprite : s;
-
-        }
-        public async UniTask<Sprite> LoadDefeatedIcon()
-        {
-            var s = await defeatedIcon;
-            return s == null ? emptySprite : s;
-
-        }
-        public async UniTask<Sprite> LoadWinIcon()
-        {
-            var s = await winIcon;
-            return s == null ? emptySprite : s;
-
-        }
-        public async UniTask<Sprite> LoadPerfectWinIcon()
-        {
-            var s = await perfectWinIcon;
-            return s == null ? emptySprite : s;
-
         }
         public Sprite LoadCollectionIcon()
         {
@@ -108,8 +157,6 @@ namespace LBoLEntitySideloader.Resource
             var s = selectionCircleIcon?.Invoke();
             return s == null ? emptySprite : s;
         }
-
-
         public Sprite LoadCardBack()
         {
             var s = cardBack?.Invoke();
@@ -117,24 +164,32 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        private UniTask<Sprite> startPanelStand;
-
-        private UniTask<Sprite> deckStand;
-
-
-        private UniTask<Sprite> winStand;
-        private UniTask<Sprite> defeatedStand;
-
-        private Func<Sprite> inRunAvatarPic;
-        private Func<Sprite> cardBack;
+        internal UniTask<Sprite> startPanelStandTask;
+        internal Func<Sprite> startPanelStandFunc;
 
 
-        private UniTask<Sprite> defeatedIcon;
-        private UniTask<Sprite> winIcon;
-        private UniTask<Sprite> perfectWinIcon;
+        internal UniTask<Sprite> deckStandTask;
+        internal Func<Sprite> deckStandFunc;
 
 
-        private Func<Sprite> collectionIcon;
-        private Func<Sprite> selectionCircleIcon;
+        internal UniTask<Sprite> winStandTask;
+        internal Func<Sprite> winStandFunc;
+        internal UniTask<Sprite> defeatedStandTask;
+        internal Func<Sprite> defeatedStandFunc;
+
+        internal Func<Sprite> inRunAvatarPic;
+        internal Func<Sprite> cardBack;
+
+
+        internal UniTask<Sprite> defeatedIconTask;
+        internal Func<Sprite> defeatedIconFunc;
+        internal UniTask<Sprite> winIconTask;
+        internal Func<Sprite> winIconFunc;
+        internal UniTask<Sprite> perfectWinIconTask;
+        internal Func<Sprite> perfectWinIconFunc;
+
+
+        internal Func<Sprite> collectionIcon;
+        internal Func<Sprite> selectionCircleIcon;
     }
 }
