@@ -332,6 +332,7 @@
 
 
     <ItemGroup>
+      <None Remove="DirResources\Suika\histIcon.xcf" />
       <None Remove="resources\BeaModelEn.yaml" />
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />

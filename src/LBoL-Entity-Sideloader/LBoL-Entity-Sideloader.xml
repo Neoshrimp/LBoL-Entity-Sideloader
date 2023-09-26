@@ -382,7 +382,7 @@
         <member name="T:LBoLEntitySideloader.Resource.PlayerImages">
             <summary>
             Container class for loading player unit images.
-            startPanelStandPic: just works? at least with Suika.png
+            Synchronous or asynchronous function can be used to load most of the sprites.
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetInRunAvatarPic(System.Func{UnityEngine.Sprite})">
@@ -390,16 +390,25 @@
             some scale of 846x688
             </summary>
         </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetDefeatedIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+            <summary>
+            448x306
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetWinIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+            <summary>
+            448x306
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetPerfectWinIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+            <summary>
+            448x306
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetCardBack(System.Func{UnityEngine.Sprite})">
             <summary>
             460x240
             </summary>
-        </member>
-        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.LoadStartPanelStandAsync">
-            <summary>
-            ////
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.ResourceLoader.LoadAudioClip(System.String,UnityEngine.AudioType,LBoLEntitySideloader.Resource.DirectorySource,System.String)">
             <summary>

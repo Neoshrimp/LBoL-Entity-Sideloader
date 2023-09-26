@@ -62,7 +62,7 @@ namespace Random_Examples
             sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
             sprites.SetDeckStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
 
-            sprites.SetDefeatedStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+            sprites.SetDefeatedStand(default, () => ResourceLoader.LoadSprite("DefeatedStand.png", dir));
             sprites.SetWinStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
 
             sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
@@ -71,9 +71,9 @@ namespace Random_Examples
 
             sprites.SetPerfectWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
             sprites.SetWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
-            sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
+            sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("DefeatedIcon.png", dir));
 
-            sprites.SetCardBack(() => ResourceLoader.LoadSprite("cardBackRaw.jpg", dir));
+            sprites.SetCardBack(() => ResourceLoader.LoadSprite("SuikaCardBack.png", dir));
 
 
             return sprites;
@@ -182,11 +182,7 @@ namespace Random_Examples
         public override CardConfig MakeConfig()
         {
             var config = new GoblinPunchCardDef().MakeConfig();
-
-
             config.Rarity = Rarity.Rare;
-
-
             return config;
         }
 

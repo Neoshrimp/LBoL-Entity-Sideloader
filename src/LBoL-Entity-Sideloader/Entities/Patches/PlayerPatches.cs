@@ -107,7 +107,7 @@ namespace LBoLEntitySideloader.Entities.Patches
                     else
                         avatarGroup.Failure = sprites.LoadDefeatedIcon();
 
-                    if(sprites.winStandFunc == null)
+                    if(sprites.winIconFunc == null)
                         avatarGroup.Normal = await sprites.LoadWinIconAsync();
                     else
                         avatarGroup.Normal = sprites.LoadWinIcon();

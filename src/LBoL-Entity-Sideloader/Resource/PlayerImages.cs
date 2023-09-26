@@ -30,11 +30,45 @@ namespace LBoLEntitySideloader.Resource
 
     /// <summary>
     /// Container class for loading player unit images.
-    /// startPanelStandPic: just works? at least with Suika.png
+    /// Synchronous or asynchronous function can be used to load most of the sprites.
     /// </summary>
     public class PlayerImages
     {
-        public readonly static Sprite emptySprite = Sprite.Create(new Texture2D(0, 0, TextureFormat.ARGB32, false), new Rect(), new Vector2(0.5f, 0.5f));
+        public PlayerImages AutoLoad(string Id, Func<string, Sprite> loadingAction, Func<string, UniTask<Sprite>> asyncAction, UseSame useSame = UseSame.StandDeckAndWinStand, string fileSuffix = ".png", string pathPrefix = "")
+        { 
+            var pi = new PlayerImages();
+
+            Func<string, string> Wrap = (string s) => $"{pathPrefix}{Id}{s}{fileSuffix}";
+
+
+            pi.SetStartPanelStand(default, () => loadingAction(Wrap(PISuffixes.stand)));
+            pi.SetDeckStand(default, () => loadingAction(Wrap((int)useSame > 0 ? PISuffixes.stand : PISuffixes.deckStand)));
+
+            pi.SetDefeatedStand(default, () => loadingAction(Wrap(PISuffixes.defeatedStand)));
+            pi.SetWinStand(default, () => loadingAction(Wrap((int)useSame > 1 ? PISuffixes.stand : PISuffixes.winStand)));
+
+            pi.SetInRunAvatarPic(() => loadingAction(Wrap(PISuffixes.avatar)));
+            pi.SetCollectionIcon(() => loadingAction(Wrap(PISuffixes.collectionIcon)));
+            pi.SetSelectionCircleIcon(() => loadingAction(Wrap(PISuffixes.selectionCircleIcon)));
+
+            pi.SetPerfectWinIcon(default, () => loadingAction(Wrap(PISuffixes.perfectWinIcon)));
+            pi.SetWinIcon(default, () => loadingAction(Wrap(PISuffixes.winIcon)));
+            pi.SetDefeatedIcon(default, () => loadingAction(Wrap(PISuffixes.defeatedIcon)));
+
+            pi.SetCardBack(() => loadingAction(Wrap(PISuffixes.cardBack)));
+
+            return pi;
+        }
+
+
+        public enum UseSame
+        {
+            None,
+            StandAndDeck,
+            StandDeckAndWinStand
+        }
+
+
 
         public void SetStartPanelStand(UniTask<Sprite> task, Func<Sprite> func = null) { startPanelStandTask = task; startPanelStandFunc = func; }
         public void SetDeckStand(UniTask<Sprite> task, Func<Sprite> func = null) { deckStandTask = task; deckStandFunc = func; }
@@ -45,8 +79,17 @@ namespace LBoLEntitySideloader.Resource
         /// some scale of 846x688
         /// </summary>
         public void SetInRunAvatarPic(Func<Sprite> func) { inRunAvatarPic = func; }
+        /// <summary>
+        /// 448x306
+        /// </summary>
         public void SetDefeatedIcon(UniTask<Sprite> task, Func<Sprite> func = null) { defeatedIconTask = task; defeatedIconFunc = func; }
+        /// <summary>
+        /// 448x306
+        /// </summary>
         public void SetWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { winIconTask = task; winIconFunc = func;  }
+        /// <summary>
+        /// 448x306
+        /// </summary>
         public void SetPerfectWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { perfectWinIconTask = task; perfectWinIconFunc = func; }
         public void SetCollectionIcon(Func<Sprite> func) { collectionIcon = func; }
         public void SetSelectionCircleIcon(Func<Sprite> func) { selectionCircleIcon = func; }
@@ -54,6 +97,7 @@ namespace LBoLEntitySideloader.Resource
         /// 460x240
         /// </summary>
         public void SetCardBack(Func<Sprite> func) { cardBack = func; }
+
 
 
         public Sprite LoadStartPanelStand()
@@ -96,10 +140,7 @@ namespace LBoLEntitySideloader.Resource
             return s == null ? emptySprite : s;
 
         }
-        /// <summary>
-        /// ////
-        /// </summary>
-        /// <returns></returns>
+
 
         public async UniTask<Sprite> LoadStartPanelStandAsync()
         {
@@ -191,5 +232,8 @@ namespace LBoLEntitySideloader.Resource
 
         internal Func<Sprite> collectionIcon;
         internal Func<Sprite> selectionCircleIcon;
+
+        public readonly static Sprite emptySprite = Sprite.Create(new Texture2D(0, 0, TextureFormat.ARGB32, false), new Rect(), new Vector2(0.5f, 0.5f));
+
     }
 }
