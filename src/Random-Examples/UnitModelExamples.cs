@@ -55,7 +55,7 @@ namespace Random_Examples
         public override ModelOption LoadModelOptions()
         {
             // pixels per unit should be pretty high
-            return new ModelOption(ResourceLoader.LoadSpriteAsync("Youmu.png", directorySource, ppu: 565, anisoLevel: 8, filterMode:FilterMode.Trilinear));
+            return new ModelOption(ResourceLoader.LoadSpriteAsync("Youmu.png", directorySource, ppu: 565));
 
         }
 

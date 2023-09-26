@@ -59,11 +59,13 @@ namespace Random_Examples
             var sprites = new PlayerImages();
 
 
-            sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
-            sprites.SetDeckStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+            //sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
 
-            sprites.SetDefeatedStand(default, () => ResourceLoader.LoadSprite("DefeatedStand.png", dir));
-            sprites.SetWinStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+            sprites.SetStartPanelStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
+            sprites.SetDeckStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
+
+            sprites.SetDefeatedStand(ResourceLoader.LoadSpriteAsync("DefeatedStand.png", dir));
+            sprites.SetWinStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
 
             sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
             sprites.SetCollectionIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
@@ -74,6 +76,25 @@ namespace Random_Examples
             sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("DefeatedIcon.png", dir));
 
             sprites.SetCardBack(() => ResourceLoader.LoadSprite("SuikaCardBack.png", dir));
+
+
+
+
+            /*            sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+                        sprites.SetDeckStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+
+                        sprites.SetDefeatedStand(default, () => ResourceLoader.LoadSprite("DefeatedStand.png", dir));
+                        sprites.SetWinStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
+
+                        sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
+                        sprites.SetCollectionIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
+                        sprites.SetSelectionCircleIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
+
+                        sprites.SetPerfectWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
+                        sprites.SetWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
+                        sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("DefeatedIcon.png", dir));
+
+                        sprites.SetCardBack(() => ResourceLoader.LoadSprite("SuikaCardBack.png", dir));*/
 
 
             return sprites;
@@ -265,7 +286,7 @@ namespace Random_Examples
         }
 
 
-        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", SuikaPlayerDef.dir, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", SuikaPlayerDef.dir, ppu: 1200);
 
 
         public override UnitModelConfig MakeConfig()

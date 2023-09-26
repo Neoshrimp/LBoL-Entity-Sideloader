@@ -144,41 +144,41 @@ namespace LBoLEntitySideloader.Resource
 
         public async UniTask<Sprite> LoadStartPanelStandAsync()
         {
-            var s = await startPanelStandTask;
+            var s = await startPanelStandTask.Value;
             return s == null ? emptySprite : s;
         }
         public async UniTask<Sprite> LoadDeckStandAsync()
         {
-            var s = await deckStandTask;
+            var s = await deckStandTask.Value;
             return s == null ? emptySprite : s;
         }
 
         public async UniTask<Sprite> LoadWinStandAsync()
         {
-            var s = await winStandTask;
+            var s = await winStandTask.Value;
             return s == null ? emptySprite : s;
         }
         public async UniTask<Sprite> LoadDefeatedStandAsync()
         {
-            var s = await defeatedStandTask;
+            var s = await defeatedStandTask.Value;
             return s == null ? emptySprite : s;
         }
 
         public async UniTask<Sprite> LoadDefeatedIconAsync()
         {
-            var s = await defeatedIconTask;
+            var s = await defeatedIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
         public async UniTask<Sprite> LoadWinIconAsync()
         {
-            var s = await winIconTask;
+            var s = await winIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
         public async UniTask<Sprite> LoadPerfectWinIconAsync()
         {
-            var s = await perfectWinIconTask;
+            var s = await perfectWinIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
@@ -205,28 +205,28 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        internal UniTask<Sprite> startPanelStandTask;
+        internal UniTask<Sprite>? startPanelStandTask;
         internal Func<Sprite> startPanelStandFunc;
 
 
-        internal UniTask<Sprite> deckStandTask;
+        internal UniTask<Sprite>? deckStandTask;
         internal Func<Sprite> deckStandFunc;
 
 
-        internal UniTask<Sprite> winStandTask;
+        internal UniTask<Sprite>? winStandTask;
         internal Func<Sprite> winStandFunc;
-        internal UniTask<Sprite> defeatedStandTask;
+        internal UniTask<Sprite>? defeatedStandTask;
         internal Func<Sprite> defeatedStandFunc;
 
         internal Func<Sprite> inRunAvatarPic;
         internal Func<Sprite> cardBack;
 
 
-        internal UniTask<Sprite> defeatedIconTask;
+        internal UniTask<Sprite>? defeatedIconTask;
         internal Func<Sprite> defeatedIconFunc;
-        internal UniTask<Sprite> winIconTask;
+        internal UniTask<Sprite>? winIconTask;
         internal Func<Sprite> winIconFunc;
-        internal UniTask<Sprite> perfectWinIconTask;
+        internal UniTask<Sprite>? perfectWinIconTask;
         internal Func<Sprite> perfectWinIconFunc;
 
 

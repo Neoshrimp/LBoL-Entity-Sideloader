@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Extensions.Unity.ImageLoader;
 using HarmonyLib;
 using LBoL.ConfigData;
 using LBoL.EntityLib.Exhibits.Shining;
@@ -64,6 +65,11 @@ namespace LBoLEntitySideloader
 
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
 
+            ImageLoader.Init();
+
+            ImageLoader.settings.useDiskCache = false;
+            ImageLoader.settings.debugLevel = DebugLevel.Error;
+
 
             harmony.PatchAll();
 
@@ -118,6 +124,8 @@ namespace LBoLEntitySideloader
 
 
             UniqueTracker.DestroySelf();
+            ImageLoader.ClearCache();
+
             // doesn't really help
             GC.Collect();
             GC.WaitForPendingFinalizers();

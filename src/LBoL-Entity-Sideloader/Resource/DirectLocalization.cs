@@ -33,8 +33,6 @@ namespace LBoLEntitySideloader.Resource
 
         public Dictionary<string, Dictionary<string, object>> WrapTermDic(IdContainer Id)
         {
-
-
             var tDic = new Dictionary<string, Dictionary<string, object>>();
 
             if (termDic.TryGetValue(Localization.CurrentLocale, out var dic))

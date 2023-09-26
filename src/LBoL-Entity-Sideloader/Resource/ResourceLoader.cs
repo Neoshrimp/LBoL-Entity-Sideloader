@@ -16,6 +16,8 @@ using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
 using System.Runtime.InteropServices;
 using UnityEngine.PlayerLoop;
+using Extensions.Unity.ImageLoader;
+using UnityEngine.UI;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -71,7 +73,7 @@ namespace LBoLEntitySideloader.Resource
                 anisoLevel = anisoLevel,
                 filterMode = filterMode
             };
-            
+
 
             // can't be used on background threads
             spriteTexture.LoadImage(memoryStream.ToArray());
@@ -87,7 +89,7 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
-        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 1, int anisoLevel = 1, FilterMode filterMode = FilterMode.Point, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
+        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 100, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
         {
 
 
@@ -97,37 +99,8 @@ namespace LBoLEntitySideloader.Resource
             else
                 path = name;
 
-
-            Log.LogDevExtra()?.LogInfo($"Loading sprite from {path}");
-            using var uwr = UnityWebRequestTexture.GetTexture(protocol + path);
-
-            uwr.timeout = 20;
-
-            await uwr.SendWebRequest();
-
-            if (string.IsNullOrEmpty(uwr.error))
-            {
-                var spriteTexture = await UniTask.RunOnThreadPool(() => DownloadHandlerTexture.GetContent(uwr));
-
-                spriteTexture.anisoLevel = anisoLevel;
-                spriteTexture.filterMode = filterMode;
-
-
-                if (rect == null)
-                    rect = new Rect(0, 0, spriteTexture.width, spriteTexture.height);
-
-                if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
-                var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
-
-                //spriteTexture.Apply(true, true);
-                return sprite;
-
-            }
-            else
-            {
-                log.LogError(uwr.error);
-                return null;
-            }
+            // ImageLoader used: https://github.com/tarunkrishnat0/Unity-ImageLoader
+            return await ImageLoader.LoadSpriteMemoryOptimized(protocol + path, ppu, spriteMeshType, pivot, rect, ignoreImageNotFoundError: false);
 
         }
 
@@ -199,7 +172,7 @@ namespace LBoLEntitySideloader.Resource
             if (string.IsNullOrEmpty(uwr.error))
             {
                 // DownloadHandlerAudioClip.GetContent is slow and needs to be awaited
-                var clip = await UniTask.RunOnThreadPool<AudioClip>(() => DownloadHandlerAudioClip.GetContent(uwr));
+                var clip = await UniTask.RunOnThreadPool(() => DownloadHandlerAudioClip.GetContent(uwr));
                 return clip;
             }
             else
