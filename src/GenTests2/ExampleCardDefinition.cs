@@ -49,9 +49,9 @@ namespace GenTests2
 
                 exhibitGen.QueueGen(Id: nameof(Yaoshi), overwriteVanilla: true, makeConfig: () =>
                 {
-
+                    var index = ExhibitConfig.FromId(nameof(Yaoshi)).Index;
                     var exhibitConfig = new ExhibitConfig(
-                        Index: 0,
+                        Index: index,
                         Id: "",
                         Order: 10,
                         IsDebug: false,

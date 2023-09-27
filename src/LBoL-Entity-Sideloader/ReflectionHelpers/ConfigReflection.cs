@@ -64,7 +64,7 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             {
                 // kind of an index
                 typeof(PlayerUnitConfig),
-                AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.ShowOrder)))
+                AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.Order)))
             },
         };
 

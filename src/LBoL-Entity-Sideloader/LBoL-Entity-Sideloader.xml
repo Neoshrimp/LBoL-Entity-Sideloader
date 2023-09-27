@@ -149,8 +149,8 @@
         <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.DefaultConfig">
             <summary> 
             Id : 
-            ShowOrder : show order in game start panel (defacto index)
-            Order : ordering priority for character's cards in collection // 2do make unique like index?
+            ShowOrder : show order in game start panel 
+            Order : ordering priority for character's cards in collection (defacto index)
             UnlockLevel : should be 0 to make character available right away
             ModleName : always ""
             NarrativeColor : color hex code
@@ -379,33 +379,66 @@
             Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
             </summary>
         </member>
+        <member name="T:LBoLEntitySideloader.Resource.PISuffixes">
+            <summary>
+            Constants used as suffixes for PlayerImages.AutoLoad method
+            </summary>
+        </member>
         <member name="T:LBoLEntitySideloader.Resource.PlayerImages">
             <summary>
             Container class for loading player unit images.
             Synchronous or asynchronous function can be used to load most of the sprites.
+            Asynchronous methods are prioritized if both methods are provided.
+            By far most efficient way of loading Sprites is by using AssetBundles. 
+            However, for mod development it might more convenient to load raw image files.
+            Therefore, packaging AssetBundles can be postponed to the final stage of development.
+            Unity Editor 2021.3.28 and https://github.com/Unity-Technologies/AssetBundles-Browser are required to package AssetBundles
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.AutoLoad(System.String,System.Func{System.String,UnityEngine.Sprite},System.Func{System.String,Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite}},LBoLEntitySideloader.Resource.PlayerImages.UseSame,System.String,System.String)">
+            <summary>
+            Quickly find and init PlayerImages if image file naming convention is followed.
+            Convention is defined in PISuffixes constants.
+            Suffixes are wrapped with provided arguments like this: {pathPrefix}{Id}{s}{fileSuffix} where 's' is the relevant suffix.
+            </summary>
+            <param name="Id"></param>
+            <param name="loadingAction"></param>
+            <param name="asyncAction"></param>
+            <param name="useSame"></param>
+            <param name="fileSuffix"></param>
+            <param name="pathPrefix"></param>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetInRunAvatarPic(System.Func{UnityEngine.Sprite})">
             <summary>
             some scale of 846x688
             </summary>
         </member>
-        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetDefeatedIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetDefeatedIcon(System.Nullable{Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite}},System.Func{UnityEngine.Sprite})">
             <summary>
-            448x306
+            448x306. top and bottom slightly cropped
             </summary>
         </member>
-        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetWinIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetWinIcon(System.Nullable{Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite}},System.Func{UnityEngine.Sprite})">
             <summary>
-            448x306
+            448x306. top and bottom slightly cropped
             </summary>
         </member>
-        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetPerfectWinIcon(Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite},System.Func{UnityEngine.Sprite})">
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetPerfectWinIcon(System.Nullable{Cysharp.Threading.Tasks.UniTask{UnityEngine.Sprite}},System.Func{UnityEngine.Sprite})">
             <summary>
-            448x306
+            448x306. top and bottom slightly cropped
             </summary>
         </member>
-        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetCardBack(System.Func{UnityEngine.Sprite})">
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetCollectionIcon(System.Func{UnityEngine.Sprite})">
+            <summary>
+            970x236
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetSelectionCircleIcon(System.Func{UnityEngine.Sprite})">
+            <summary>
+            320x320 circle
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PlayerImages.SetCardImprint(System.Func{UnityEngine.Sprite})">
             <summary>
             460x240
             </summary>
@@ -439,6 +472,17 @@
             <summary>
             definition type => attribute
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.TemplateGen.GenHelper.WrapFunc``2(System.Func{``0,``1},``0)">
+            <summary>
+            Captures local variables for closure function.
+            More info: https://unicorn-dev.medium.com/how-to-capture-a-variable-in-c-and-not-to-shoot-yourself-in-the-foot-d169aa161aa6
+            </summary>
+            <typeparam name="TParam"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="func"></param>
+            <param name="locals"></param>
+            <returns></returns>
         </member>
         <member name="F:LBoLEntitySideloader.UniqueTracker.configIds">
             <summary>
@@ -568,7 +612,7 @@
             <param name="ignoreImageNotFoundError">Ignore error if the image was not found by specified url</param>
             <returns>Returns sprite asynchronously </returns>
         </member>
-        <member name="M:Extensions.Unity.ImageLoader.ImageLoader.LoadSpriteMemoryOptimized(System.String,System.Int32,UnityEngine.SpriteMeshType,System.Nullable{UnityEngine.Vector2},System.Nullable{UnityEngine.Rect},UnityEngine.TextureFormat,System.Boolean)">
+        <member name="M:Extensions.Unity.ImageLoader.ImageLoader.LoadSpriteMemoryOptimized(System.String,System.Int32,UnityEngine.Experimental.Rendering.GraphicsFormat,System.Int32,UnityEngine.FilterMode,UnityEngine.SpriteMeshType,System.Nullable{UnityEngine.Vector2},System.Nullable{UnityEngine.Rect},UnityEngine.TextureFormat,System.Boolean)">
             <summary>
             Load image from web or local path and return it as Sprite but with possible memory optimization by using compression when generating texture and option to enable mipmaps.
             </summary>

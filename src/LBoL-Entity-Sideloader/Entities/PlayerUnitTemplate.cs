@@ -95,8 +95,8 @@ namespace LBoLEntitySideloader.Entities
 
         /// <summary> 
         /// Id : 
-        /// ShowOrder : show order in game start panel (defacto index)
-        /// Order : ordering priority for character's cards in collection // 2do make unique like index?
+        /// ShowOrder : show order in game start panel 
+        /// Order : ordering priority for character's cards in collection (defacto index)
         /// UnlockLevel : should be 0 to make character available right away
         /// ModleName : always ""
         /// NarrativeColor : color hex code
@@ -156,7 +156,7 @@ namespace LBoLEntitySideloader.Entities
             EntityManager.HandleOverwriteWrap(() => CardWidget._ownerSpriteTable.AlwaysAdd(
                 UniqueId, resource.LoadCardBack()),
                 this,
-                PlayerSpriteLoader.OverwriteName(PISuffixes.cardBack),
+                PlayerSpriteLoader.OverwriteName(PISuffixes.cardImprint),
                 this.user
             );
             

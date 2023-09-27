@@ -34,7 +34,10 @@ namespace LBoLEntitySideloader
                 {
                     _instance = new UniqueTracker();
                     _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
-                    _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(5);
+                    _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(6);
+                    // 2do related to collection panel
+                    _instance.indexTable.Sequence(typeof(ExhibitConfig)).SetCounter(800);
+
 
                 }
                 return _instance;
@@ -42,6 +45,7 @@ namespace LBoLEntitySideloader
         }
 
         internal static void DestroySelf() { _instance = null; }
+
 
 
         /// <summary>

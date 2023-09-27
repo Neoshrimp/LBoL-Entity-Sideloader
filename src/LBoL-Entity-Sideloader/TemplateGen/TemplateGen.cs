@@ -21,8 +21,6 @@ namespace LBoLEntitySideloader.TemplateGen
 
     public abstract class TemplateGen<ED> where ED : EntityDefinition
     {
-
-
         public readonly static Assembly sideLoaderAss = typeof(BepinexPlugin).Assembly;
 
         protected static Sequence dupNameSeq = new Sequence();
@@ -54,7 +52,6 @@ namespace LBoLEntitySideloader.TemplateGen
         private Dictionary<string, Type> name2DefTypeCache = new Dictionary<string, Type>();
 
 
-        // 2do add codeDom lib
 
         public TemplateGen(Assembly originAssembly = null)
         {
@@ -157,8 +154,8 @@ namespace LBoLEntitySideloader.TemplateGen
             if (func == null)
                 func = () => default(R);
 
-            // 2do same delegate ref bug
-            UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, (Delegate)func.Clone());
+            
+            UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
 
 
             newMethod.Statements.Add(new CodeSnippetExpression(@$"

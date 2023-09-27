@@ -7,6 +7,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Resource
 {
+    // 2do test fallback loc
     public class DirectLocalization : LocalizationOption
     {
         public bool mergeTerms;

@@ -128,6 +128,11 @@
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="SpriteTemplates\" />
+  </ItemGroup>
     
     
 	

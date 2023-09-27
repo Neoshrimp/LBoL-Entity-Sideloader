@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using UnityEngine.Profiling;
 using LBoLEntitySideloader;
+using UnityEngine.Experimental.Rendering;
 
 
 
@@ -195,7 +196,7 @@ namespace Extensions.Unity.ImageLoader
         /// <param name="ignoreImageNotFoundError">Ignore error if the image was not found by specified url</param>
         /// <returns>Returns sprite asynchronously </returns>
         /// 
-        internal static async UniTask<Sprite> LoadSpriteMemoryOptimized(string url, int ppu = 100, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Vector2? pivot = null, Rect? rect = null, TextureFormat textureFormat = TextureFormat.ARGB32, bool ignoreImageNotFoundError = false)
+        internal static async UniTask<Sprite> LoadSpriteMemoryOptimized(string url, int ppu = 100, GraphicsFormat finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB, int anisoLevel = 1, FilterMode filterMode = FilterMode.Bilinear, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Vector2? pivot = null, Rect? rect = null, TextureFormat textureFormat = TextureFormat.ARGB32, bool ignoreImageNotFoundError = false)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -292,7 +293,7 @@ namespace Extensions.Unity.ImageLoader
                 Profiler.BeginSample("LoadSpriteMemoryOptimized " + name);
 
                 //Debug.Log($"LoadSpriteMemoryOptimized: before name={name}, size={Utils.ToSize(request.downloadHandler.data.Length)}");
-                var compressedTexture = Utils.CreateTexWithMipmaps(request.downloadHandler.data, settings.generateMipMaps, name);
+                var compressedTexture = Utils.CreateTexWithMipmaps(request.downloadHandler.data, settings.generateMipMaps, finalGraphicsFormat, anisoLevel, filterMode, name);
                 Log.LogDevExtra()?.LogInfo($"LoadSpriteMemoryOptimized: name={name}, size={Utils.ToSize(compressedTexture.GetRawTextureData().Length)}, mipmap={compressedTexture.mipmapCount}, format={compressedTexture.format}, graphicsFormat={compressedTexture.graphicsFormat}, size={compressedTexture.width}x{compressedTexture.height}");
                 var sprite = ToSprite(compressedTexture);
 

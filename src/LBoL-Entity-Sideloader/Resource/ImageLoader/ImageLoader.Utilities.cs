@@ -85,9 +85,8 @@ namespace Extensions.Unity.ImageLoader
             return loadedTexture;
         }
 
-        public static Texture2D CreateTexWithMipmaps(byte[] data, bool shouldGenerateMipMaps = true, string name = "DynamicTex")
+        public static Texture2D CreateTexWithMipmaps(byte[] data, bool shouldGenerateMipMaps = true, GraphicsFormat finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB, int anisoLevel = 1, FilterMode filterMode = FilterMode.Bilinear, string name = "DynamicTex")
         {
-            GraphicsFormat finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB;
 //#if UNITY_ANDROID
 //            finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB;
 //            //TextureFormat textureFormat = TextureFormat.ETC2_RGB;
@@ -105,7 +104,11 @@ namespace Extensions.Unity.ImageLoader
             var loadedTexture = new Texture2D(4, 4, finalGraphicsFormat, flags) { 
                 name = name+"-"+shouldGenerateMipMaps,
                 wrapMode = TextureWrapMode.Clamp,
+                anisoLevel = 1,
+                filterMode = FilterMode.Bilinear
             };
+
+
             //var loadedTexture = new Texture2D(4, 4, textureFormat, true); // Generates mipmaps without compression
             // loadedTexture.wrapMode = TextureWrapMode.Clamp;
 

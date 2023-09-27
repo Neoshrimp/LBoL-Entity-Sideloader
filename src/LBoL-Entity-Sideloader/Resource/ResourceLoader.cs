@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.PlayerLoop;
 using Extensions.Unity.ImageLoader;
 using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -49,11 +50,11 @@ namespace LBoLEntitySideloader.Resource
 
         public static Sprite LoadSprite(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
         {
-            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, rect, pivot);
+            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, false, rect, pivot);
         }
 
 
-        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, Rect? rect = null, Vector2? pivot = null)
+        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, bool generateMipMaps = false, Rect ? rect = null, Vector2? pivot = null)
         {
             using Stream resource = source.Load(name);
 
@@ -68,7 +69,10 @@ namespace LBoLEntitySideloader.Resource
                 memoryStream.Write(buffer, 0, count);
 
             //var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, true)
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            var texGenFlags = TextureCreationFlags.None;
+            if (generateMipMaps)
+                texGenFlags |= TextureCreationFlags.MipChain;
+            var spriteTexture = new Texture2D(0, 0, GraphicsFormat.R8G8B8A8_SRGB, texGenFlags)
             {
                 anisoLevel = anisoLevel,
                 filterMode = filterMode
@@ -89,7 +93,7 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
-        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 100, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
+        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 100, GraphicsFormat finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB, int anisoLevel = 1, FilterMode filterMode = FilterMode.Bilinear, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
         {
 
 
@@ -100,7 +104,7 @@ namespace LBoLEntitySideloader.Resource
                 path = name;
 
             // ImageLoader used: https://github.com/tarunkrishnat0/Unity-ImageLoader
-            return await ImageLoader.LoadSpriteMemoryOptimized(protocol + path, ppu, spriteMeshType, pivot, rect, ignoreImageNotFoundError: false);
+            return await ImageLoader.LoadSpriteMemoryOptimized(protocol + path, ppu, finalGraphicsFormat, anisoLevel, filterMode, spriteMeshType, pivot, rect, ignoreImageNotFoundError: false);
 
         }
 

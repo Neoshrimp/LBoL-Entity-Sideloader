@@ -1,12 +1,16 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using UnityEngine;
-using static LBoL.Core.CrossPlatformHelper;
+
 
 namespace LBoLEntitySideloader.Resource
 {
+    /// <summary>
+    /// Constants used as suffixes for PlayerImages.AutoLoad method
+    /// </summary>
     public static class PISuffixes
     {
         public const string stand = "Stand";
@@ -23,7 +27,7 @@ namespace LBoLEntitySideloader.Resource
         public const string collectionIcon = "CollectionIcon";
         public const string selectionCircleIcon = "SelectionCircleIcon";
 
-        public const string cardBack = "CardBack";
+        public const string cardImprint = "CardImprint";
 
 
     }
@@ -31,33 +35,50 @@ namespace LBoLEntitySideloader.Resource
     /// <summary>
     /// Container class for loading player unit images.
     /// Synchronous or asynchronous function can be used to load most of the sprites.
+    /// Asynchronous methods are prioritized if both methods are provided.
+    /// By far most efficient way of loading Sprites is by using AssetBundles. 
+    /// However, for mod development it might more convenient to load raw image files.
+    /// Therefore, packaging AssetBundles can be postponed to the final stage of development.
+    /// Unity Editor 2021.3.28 and https://github.com/Unity-Technologies/AssetBundles-Browser are required to package AssetBundles
     /// </summary>
     public class PlayerImages
     {
-        public PlayerImages AutoLoad(string Id, Func<string, Sprite> loadingAction, Func<string, UniTask<Sprite>> asyncAction, UseSame useSame = UseSame.StandDeckAndWinStand, string fileSuffix = ".png", string pathPrefix = "")
+        /// <summary>
+        /// Quickly find and init PlayerImages if image file naming convention is followed.
+        /// Convention is defined in PISuffixes constants.
+        /// Suffixes are wrapped with provided arguments like this: {pathPrefix}{Id}{s}{fileSuffix} where 's' is the relevant suffix.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="loadingAction"></param>
+        /// <param name="asyncAction"></param>
+        /// <param name="useSame"></param>
+        /// <param name="fileSuffix"></param>
+        /// <param name="pathPrefix"></param>
+        public void AutoLoad(string Id, Func<string, Sprite> loadingAction, [MaybeNull] Func<string, UniTask<Sprite>> asyncAction, UseSame useSame = UseSame.StandDeckAndWinStand, string fileSuffix = ".png", string pathPrefix = "")
         { 
-            var pi = new PlayerImages();
+            var pi = this;
 
             Func<string, string> Wrap = (string s) => $"{pathPrefix}{Id}{s}{fileSuffix}";
 
+            pi.SetStartPanelStand(asyncAction?.Invoke(Wrap(PISuffixes.stand)), () => loadingAction?.Invoke(Wrap(PISuffixes.stand)));
 
-            pi.SetStartPanelStand(default, () => loadingAction(Wrap(PISuffixes.stand)));
-            pi.SetDeckStand(default, () => loadingAction(Wrap((int)useSame > 0 ? PISuffixes.stand : PISuffixes.deckStand)));
+            string deckStand = Wrap((int)useSame > 0 ? PISuffixes.stand : PISuffixes.deckStand);
+            pi.SetDeckStand(asyncAction?.Invoke(deckStand), () => loadingAction?.Invoke(deckStand));
+            pi.SetDefeatedStand(asyncAction?.Invoke(Wrap(PISuffixes.defeatedStand)), () => loadingAction?.Invoke(Wrap(PISuffixes.defeatedStand)));
 
-            pi.SetDefeatedStand(default, () => loadingAction(Wrap(PISuffixes.defeatedStand)));
-            pi.SetWinStand(default, () => loadingAction(Wrap((int)useSame > 1 ? PISuffixes.stand : PISuffixes.winStand)));
+            string winStand = Wrap((int)useSame > 1 ? PISuffixes.stand : PISuffixes.winStand);
+            pi.SetWinStand(asyncAction?.Invoke(winStand), () => loadingAction?.Invoke(winStand));
 
-            pi.SetInRunAvatarPic(() => loadingAction(Wrap(PISuffixes.avatar)));
-            pi.SetCollectionIcon(() => loadingAction(Wrap(PISuffixes.collectionIcon)));
-            pi.SetSelectionCircleIcon(() => loadingAction(Wrap(PISuffixes.selectionCircleIcon)));
+            pi.SetInRunAvatarPic(() => loadingAction?.Invoke(Wrap(PISuffixes.avatar)));
+            pi.SetCollectionIcon(() => loadingAction?.Invoke(Wrap(PISuffixes.collectionIcon)));
+            pi.SetSelectionCircleIcon(() => loadingAction?.Invoke(Wrap(PISuffixes.selectionCircleIcon)));
 
-            pi.SetPerfectWinIcon(default, () => loadingAction(Wrap(PISuffixes.perfectWinIcon)));
-            pi.SetWinIcon(default, () => loadingAction(Wrap(PISuffixes.winIcon)));
-            pi.SetDefeatedIcon(default, () => loadingAction(Wrap(PISuffixes.defeatedIcon)));
+            pi.SetPerfectWinIcon(asyncAction?.Invoke(Wrap(PISuffixes.perfectWinIcon)), () => loadingAction?.Invoke(Wrap(PISuffixes.perfectWinIcon)));
+            pi.SetWinIcon(asyncAction?.Invoke(Wrap(PISuffixes.winIcon)), () => loadingAction?.Invoke(Wrap(PISuffixes.winIcon)));
+            pi.SetDefeatedIcon(asyncAction?.Invoke(Wrap(PISuffixes.defeatedIcon)), () => loadingAction?.Invoke(Wrap(PISuffixes.defeatedIcon)));
 
-            pi.SetCardBack(() => loadingAction(Wrap(PISuffixes.cardBack)));
+            pi.SetCardImprint(() => loadingAction?.Invoke(Wrap(PISuffixes.cardImprint)));
 
-            return pi;
         }
 
 
@@ -70,71 +91,76 @@ namespace LBoLEntitySideloader.Resource
 
 
 
-        public void SetStartPanelStand(UniTask<Sprite> task, Func<Sprite> func = null) { startPanelStandTask = task; startPanelStandFunc = func; }
-        public void SetDeckStand(UniTask<Sprite> task, Func<Sprite> func = null) { deckStandTask = task; deckStandFunc = func; }
-        public void SetWinStand(UniTask<Sprite> task, Func<Sprite> func = null) { winStandTask = task; winStandFunc = func; }
-        public void SetDefeatedStand(UniTask<Sprite> task, Func<Sprite> func = null) { defeatedStandTask = task; defeatedStandFunc = func; }
+        public void SetStartPanelStand(UniTask<Sprite>? task, Func<Sprite> func = null) { startPanelStandTask = task; startPanelStandFunc = func; }
+        public void SetDeckStand(UniTask<Sprite>? task, Func<Sprite> func = null) { deckStandTask = task; deckStandFunc = func; }
+        public void SetWinStand(UniTask<Sprite>? task, Func<Sprite> func = null) { winStandTask = task; winStandFunc = func; }
+        public void SetDefeatedStand(UniTask<Sprite>? task, Func<Sprite> func = null) { defeatedStandTask = task; defeatedStandFunc = func; }
 
         /// <summary>
         /// some scale of 846x688
         /// </summary>
         public void SetInRunAvatarPic(Func<Sprite> func) { inRunAvatarPic = func; }
         /// <summary>
-        /// 448x306
+        /// 448x306. top and bottom slightly cropped
         /// </summary>
-        public void SetDefeatedIcon(UniTask<Sprite> task, Func<Sprite> func = null) { defeatedIconTask = task; defeatedIconFunc = func; }
+        public void SetDefeatedIcon(UniTask<Sprite>? task, Func<Sprite> func = null) { defeatedIconTask = task; defeatedIconFunc = func; }
         /// <summary>
-        /// 448x306
+        /// 448x306. top and bottom slightly cropped
         /// </summary>
-        public void SetWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { winIconTask = task; winIconFunc = func;  }
+        public void SetWinIcon(UniTask<Sprite>? task, Func<Sprite> func = null) { winIconTask = task; winIconFunc = func;  }
         /// <summary>
-        /// 448x306
+        /// 448x306. top and bottom slightly cropped
         /// </summary>
-        public void SetPerfectWinIcon(UniTask<Sprite> task, Func<Sprite> func = null) { perfectWinIconTask = task; perfectWinIconFunc = func; }
+        public void SetPerfectWinIcon(UniTask<Sprite>? task, Func<Sprite> func = null) { perfectWinIconTask = task; perfectWinIconFunc = func; }
+        /// <summary>
+        /// 970x236
+        /// </summary>
         public void SetCollectionIcon(Func<Sprite> func) { collectionIcon = func; }
+        /// <summary>
+        /// 320x320 circle
+        /// </summary>
         public void SetSelectionCircleIcon(Func<Sprite> func) { selectionCircleIcon = func; }
         /// <summary>
         /// 460x240
         /// </summary>
-        public void SetCardBack(Func<Sprite> func) { cardBack = func; }
+        public void SetCardImprint(Func<Sprite> func) { cardImprint = func; }
 
 
 
-        public Sprite LoadStartPanelStand()
+        internal Sprite LoadStartPanelStand()
         {
             var s = startPanelStandFunc?.Invoke();
             return s == null ? emptySprite : s;
         }
-        public Sprite LoadDeckStand()
+        internal Sprite LoadDeckStand()
         {
             var s = deckStandFunc?.Invoke();
             return s == null ? emptySprite : s;
         }
 
-        public Sprite LoadWinStand()
+        internal Sprite LoadWinStand()
         {
             var s = winStandFunc?.Invoke();
             return s == null ? emptySprite : s;
         }
-        public Sprite LoadDefeatedStand()
+        internal Sprite LoadDefeatedStand()
         {
             var s = defeatedStandFunc?.Invoke();
             return s == null ? emptySprite : s;
         }
 
-        public Sprite LoadDefeatedIcon()
+        internal Sprite LoadDefeatedIcon()
         {
             var s = defeatedIconFunc?.Invoke();
             return s == null ? emptySprite : s;
-
         }
-        public Sprite LoadWinIcon()
+        internal Sprite LoadWinIcon()
         {
             var s = winIconFunc?.Invoke();
             return s == null ? emptySprite : s;
 
         }
-        public Sprite LoadPerfectWinIcon()
+        internal Sprite LoadPerfectWinIcon()
         {
             var s = perfectWinIconFunc?.Invoke();
             return s == null ? emptySprite : s;
@@ -142,65 +168,80 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        public async UniTask<Sprite> LoadStartPanelStandAsync()
+        internal async UniTask<Sprite> LoadStartPanelStandAsync()
         {
+            if (startPanelStandTask == null)
+                return null;
             var s = await startPanelStandTask.Value;
             return s == null ? emptySprite : s;
         }
-        public async UniTask<Sprite> LoadDeckStandAsync()
+        internal async UniTask<Sprite> LoadDeckStandAsync()
         {
+            if (deckStandTask == null)
+                return null;
             var s = await deckStandTask.Value;
             return s == null ? emptySprite : s;
         }
 
-        public async UniTask<Sprite> LoadWinStandAsync()
+        internal async UniTask<Sprite> LoadWinStandAsync()
         {
+            if (winStandTask == null)
+                return null;
             var s = await winStandTask.Value;
             return s == null ? emptySprite : s;
         }
-        public async UniTask<Sprite> LoadDefeatedStandAsync()
+        internal async UniTask<Sprite> LoadDefeatedStandAsync()
         {
+            if (defeatedStandTask == null)
+                return null;
             var s = await defeatedStandTask.Value;
             return s == null ? emptySprite : s;
         }
 
-        public async UniTask<Sprite> LoadDefeatedIconAsync()
+        internal async UniTask<Sprite> LoadDefeatedIconAsync()
         {
+            if (defeatedIconTask == null)
+                return null;
             var s = await defeatedIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
-        public async UniTask<Sprite> LoadWinIconAsync()
+        internal async UniTask<Sprite> LoadWinIconAsync()
         {
+            if (winIconTask == null)
+                return null;
             var s = await winIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
-        public async UniTask<Sprite> LoadPerfectWinIconAsync()
+        internal async UniTask<Sprite> LoadPerfectWinIconAsync()
         {
+            if (perfectWinIconTask == null)
+                return null;
             var s = await perfectWinIconTask.Value;
             return s == null ? emptySprite : s;
 
         }
 
-        public Sprite LoadInRunAvatarPic()
+        internal Sprite LoadInRunAvatarPic()
         {
             var s = inRunAvatarPic?.Invoke();
             return s == null ? emptySprite : s;
         }
-        public Sprite LoadCollectionIcon()
+        internal Sprite LoadCollectionIcon()
         {
             var s = collectionIcon?.Invoke();
             return s == null ? emptySprite : s;
         }
-        public Sprite LoadSelectionCircleIcon()
+        internal Sprite LoadSelectionCircleIcon()
         {
             var s = selectionCircleIcon?.Invoke();
-            return s == null ? emptySprite : s;
+            // circle icon has default sprite
+            return s == null ? null : s;
         }
-        public Sprite LoadCardBack()
+        internal Sprite LoadCardBack()
         {
-            var s = cardBack?.Invoke();
+            var s = cardImprint?.Invoke();
             return s == null ? emptySprite : s;
         }
 
@@ -219,7 +260,7 @@ namespace LBoLEntitySideloader.Resource
         internal Func<Sprite> defeatedStandFunc;
 
         internal Func<Sprite> inRunAvatarPic;
-        internal Func<Sprite> cardBack;
+        internal Func<Sprite> cardImprint;
 
 
         internal UniTask<Sprite>? defeatedIconTask;

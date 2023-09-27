@@ -6,6 +6,16 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.0` added template for new playable characters and helpers methods. 
+
+Added methods for manipulating Stage pools and Stage list itself (in `StageTemplate`). 
+
+Routed async sprite loading through ImageLoader library.  
+
+Added cropping templates for various images.
+
+ResourceLoader can load AssetBundels now.
+
 `0.8.4` better logging. Set ExtraLogging to false to avoid logging individual entities. Added documentation xml.
 
 `0.8.3` enable exhibit dupes (thanks to IntoxicatedKid).

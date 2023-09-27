@@ -58,43 +58,7 @@ namespace Random_Examples
         {
             var sprites = new PlayerImages();
 
-
-            //sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
-
-            sprites.SetStartPanelStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
-            sprites.SetDeckStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
-
-            sprites.SetDefeatedStand(ResourceLoader.LoadSpriteAsync("DefeatedStand.png", dir));
-            sprites.SetWinStand(ResourceLoader.LoadSpriteAsync("Suika.png", dir));
-
-            sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-            sprites.SetCollectionIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-            sprites.SetSelectionCircleIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-
-            sprites.SetPerfectWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
-            sprites.SetWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
-            sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("DefeatedIcon.png", dir));
-
-            sprites.SetCardBack(() => ResourceLoader.LoadSprite("SuikaCardBack.png", dir));
-
-
-
-
-            /*            sprites.SetStartPanelStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
-                        sprites.SetDeckStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
-
-                        sprites.SetDefeatedStand(default, () => ResourceLoader.LoadSprite("DefeatedStand.png", dir));
-                        sprites.SetWinStand(default, () => suikaAB.LoadAsset<Sprite>("Suika"));
-
-                        sprites.SetInRunAvatarPic(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-                        sprites.SetCollectionIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-                        sprites.SetSelectionCircleIcon(() => ResourceLoader.LoadSprite("SuikaAvatar.png", dir));
-
-                        sprites.SetPerfectWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
-                        sprites.SetWinIcon(ResourceLoader.LoadSpriteAsync("SuikaAvatar.png", dir));
-                        sprites.SetDefeatedIcon(ResourceLoader.LoadSpriteAsync("DefeatedIcon.png", dir));
-
-                        sprites.SetCardBack(() => ResourceLoader.LoadSprite("SuikaCardBack.png", dir));*/
+            sprites.AutoLoad("", (s) => ResourceLoader.LoadSprite(s, dir), (s) => ResourceLoader.LoadSpriteAsync(s, dir));
 
 
             return sprites;
@@ -109,7 +73,7 @@ namespace Random_Examples
 
             var config = new PlayerUnitConfig(
             Id: "",
-            ShowOrder: 0,
+            ShowOrder: 6,
             Order: 0,
             UnlockLevel: 0,
             ModleName: "",
@@ -204,6 +168,8 @@ namespace Random_Examples
         {
             var config = new GoblinPunchCardDef().MakeConfig();
             config.Rarity = Rarity.Rare;
+            config.Damage = 14;
+            config.UpgradedDamage = 17;
             return config;
         }
 
@@ -218,50 +184,74 @@ namespace Random_Examples
     }
 
 
-    /*    public sealed class BeaPlayerDef : PlayerUnitTemplate
+    public sealed class BeaPlayerDef : PlayerUnitTemplate
+    {
+
+
+        public override IdContainer GetId() => nameof(Bea);
+
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+        public override PlayerImages LoadPlayerImages()
         {
+            var sprites = new PlayerImages();
 
+            // 2do for some reason this method works better for Bea..
+            var asyncLoading = ResourceLoader.LoadSpriteAsync("bea.png", directorySource);
 
-            public override IdContainer GetId() => nameof(Bea);
+            sprites.SetStartPanelStand(asyncLoading);
+            sprites.SetWinStand(asyncLoading);
+            sprites.SetDeckStand(asyncLoading);
 
-            public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
-
-            public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("bea.png", directorySource, ppu: 800, anisoLevel: 16, filterMode: FilterMode.Trilinear);
-
-
-            public override PlayerUnitConfig MakeConfig()
-            {
-                var config = PlayerUnitConfig.FromId("Reimu").Copy();
-                return config;
-            }
-
-            [EntityLogic(typeof(BeaPlayerDef))]
-            public sealed class Bea : PlayerUnit { }
-
+            return sprites;
         }
 
 
-
-        public sealed class KeikiPlayerDef : PlayerUnitTemplate
+        public override PlayerUnitConfig MakeConfig()
         {
-            public override IdContainer GetId() => nameof(Keiki);
+            var config = PlayerUnitConfig.FromId("Reimu").Copy();
+            return config;
+        }
 
-            public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+        [EntityLogic(typeof(BeaPlayerDef))]
+        public sealed class Bea : PlayerUnit { }
+
+    }
 
 
-            public override Sprite LoadStandSprite() => ResourceLoader.LoadSprite("keiki.png", directorySource, ppu: 700, anisoLevel: 16, filterMode: FilterMode.Trilinear);
+
+    public sealed class KeikiPlayerDef : PlayerUnitTemplate
+    {
+        public override IdContainer GetId() => nameof(Keiki);
+
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
 
-            public override PlayerUnitConfig MakeConfig()
-            {
-                var config = PlayerUnitConfig.FromId("Reimu").Copy();
-                return config;
-            }
+        public override PlayerImages LoadPlayerImages()
+        {
+            var sprites = new PlayerImages();
 
-            [EntityLogic(typeof(KeikiPlayerDef))]
-            public sealed class Keiki : PlayerUnit { }
+            // 2do for some reason this method works better for Keiki
+            var loading = ResourceLoader.LoadSprite("keiki.png", directorySource);
 
-        }*/
+            sprites.SetStartPanelStand(null, () => loading);
+            sprites.SetWinStand(null, () => loading);
+            sprites.SetDeckStand(null, () => loading);
+
+            return sprites;
+        }
+
+
+        public override PlayerUnitConfig MakeConfig()
+        {
+            var config = PlayerUnitConfig.FromId("Reimu").Copy();
+            return config;
+        }
+
+        [EntityLogic(typeof(KeikiPlayerDef))]
+        public sealed class Keiki : PlayerUnit { }
+
+    }
 
 
 
@@ -298,20 +288,19 @@ namespace Random_Examples
     }
 
 
-/*    public sealed class BeaModelDef : UnitModelTemplate
+    public sealed class BeaModelDef : UnitModelTemplate
     {
 
 
         public override IdContainer GetId() => new BeaPlayerDef().UniqueId;
 
-        public override LocalizationOption LoadLocalization() 
-        { 
+        public override LocalizationOption LoadLocalization()
+        {
             var lf = new LocalizationFiles(embeddedSource);
             lf.AddLocaleFile(Locale.En, "BeaModelEn");
             lf.mergeTerms = true;
             return lf;
-        } 
-        
+        }
 
 
         public override ModelOption LoadModelOptions()
@@ -319,12 +308,8 @@ namespace Random_Examples
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Remilia"));
         }
 
-        static internal UniTask<Sprite> LoadSuikaSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", directorySource, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
-        public override UniTask<Sprite> LoadSpellSprite()
-        {
-            return LoadSuikaSprite();
-        }
+        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("bea.png", directorySource, ppu: 600);
 
         public override UnitModelConfig MakeConfig()
         {
@@ -339,19 +324,16 @@ namespace Random_Examples
     {
         public override IdContainer GetId() => new KeikiPlayerDef().UniqueId;
 
-        public override LocalizationOption LoadLocalization() => new DirectLocalization(new Dictionary<string, object>() { { "Default", "Keiki Nuts"}, { "Short", "Keiki" } });
+        public override LocalizationOption LoadLocalization() => new DirectLocalization(new Dictionary<string, object>() { { "Default", "Keiki Haniyasushin" }, { "Short", "Keiki" } });
 
         public override ModelOption LoadModelOptions()
         {
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Remilia"));
         }
 
-        static internal UniTask<Sprite> LoadSuikaSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", directorySource, ppu: 1200, anisoLevel: 16, filterMode: FilterMode.Trilinear);
 
-        public override UniTask<Sprite> LoadSpellSprite()
-        {
-            return LoadSuikaSprite();
-        }
+        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("keiki.png", directorySource, ppu: 600);
+
 
         public override UnitModelConfig MakeConfig()
         {
@@ -359,13 +341,13 @@ namespace Random_Examples
             config.Flip = true;
             return config;
         }
-    }*/
+    }
 
 
 
 
-  
 
 
-  
+
+
 }

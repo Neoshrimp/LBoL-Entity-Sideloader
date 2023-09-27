@@ -42,11 +42,7 @@ namespace LBoLEntitySideloader.Entities.Patches
 
                 if (UiManager.Instance._panelTable.ContainsKey(typeof(GameResultPanel)))
                     LoadForGameResultPanel(UiManager.GetPanel<GameResultPanel>());
-
-
             }
-
-
         }
 
         internal static void LoadForStartPanel(StartGamePanel startGamePanel)
@@ -60,25 +56,29 @@ namespace LBoLEntitySideloader.Entities.Patches
 
                 EntityManager.HandleOverwriteWrap(async () => {
 
-                    var st = new Stopwatch();
-                    st.Start();
+/*                    var st = new Stopwatch();
+                    st.Start();*/
 
-                    if(sprites.startPanelStandFunc == null)
+                    if(sprites.startPanelStandTask != null)
                         startGamePanel.standPicList.AlwaysAdd(puT.UniqueId, await sprites.LoadStartPanelStandAsync());
                     else
                         startGamePanel.standPicList.AlwaysAdd(puT.UniqueId, sprites.LoadStartPanelStand());
 
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.stand), puT.user);
 
 
                 EntityManager.HandleOverwriteWrap(() => {
-                    var st = new Stopwatch();
-                    st.Start();
-                    startGamePanel.headPicList.AlwaysAdd(puT.UniqueId, sprites.LoadSelectionCircleIcon());
-                    st.Stop();
-                    Log.log.LogDebug($"selectionIcon LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");
+/*                    var st = new Stopwatch();
+                    st.Start();*/
+
+                    var headSprite = sprites.LoadSelectionCircleIcon();
+                    if(headSprite != null)
+                        startGamePanel.headPicList.AlwaysAdd(puT.UniqueId, headSprite);
+
+/*                    st.Stop();
+                    Log.log.LogDebug($"selectionIcon LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
 
 
@@ -98,28 +98,28 @@ namespace LBoLEntitySideloader.Entities.Patches
                 var sprites = puT.LoadPlayerImages();
 
                 EntityManager.HandleOverwriteWrap(async () => {
-                    var st = new Stopwatch();
-                    st.Start();
+/*                    var st = new Stopwatch();
+                    st.Start();*/
                     var avatarGroup = new HistoryPanel.AvatarGroup();
 
-                    if(sprites.defeatedIconFunc == null)
+                    if(sprites.defeatedIconTask != null)
                         avatarGroup.Failure = await sprites.LoadDefeatedIconAsync();
                     else
                         avatarGroup.Failure = sprites.LoadDefeatedIcon();
 
-                    if(sprites.winIconFunc == null)
+                    if(sprites.winIconTask != null)
                         avatarGroup.Normal = await sprites.LoadWinIconAsync();
                     else
                         avatarGroup.Normal = sprites.LoadWinIcon();
 
-                    if(sprites.perfectWinIconFunc == null)
+                    if(sprites.perfectWinIconTask != null)
                         avatarGroup.TrueEnd = await sprites.LoadPerfectWinIconAsync();
                     else
                         avatarGroup.TrueEnd = sprites.LoadPerfectWinIcon();
 
                     historyPanel.avatarTable.AlwaysAdd(puT.UniqueId, avatarGroup);
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForHistoryPanel load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForHistoryPanel load in: {st.ElapsedMilliseconds}ms");*/
 
                 },
                 puT, OverwriteName("AvatarGroup"), puT.user);
@@ -139,28 +139,28 @@ namespace LBoLEntitySideloader.Entities.Patches
             {
                 var sprites = puT.LoadPlayerImages();
                 EntityManager.HandleOverwriteWrap(async () => {
-                    var st = new Stopwatch();
-                    st.Start();
-                    if(sprites.winStandFunc == null)
+/*                    var st = new Stopwatch();
+                    st.Start();*/
+                    if(sprites.winStandTask != null)
                         gameResultPanel.characterPortraits.AlwaysAdd(puT.UniqueId, await sprites.LoadWinStandAsync());
                     else
                         gameResultPanel.characterPortraits.AlwaysAdd(puT.UniqueId, sprites.LoadWinStand());
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForGameResultPanel win pic load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForGameResultPanel win pic load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.winStand), puT.user);
 
 
                 EntityManager.HandleOverwriteWrap(async () => {
-                    var st = new Stopwatch();
-                    st.Start();
+/*                    var st = new Stopwatch();
+                    st.Start();*/
 
-                    if(sprites.defeatedStandFunc == null)
+                    if(sprites.defeatedStandTask != null)
                         gameResultPanel.characterDefeatPortraits.AlwaysAdd(puT.UniqueId, await sprites.LoadDefeatedStandAsync());
                     else
                         gameResultPanel.characterDefeatPortraits.AlwaysAdd(puT.UniqueId, sprites.LoadDefeatedStand());
 
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForGameResultPanel lose pic load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForGameResultPanel lose pic load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.defeatedStand), puT.user);
 
             });
@@ -176,15 +176,15 @@ namespace LBoLEntitySideloader.Entities.Patches
             {
                 var sprites = puT.LoadPlayerImages();
                 EntityManager.HandleOverwriteWrap(async () => {
-                    var st = new Stopwatch();
-                    st.Start();
-                    if(sprites.deckStandFunc == null)
+/*                    var st = new Stopwatch();
+                    st.Start();*/
+                    if(sprites.deckStandTask != null)
                         showCardsPanel.characterPortraits.AlwaysAdd(puT.UniqueId, await sprites.LoadDeckStandAsync());
                     else
                         showCardsPanel.characterPortraits.AlwaysAdd(puT.UniqueId, sprites.LoadDeckStand());
 
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForDeckPanel inner load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForDeckPanel inner load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.deckStand), puT.user);
             });
         }
@@ -200,11 +200,11 @@ namespace LBoLEntitySideloader.Entities.Patches
                 var sprites = puT.LoadPlayerImages();
                 var st = new Stopwatch();
                 EntityManager.HandleOverwriteWrap(() => {
-                    var st = new Stopwatch();
-                    st.Start();
+/*                    var st = new Stopwatch();
+                    st.Start();*/
                     museumPanel.portraitList.AlwaysAdd(puT.UniqueId, sprites.LoadCollectionIcon());
-                    st.Stop();
-                    Log.log.LogDebug($"LoadForMuseumPanel load in: {st.ElapsedMilliseconds}ms");
+/*                    st.Stop();
+                    Log.log.LogDebug($"LoadForMuseumPanel load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.collectionIcon), puT.user);
 
             });
