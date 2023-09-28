@@ -14,7 +14,7 @@ Routed async sprite loading through ImageLoader library.
 
 Added cropping templates for various images.
 
-ResourceLoader can load AssetBundels now.
+ResourceLoader can load AssetBundle s now.
 
 `0.8.4` better logging. Set ExtraLogging to false to avoid logging individual entities. Added documentation xml.
 

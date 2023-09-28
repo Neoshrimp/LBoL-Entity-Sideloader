@@ -58,7 +58,6 @@ namespace Extensions.Unity.ImageLoader
         /// <summary>
         /// Clear Memory cache for all urls
         /// </summary>
-        /// <param name="url">URL to the picture, web or local</param>
         public static void ClearMemoryCache()
         {
             foreach (var cache in memorySpriteCache.Values)

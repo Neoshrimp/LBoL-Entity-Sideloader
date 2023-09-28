@@ -680,7 +680,6 @@
             <summary>
             Clear Memory cache for all urls
             </summary>
-            <param name="url">URL to the picture, web or local</param>
         </member>
         <member name="M:Extensions.Unity.ImageLoader.ImageLoader.SetSprite(System.String,UnityEngine.UI.Image,UnityEngine.TextureFormat,System.Boolean)">
             <summary>
