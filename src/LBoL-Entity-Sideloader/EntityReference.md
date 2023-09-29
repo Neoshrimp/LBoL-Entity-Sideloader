@@ -193,7 +193,7 @@ Actual number of Lasers/Bullets spawned is a combination of `PieceConfig.Group` 
 
 More research is needed..
 
-##### Laser/Bullet configs
+##### `Laser/Bullet` configs
 More of a containers for actual visual effects.
 
 Maps to Effect where `Laser/BulletConfig.Widget == EffectConfig.Name`
