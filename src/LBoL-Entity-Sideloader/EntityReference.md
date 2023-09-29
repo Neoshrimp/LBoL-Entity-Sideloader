@@ -156,3 +156,52 @@ A `512x512` icon. `Dictionary<string, Sprite> customSprites` can be specified fo
 
 ### BgmConfig
 *soooooon*
+
+
+
+### Gun, Piece, Bullet, Laser, Spell and Effect config relation
+
+
+*Rough mapping graph*
+```
+Gun where GunConfig.Id * 100+0-99 == PieceConfig.Id => Piece(s)
+where PieceConfig.Projectile == Laser/BulletConfig.Name  =>
+PieceConfig.Type == True - Laser   \
+                                where Laser/BulletConfig.Widget == EffectConfig.Name => Effect
+PieceConfig.Type == False - Bullet /                                        (GameObject with EffectWidget)
+```
+
+##### `GunConfig`
+ maps to 1-100 Pieces from. Mapping is achieved by multiplying `GunCondig.Id` by `100`. The respective  `PieceConfig.Id` will range from that number the number+99 (inclusively).
+
+`GunConfig.Name` isn't important for mapping. It's only for naming Gun gameObject and debug menu.
+
+`GunConfig.Spell` maps to `SpellConfig.Id`. However, `SpellConfig` doesn't provided any info really. If a Gun has `GunConfig.Spell` value spell splash screen will be displayed. Properties of the splash are determined by `UnitModelConfig`.
+
+##### `SpellConfig`
+*pretty dead currently*
+For sake of simplicity, Sideloader forcibly removes any `SpellWidget` loaded from `SpellConfig.Resource`.
+
+##### `PieceConfig`
+ is a major config which determines how projectiles, that is Laser or Bullet, will act. Many `PieceConfig` values are encoded in 2-dimensional arrays making the config somewhat cryptic.
+
+Maps to Laser/Bullet where `PieceConfig.Projectile == Laser/BulletConfig.Name`
+
+`PieceConfig.Type` determines whether the projectile is Laser or Bullet. `True` for Laser, `False` for bullet.
+
+Actual number of Lasers/Bullets spawned is a combination of `PieceConfig.Group` and `PieceConfig.Way`
+
+More research is needed..
+
+##### Laser/Bullet configs
+More of a containers for actual visual effects.
+
+Maps to Effect where `Laser/BulletConfig.Widget == EffectConfig.Name`
+
+##### `EffectConfig`
+basically denotes a path to visual effect prefab. Effect is a GameObject with any number of children objects which have a [`ParicleSystem`](https://docs.unity3d.com/2021.3/Documentation/ScriptReference/ParticleSystem.html) and/or [`TrailRenderer`](https://docs.unity3d.com/2021.3/Documentation/Manual/class-TrailRenderer.html) components. The components are referenced in a lists of `EffectWidget` MonoBehaviour, which is attached to Effect gameObject. Realistically, components should be designed in Unity Editor and loaded in LBoL via AssetBundles.
+
+
+
+
+

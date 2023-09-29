@@ -272,18 +272,28 @@ namespace Random_Examples
 
         public override ModelOption LoadModelOptions()
         {
+            return new ModelOption(ResourceLoader.LoadSpriteAsync("Youmu.png", directorySource, ppu: 565));
+
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Remilia"));
         }
 
 
-        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Suika.png", SuikaPlayerDef.dir, ppu: 1200);
+        public override UniTask<Sprite> LoadSpellSprite() => ResourceLoader.LoadSpriteAsync("Stand.png", SuikaPlayerDef.dir, ppu: 1200);
 
 
         public override UnitModelConfig MakeConfig()
         {
-            var config = UnitModelConfig.FromName("Remilia").Copy();
+/*            var config = UnitModelConfig.FromName("Remilia").Copy();
             config.Flip = true;
             return config;
+ */
+
+            var config = UnitModelConfig.FromName("Youmu").Copy();
+            config.Flip = false;
+            config.Type = 0;
+            config.Offset = new Vector2(0, 0.04f);
+            return config;
+
         }
     }
 

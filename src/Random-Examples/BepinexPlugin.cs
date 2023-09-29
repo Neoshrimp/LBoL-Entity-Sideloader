@@ -59,7 +59,7 @@ namespace Random_Examples
 
             JadeBoxExamples.GenJadeBoxes();
 
-            EntityManager.AddPostLoadAction(() =>
+/*            EntityManager.AddPostLoadAction(() =>
             {
                 for (int i = 0; i < 14 * 4; i++)
                 {
@@ -77,13 +77,13 @@ namespace Random_Examples
                         generateEmptyLogic: true);
                 }
                 exhibitGen.FinalizeGen();
-            });
+            });*/
 
             CustomFormations.AddFormations();
 
             CustomLoadouts.AddLoadouts();
 
-            StageExamples.AddStages();
+            //StageExamples.AddStages();
 
             // unload asset bundles OnDestroy
             suikaAB = ResourceLoader.LoadAssetBundle("suikaBundle", SuikaPlayerDef.dir);
