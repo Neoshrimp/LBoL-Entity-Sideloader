@@ -124,7 +124,9 @@ namespace LBoLEntitySideloader
 
 
             UniqueTracker.DestroySelf();
-            ImageLoader.ClearCache();
+
+            // ??
+            //ImageLoader.ClearCache();
 
             // doesn't really help
             GC.Collect();

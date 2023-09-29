@@ -272,6 +272,7 @@ namespace Random_Examples
 
         public override ModelOption LoadModelOptions()
         {
+
             return new ModelOption(ResourceLoader.LoadSpriteAsync("Youmu.png", directorySource, ppu: 565));
 
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Remilia"));

@@ -47,8 +47,6 @@ namespace LBoLEntitySideloader.Entities.Patches
 
         internal static void LoadForStartPanel(StartGamePanel startGamePanel)
         {
-            Log.log.LogDebug($"loading player image: {nameof(LoadForStartPanel)}");
-
 
             Wrap((PlayerUnitTemplate puT) =>
             {
@@ -56,7 +54,9 @@ namespace LBoLEntitySideloader.Entities.Patches
 
                 EntityManager.HandleOverwriteWrap(async () => {
 
-/*                    var st = new Stopwatch();
+/*                  
+                    Log.log.LogDebug($"loading player image: {nameof(LoadForStartPanel)}");
+                    var st = new Stopwatch();
                     st.Start();*/
 
                     if(sprites.startPanelStandTask != null)
@@ -90,7 +90,6 @@ namespace LBoLEntitySideloader.Entities.Patches
 
         internal static void LoadForHistoryPanel(HistoryPanel historyPanel)
         {
-            Log.log.LogDebug($"loading player image: {nameof(LoadForHistoryPanel)}");
 
             Wrap((PlayerUnitTemplate puT) =>
             {
@@ -98,7 +97,9 @@ namespace LBoLEntitySideloader.Entities.Patches
                 var sprites = puT.LoadPlayerImages();
 
                 EntityManager.HandleOverwriteWrap(async () => {
-/*                    var st = new Stopwatch();
+/*                  
+                    Log.log.LogDebug($"loading player image: {nameof(LoadForHistoryPanel)}");
+                    var st = new Stopwatch();
                     st.Start();*/
                     var avatarGroup = new HistoryPanel.AvatarGroup();
 
@@ -133,13 +134,16 @@ namespace LBoLEntitySideloader.Entities.Patches
         internal static void LoadForGameResultPanel(GameResultPanel gameResultPanel)
         {
 
-            Log.log.LogDebug($"loading player image: {nameof(LoadForGameResultPanel)}");
+            
 
             Wrap((PlayerUnitTemplate puT) =>
             {
                 var sprites = puT.LoadPlayerImages();
                 EntityManager.HandleOverwriteWrap(async () => {
-/*                    var st = new Stopwatch();
+/*                  
+
+                    Log.log.LogDebug($"loading player image: {nameof(LoadForGameResultPanel)}");
+                    var st = new Stopwatch();
                     st.Start();*/
                     if(sprites.winStandTask != null)
                         gameResultPanel.characterPortraits.AlwaysAdd(puT.UniqueId, await sprites.LoadWinStandAsync());
@@ -170,13 +174,14 @@ namespace LBoLEntitySideloader.Entities.Patches
 
         internal static void LoadForDeckPanel(ShowCardsPanel showCardsPanel)
         {
-            Log.log.LogDebug($"loading player image: {nameof(LoadForDeckPanel)}");
 
             Wrap((PlayerUnitTemplate puT) =>
             {
                 var sprites = puT.LoadPlayerImages();
                 EntityManager.HandleOverwriteWrap(async () => {
-/*                    var st = new Stopwatch();
+/*                  
+                    Log.log.LogDebug($"loading player image: {nameof(LoadForDeckPanel)}");   
+                    var st = new Stopwatch();
                     st.Start();*/
                     if(sprites.deckStandTask != null)
                         showCardsPanel.characterPortraits.AlwaysAdd(puT.UniqueId, await sprites.LoadDeckStandAsync());
@@ -193,14 +198,16 @@ namespace LBoLEntitySideloader.Entities.Patches
 
         internal static void LoadForMuseumPanel(MuseumPanel museumPanel)
         {
-            Log.log.LogDebug($"loading player image: {nameof(LoadForMuseumPanel)}");
+            
 
             Wrap((PlayerUnitTemplate puT) =>
             {
                 var sprites = puT.LoadPlayerImages();
                 var st = new Stopwatch();
                 EntityManager.HandleOverwriteWrap(() => {
-/*                    var st = new Stopwatch();
+/*                    
+                    Log.log.LogDebug($"loading player image: {nameof(LoadForMuseumPanel)}");
+                    var st = new Stopwatch();
                     st.Start();*/
                     museumPanel.portraitList.AlwaysAdd(puT.UniqueId, sprites.LoadCollectionIcon());
 /*                    st.Stop();

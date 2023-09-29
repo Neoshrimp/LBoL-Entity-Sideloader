@@ -222,6 +222,17 @@ namespace Extensions.Unity.ImageLoader
 
             AddLoading(url);
 
+
+            Func<Texture2D, Sprite> createSprite = (texture) => {
+                if (rect == null)
+                    rect = new Rect(0, 0, texture.width, texture.height);
+                if (pivot == null)
+                    pivot = new Vector2(0.5f, 0.5f);
+
+                var sprite = Sprite.Create(texture, rect.Value, pivot.Value, ppu, 0, spriteMeshType);
+                return sprite;
+            };
+
             if (settings.debugLevel <= DebugLevel.Log)
                 Debug.Log($"[ImageLoader] Loading new Sprite into memory url={url}");
             try
@@ -234,12 +245,7 @@ namespace Extensions.Unity.ImageLoader
                     if (texture.LoadImage(cachedImage))
                     {
 
-                        if (rect == null)
-                            rect = new Rect(0, 0, texture.width, texture.height);
-                        if (pivot == null)
-                            pivot = new Vector2(0.5f, 0.5f);
-
-                        var sprite = Sprite.Create(texture, rect.Value, pivot.Value, ppu, 0, spriteMeshType);
+                        var sprite = createSprite(texture);
                         if (sprite != null)
                             SaveToMemoryCache(url, sprite, replace: true);
 
@@ -293,9 +299,9 @@ namespace Extensions.Unity.ImageLoader
                 Profiler.BeginSample("LoadSpriteMemoryOptimized " + name);
 
                 //Debug.Log($"LoadSpriteMemoryOptimized: before name={name}, size={Utils.ToSize(request.downloadHandler.data.Length)}");
-                var compressedTexture = Utils.CreateTexWithMipmaps(request.downloadHandler.data, settings.generateMipMaps, finalGraphicsFormat, anisoLevel, filterMode, name);
+                var compressedTexture = Utils.CreateTexWithMipmaps(request.downloadHandler.data, shouldGenerateMipMaps: true, finalGraphicsFormat, anisoLevel, filterMode, name);
                 Log.LogDevExtra()?.LogInfo($"LoadSpriteMemoryOptimized: name={name}, size={Utils.ToSize(compressedTexture.GetRawTextureData().Length)}, mipmap={compressedTexture.mipmapCount}, format={compressedTexture.format}, graphicsFormat={compressedTexture.graphicsFormat}, size={compressedTexture.width}x{compressedTexture.height}");
-                var sprite = ToSprite(compressedTexture);
+                var sprite = createSprite(compressedTexture);
 
                 Profiler.EndSample();
 
