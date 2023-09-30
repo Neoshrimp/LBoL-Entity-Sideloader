@@ -58,7 +58,7 @@ namespace Random_Examples
         {
             var sprites = new PlayerImages();
 
-            sprites.AutoLoad("", (s) => ResourceLoader.LoadSprite(s, dir), (s) => ResourceLoader.LoadSpriteAsync(s, dir));
+            sprites.AutoLoad("", (s) => ResourceLoader.LoadSprite(s, dir, ppu: 100, 1, FilterMode.Bilinear, generateMipMaps: true), (s) => ResourceLoader.LoadSpriteAsync(s, dir));
 
 
             return sprites;

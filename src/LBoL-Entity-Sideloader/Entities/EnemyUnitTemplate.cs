@@ -22,11 +22,7 @@ namespace LBoLEntitySideloader.Entities
     public abstract class EnemyUnitTemplate : EntityDefinition,
         IConfigProvider<EnemyUnitConfig>,
         IGameEntityProvider<EnemyUnit>,
-        IResourceConsumer<LocalizationOption>,
-
-        IResourceConsumer<Sprite>,
-        IResourceConsumer<SkeletonDataAsset>
-        
+        IResourceConsumer<LocalizationOption>        
     {
         public override Type ConfigType() => typeof(EnemyUnitConfig);
 
@@ -145,19 +141,5 @@ namespace LBoLEntitySideloader.Entities
         }
 
 
-/*        public abstract Sprite LoadSprite();
-
-        public abstract SkeletonDataAsset LoadSkeletonDataAsset();*/
-
-        // load model?
-        public void Consume(SkeletonDataAsset skeletonDataAsset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Consume(Sprite sprite)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

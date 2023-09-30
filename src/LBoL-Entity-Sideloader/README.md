@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.01` Improve Texture2D scaling quality by adding mipmap generation.
+
 `0.9.0` added template for new playable characters and helpers methods. 
 
 Added methods for manipulating Stage pools and Stage list itself (in `StageTemplate`). 

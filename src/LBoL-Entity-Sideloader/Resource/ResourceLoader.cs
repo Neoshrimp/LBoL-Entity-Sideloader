@@ -28,6 +28,13 @@ namespace LBoLEntitySideloader.Resource
 
         public static Texture2D LoadTexture(string name, IResourceSource source)
         {
+
+            return LoadTexture(name, source, 1, FilterMode.Bilinear, true);
+
+        }
+
+        public static Texture2D LoadTexture(string name, IResourceSource source, int anisoLevel, FilterMode filterMode, bool generateMipMaps)
+        {
             using Stream resource = source.Load(name);
 
             if (resource == null)
@@ -38,19 +45,20 @@ namespace LBoLEntitySideloader.Resource
             int count;
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, generateMipMaps)
             {
-                anisoLevel = 1,
-                filterMode = 0
+                anisoLevel = anisoLevel,
+                filterMode = filterMode
             };
 
             spriteTexture.LoadImage(memoryStream.ToArray());
             return spriteTexture;
         }
 
+
         public static Sprite LoadSprite(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
         {
-            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, false, rect, pivot);
+            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, true, rect, pivot);
         }
 
 

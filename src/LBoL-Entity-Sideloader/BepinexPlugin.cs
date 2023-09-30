@@ -158,7 +158,7 @@ namespace LBoLEntitySideloader
 
                         if (hardReload)
                         {
-                            EntityManager.Instance.RegisterUsers(EntityManager.Instance.sideloaderUsers);
+                            EntityManager.Instance.RegisterUsers(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!");
                             EntityManager.Instance.LoadAssetsForResourceHelper(EntityManager.Instance.sideloaderUsers);
 
                             // reloads Sideloader loc via hookpoint
@@ -166,16 +166,16 @@ namespace LBoLEntitySideloader
 
                             UniqueTracker.Instance.RaisePostMainLoad();
 
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: false);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: false);
 
 
                         }
                         else
                         {
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources");
 
                             UniqueTracker.Instance.RaisePostMainLoad();
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources");
 
                         }
 

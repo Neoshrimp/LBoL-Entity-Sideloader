@@ -29,7 +29,7 @@ using System.Diagnostics;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.Entities.Patches;
 
-
+    
 namespace LBoLEntitySideloader.Entities
 {
     // soon(tm)

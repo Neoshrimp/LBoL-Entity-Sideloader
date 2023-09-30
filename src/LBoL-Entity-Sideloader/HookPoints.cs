@@ -44,11 +44,11 @@ namespace LBoLEntitySideloader
                 await __result;
 
 
-                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, loadLoc: false);
+                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
 
                 UniqueTracker.Instance.RaisePostMainLoad();
                 // secondary users are populate after RaisePostMainLoad
-                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, loadLoc: true);
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: true);
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 

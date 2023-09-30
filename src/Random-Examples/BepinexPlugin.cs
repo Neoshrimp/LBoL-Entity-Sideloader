@@ -37,7 +37,7 @@ namespace Random_Examples
 
         internal static AssetBundle suikaAB;
 
-        //internal static AssetBundle effectsAB;
+        internal static AssetBundle effectsAB;
 
 
         private void Awake()
@@ -88,7 +88,7 @@ namespace Random_Examples
             // unload asset bundles OnDestroy
             suikaAB = ResourceLoader.LoadAssetBundle("suikaBundle", SuikaPlayerDef.dir);
 
-            //effectsAB = ResourceLoader.LoadAssetBundle("effects", directorySource);
+            effectsAB = ResourceLoader.LoadAssetBundle("effects", directorySource);
 
 
         }
@@ -120,7 +120,7 @@ namespace Random_Examples
 
             // unload asset bundles OnDestroy
             suikaAB?.Unload(false);
-            //effectsAB?.Unload(false);
+            effectsAB?.Unload(false);
 
         }
 

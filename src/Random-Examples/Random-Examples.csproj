@@ -323,6 +323,9 @@
         <Reference Include="UnityEngine.UnityEngine.AssetBundleModule">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 

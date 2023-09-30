@@ -374,7 +374,7 @@ namespace LBoLEntitySideloader
                                 bgmConfig.Path = bgmConfig.ID;
                                 bgmConfig.Folder = "";
                             }
-                            UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
+                            UniqueTracker.Instance.AddOnDemandResource(bt.TemplateType(), bgmConfig.ID, entityDefinition);
 
 
                         }
@@ -415,6 +415,20 @@ namespace LBoLEntitySideloader
                         else if (entityDefinition is StageTemplate scT)
                         {
                             RegisterConfig(scT, user);
+                        }
+                        else if (entityDefinition is EffectTemplate eft)
+                        {
+                            string ogPath = null;
+                            if (user.IsForOverwriting(eft.GetType()) && TemplatesReflection.DoOverwrite(eft.GetType(), nameof(eft.MakeConfig)))
+                                ogPath = EffectConfig.FromName(entityDefinition.UniqueId).Path;
+
+                            var effectConfig = RegisterConfig(eft, user);
+
+                            if(effectConfig != null)
+                                if (ogPath != null)
+                                    effectConfig.Path = ogPath;
+                                else
+                                    effectConfig.Path = effectConfig.Name;
                         }
                     }
                     catch (Exception ex)
@@ -497,6 +511,7 @@ namespace LBoLEntitySideloader
 
             if (!user.IsForOverwriting(entityDefinition.GetType()))
             {
+
                 var f_Index = ConfigReflection.HasIndex(configType);
                 if (f_Index != null)
                 {
@@ -517,6 +532,7 @@ namespace LBoLEntitySideloader
 
 
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
+
 
                         ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
                         ref_Data()[i] = newConfig;
@@ -694,7 +710,7 @@ namespace LBoLEntitySideloader
 
 
 
-        internal void RegisterUsers(SideloaderUsers sideloaderUsers)
+        internal void RegisterUsers(SideloaderUsers sideloaderUsers, string onCompleteMsg = "All sideloader users registered!")
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
@@ -703,7 +719,7 @@ namespace LBoLEntitySideloader
                 RegisterUser(user);
             }
 
-            log.LogInfo($"All sideloader users registered!");
+            log.LogInfo(onCompleteMsg);
         }
 
         internal void LoadAssetsForResourceHelper(SideloaderUsers sideloaderUsers)
@@ -745,7 +761,11 @@ namespace LBoLEntitySideloader
                         // overwrite handled later
                         puT.Consume(puT.LoadPlayerImages());
                     }
-                    
+                    else if (definition is EffectTemplate eft)
+                    {
+                        HandleOverwriteWrap(() => eft.Consume(eft.LoadEffectData()), definition, nameof(eft.LoadEffectData), user);
+                    }
+
 
 
                 }
@@ -836,11 +856,11 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void LoadAll(SideloaderUsers sideloaderUsers, bool loadLoc = true)
+        internal void LoadAll(SideloaderUsers sideloaderUsers, string onRegistrationCompleteMsg = "All sideloader users registered!", string onCompleteMsg = "Finished loading custom resources.", bool loadLoc = true)
         {
             try
             {
-                Instance.RegisterUsers(sideloaderUsers);
+                Instance.RegisterUsers(sideloaderUsers, onRegistrationCompleteMsg);
                 Instance.LoadAssetsForResourceHelper(sideloaderUsers);
                 if(loadLoc)
                     Instance.LoadLocalization(sideloaderUsers);
@@ -851,7 +871,7 @@ namespace LBoLEntitySideloader
                 log.LogError(ex);
             }
 
-            log.LogInfo("Finished loading custom resources.");
+            log.LogInfo(onCompleteMsg);
         }
 
         static internal bool HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)
