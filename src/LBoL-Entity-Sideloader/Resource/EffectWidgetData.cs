@@ -39,6 +39,7 @@ namespace LBoLEntitySideloader.Resource
         /// <summary>
         /// Adds EffectWidget Monobehaviour to effectGo.
         /// effectGo should be a prefab loaded via AssetBundle with all visual Particle/Trail systems in its children gameObjects.
+        /// Loading via AssetBundle or Addressables is important as this is pretty much only way to load gameObject in memory but not instantiate it in a scene.
         /// Additional minor properties can be provided to Particle/Trail systems via queue arguments.
         /// First element in the queue will go to the first system discovered (the top most in the hierarchy), second element to the second discovered and so on.
         /// When queue has only one element remaining, the properties of the element will be applied to any systems discovered afterwards. This way a queue with single element can be provided to apply the same properties to all the systems.
