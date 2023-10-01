@@ -54,32 +54,44 @@ namespace LBoLEntitySideloader.Entities
             Log.log.LogWarning($"Failed to get {nameof(EffectWidget)} for Effect with Name: {UniqueId}");
         }
 
-/*        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadEffect))]
-        class LoadEffect_Patch
-        {
-            static bool Prefix(string path, ref EffectWidget __result)
-            {
-                var Name = path;
-
-                if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(EffectTemplate), Name, out var entityDefinition))
+        /*        [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadEffect))]
+                class LoadEffect_Patch
                 {
-                    if (entityDefinition is EffectTemplate et && EntityManager.HandleOverwriteWrap(() => { }, et, nameof(LoadEffectData), et.user))
+                    static bool Prefix(string path, ref EffectWidget __result)
                     {
+                        var Name = path;
 
-                        if (et.LoadEffectData().effectGo.TryGetComponent<EffectWidget>(out var ew))
+                        if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(EffectTemplate), Name, out var entityDefinition))
                         {
-                            //ew.name = entityDefinition.UniqueId;
-                            __result = ew;
-                            return false;
-                        }
-                        throw new ArgumentException($"Failed to get {nameof(EffectWidget)} with Name: {Name}");
-                    }
-                    return true;
-                }
-                return true;
-            }
-        }*/
+                            if (entityDefinition is EffectTemplate et && EntityManager.HandleOverwriteWrap(() => { }, et, nameof(LoadEffectData), et.user))
+                            {
 
+                                if (et.LoadEffectData().effectGo.TryGetComponent<EffectWidget>(out var ew))
+                                {
+                                    //ew.name = entityDefinition.UniqueId;
+                                    __result = ew;
+                                    return false;
+                                }
+                                throw new ArgumentException($"Failed to get {nameof(EffectWidget)} with Name: {Name}");
+                            }
+                            return true;
+                        }
+                        return true;
+                    }
+                }*/
+
+
+        [HarmonyPatch(typeof(EffectWidget), nameof(EffectWidget.Awake))]
+        class EffectWidget_InitArrays_Patch
+        {
+            static void Prefix(EffectWidget __instance)
+            {
+                if (__instance.particleSystemElements == null)
+                    __instance.particleSystemElements = new EffectWidget.ParticleSystemElement[0];
+                if (__instance.trailRendererElements == null)
+                    __instance.trailRendererElements = new EffectWidget.TrailRendererElement[0];
+            }
+        }
 
     }
 }
