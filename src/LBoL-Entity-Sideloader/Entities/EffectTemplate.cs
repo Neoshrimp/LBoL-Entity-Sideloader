@@ -16,7 +16,7 @@ namespace LBoLEntitySideloader.Entities
 {
     public abstract class EffectTemplate : EntityDefinition,
         IConfigProvider<EffectConfig>,
-        IResourceConsumer<EffectData>
+        IResourceConsumer<EffectWidgetData>
     {
         public override Type ConfigType() => typeof(EffectConfig);
 
@@ -41,9 +41,9 @@ namespace LBoLEntitySideloader.Entities
 
         abstract public EffectConfig MakeConfig();
 
-        abstract public EffectData LoadEffectData();
+        abstract public EffectWidgetData LoadEffectData();
 
-        public void Consume(EffectData effectData)
+        public void Consume(EffectWidgetData effectData)
         {
 
             if (effectData.effectGo.TryGetComponent<EffectWidget>(out var ew))

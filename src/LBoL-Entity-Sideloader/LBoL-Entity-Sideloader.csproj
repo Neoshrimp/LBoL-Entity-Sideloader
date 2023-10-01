@@ -127,6 +127,9 @@
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 

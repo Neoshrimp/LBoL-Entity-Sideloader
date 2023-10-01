@@ -8,6 +8,27 @@ namespace LBoLEntitySideloader.Utils
 {
     public static class GameObjectExtensions
     {
+        /// <summary>
+        /// Includes root object
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public static IEnumerable<GameObject> IterateHierarchy(this Transform root)
+        {
+            Queue<Transform> queue = new Queue<Transform>();
+            queue.Enqueue(root);
+
+            while (queue.Count > 0)
+            {
+                Transform current = queue.Dequeue();
+                yield return current.gameObject;
+
+                foreach (Transform child in current)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+        }
 
         public static T JankyCopyComponent<T>(this GameObject destination, T original) where T : Component
         {

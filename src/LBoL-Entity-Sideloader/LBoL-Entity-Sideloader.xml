@@ -346,6 +346,37 @@
             <param name="GUID"></param>
             <param name="subFolder"></param>
         </member>
+        <member name="T:LBoLEntitySideloader.Resource.EffectWidgetData">
+            <summary>
+            Class for creating gameObject with EffectWidget
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.EffectWidgetData.#ctor(UnityEngine.GameObject,System.Collections.Generic.Queue{LBoLEntitySideloader.Resource.EffectWidgetData.ExtraElementProperties},System.Collections.Generic.Queue{LBoLEntitySideloader.Resource.EffectWidgetData.ExtraElementProperties},LBoLEntitySideloader.Resource.EffectWidgetData.SortingLayer,System.String)">
+            <summary>
+            See EffectWidgetData.CreateEffect
+            </summary>
+            <param name="effectGo"></param>
+            <param name="particleSystemProperties"></param>
+            <param name="trailRendererProperties"></param>
+            <param name="sortingLayer"></param>
+            <param name="nameOverwrite"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.EffectWidgetData.CreateEffect(UnityEngine.GameObject,System.Collections.Generic.Queue{LBoLEntitySideloader.Resource.EffectWidgetData.ExtraElementProperties},System.Collections.Generic.Queue{LBoLEntitySideloader.Resource.EffectWidgetData.ExtraElementProperties},LBoLEntitySideloader.Resource.EffectWidgetData.SortingLayer,System.String)">
+            <summary>
+            Adds EffectWidget Monobehaviour to effectGo.
+            effectGo should be a prefab loaded via AssetBundle with all visual Particle/Trail systems in its children gameObjects.
+            Additional minor properties can be provided to Particle/Trail systems via queue arguments.
+            First element in the queue will go to the first system discovered (the top most in the hierarchy), second element to the second discovered and so on.
+            When queue has only one element remaining, the properties of the element will be applied to any systems discovered afterwards. This way a queue with single element can be provided to apply the same properties to all the systems.
+            If queue is null defaultProps will be used.
+            </summary>
+            <param name="effectGo"></param>
+            <param name="particleSystemProperties"></param>
+            <param name="trailRendererProperties"></param>
+            <param name="sortingLayer"></param>
+            <param name="nameOverwrite"></param>
+            <returns></returns>
+        </member>
         <member name="F:LBoLEntitySideloader.Resource.ExhibitSprites.main">
             <summary>
             512x512 image
@@ -543,6 +574,13 @@
             <summary>
             templateType => Id => definitionType
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.GameObjectExtensions.IterateHierarchy(UnityEngine.Transform)">
+            <summary>
+            Includes root object
+            </summary>
+            <param name="root"></param>
+            <returns></returns>
         </member>
         <member name="M:LBoLEntitySideloader.Utils.Numbers.DecimalToABC(System.Int64,System.Int32)">
             <summary>
