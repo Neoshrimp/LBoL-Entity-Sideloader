@@ -18,14 +18,9 @@ using static Random_Examples.BepinexPlugin;
 
 namespace Random_Examples
 {
-    [OverwriteVanilla]
     public abstract class BaseRedParticlesEffectDef : EffectTemplate
     {
         static GameObject ParticleGo;
-
-        [DontOverwrite]
-        public override EffectConfig MakeConfig() => DefaultConfig();
-
 
         public override EffectWidgetData LoadEffectData() 
         {
@@ -39,20 +34,38 @@ namespace Random_Examples
 
     }
 
+    public sealed class RedBlueCirclesEffect : BaseRedParticlesEffectDef
+    {
+        public override IdContainer GetId() => "RedBlueCircles";
 
-    public sealed class KoishiShootRedDef : BaseRedParticlesEffectDef
+        public override EffectConfig MakeConfig() => DefaultConfig();
+
+    }
+
+    [OverwriteVanilla]
+    public abstract class RedParticleOverwrite : BaseRedParticlesEffectDef
+    {
+        [DontOverwrite]
+        public override EffectConfig MakeConfig()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public sealed class KoishiShootRedDef : RedParticleOverwrite
     {
         public override IdContainer GetId() => "DanmaBigHeart";
     }
 
 
-    public sealed class ShootRedDef : BaseRedParticlesEffectDef {
+    public sealed class ShootRedDef : RedParticleOverwrite {
         public override IdContainer GetId() => "DanmaFish";
 
     }
 
     //gun = 凤翼天翔
-    public sealed class DanmaAmuletRedDef : BaseRedParticlesEffectDef
+    public sealed class DanmaAmuletRedDef : RedParticleOverwrite
     {
         public override IdContainer GetId() => "DanmaAmulet";
 

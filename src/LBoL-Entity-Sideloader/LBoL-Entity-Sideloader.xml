@@ -27,6 +27,23 @@
             </summary>
             <param name="scriptEngineInfo"></param>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.BulletTemplate.DefaultConfig">
+            <summary>
+            Name: ;
+            Widget: ;
+            Launch: ;
+            LaunchSfx: ;
+            HitBody: ;
+            HitBodySfx: ;
+            HitShield: ;
+            HitShieldSfx: ;
+            HitBlock: ;
+            HitBlockSfx: ;
+            Graze: ;
+            GrazeSfx: ;
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.CardTemplate.DefaultConfig">
             <summary>
             Common default values for CardConfig. The values which are safe to be left as a null are left as null.
@@ -139,10 +156,44 @@
             </summary>
             <returns>Type</returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.GunTemplate.DefaultConfig">
+            <summary>
+            Id : the most important parameter. Maps gun to one or more Pieces,
+            Name : technically the Id of the GunCOnfig but in reality just a cosmetic name,
+            Spell : ,
+            Sequence : Sequence Id,
+            Animation : "shoot1", "shoot2", "shoot3" or "shoot4",
+            ForceHitTime : ,
+            ForceHitAnimation : ,
+            ForceShowEndStartTime : ,
+            Shooter : always "Direct" ?,
+            ShakePower : ,
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.DefaultConfig">
             <summary>
             Group: restricts JadeBox selection. Only one JadeBox per group can be selected. Empty string list = no restrictions
             Keywords: should be RelativeKeywords. Cosmetic tooltip keywords.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.LaserTemplate.DefaultConfig">
+            <summary>
+            Name : ,
+            Widget : ,
+            LaunchSfx : ,
+            Size : ,
+            Offset : ,
+            Start : ,
+            HitBody : effect Name,
+            HitBodySfx : ,
+            HitShield : ,
+            HitShieldSfx : ,
+            HitBlock : ,
+            HitBlockSfx : ,
+            Graze : ,
+            GrazeSfx : ,
             </summary>
             <returns></returns>
         </member>
@@ -365,6 +416,7 @@
             <summary>
             Adds EffectWidget Monobehaviour to effectGo.
             effectGo should be a prefab loaded via AssetBundle with all visual Particle/Trail systems in its children gameObjects.
+            Loading via AssetBundle or Addressables is important as this is pretty much only way to load gameObject in memory but not instantiate it in a scene.
             Additional minor properties can be provided to Particle/Trail systems via queue arguments.
             First element in the queue will go to the first system discovered (the top most in the hierarchy), second element to the second discovered and so on.
             When queue has only one element remaining, the properties of the element will be applied to any systems discovered afterwards. This way a queue with single element can be provided to apply the same properties to all the systems.
@@ -409,6 +461,50 @@
             <summary>
             Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.PieceTemplate.DefaultConfig">
+            <summary>
+            Id : ,
+            Type : ,
+            Projectile : ,
+            ShootType : 0/1/2/3,
+            ParentPiece : ,
+            AddParentAngle : ,
+            LastWave : ,
+            FollowPiece : ,
+            ShootEnd : ,
+            HitAmount : ,
+            HitInterval : ,
+            ZeroHitNotDie : ,
+            Scale : ,
+            Color : ,
+            RootType : ,
+            X : ,
+            Y : ,
+            Radius : ,
+            RadiusA : ,
+            Aim : ,
+            StartTime : ,
+            GInterval : ,
+            Group : ,
+            Way : ,
+            GAngle : ,
+            Range : ,
+            Life : ,
+            LaserLastWave : ,
+            StartSpeed : ,
+            StartAcc : ,
+            StartAccAngle : ,
+            EvStart : ,
+            EvDuration : ,
+            EvNumber : ,
+            EvType : ,
+            VanishV3 : ,
+            LaunchSfx : ,
+            HitBodySfx : ,
+            HitAnimationSpeed : 
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:LBoLEntitySideloader.Resource.PISuffixes">
             <summary>

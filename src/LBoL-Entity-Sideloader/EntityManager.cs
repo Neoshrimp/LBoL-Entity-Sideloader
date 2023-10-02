@@ -424,11 +424,27 @@ namespace LBoLEntitySideloader
 
                             var effectConfig = RegisterConfig(eft, user);
 
-                            if(effectConfig != null)
+                            if (effectConfig != null)
                                 if (ogPath != null)
                                     effectConfig.Path = ogPath;
                                 else
                                     effectConfig.Path = effectConfig.Name;
+                        }
+                        else if(entityDefinition is LaserTemplate lt)
+                        {
+                            RegisterConfig(lt, user);
+                        }
+                        else if (entityDefinition is BulletTemplate bulletT)
+                        {
+                            RegisterConfig(bulletT, user);
+                        }
+                        else if (entityDefinition is GunTemplate gt)
+                        {
+                            RegisterConfig(gt, user);
+                        }
+                        else if (entityDefinition is PieceTemplate pt)
+                        {
+                            RegisterConfig(pt, user);
                         }
                     }
                     catch (Exception ex)
@@ -518,7 +534,31 @@ namespace LBoLEntitySideloader
                     f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
                 }
 
-                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                switch (entityDefinition.UniqueId.idType)
+                {
+                    case IdContainer.IdType.String:
+                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
+                        break;
+                    case IdContainer.IdType.Int:
+                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
+                }
+
+                switch (entityDefinition.UniqueId.idType)
+                {
+                    case IdContainer.IdType.String:
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                        break;
+                    case IdContainer.IdType.Int:
+                        ((Dictionary<int, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
+                }
                 ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
 
             }
@@ -534,7 +574,18 @@ namespace LBoLEntitySideloader
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
 
 
-                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                        switch (entityDefinition.UniqueId.idType)
+                        {
+                            case IdContainer.IdType.String:
+                                ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                                break;
+                            case IdContainer.IdType.Int:
+                                ((Dictionary<int, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                                break;
+                            default:
+                                log.LogWarning("RegisterConfig: you shouldn't be here");
+                                break;
+                        }
                         ref_Data()[i] = newConfig;
                     }
                 }

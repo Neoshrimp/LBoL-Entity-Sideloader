@@ -51,10 +51,10 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             },
 
             // Id is an index, yes
-            {
+/*            {
                 typeof(GunConfig),
                 AccessTools.Field(typeof(GunConfig), BackingWrap(nameof(GunConfig.Id)))
-            },
+            },*/
 
             {
                 typeof(JadeBoxConfig),
