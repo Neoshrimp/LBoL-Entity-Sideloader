@@ -94,7 +94,7 @@ namespace LBoLEntitySideloader
                 }
                 else
                 {
-                    log.LogInfo($"BePinEx scriptengine is needed to use runtime reload");
+                    log.LogInfo($"scriptengine is required for runtime reload");
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace LBoLEntitySideloader
         {
 
             foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
-            {
+            {   
                 EntityManager.Instance.UnregisterUser(user);
             }
 
