@@ -4,6 +4,15 @@
         <name>LBoL-Entity-Sideloader</name>
     </assembly>
     <members>
+        <member name="T:LBoLEntitySideloader.Attributes.DontOverwriteAttribute">
+            <summary>
+            Used on template class overridden methods.
+            Will have no effect unless template uses [OverwriteVanilla] attribute.
+            The annotated method will be ignored completely and never called, 
+            effectively preventing the change of the respective component.
+            This attribute cannot be used on types but for entities which have EntityLogic type component entity logic will not be changed if a type with [EntityLogic] is omitted.
+            </summary>
+        </member>
         <member name="T:LBoLEntitySideloader.Attributes.EntityLogic">
             <summary>
             Used to mark entity logic classes. Ensures that there is single entity logic per definition.
@@ -19,6 +28,14 @@
         <member name="T:LBoLEntitySideloader.Attributes.ExternalEntityLogicAttribute">
             <summary>
             Suppress empty
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.Attributes.OverwriteVanilla">
+            <summary>
+            Used on template(definition) classes. 
+            Indicates that changes defined in the template will be applied to a vanilla entity with Id returned by GetId().
+            Which entity components should be overwritten can be controlled with [DontOverwrite] attribute.
+            For entities which have EntityLogic type component entity logic will not be changed if a type with [EntityLogic] is omitted
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.BepinexPlugin.Reload(BepInEx.PluginInfo,System.Boolean)">
@@ -51,7 +68,7 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:LBoLEntitySideloader.Entities.CardTemplate.MakeConfig" -->
-        <member name="T:LBoLEntitySideloader.Entities.ConfigBuilders.EventType.MainEvent">
+        <member name="T:LBoLEntitySideloader.Entities.ConfigBuilders.Piece.EventType.MainEvent">
             <summary>
             has some duplicate unused events
             </summary>
