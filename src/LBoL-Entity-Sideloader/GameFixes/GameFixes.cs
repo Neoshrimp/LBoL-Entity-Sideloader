@@ -17,6 +17,7 @@ using System.Collections;
 using LBoL.Core.Battle;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.EnemyUnits.Character;
+using LBoL.Presentation.UI.ExtraWidgets;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -292,6 +293,32 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
+
+    // 2do mysterious bug. cannot reproduce
+    //[HarmonyPatch(typeof(CardUi), nameof(CardUi.SetPendingCardsAlpha))]
+    class CardUi_SetPendingCardsAlpha_Patch
+    {
+        static bool Prefix(CardUi __instance, float alpha)
+        {
+            try
+            {
+                foreach (HandCard handCard in __instance?._pendingUseWidgets)
+                {
+                    if(handCard?.CanvasGroup?.alpha != null)
+                    handCard.CanvasGroup.alpha = alpha;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Log.log.LogError(ex);
+            }
+
+
+            return false;
+        }
+
+    }
 
 
 
