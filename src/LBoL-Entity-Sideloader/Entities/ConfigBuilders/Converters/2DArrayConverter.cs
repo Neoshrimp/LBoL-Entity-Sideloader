@@ -5,6 +5,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
 {
+
     public class D2ArrayConverter<N> : ITwoWayConverter<D2ArrayEncode<N>, N[][]> where N : struct
     {
         public N[][] ConvertTo(D2ArrayEncode<N> encoded)
@@ -51,6 +52,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
         }
     }
 
+    [Serializable]
     public class D2ArrayEncode<N> where N : struct
     {
         public Mode mode = Mode.Zero;
@@ -89,6 +91,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
     }
 
 
+    [Serializable]
     public class NumberOption<N> : ITwoWayConverter<NumberOption<N>, N[]> where N : struct
     {
         public Mode mode = Mode.Zero;

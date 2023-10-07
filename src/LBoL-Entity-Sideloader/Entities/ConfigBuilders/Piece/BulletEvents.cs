@@ -6,12 +6,13 @@ using static LBoLEntitySideloader.Entities.ConfigBuilders.Piece.EventType;
 
 namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
 {
+    [Serializable]
     public class BulletEvents
     {
         public List<DecodedBulletEvent> bulletEvents = new List<DecodedBulletEvent>();
     }
 
-
+    [Serializable]
     public class DecodedBulletEvent
     {
         public EvStart evStart = new EvStart();
@@ -73,6 +74,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
         }
     }
 
+    [Serializable]
     public class EventType
     {
         public MainEvent mainEvent;
@@ -116,8 +118,9 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
     }
 
 
-
+    [Serializable]
     public class EventNumberConverter : D2ArrayConverter<float> { }
+
 
     public class EvDurationConvert : ITwoWayConverter<EvDuration, int[][]>
     {
@@ -159,6 +162,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
         }
     }
 
+    [Serializable]
     public class EvDuration
     {
         public Mode mode;
@@ -216,6 +220,8 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
         }
     }
 
+
+    [Serializable]
     public class EvStart
     {
         public Mode mode;

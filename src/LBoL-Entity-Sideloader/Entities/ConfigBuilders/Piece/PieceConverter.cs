@@ -164,7 +164,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
             }
         }
 
-
+        [Serializable]
         public class PieceColor
         {
             public Mode mode = Mode.Simple;
@@ -335,7 +335,7 @@ namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
         }
 
 
-
+        [Serializable]
         public class Way
         {
             public Mode mode;
