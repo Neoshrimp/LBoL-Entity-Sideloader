@@ -68,11 +68,6 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:LBoLEntitySideloader.Entities.CardTemplate.MakeConfig" -->
-        <member name="T:LBoLEntitySideloader.Entities.ConfigBuilders.Piece.EventType.MainEvent">
-            <summary>
-            has some duplicate unused events
-            </summary>
-        </member>
         <member name="M:LBoLEntitySideloader.Entities.EnemyGroupTemplate.AddFormation(System.String,System.Collections.Generic.Dictionary{System.Int32,UnityEngine.Vector2},System.Reflection.Assembly)">
             <summary>
             Numbering should start from 0. First enemy from enemy list will go to slot 0, second to slot 1 and so on. Make sure enemy act order display is consistent with the game's (left to right first, then top to bottom).

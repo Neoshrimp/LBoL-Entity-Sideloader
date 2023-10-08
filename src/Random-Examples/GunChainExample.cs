@@ -2,7 +2,6 @@
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Entities;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Piece;
 using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
@@ -43,14 +42,13 @@ namespace Random_Examples
         public override PieceConfig MakeConfig()
         {
 
-            var pb = new PieceBuilder();
-            var rc = pb.Config2ReadableConfig(DefaultConfig());
-
+            //var pb = new PieceBuilder();
+            //var rc = pb.Config2ReadableConfig(DefaultConfig());
             //var rc = new PieceReadableConfig();
             //var config = rc.ConvertSelf();
+            //var config = rc.ConvertSelf();
 
-
-            var config = rc.ConvertSelf();
+            var config = DefaultConfig();
             config.Projectile = new RedBlueBullet().UniqueId;
             return config;
         }
