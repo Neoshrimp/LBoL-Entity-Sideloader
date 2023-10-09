@@ -1,13 +1,13 @@
 ﻿using LBoL.ConfigData;
 using LBoL.EntityLib.Exhibits.Shining;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Converters;
+using GunDesigner.ConfigBuilders.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using static LBoLEntitySideloader.Entities.ConfigBuilders.Piece.PieceConverter;
+using static GunDesigner.ConfigBuilders.Piece.PieceConverter;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
+namespace GunDesigner.ConfigBuilders.Piece
 {
     [Serializable]
     public class PieceReadableConfig : ReadableConfig<PieceConfig>

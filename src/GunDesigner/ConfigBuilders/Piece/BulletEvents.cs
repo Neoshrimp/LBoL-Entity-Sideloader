@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Converters;
-using static LBoLEntitySideloader.Entities.ConfigBuilders.Piece.EventType;
+using GunDesigner.ConfigBuilders.Converters;
+using static GunDesigner.ConfigBuilders.Piece.EventType;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
+namespace GunDesigner.ConfigBuilders.Piece
 {
     [Serializable]
     public class BulletEvents

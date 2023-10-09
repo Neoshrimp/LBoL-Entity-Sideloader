@@ -1,4 +1,4 @@
-﻿namespace LBoLEntitySideloader.Entities.ConfigBuilders
+﻿namespace GunDesigner.ConfigBuilders
 {
     public abstract class ReadableConfig<C>
     {

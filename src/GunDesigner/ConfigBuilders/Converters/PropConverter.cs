@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
+namespace GunDesigner.ConfigBuilders.Converters
 {
     public abstract class PropConverter<From, To> : ITwoWayConverter<From, To>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
+namespace GunDesigner.ConfigBuilders.Converters
 {
 
     public class D2ArrayConverter<N> : ITwoWayConverter<D2ArrayEncode<N>, N[][]> where N : struct

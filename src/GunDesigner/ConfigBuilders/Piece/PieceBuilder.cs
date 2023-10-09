@@ -1,11 +1,11 @@
 ﻿using LBoL.ConfigData;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Converters;
+using GunDesigner.ConfigBuilders.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
+namespace GunDesigner.ConfigBuilders.Piece
 {
     public class PieceBuilder : ConfigBuilder<PieceConfig, PieceReadableConfig>
     {

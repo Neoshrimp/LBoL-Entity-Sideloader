@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using static LBoLEntitySideloader.Entities.ConfigBuilders.Piece.PieceConverter;
+using static GunDesigner.ConfigBuilders.Piece.PieceConverter;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Converters
+namespace GunDesigner.ConfigBuilders.Converters
 {
     public interface IConverter<From, To>
     {

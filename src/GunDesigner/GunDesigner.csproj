@@ -33,6 +33,11 @@
         <PublicizerLogFilePath>.\Krafs.publicizer.log</PublicizerLogFilePath>
         <PublicizerRuntimeStrategies>IgnoresAccessChecksTo</PublicizerRuntimeStrategies>
     </PropertyGroup>
+
+
+    <ItemGroup>
+        <Publicize Include="UnityExplorer.Core.Mono" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false"/>
+    </ItemGroup>
     
     <!--Don't publicize virtual members which are meant to be overwritten in concrete entity logic types-->
     <ItemGroup>
@@ -312,12 +317,18 @@
         </Reference>
         <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-        </Reference>	
+        </Reference>
+        <Reference Include="UnityEngine.UnityEngine.TextRenderingModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityExplorer.Core.Mono">
+            <HintPath>$(BepInExFolder)\plugins\sinai-dev-UnityExplorer\UnityExplorer.Core.Mono.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 
     <ItemGroup>
-      <EmbeddedResource Include="Resources\*" />
+      <EmbeddedResource Include="Resources\*" />    
     </ItemGroup>
 
 

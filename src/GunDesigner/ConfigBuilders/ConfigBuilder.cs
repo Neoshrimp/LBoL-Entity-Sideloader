@@ -7,9 +7,9 @@ using System.Text;
 using HarmonyLib;
 using LBoL.Base.Extensions;
 using LBoL.ConfigData;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Converters;
+using GunDesigner.ConfigBuilders.Converters;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders
+namespace GunDesigner.ConfigBuilders
 {
     public abstract class ConfigBuilder<C, RC> where C: class where RC : ReadableConfig<C>, new()
     {

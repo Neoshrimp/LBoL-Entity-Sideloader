@@ -3,9 +3,7 @@ using LBoL.ConfigData;
 using LBoL.EntityLib.Cards.Character.Cirno;
 using LBoL.EntityLib.EnemyUnits.Lore;
 using LBoL.Presentation.Bullet;
-using LBoLEntitySideloader.Entities.ConfigBuilders.Converters;
-using Mono.CSharp;
-using Mono.CSharp.Linq;
+using GunDesigner.ConfigBuilders.Converters;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,9 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static LBoLEntitySideloader.Entities.ConfigBuilders.Piece.PieceConverter.ColorConvert;
+using static GunDesigner.ConfigBuilders.Piece.PieceConverter.ColorConvert;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders.Piece
+namespace GunDesigner.ConfigBuilders.Piece
 {
     public class PieceConverter : ConverterContainer
     {

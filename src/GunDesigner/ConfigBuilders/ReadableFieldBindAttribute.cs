@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace LBoLEntitySideloader.Entities.ConfigBuilders
+namespace GunDesigner.ConfigBuilders
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public sealed class ReadableFieldBindAttribute : Attribute

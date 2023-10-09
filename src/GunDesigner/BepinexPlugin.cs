@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using GunDesigner.ConfigBuilders.Piece;
+using GunDesigner.UI;
 using HarmonyLib;
 using LBoL.Base;
 using LBoL.Base.Extensions;
@@ -110,6 +112,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityExplorer.Core;
 using UniverseLib;
 using UniverseLib.Config;
 using Untitled;
@@ -122,6 +125,7 @@ namespace GunDesigner
 {
     [BepInPlugin(GunDesigner.PInfo.GUID, GunDesigner.PInfo.Name, GunDesigner.PInfo.version)]
     [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency(ExplorerCore.GUID, BepInDependency.DependencyFlags.HardDependency)]
     [BepInProcess("LBoL.exe")]
     public class BepinexPlugin : BaseUnityPlugin
     {
@@ -138,6 +142,10 @@ namespace GunDesigner
         internal static DirectorySource directorySource = new DirectorySource(GunDesigner.PInfo.GUID, "");
 
 
+        //TEMP
+
+        public static PieceReadableConfig pieceReadableConfig = new PieceReadableConfig();
+
         private void Awake()
         {
             log = Logger;
@@ -148,9 +156,15 @@ namespace GunDesigner
 
             harmony.PatchAll();
 
-            Universe.Init();
+            Universe.Init(1f, () => { 
+                UIMaster.Init();
+                UIMaster.GetPanel<PiecePanel>(UIMaster.Panels.Piece).Enabled = true;
+            },
+            null,
+            new UniverseLibConfig() { Force_Unlock_Mouse = true });
 
-            var universeCfg = new UniverseLibConfig();
+
+
 
         }
 
@@ -158,6 +172,8 @@ namespace GunDesigner
         {
             if (harmony != null)
                 harmony.UnpatchSelf();
+
+            UIMaster.DestroyAll();
         }
 
 
