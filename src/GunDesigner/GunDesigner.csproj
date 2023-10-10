@@ -36,7 +36,7 @@
 
 
     <ItemGroup>
-        <Publicize Include="UnityExplorer.Core.Mono" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false"/>
+        <Publicize Include="UnityExplorer.Core.Mono" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false" />
     </ItemGroup>
     
     <!--Don't publicize virtual members which are meant to be overwritten in concrete entity logic types-->

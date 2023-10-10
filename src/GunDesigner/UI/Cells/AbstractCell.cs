@@ -4,17 +4,17 @@ using System.Text;
 using UnityEngine;
 using UniverseLib.UI.Widgets.ScrollView;
 
-namespace GunDesigner.UI
+namespace GunDesigner.UI.Cells
 {
-    public abstract class PropCell : ICell
+    public abstract class AbstractCell<T> : ICell where T : class
     {
-
         public float DefaultHeight => 30f;
 
         public GameObject UIRoot { get; set; }
 
         public bool Enabled => m_enabled;
         private bool m_enabled;
+
 
         public RectTransform Rect { get; set; }
 
@@ -31,6 +31,5 @@ namespace GunDesigner.UI
         }
 
         public abstract GameObject CreateContent(GameObject parent);
-
     }
 }

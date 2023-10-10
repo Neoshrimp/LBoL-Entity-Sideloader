@@ -113,6 +113,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityExplorer.Core;
+using UnityExplorer.Core.UI.Panels;
 using UniverseLib;
 using UniverseLib.Config;
 using Untitled;
@@ -142,9 +143,7 @@ namespace GunDesigner
         internal static DirectorySource directorySource = new DirectorySource(GunDesigner.PInfo.GUID, "");
 
 
-        //TEMP
 
-        public static PieceReadableConfig pieceReadableConfig = new PieceReadableConfig();
 
         private void Awake()
         {
@@ -156,16 +155,23 @@ namespace GunDesigner
 
             harmony.PatchAll();
 
-            Universe.Init(1f, () => { 
+            Universe.Init(1f, () => {
                 UIMaster.Init();
                 UIMaster.GetPanel<PiecePanel>(UIMaster.Panels.Piece).Enabled = true;
             },
-            null,
+            Log,
             new UniverseLibConfig() { Force_Unlock_Mouse = true });
 
 
+            //StartCoroutine(DebugCor());
+        }
 
 
+        IEnumerator DebugCor()
+        {
+            yield return new WaitForSeconds(2f);
+            UIMaster.Init();
+            UIMaster.GetPanel<PiecePanel>(UIMaster.Panels.Piece).Enabled = true;
         }
 
         private void OnDestroy()
@@ -176,6 +182,31 @@ namespace GunDesigner
             UIMaster.DestroyAll();
         }
 
+
+
+        private static void Log(object message, LogType logType)
+        {
+            string msg = message?.ToString();
+            msg = string.IsNullOrEmpty(msg) ? "Empty Log message" :  msg;
+
+
+            switch (logType)
+            {
+                case LogType.Assert:
+                case LogType.Log:
+                    log.LogInfo(msg);
+                    break;
+
+                case LogType.Warning:
+                    log.LogWarning(msg);
+                    break;
+
+                case LogType.Error:
+                case LogType.Exception:
+                    log.LogError(msg);
+                    break;
+            }
+        }
 
     }
 }

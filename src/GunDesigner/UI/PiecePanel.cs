@@ -1,4 +1,6 @@
 ﻿using GunDesigner.ConfigBuilders.Piece;
+using GunDesigner.UI.Cells;
+using GunDesigner.UI.Cells.Piece;
 using LBoL.Presentation.UI;
 using System;
 using System.Collections.Generic;
@@ -36,9 +38,21 @@ namespace GunDesigner.UI
 
         public Dictionary<int, PieceReadableConfig> configs = new Dictionary<int, PieceReadableConfig>() { {0, new PieceReadableConfig() } };
 
-        public Dictionary<int, List<CacheObjectCell>> fields = new Dictionary<int, List<CacheObjectCell>>();
+        public PiecePropPool piecePropPool = new PiecePropPool();
 
-        public PieceConfigReflectionInspector inspector = new PieceConfigReflectionInspector();
+
+        public class ConfigPoolPair
+        {
+            public PieceReadableConfig pieceReadableConfig;
+            public PiecePropPool piecePropPool;
+        }
+
+
+        
+
+        //public Dictionary<int, List<CacheObjectCell>> fields = new Dictionary<int, List<CacheObjectCell>>();
+
+        //public PieceConfigReflectionInspector inspector = new PieceConfigReflectionInspector();
 
         public PiecePanel(UIBase owner) : base(owner)
         {
@@ -46,9 +60,7 @@ namespace GunDesigner.UI
 
             //InspectorManager.CreateInspector<PieceConfigReflectionInspector>(configs.First(), false, null);
 
-            inspector.Target = configs.First();
-            inspector.StaticOnly = false;
-            inspector.SetTarget(inspector.Target);
+
 
             //inspector.content
 
@@ -100,13 +112,16 @@ namespace GunDesigner.UI
 
             UIFactory.SetLayoutElement(title.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999);
 
-            ScrollPool<CacheMemberCell> scrollPool = UIFactory.CreateScrollPool<CacheMemberCell>(
+            ScrollPool<PropCell<PieceReadableConfig>> scrollPool = UIFactory.CreateScrollPool<PropCell<PieceReadableConfig>>(
                 this.ContentRoot,
                 "ConfigEntries",
                 out GameObject scrollObj,
                 out GameObject scrollContent);
 
-            scrollPool.Initialize(inspector);
+            piecePropPool.target = configs.First().Value;
+
+
+            scrollPool.Initialize(piecePropPool);
 
 
         }
