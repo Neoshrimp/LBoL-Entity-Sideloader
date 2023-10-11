@@ -157,7 +157,7 @@ namespace GunDesigner
 
             Universe.Init(1f, () => {
                 UIMaster.Init();
-                UIMaster.GetPanel<PiecePanel>(UIMaster.Panels.Piece).Enabled = true;
+                //UIMaster.GetPanel<PiecePanel>(UIMaster.Panels.Piece).Enabled = true;
             },
             Log,
             new UniverseLibConfig() { Force_Unlock_Mouse = true });

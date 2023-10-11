@@ -32,7 +32,9 @@ namespace GunDesigner.UI
             uIRootRect = uIRoot.GetComponent<RectTransform>();
             uICanvas = uIRoot.GetComponent<Canvas>();
 
-            AllPanels.Add(Panels.Piece, new PiecePanel(uIBase));
+            //AllPanels.Add(Panels.Piece, new PiecePanel(uIBase));
+
+            AllPanels.Add(Panels.Test, new TestCellHandler(uIBase));
 
         }
 
@@ -59,7 +61,8 @@ namespace GunDesigner.UI
 
         public enum Panels
         {
-            Piece
+            Piece,
+            Test
         }
     }
 }

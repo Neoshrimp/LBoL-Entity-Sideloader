@@ -41,16 +41,15 @@ namespace GunDesigner.UI
         public PiecePropPool piecePropPool = new PiecePropPool();
 
 
-        public class ConfigPoolPair
+/*        public class ConfigPoolPair
         {
             public PieceReadableConfig pieceReadableConfig;
             public PiecePropPool piecePropPool;
-        }
+        }*/
 
 
         
 
-        //public Dictionary<int, List<CacheObjectCell>> fields = new Dictionary<int, List<CacheObjectCell>>();
 
         //public PieceConfigReflectionInspector inspector = new PieceConfigReflectionInspector();
 
