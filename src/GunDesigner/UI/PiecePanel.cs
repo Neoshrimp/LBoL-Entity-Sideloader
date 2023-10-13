@@ -19,7 +19,7 @@ using UniverseLib.UI.Widgets.ScrollView;
 
 namespace GunDesigner.UI
 {
-    public class PiecePanel : GDPanelBase
+    public class PiecePanel : GDPanelBase, ICellPoolDataSource<PropCell<PieceReadableConfig>>
     {
 
 
@@ -38,41 +38,44 @@ namespace GunDesigner.UI
 
         public Dictionary<int, PieceReadableConfig> configs = new Dictionary<int, PieceReadableConfig>() { {0, new PieceReadableConfig() } };
 
-        public PiecePropPool piecePropPool = new PiecePropPool();
+        //public PropPool<PieceReadableConfig> piecePropPool = new PropPool<PieceReadableConfig>();
 
 
-/*        public class ConfigPoolPair
+        /*        public class ConfigPoolPair
+                {
+                    public PieceReadableConfig pieceReadableConfig;
+                    public PiecePropPool piecePropPool;
+                }*/
+
+        List<PropCell<PieceReadableConfig>> cellData = new List<PropCell<PieceReadableConfig>>();
+
+        public int ItemCount => cellData.Count;
+
+
+        public void OnCellBorrowed(PropCell<PieceReadableConfig> cell) {}
+
+        public void SetCell(PropCell<PieceReadableConfig> cell, int index)
         {
-            public PieceReadableConfig pieceReadableConfig;
-            public PiecePropPool piecePropPool;
-        }*/
+            //cell.target = configs.First().Value;
+        }
 
 
-        
-
-
-        //public PieceConfigReflectionInspector inspector = new PieceConfigReflectionInspector();
 
         public PiecePanel(UIBase owner) : base(owner)
         {
             UIMaster.panelManager.OnClickedOutsidePanels += Unfocused;
 
-            //InspectorManager.CreateInspector<PieceConfigReflectionInspector>(configs.First(), false, null);
 
 
+            
+            cellData.Add(new PropCell<PieceReadableConfig>());
 
-            //inspector.content
+/*            piecePropPool.target = configs.First().Value;
+            piecePropPool.cells.Add(new PropCell<PieceReadableConfig>());*/
 
-/*            foreach (var kv in configs)
-            {
-                fields.Add(kv.Key, new List<CacheObjectCell>());
 
-                var cf = fields[kv.Key];
-                var con = kv.Value;
-                
+            //piecePropPool.cells.Add(new addParentAngle());
 
-                cf.Add(new CacheMemberCell());
-            }*/
         }
 
 
@@ -113,16 +116,14 @@ namespace GunDesigner.UI
 
             ScrollPool<PropCell<PieceReadableConfig>> scrollPool = UIFactory.CreateScrollPool<PropCell<PieceReadableConfig>>(
                 this.ContentRoot,
-                "ConfigEntries",
+                "PieceEntries",
                 out GameObject scrollObj,
                 out GameObject scrollContent);
 
-            piecePropPool.target = configs.First().Value;
-
-
-            scrollPool.Initialize(piecePropPool);
-
+            scrollPool.Initialize(this);
 
         }
+
+
     }
 }

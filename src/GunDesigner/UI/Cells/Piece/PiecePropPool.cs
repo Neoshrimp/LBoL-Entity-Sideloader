@@ -9,7 +9,7 @@ namespace GunDesigner.UI.Cells.Piece
     {
         public PiecePropPool()
         {
-            cells.Add(new addParentAngle());
+            //cells.Add(new addParentAngle());
         }
     }
 }
