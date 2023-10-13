@@ -1,11 +1,12 @@
 ﻿using GunDesigner.ConfigBuilders.Piece;
+using GunDesigner.UI.Entries;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GunDesigner.UI.Cells.Piece
+namespace GunDesigner.UI.Entries.Piece
 {
-    public class addParentAngle : BoolCell<PieceReadableConfig>
+    public class addParentAngle : BoolEntry<PieceReadableConfig>
     {
         public override void AssignAction(PieceReadableConfig target) => target.addParentAngle = GetValue();
 

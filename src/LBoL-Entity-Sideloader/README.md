@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.11` Remove error message suppression in ViewConsumeMana. An explicit fix is required to make auto cast work more properly.
+
 `0.9.1` Improve Texture2D scaling quality by adding mipmap generation.
 
 `0.9.0` added template for new playable characters and helpers methods. 

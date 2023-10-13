@@ -6,31 +6,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniverseLib.UI;
 using UniverseLib.UI.Models;
-using UniverseLib.Utility;
+using UniverseLib.UI.Widgets.ScrollView;
 
-namespace GunDesigner.UI.Cells
+namespace GunDesigner.UI.Entries
 {
-    public class BoolCell<T> : PropCell<T> where T : class
+    public abstract class PropEntry<T> where T : class
     {
 
-        public bool content;
-
-        public Toggle Toggle;
-        public Text ToggleText;
+        public T target;
+        public float DefaultHeight => 30f;
+        public GameObject UIRoot { get; set; }
+        public RectTransform Rect { get; set; }
 
         public Text NameLabel;
+        protected virtual string NameLabelText => GetType().Name;
 
         public LayoutElement NameLayout;
         public GameObject RightGroupContent;
+        public GameObject rightHoriGroup;
+
         public LayoutElement RightGroupLayout;
         public GameObject SubContentHolder;
 
         public InputFieldRef HiddenNameLabel;
 
-        public override GameObject CreateContent(GameObject parent)
+        public virtual GameObject MakeContent(GameObject parent)
         {
-
-            UIRoot = base.CreateContent(parent);
+            // Main layout
+            UIRoot = UIFactory.CreateUIObject(GetType().Name, parent, new Vector2(100, DefaultHeight));
+            Rect = UIRoot.GetComponent<RectTransform>();
+            UIFactory.SetLayoutGroup<VerticalLayoutGroup>(UIRoot, false, false, true, true, childAlignment: TextAnchor.UpperLeft);
+            UIFactory.SetLayoutElement(UIRoot, minWidth: 100, flexibleWidth: 9999, minHeight: (int)DefaultHeight, flexibleHeight: 600);
+            UIRoot.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
 
             GameObject horiRow = UIFactory.CreateUIObject("HoriGroup", UIRoot);
@@ -41,7 +48,7 @@ namespace GunDesigner.UI.Cells
 
             // Left name label
 
-            NameLabel = UIFactory.CreateLabel(horiRow, "NameLabel", "<notset>", TextAnchor.MiddleLeft);
+            NameLabel = UIFactory.CreateLabel(horiRow, "NameLabel", NameLabelText, TextAnchor.MiddleLeft);
             NameLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
             NameLayout = UIFactory.SetLayoutElement(NameLabel.gameObject, minHeight: 25, minWidth: 20, flexibleHeight: 300, flexibleWidth: 0);
             UIFactory.SetLayoutGroup<VerticalLayoutGroup>(NameLabel.gameObject, true, true, true, true);
@@ -64,29 +71,16 @@ namespace GunDesigner.UI.Cells
             UIFactory.SetLayoutElement(RightGroupContent, minHeight: 25, minWidth: 200, flexibleWidth: 9999, flexibleHeight: 800);
 
 
-
-
-            GameObject rightHoriGroup = UIFactory.CreateUIObject("RightHoriGroup", RightGroupContent);
+            rightHoriGroup = UIFactory.CreateUIObject("RightHoriGroup", RightGroupContent);
             UIFactory.SetLayoutGroup<HorizontalLayoutGroup>(rightHoriGroup, false, false, true, true, 4, childAlignment: TextAnchor.UpperLeft);
             UIFactory.SetLayoutElement(rightHoriGroup, minHeight: 25, minWidth: 200, flexibleWidth: 9999, flexibleHeight: 800);
-
-            GameObject toggleObj = UIFactory.CreateToggle(rightHoriGroup, "Toggle", out Toggle, out ToggleText);
-            UIFactory.SetLayoutElement(toggleObj, minWidth: 70, minHeight: 25, flexibleWidth: 0, flexibleHeight: 0);
-            ToggleText.color = SignatureHighlighter.KeywordBlue;
-            Toggle.onValueChanged.AddListener(ToggleClicked);
-
 
             return UIRoot;
         }
 
-        protected virtual void ToggleClicked(bool value)
-        {
-            ToggleText.text = value.ToString();
-            AssignAction(target);
-        }
+        public abstract void AssignAction(T target);
 
-        public bool GetValue() => Toggle.isOn;
+        public abstract void DataToUI(T target);
 
-        public void SetValue(bool val) => Toggle.isOn = val;
     }
 }

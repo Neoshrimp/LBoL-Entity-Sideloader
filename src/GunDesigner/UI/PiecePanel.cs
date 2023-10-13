@@ -1,6 +1,6 @@
 ﻿using GunDesigner.ConfigBuilders.Piece;
-using GunDesigner.UI.Cells;
 using GunDesigner.UI.Cells.Piece;
+using GunDesigner.UI.Entries;
 using LBoL.Presentation.UI;
 using System;
 using System.Collections.Generic;
@@ -21,9 +21,8 @@ namespace GunDesigner.UI
 {
     public class PiecePanel : GDPanelBase
     {
-
-
         public override string Name => "Piece Builder";
+        public override UIMaster.Panels PanelType => UIMaster.Panels.Piece;
 
         public override int MinWidth => 450;
 
@@ -33,46 +32,34 @@ namespace GunDesigner.UI
 
         public override Vector2 DefaultAnchorMax => new Vector2(0.5f, 1f);
 
-        public override UIMaster.Panels PanelType => UIMaster.Panels.Piece;
 
 
         public Dictionary<int, PieceReadableConfig> configs = new Dictionary<int, PieceReadableConfig>() { {0, new PieceReadableConfig() } };
 
-        public PiecePropPool piecePropPool = new PiecePropPool();
+        List<PropEntry<PieceReadableConfig>> cellData = new List<PropEntry<PieceReadableConfig>>();
 
+        public PieceReadableConfig tempTarget;
 
-/*        public class ConfigPoolPair
+        public List<PropEntry<PieceReadableConfig>> uiEntries = new List<PropEntry<PieceReadableConfig>>()
         {
-            public PieceReadableConfig pieceReadableConfig;
-            public PiecePropPool piecePropPool;
-        }*/
+            new addParentAngle()
 
-
-        
-
-
-        //public PieceConfigReflectionInspector inspector = new PieceConfigReflectionInspector();
+        };
 
         public PiecePanel(UIBase owner) : base(owner)
         {
             UIMaster.panelManager.OnClickedOutsidePanels += Unfocused;
 
-            //InspectorManager.CreateInspector<PieceConfigReflectionInspector>(configs.First(), false, null);
 
 
 
-            //inspector.content
 
-/*            foreach (var kv in configs)
-            {
-                fields.Add(kv.Key, new List<CacheObjectCell>());
+            /*            piecePropPool.target = configs.First().Value;
+                        piecePropPool.cells.Add(new PropCell<PieceReadableConfig>());*/
 
-                var cf = fields[kv.Key];
-                var con = kv.Value;
-                
 
-                cf.Add(new CacheMemberCell());
-            }*/
+            //piecePropPool.cells.Add(new addParentAngle());
+
         }
 
 
@@ -80,7 +67,7 @@ namespace GunDesigner.UI
         {
             if (this.Enabled)
             {
-                Log.log.LogInfo("Outside d3eez");
+                Log.log.LogInfo(tempTarget.ConvertSelf());
             
             }
         }
@@ -111,18 +98,27 @@ namespace GunDesigner.UI
 
             UIFactory.SetLayoutElement(title.gameObject, minHeight: 25, minWidth: 100, flexibleWidth: 999);
 
-            ScrollPool<PropCell<PieceReadableConfig>> scrollPool = UIFactory.CreateScrollPool<PropCell<PieceReadableConfig>>(
-                this.ContentRoot,
-                "ConfigEntries",
-                out GameObject scrollObj,
-                out GameObject scrollContent);
+            var scrollView = UIFactory.CreateScrollView(ContentRoot, "pieceScroll", out var scrollContent, out var autoSliderScrollbar);
 
-            piecePropPool.target = configs.First().Value;
+            UIFactory.SetLayoutElement(scrollView, flexibleWidth: 9999, flexibleHeight: 9999);
+            UIFactory.SetLayoutGroup<VerticalLayoutGroup>(scrollContent, padTop: 5, padLeft: 5, padBottom: 5, padRight: 5);
+
+            this.tempTarget = configs.First().Value;
 
 
-            scrollPool.Initialize(piecePropPool);
+            foreach (var e in uiEntries)
+            {
+                e.target = tempTarget;
+
+                e.MakeContent(scrollContent);
+
+
+                e.DataToUI(e.target);
+            }
 
 
         }
+
+
     }
 }
