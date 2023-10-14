@@ -38,7 +38,7 @@ namespace GunDesigner.UI.Entries
         protected void ToggleClicked(bool value)
         {
             ToggleText.text = value.ToString();
-            AssignAction(target);
+            UItoData();
         }
 
         public bool GetValue() => Toggle.isOn;

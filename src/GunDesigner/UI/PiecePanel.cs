@@ -1,6 +1,6 @@
 ﻿using GunDesigner.ConfigBuilders.Piece;
-using GunDesigner.UI.Cells.Piece;
 using GunDesigner.UI.Entries;
+using GunDesigner.UI.Entries.Piece;
 using LBoL.Presentation.UI;
 using System;
 using System.Collections.Generic;
@@ -42,6 +42,7 @@ namespace GunDesigner.UI
 
         public List<PropEntry<PieceReadableConfig>> uiEntries = new List<PropEntry<PieceReadableConfig>>()
         {
+            new Id(),
             new addParentAngle()
 
         };
@@ -113,7 +114,7 @@ namespace GunDesigner.UI
                 e.MakeContent(scrollContent);
 
 
-                e.DataToUI(e.target);
+                e.DataToUI();
             }
 
 

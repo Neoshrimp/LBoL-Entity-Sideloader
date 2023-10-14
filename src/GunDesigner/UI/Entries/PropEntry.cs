@@ -78,9 +78,9 @@ namespace GunDesigner.UI.Entries
             return UIRoot;
         }
 
-        public abstract void AssignAction(T target);
+        public abstract void UItoData();
 
-        public abstract void DataToUI(T target);
+        public abstract void DataToUI();
 
     }
 }
