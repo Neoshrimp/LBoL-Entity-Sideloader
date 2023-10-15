@@ -1,6 +1,7 @@
 ﻿using GunDesigner.ConfigBuilders.Piece;
 using GunDesigner.UI.Entries;
 using GunDesigner.UI.Entries.Piece;
+using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,17 @@ namespace GunDesigner.UI
         public List<PropEntry<PieceReadableConfig>> uiEntries = new List<PropEntry<PieceReadableConfig>>()
         {
             new Id(),
-            new addParentAngle()
+            // type
+            new projectile(),
+            //
+            new addParentAngle(),
+            new lastWave(),
+            new followPiece(),
+            new shootEnd(),
+            new hitAmount(),
+            new laserHitInterval(),
+            new zeroHitNotDie(),
+            new scale()
 
         };
 
@@ -68,6 +79,11 @@ namespace GunDesigner.UI
         {
             if (this.Enabled)
             {
+
+                foreach (var e in uiEntries)
+                {
+                    e.UItoData();
+                }
                 Log.log.LogInfo(tempTarget.ConvertSelf());
             
             }
