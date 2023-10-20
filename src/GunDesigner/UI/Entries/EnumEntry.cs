@@ -21,10 +21,6 @@ namespace GunDesigner.UI.Entries
             UIFactory.SetLayoutElement(SubContentHolder.gameObject, minHeight: 30, flexibleHeight: 600, minWidth: 100, flexibleWidth: 9999);
             UIFactory.SetLayoutGroup<VerticalLayoutGroup>(SubContentHolder, true, true, true, true, 2, childAlignment: TextAnchor.UpperLeft);
 
-
-
-
-
             return UIRoot;
         }
 

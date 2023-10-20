@@ -134,7 +134,7 @@
 
 
   <ItemGroup>
-    <Folder Include="SpriteTemplates\" />
+    <Folder Include="spriteTemplates\" />
   </ItemGroup>
     
     

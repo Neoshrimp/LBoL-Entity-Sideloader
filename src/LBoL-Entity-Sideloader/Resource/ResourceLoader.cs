@@ -62,7 +62,7 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, bool generateMipMaps = false, Rect ? rect = null, Vector2? pivot = null)
+        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, bool generateMipMaps = false, Rect? rect = null, Vector2? pivot = null)
         {
             using Stream resource = source.Load(name);
 
