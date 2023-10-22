@@ -112,70 +112,7 @@ namespace LBoLEntitySideloader.Resource
 
 
 
-        internal static void FillSpellPanelLocTable(Dictionary<string, Dictionary<string, object>> termDic, bool mergeTerms, SpellPanel spellPanel)
-        {
-            var se = new SpellPanel.Entry() { Title = null, Name = null };
-
-            if (spellPanel == null)
-            { 
-                try
-                {
-                    spellPanel = UiManager.GetPanel<SpellPanel>();
-                }
-                catch (InvalidOperationException)
-                {
-                    return;
-                }
-            }
-
-            var table = (Dictionary<string, SpellPanel.Entry>)spellPanel._l10nTable;
-
-            foreach (var kv in termDic)
-            {
-                var id = kv.Key;
-                foreach (var tv in kv.Value)
-                {
-                    var tKey = tv.Key;
-                    var term = tv.Value;
-                    if (tKey == UltimateSkillTemplate.OnCastTitle)
-                    {
-                        se.Title = term.ToString() ?? "";
-                    } 
-                    else if (tKey == UltimateSkillTemplate.OnCastName)
-                    {
-                        se.Name = term.ToString() ?? "";
-                    } 
-                    else if (tKey == "Title" && !kv.Value.ContainsKey(UltimateSkillTemplate.OnCastTitle))
-                    {
-                        se.Title = term.ToString() ?? "";
-                    } 
-                    else if (tKey == "Content" && !kv.Value.ContainsKey(UltimateSkillTemplate.OnCastName))
-                    {
-                        se.Name = term.ToString() ?? "";
-                    }
-                }
-
-                if (mergeTerms)
-                {
-                    if (table.TryGetValue(id, out var cSe))
-                    {
-                        if (se.Title != null)
-                            cSe.Title = se.Title;
-                        if (se.Name != null)
-                            cSe.Name = se.Name;
-                    }
-                    else
-                    {
-                        table.Add(id, se);
-                    }
-                }
-                else 
-                {
-                    table.AlwaysAdd(id, se);
-                }
-
-            }
-        }
+     
 
     }
 }

@@ -53,6 +53,8 @@ namespace LBoLEntitySideloader
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
+                EntityManager.Instance.PostAllLoadProcessing();
+
             }
 
         }
@@ -113,7 +115,6 @@ namespace LBoLEntitySideloader
 
 
         [HarmonyPatch]
-        [HarmonyDebug]
         class SpellPanelSpecialLoc_Patch
         {
             static IEnumerable<MethodBase> TargetMethods()
@@ -123,8 +124,7 @@ namespace LBoLEntitySideloader
 
             static void LoadLoc(SpellPanel spellPanel)
             {
-                log.LogDebug("deeeeeeez");
-                UltimateSkillTemplate.LoadAllSpecialLoc(spellPanel);
+                SpellTemplate.LoadAllSpecialLoc(spellPanel);
             }
 
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)

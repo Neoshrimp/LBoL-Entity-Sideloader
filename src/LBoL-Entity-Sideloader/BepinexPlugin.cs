@@ -168,7 +168,6 @@ namespace LBoLEntitySideloader
 
                             EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: false);
 
-
                         }
                         else
                         {
@@ -177,8 +176,10 @@ namespace LBoLEntitySideloader
                             UniqueTracker.Instance.RaisePostMainLoad();
                             EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources");
 
+
                         }
 
+                        EntityManager.Instance.PostAllLoadProcessing();
 
                         UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
@@ -193,7 +194,7 @@ namespace LBoLEntitySideloader
                         }
                         else
                         {
-                            UltimateSkillTemplate.LoadAllSpecialLoc();
+                            SpellTemplate.LoadAllSpecialLoc();
                         }
 
 

@@ -6,6 +6,9 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.13` Add spell name and title text to bomb splash. Add `SpellTemplate` (practically useless).
+
+
 `0.9.12` Add `AutoCastAction` in `LBoLEntitySideloader.ExtraFunc.CardHelper`
 
 `0.9.11` Remove error message suppression in ViewConsumeMana. An explicit fix is required to make auto cast work more properly.

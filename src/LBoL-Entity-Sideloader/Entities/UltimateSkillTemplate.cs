@@ -16,6 +16,7 @@ using LBoL.Base.Extensions;
 using YamlDotNet.RepresentationModel;
 using System.Linq;
 using LBoL.Presentation.UI.Panels;
+using LBoLEntitySideloader.Entities.DynamicTemplates;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -26,8 +27,7 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<Sprite>
     {
 
-        public const string OnCastTitle = "OnCastTitle";
-        public const string OnCastName = "OnCastName";
+
         public override Type ConfigType() => typeof(UltimateSkillConfig);
 
         public override Type EntityType() => typeof(UltimateSkill);
@@ -82,22 +82,6 @@ namespace LBoLEntitySideloader.Entities
         public void Consume(LocalizationOption locOption)
         {
             ProcessLocalization(locOption, EntityType());
-
-            if (locOption is GlobalLocalization globalLoc)
-            {
-                if (globalLoc.LocalizationFiles.locTable.NotEmpty())
-                {
-                    if (!UniqueTracker.Instance.spellEntriesLocFiles.TryAdd(userAssembly, globalLoc.LocalizationFiles))
-                    {
-                        Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global spell localization files but they've already been set by another {TemplateType().Name}.");
-                    }
-                }
-                UniqueTracker.Instance.spellIdsToLocalize.TryAdd(userAssembly, new HashSet<string>());
-                UniqueTracker.Instance.spellIdsToLocalize[userAssembly].Add(GetId());
-                return;
-            }
-
-
         }
 
         public void Consume(Sprite sprite)
@@ -108,51 +92,17 @@ namespace LBoLEntitySideloader.Entities
             ResourcesHelper.Sprites[EntityType()].AlwaysAdd(UniqueId, sprite);
         }
 
-        // 2do move to SpellConfig?
-        internal static void LoadAllSpecialLoc(SpellPanel spellPanel = null)
+        internal SpellTemplate CreateSpellTemplate()
         {
-            foreach (var usT in UniqueTracker.Instance.ultimateSkillTemplates)
+            var spell = new DynamicSpell
             {
-                usT.LoadSpecialLoc(usT.LoadLocalization(), spellPanel);
-            }
+                CreateLoadLoc = () => LoadLocalization(),
+                CreateMakeConfig = () => new SpellConfig(UniqueId, "")
+            };
+            spell.Create(UniqueId, user);
+            return spell;
         }
 
-        /// <summary>
-        /// on cast spell title
-        /// </summary>
-        /// <param name="locOption"></param>
-        internal void LoadSpecialLoc(LocalizationOption locOption, SpellPanel spellPanel)
-        {
-
-            if (locOption is GlobalLocalization)
-            {
-                if (UniqueTracker.Instance.spellEntriesLocFiles.TryGetValue(user.assembly, out var spellLocfiles))
-                {
-
-                    LocalizationOption.FillSpellPanelLocTable(spellLocfiles.LoadLocTable(UniqueTracker.Instance.spellIdsToLocalize[user.assembly].ToArray()), spellLocfiles.mergeTerms, spellPanel);
-                }
-                return;
-            }
-
-            if (locOption is LocalizationFiles locFiles)
-            {
-
-                var termDic = locFiles.LoadLocTable(new string[] { GetId() });
-                LocalizationOption.FillSpellPanelLocTable(termDic, locFiles.mergeTerms, spellPanel);
-
-                return;
-            }
-
-            if (locOption is DirectLocalization rawLoc)
-            {
-
-                var termDic = rawLoc.WrapTermDic(UniqueId);
-
-                LocalizationOption.FillSpellPanelLocTable(termDic, rawLoc.mergeTerms, spellPanel);
-
-                return;
-            }
-        }
     }
 
 }

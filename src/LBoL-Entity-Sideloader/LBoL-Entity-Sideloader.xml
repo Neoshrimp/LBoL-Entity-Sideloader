@@ -256,6 +256,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LBoLEntitySideloader.Entities.SpellTemplate">
+            <summary>
+            This template is only useful for setting enemy spell localization. 
+            Player UltimateSkillTemplate should create 
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.SpellTemplate.LoadSpecialLoc(LBoLEntitySideloader.Resource.LocalizationOption,LBoL.Presentation.UI.Panels.SpellPanel)">
+            <summary>
+            on cast spell title
+            </summary>
+            <param name="locOption"></param>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.StageTemplate.ModifyStage(System.String,System.Func{LBoL.Core.Stage,LBoL.Core.Stage},System.Reflection.Assembly)">
             <summary>
             Stage RandomPools should be added or removed from rather than completely replaced
@@ -314,12 +326,6 @@
             Circle centered in 280x280 canvas but not touching the edges. Refer to ultSkillSpriteTemplate.png
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:LBoLEntitySideloader.Entities.UltimateSkillTemplate.LoadSpecialLoc(LBoLEntitySideloader.Resource.LocalizationOption,LBoL.Presentation.UI.Panels.SpellPanel)">
-            <summary>
-            on cast spell title
-            </summary>
-            <param name="locOption"></param>
         </member>
         <member name="M:LBoLEntitySideloader.Entities.UnitModelTemplate.DefaultConfig">
             <summary>

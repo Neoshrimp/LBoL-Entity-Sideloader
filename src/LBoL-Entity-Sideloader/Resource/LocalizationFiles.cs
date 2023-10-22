@@ -102,7 +102,7 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(string[] Ids)
+        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(string[] Ids, bool addEmptyDic = true)
         {
             Dictionary<string, Dictionary<string, object>> dictionary = new Dictionary<string, Dictionary<string, object>>();
 
@@ -126,7 +126,8 @@ namespace LBoLEntitySideloader.Resource
                         continue;
                     }
                 }
-                dictionary.Add(id, new Dictionary<string, object>());
+                if(addEmptyDic)
+                    dictionary.Add(id, new Dictionary<string, object>());
             }
 
             return dictionary;

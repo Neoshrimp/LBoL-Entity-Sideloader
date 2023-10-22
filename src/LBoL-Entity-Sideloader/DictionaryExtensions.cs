@@ -39,5 +39,12 @@ namespace LBoLEntitySideloader
             otherDic.ToList().ForEach(x => dupes = dictionary.AlwaysAdd(x.Key, x.Value) ? true : dupes);
             return dupes;
         }
+
+
+/*        public static void InnerAdd<K, V>(this Dictionary<K, V> dictionary, K outerKey, object innerKey, object value) where V : ICollection<KeyValuePair<object, object>>, new()
+        {
+            dictionary.TryAdd(outerKey, new V());
+            dictionary[outerKey].Add(innerKey, value);
+        }*/
     }
 }

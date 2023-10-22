@@ -430,7 +430,7 @@ namespace LBoLEntitySideloader
                                 else
                                     effectConfig.Path = effectConfig.Name;
                         }
-                        else if(entityDefinition is LaserTemplate lt)
+                        else if (entityDefinition is LaserTemplate lt)
                         {
                             RegisterConfig(lt, user);
                         }
@@ -445,6 +445,10 @@ namespace LBoLEntitySideloader
                         else if (entityDefinition is PieceTemplate pt)
                         {
                             RegisterConfig(pt, user);
+                        }
+                        else if (entityDefinition is SpellTemplate spT)
+                        {
+                            RegisterConfig(spT, user);
                         }
                     }
                     catch (Exception ex)
@@ -837,7 +841,6 @@ namespace LBoLEntitySideloader
 
                 foreach (var template in user.definitionInfos)
                 {
-
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
@@ -861,9 +864,11 @@ namespace LBoLEntitySideloader
                     }
                     else if (definition is UltimateSkillTemplate ust)
                     {
-                        HandleOverwriteWrap(() => { 
+                        HandleOverwriteWrap(() =>
+                        {
                             ust.Consume(ust.LoadLocalization());
-                            UniqueTracker.Instance.ultimateSkillTemplates.Add(ust);
+                            UniqueTracker.Instance.ultimateSkillTemplates.TryAdd(ust.userAssembly, new Dictionary<string, UltimateSkillTemplate>());
+                            UniqueTracker.Instance.ultimateSkillTemplates[ust.userAssembly].Add(ust.GetId(), ust);
                         }, definition, nameof(ust.LoadLocalization), user);
 
                     }
@@ -874,6 +879,15 @@ namespace LBoLEntitySideloader
                     else if (definition is PlayerUnitTemplate puT)
                     {
                         HandleOverwriteWrap(() => puT.Consume(puT.LoadLocalization()), definition, nameof(puT.LoadLocalization), user);
+                    }
+                    else if (definition is SpellTemplate spT)
+                    {
+                        HandleOverwriteWrap(() =>
+                        {
+                            spT.Consume(spT.LoadLocalization());
+                            UniqueTracker.Instance.spellTemplates.TryAdd(spT.userAssembly, new Dictionary<string, SpellTemplate>());
+                            UniqueTracker.Instance.spellTemplates[spT.userAssembly].Add(spT.GetId(), spT);
+                        }, definition, nameof(spT.LoadLocalization), user);
                     }
                 }
 
@@ -908,8 +922,6 @@ namespace LBoLEntitySideloader
                 }
 
 
-
-
             }
         }
 
@@ -930,6 +942,28 @@ namespace LBoLEntitySideloader
             }
 
             log.LogInfo(onCompleteMsg);
+        }
+
+        internal void PostAllLoadProcessing()
+        {
+            foreach (var kv in UniqueTracker.Instance.ultimateSkillTemplates)
+            {
+                var ass = kv.Key;
+                var ultTemplates = kv.Value;
+                List<UltimateSkillTemplate> ultWithoutSpell;
+                if (UniqueTracker.Instance.spellTemplates.TryGetValue(ass, out var spellTemplates))
+                {
+                    ultWithoutSpell = ultTemplates.Where(kv => !spellTemplates.ContainsKey(kv.Key)).Select(kv => kv.Value).ToList();
+                }
+                else
+                {
+                    ultWithoutSpell = ultTemplates.Select(kv => kv.Value).ToList();
+                }
+                foreach (var u in ultWithoutSpell)
+                {
+                    u.CreateSpellTemplate();
+                }
+            }
         }
 
 
