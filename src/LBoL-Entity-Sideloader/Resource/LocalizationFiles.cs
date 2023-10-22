@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using YamlDotNet.Helpers;
 using YamlDotNet.RepresentationModel;
 
 namespace LBoLEntitySideloader.Resource
@@ -99,6 +100,41 @@ namespace LBoLEntitySideloader.Resource
             Log.log.LogWarning($"{entityType.Assembly.GetName().Name}: No localization found for {entityType.Name} types.");
             return null;
         }
+
+
+        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(string[] Ids)
+        {
+            Dictionary<string, Dictionary<string, object>> dictionary = new Dictionary<string, Dictionary<string, object>>();
+
+            YamlMappingNode yaml = Load(Localization.CurrentLocale);
+
+            if (yaml == null)
+            {
+                Log.log.LogWarning($"{nameof(LocalizationFiles)}: No localization found.");
+            }
+
+            IOrderedDictionary<YamlNode, YamlNode> children = yaml.Children;
+            foreach (var id in Ids)
+            {
+                YamlNode yamlNode;
+                if (children.TryGetValue(id, out yamlNode))
+                {
+                    YamlMappingNode yamlMappingNode = yamlNode as YamlMappingNode;
+                    if (yamlMappingNode != null)
+                    {
+                        dictionary.Add(id, Localization.CreatePropertyLocalizeTable(id, yamlMappingNode));
+                        continue;
+                    }
+                }
+                dictionary.Add(id, new Dictionary<string, object>());
+            }
+
+            return dictionary;
+        }
+
+
+
+
 
 
         public static void MissingValueError(string enityLogicId)

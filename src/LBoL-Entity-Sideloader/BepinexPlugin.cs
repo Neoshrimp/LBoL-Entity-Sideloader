@@ -183,13 +183,17 @@ namespace LBoLEntitySideloader
                         UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
                         if (GameMaster.Instance.CurrentGameRun == null)
-                        { 
+                        {
                             // reload jade boxes
                             UiManager.GetPanel<StartGamePanel>()._jadeBoxToggles.Clear();
                             UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
                             // formation reload moved to HookPoints.FormationsHotReload_Patch
                             EnemyGroupTemplate.ReloadFormations();
                             PlayerSpriteLoader.ReloadForMainMenu();
+                        }
+                        else
+                        {
+                            UltimateSkillTemplate.LoadAllSpecialLoc();
                         }
 
 

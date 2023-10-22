@@ -27,8 +27,8 @@ namespace LBoLEntitySideloader.Entities
     public abstract class EntityDefinition
     {
         
-        internal Assembly userAssembly;
-        internal UserInfo user;
+        public Assembly userAssembly;
+        public UserInfo user;
 
 
 

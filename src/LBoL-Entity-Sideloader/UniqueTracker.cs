@@ -112,6 +112,13 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Assembly, HashSet<IdContainer>> unitIdsToLocalize = new Dictionary<Assembly, HashSet<IdContainer>>();
 
+
+        public Dictionary<Assembly, LocalizationFiles> spellEntriesLocFiles = new Dictionary<Assembly, LocalizationFiles>();
+
+        public Dictionary<Assembly, HashSet<string>> spellIdsToLocalize = new Dictionary<Assembly, HashSet<string>>();
+
+        public HashSet<UltimateSkillTemplate> ultimateSkillTemplates = new HashSet<UltimateSkillTemplate>();
+
         /// <summary>
         /// assembly name => method cache
         /// </summary>

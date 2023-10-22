@@ -9,10 +9,12 @@ using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
 using LBoL.Presentation.I10N;
+using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using MonoMod.Utils;
+using Spine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +40,6 @@ namespace LBoLEntitySideloader
         class InitializeRestAsync_Patch
         {
 
-
             static public async void Postfix(Task __result)
             {   
                 await __result;
@@ -55,6 +56,8 @@ namespace LBoLEntitySideloader
             }
 
         }
+
+
 
 
 
@@ -109,7 +112,37 @@ namespace LBoLEntitySideloader
 
 
 
+        [HarmonyPatch]
+        [HarmonyDebug]
+        class SpellPanelSpecialLoc_Patch
+        {
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                yield return ExtraAccess.InnerMoveNext(typeof(SpellPanel), nameof(SpellPanel.CustomLocalizationAsync));
+            }
 
+            static void LoadLoc(SpellPanel spellPanel)
+            {
+                log.LogDebug("deeeeeeez");
+                UltimateSkillTemplate.LoadAllSpecialLoc(spellPanel);
+            }
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                var l10nF = AccessTools.Field(typeof(SpellPanel), nameof(SpellPanel._l10nTable));
+                return new CodeMatcher(instructions, generator)
+                    .End()
+                    .MatchBack(false, new CodeInstruction(OpCodes.Stfld, l10nF))
+                    .Advance(-1)
+                    .MatchBack(false, new CodeInstruction(OpCodes.Stfld, l10nF))
+                    .Advance(1)
+                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpellPanelSpecialLoc_Patch), nameof(LoadLoc))))
+                    .Insert(new CodeInstruction(OpCodes.Ldloc_1))
+                    .InstructionEnumeration();
+            }
+
+
+        }
 
 
 
@@ -138,6 +171,7 @@ namespace LBoLEntitySideloader
                     }
                 }*/
 
+
         //[HarmonyPatch]
         class Loc_IntrusivePatch
         {
@@ -153,9 +187,7 @@ namespace LBoLEntitySideloader
             static void LoadLocWrap()
             {
 
-                // untested
                 EntityManager.Instance.LoadLocalization(EntityManager.Instance.sideloaderUsers);
-                UniqueTracker.Instance.RaisePostMainLoad();
                 EntityManager.Instance.LoadLocalization(EntityManager.Instance.secondaryUsers);
 
             }
@@ -177,8 +209,6 @@ namespace LBoLEntitySideloader
             }
 
         }
-
-
 
 
 
@@ -219,11 +249,6 @@ namespace LBoLEntitySideloader
 
 
         }
-
-
-
-
-
 
 
 

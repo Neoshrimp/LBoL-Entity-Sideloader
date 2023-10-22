@@ -861,7 +861,11 @@ namespace LBoLEntitySideloader
                     }
                     else if (definition is UltimateSkillTemplate ust)
                     {
-                        HandleOverwriteWrap(() => ust.Consume(ust.LoadLocalization()), definition, nameof(ust.LoadLocalization), user);
+                        HandleOverwriteWrap(() => { 
+                            ust.Consume(ust.LoadLocalization());
+                            UniqueTracker.Instance.ultimateSkillTemplates.Add(ust);
+                        }, definition, nameof(ust.LoadLocalization), user);
+
                     }
                     else if (definition is UnitModelTemplate umT)
                     {
@@ -898,10 +902,13 @@ namespace LBoLEntitySideloader
 
                 }
 
-                if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var locfiles))
+                if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var unLocfiles))
                 {
-                    LocalizationOption.FillUnitNameTable(locfiles.Load(Localization.CurrentLocale), locfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
+                    LocalizationOption.FillUnitNameTable(unLocfiles.Load(Localization.CurrentLocale), unLocfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
                 }
+
+
+
 
             }
         }
@@ -923,6 +930,13 @@ namespace LBoLEntitySideloader
             }
 
             log.LogInfo(onCompleteMsg);
+        }
+
+
+        internal void DoForAllUsers(Action<UserInfo> action)
+        {
+            sideloaderUsers.userInfos.Values.Do(ui => action(ui));
+            secondaryUsers.userInfos.Values.Do(ui => action(ui));
         }
 
         static internal bool HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)

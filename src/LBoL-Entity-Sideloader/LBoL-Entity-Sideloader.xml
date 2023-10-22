@@ -315,6 +315,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.UltimateSkillTemplate.LoadSpecialLoc(LBoLEntitySideloader.Resource.LocalizationOption,LBoL.Presentation.UI.Panels.SpellPanel)">
+            <summary>
+            on cast spell title
+            </summary>
+            <param name="locOption"></param>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.UnitModelTemplate.DefaultConfig">
             <summary>
             Name : Id should be the same as EnemyUnit's;
@@ -381,6 +387,13 @@
             Queues empty entry to BattleManaPanel._consumingDequeu
             Should not be used unless some very specific behavior is desired.
             Use AutoCastAction instead.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:LBoLEntitySideloader.ExtraFunc.CoroutineExtender" -->
+        <member name="F:LBoLEntitySideloader.ExtraFunc.CoroutineExtender.midEnums">
+            <summary>
+            Each enumerator in the list is yielded after target_enumerator yields a result.
+            That means last midEnum can sometimes be equivalent to postEnum.
             </summary>
         </member>
         <member name="T:LBoLEntitySideloader.GameFixes.CardPerformAction_Patch">

@@ -2,7 +2,10 @@
 using BepInEx.Configuration;
 using Extensions.Unity.ImageLoader;
 using HarmonyLib;
+using LBoL.Presentation.UI;
+using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
 using System.Collections.Generic;
@@ -51,7 +54,14 @@ namespace Random_Examples
 
             EntityManager.RegisterSelf();
 
-            harmony.PatchAll();
+            try
+            {
+                harmony.PatchAll();
+            }
+            catch (System.Exception ex)
+            {
+                log.LogError(ex);
+            }
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
@@ -90,27 +100,25 @@ namespace Random_Examples
 
             effectsAB = ResourceLoader.LoadAssetBundle("effects", directorySource);
 
-
+            
         }
 
-/*        private KeyboardShortcut effectKey = new KeyboardShortcut(KeyCode.H);
-        private void Update()
+
+
+
+        public static void deez()
+
         {
+            var tf = AccessTools.Field(typeof(SpellPanel.Entry), ConfigReflection.BackingWrap("Title"));
+            var nf = AccessTools.Field(typeof(SpellPanel.Entry), ConfigReflection.BackingWrap("Name"));
 
-            if (effectKey.IsDown())
-            { 
-                var go = GameObject.Find("GameDirector");
-                if (go != null)
-                {
-                    Debug.Log("DEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEZ");
-                    var ef = effectsAB.LoadAsset<GameObject>("EffectObject");
-                    ef.transform.position = new Vector3(-3f, 0.5f, 1);
-                    ef.transform.localScale = new Vector3(30f, 30f, 30f);
-                    ef.transform.SetParent(go.transform);
-                }
+
+
+            foreach (var kv in UiManager.GetPanel<SpellPanel>()._l10nTable)
+            {
+                Debug.Log(kv.Key + ": " + kv.Value.Title + ", " + kv.Value.Name);
             }
-        }*/
-
+        }
 
         private void OnDestroy()
         {

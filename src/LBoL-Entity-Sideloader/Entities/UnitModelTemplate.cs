@@ -129,7 +129,7 @@ namespace LBoLEntitySideloader.Entities
                 }
                 UniqueTracker.Instance.unitIdsToLocalize.TryAdd(userAssembly, new HashSet<IdContainer>());
                 UniqueTracker.Instance.unitIdsToLocalize[userAssembly].Add(GetId());
-
+                return;
             }
 
             if (locOption is LocalizationFiles locFiles)
@@ -147,6 +147,7 @@ namespace LBoLEntitySideloader.Entities
                     locFiles.fileNames.TryGetValue(locFiles.GetAvailableLocale(), out var filename);
                     Log.log.LogWarning($"{GetId()} not found in {filename}");
                 }
+                return;
             }
 
             if (locOption is DirectLocalization rawLoc)
@@ -154,6 +155,7 @@ namespace LBoLEntitySideloader.Entities
                 var termDic = rawLoc.WrapTermDic(UniqueId);
 
                 LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(termDic), rawLoc.mergeTerms);
+                return;
             }
 
         }

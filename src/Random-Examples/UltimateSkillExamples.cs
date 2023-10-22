@@ -1,4 +1,5 @@
-﻿using LBoL.Base;
+﻿using HarmonyLib;
+using LBoL.Base;
 using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Battle;
@@ -14,10 +15,13 @@ using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using static Random_Examples.BepinexPlugin;
@@ -76,9 +80,13 @@ namespace Random_Examples
 
         protected override IEnumerable<BattleAction> Actions(UnitSelector selector)
         {
+            yield return PerformAction.Spell(Owner, new ReimuUltRJabDef().UniqueId);
+
 			yield return new DamageAction(base.Owner, selector.GetEnemy(base.Battle), this.Damage, base.GunName, GunType.Single);
 
         }
-
     }
+
+
+
 }
