@@ -143,6 +143,8 @@ namespace LBoLEntitySideloader
             UniqueTracker.Instance.modifyStageActions.AddRange(EntityManager.Instance.loadedFromModifyStageActions);
 
 
+            UniqueTracker.Instance.formationAddActions.AddRange(StageTemplate.loadedFromDiskEnvironments);
+
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
 
@@ -197,7 +199,7 @@ namespace LBoLEntitySideloader
                             SpellTemplate.LoadAllSpecialLoc();
                         }
 
-
+                        StageTemplate.ReloadEnvs();
 
                         if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
                         {

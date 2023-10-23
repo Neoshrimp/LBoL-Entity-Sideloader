@@ -335,6 +335,7 @@
 
 
     <ItemGroup>
+      <None Remove="DirResources\ghibliDeez.jpg" />
       <None Remove="DirResources\Suika\histIcon.xcf" />
       <None Remove="resources\BeaModelEn.yaml" />
       <None Remove="resources\CardsEn.yaml" />
@@ -354,6 +355,7 @@
 
 
     <ItemGroup>
+      <EmbeddedResource Include="DirResources\ghibliDeez.jpg" />
       <EmbeddedResource Include="DirResources\ghibli.jpg" />
       <EmbeddedResource Include="DirResources\Youmu.png" />
     </ItemGroup>

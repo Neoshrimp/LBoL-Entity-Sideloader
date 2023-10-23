@@ -276,6 +276,14 @@
             <param name="stageMod"></param>
             <param name="callingAssembly"></param>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.StageTemplate.CreateSimpleEnvObject(System.String,UnityEngine.Sprite)">
+            <summary>
+            3230x1822 with ppu at 100
+            </summary>
+            <param name="name"></param>
+            <param name="background"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.StageTemplate.DefaultConfig">
             <summary>
             Id : ,

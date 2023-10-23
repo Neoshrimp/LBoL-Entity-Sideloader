@@ -5,6 +5,7 @@ using HarmonyLib;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
@@ -93,6 +94,9 @@ namespace Random_Examples
 
             CustomLoadouts.AddLoadouts();
 
+            NewBackgrounds.AddNewBackgrounds();
+
+
             //StageExamples.AddStages();
 
             // unload asset bundles OnDestroy
@@ -105,20 +109,6 @@ namespace Random_Examples
 
 
 
-
-        public static void deez()
-
-        {
-            var tf = AccessTools.Field(typeof(SpellPanel.Entry), ConfigReflection.BackingWrap("Title"));
-            var nf = AccessTools.Field(typeof(SpellPanel.Entry), ConfigReflection.BackingWrap("Name"));
-
-
-
-            foreach (var kv in UiManager.GetPanel<SpellPanel>()._l10nTable)
-            {
-                Debug.Log(kv.Key + ": " + kv.Value.Title + ", " + kv.Value.Name);
-            }
-        }
 
         private void OnDestroy()
         {

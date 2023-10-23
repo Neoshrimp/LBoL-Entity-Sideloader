@@ -11,6 +11,7 @@ using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.JadeBoxes;
 using LBoL.EntityLib.UltimateSkills;
+using LBoL.Presentation;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
@@ -80,10 +81,21 @@ namespace Random_Examples
 
         protected override IEnumerable<BattleAction> Actions(UnitSelector selector)
         {
+            var bgGo = StageTemplate.TryGetEnvObject(NewBackgrounds.ghibliDeez);
+
+            bgGo.SetActive(true);
+            GameMaster.Instance.StartCoroutine(DeactivateDeez(bgGo));
+
             yield return PerformAction.Spell(Owner, new ReimuUltRJabDef().UniqueId);
 
 			yield return new DamageAction(base.Owner, selector.GetEnemy(base.Battle), this.Damage, base.GunName, GunType.Single);
 
+        }
+
+        IEnumerator DeactivateDeez(GameObject go)
+        {
+            yield return new WaitForSeconds(5f);
+            go.SetActive(false);
         }
     }
 

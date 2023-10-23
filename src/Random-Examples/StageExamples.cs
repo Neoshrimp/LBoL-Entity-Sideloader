@@ -3,21 +3,42 @@ using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.Randoms;
 using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.EntityLib.Stages;
 using LBoL.EntityLib.Stages.NormalStages;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using UnityEngine;
 using static Random_Examples.BepinexPlugin;
 
 namespace Random_Examples
 {
+
+    [OverwriteVanilla]
+    public sealed class battleAdvDef : StageTemplate
+    {
+        public override IdContainer GetId() => nameof(BattleAdvTest);
+
+
+        public override StageConfig MakeConfig()
+        {
+            var config = StageConfig.FromId(GetId());
+            config.Obj0 = NewBackgrounds.ghibli;
+            config.Obj1 = NewBackgrounds.ghibli;
+            config.Obj2 = NewBackgrounds.ghibli;
+            config.Obj3 = NewBackgrounds.ghibli;
+            config.Obj4 = NewBackgrounds.ghibli;
+            return config;
+        }
+    }
 
     public sealed class NewStageExDef : StageTemplate
     {
@@ -26,7 +47,13 @@ namespace Random_Examples
 
         public override StageConfig MakeConfig()
         {
-            return DefaultConfig();
+            var config = DefaultConfig();
+            config.Obj0 = NewBackgrounds.ghibli;
+            config.Obj1 = NewBackgrounds.ghibli;
+            config.Obj2 = NewBackgrounds.ghibli;
+            config.Obj3 = NewBackgrounds.ghibli;
+            config.Obj4 = NewBackgrounds.ghibli;
+            return config;
         }
 
         [EntityLogic(typeof(NewStageExDef))]
@@ -112,7 +139,25 @@ namespace Random_Examples
     }
 
 
+    public static class NewBackgrounds
+    {
+        public const string ghibli = "ghibli";
+        public const string ghibliDeez = "ghibliDeez";
 
+
+        public static void AddNewBackgrounds()
+        {
+            StageTemplate.AddEvironmentGameobject(StageTemplate.CreateSimpleEnvObject(ghibli, ResourceLoader.LoadSprite("ghibli.jpg", directorySource, ppu: 100)), managedByEnvironment: true);
+
+            StageTemplate.AddEvironmentGameobject(StageTemplate.CreateSimpleEnvObject(ghibliDeez, ResourceLoader.LoadSprite("ghibliDeez.jpg", directorySource, ppu: 100)),                 managedByEnvironment: false, 
+                // makes it visible over regular bg
+                adjustAfterSettingRoot: (GameObject self) => { 
+                self.transform.position += new Vector3(0, 0, -0.1f); 
+                return self;
+            });
+
+        }
+    }
 
 
     public class StageExamples

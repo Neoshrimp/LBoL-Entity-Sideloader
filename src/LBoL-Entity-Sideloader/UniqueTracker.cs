@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 
 namespace LBoLEntitySideloader
 {
@@ -132,6 +133,10 @@ namespace LBoLEntitySideloader
 
         public List<Action> formationAddActions = new List<Action>();
 
+        public List<Action> environmentsAddActions = new List<Action>();
+
+        public Dictionary<Assembly, Dictionary<string, GameObject>> createdEnvObjectCache = new Dictionary<Assembly, Dictionary<string, GameObject>>();
+
         /// <summary>
         /// charId +=> loadoutType +=> LoadoutInfo
         /// </summary>
@@ -215,6 +220,7 @@ namespace LBoLEntitySideloader
         /// </summary>
         public Dictionary<Type, Dictionary<string, EntityDefinition>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, EntityDefinition>>();
 
+        
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
         public bool IsLoadedOnDemand(Type templateType, string Id, out EntityDefinition entityDefinition)

@@ -97,6 +97,19 @@ namespace LBoLEntitySideloader
             }
         }
 
+
+        [HarmonyPatch(typeof(LBoL.Presentation.Environment), nameof(LBoL.Presentation.Environment.Awake))]
+        [HarmonyPriority(Priority.First)]
+        class AddEnvironments_Patch
+        {
+            static void Postfix()
+            {
+                StageTemplate.LoadCustomEnvironments();
+            }
+        }
+
+
+
         // formation reload needs to be delayed after enemies have cleared
         [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.InternalClearEnemies))]
         class FormationsHotReload_Patch
