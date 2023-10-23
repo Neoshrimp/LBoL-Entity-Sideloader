@@ -276,13 +276,35 @@
             <param name="stageMod"></param>
             <param name="callingAssembly"></param>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.StageTemplate.TryGetEnvObject(System.String,System.Reflection.Assembly)">
+            <summary>
+            Gets reference to environment object created via AddEvironmentGameobject.   
+            Save to use in entity logic methods to perform actions.
+            </summary>
+            <param name="name"></param>
+            <param name="userAssembly"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.StageTemplate.CreateSimpleEnvObject(System.String,UnityEngine.Sprite)">
             <summary>
-            3230x1822 with ppu at 100
+            Creates function which creates simple background object.
+            Game uses 3230x1822 sprite with ppu at 100 but generally background size is pretty lenient
             </summary>
             <param name="name"></param>
             <param name="background"></param>
             <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.StageTemplate.AddEvironmentGameobject(System.Func{UnityEngine.GameObject},System.Boolean,System.Func{UnityEngine.GameObject,UnityEngine.GameObject},System.String,System.Reflection.Assembly)">
+            <summary>
+            Defers env object creation after Environment.Awake is called.
+            Should be used in BepinexPlugin.Awake()
+            After setting root object position will be reset to 0, 0, 0. adjustAfterSettingRoot Func can be used to change that.
+            </summary>
+            <param name="getEvnGo"></param>
+            <param name="managedByEnvironment">if true the env object can be used in StageConfig</param>
+            <param name="adjustAfterSettingRoot"></param>
+            <param name="overwriteName"></param>
+            <param name="callingAssembly"></param>
         </member>
         <member name="M:LBoLEntitySideloader.Entities.StageTemplate.DefaultConfig">
             <summary>
