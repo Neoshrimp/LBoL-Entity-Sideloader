@@ -42,10 +42,7 @@ namespace LBoLEntitySideloader
                         // special case when template doesn't provide a config
                         lookUpDic.Add(tt, tt.Name);
                     }
-
-
                 }
-
             }
 
             foreach (var kv in lookUpDic)

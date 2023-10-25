@@ -50,16 +50,17 @@ namespace LBoLEntitySideloader.Entities
 
         static public void AddLoadout(string charId, Type ultimateSkill, Type exhibit, List<Type> deck, int complexity, Assembly callingAssembly = null)
         {
-            AddExtraLoadout(charId, ultimateSkill.Name, exhibit.Name, deck.Select(t => t.Name).ToList(), complexity, callingAssembly);
+            if (callingAssembly == null)
+                callingAssembly = Assembly.GetCallingAssembly();
+            AddLoadout(charId, ultimateSkill.Name, exhibit.Name, deck.Select(t => t.Name).ToList(), complexity, callingAssembly);
         }
 
-        static public void AddExtraLoadout(string charId, string ultimateSkill, string exhibit, List<string> deck, int complexity, Assembly callingAssembly = null)
+        static public void AddLoadout(string charId, string ultimateSkill, string exhibit, List<string> deck, int complexity, Assembly callingAssembly = null)
         {
 
             if (callingAssembly == null)
                 callingAssembly = Assembly.GetCallingAssembly();
 
-                
 
             Action action = () =>
             {

@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.21` Rename PlayerUnitTemplate.AddExtraLoadout to AddLoadout
+
 `0.9.2` Add custom stage gameObjects.
 
 `0.9.13` Add spell name and title text to bomb splash. Add `SpellTemplate` (practically useless).
