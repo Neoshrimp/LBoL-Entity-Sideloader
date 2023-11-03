@@ -51,6 +51,8 @@ namespace LBoLEntitySideloader
 
         public List<UniqueTracker.StageModAction> loadedFromModifyStageActions = new List<UniqueTracker.StageModAction>();
 
+        internal DeferredActions addBossIconsActions = new DeferredActions();
+
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
         {
@@ -963,6 +965,7 @@ namespace LBoLEntitySideloader
                 {
                     u.CreateSpellTemplate();
                 }
+
             }
         }
 

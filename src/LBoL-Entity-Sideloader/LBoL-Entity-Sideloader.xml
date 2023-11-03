@@ -90,6 +90,14 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.EnemyUnitTemplate.AddBossNodeIcon(System.String,System.Func{UnityEngine.Sprite},System.Reflection.Assembly)">
+            <summary>
+            icon for boss encounter node. Some circular dimension
+            </summary>
+            <param name="enemyUnitId"></param>
+            <param name="getSprite"></param>
+            <param name="callingAssembly"></param>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.EnemyUnitTemplate.DefaultConfig">
             <summary>
             Id:

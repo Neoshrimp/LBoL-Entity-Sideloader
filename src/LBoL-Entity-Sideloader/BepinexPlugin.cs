@@ -142,8 +142,9 @@ namespace LBoLEntitySideloader
             UniqueTracker.Instance.modifyStageListFuncs.AddRange(EntityManager.Instance.loadedFromDiskmodifyStageListFuncs);
             UniqueTracker.Instance.modifyStageActions.AddRange(EntityManager.Instance.loadedFromModifyStageActions);
 
-
             UniqueTracker.Instance.formationAddActions.AddRange(StageTemplate.loadedFromDiskEnvironments);
+
+            EntityManager.Instance.addBossIconsActions.Clear();
 
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
@@ -181,6 +182,7 @@ namespace LBoLEntitySideloader
 
                         }
 
+                        EntityManager.Instance.addBossIconsActions.Reload();
                         EntityManager.Instance.PostAllLoadProcessing();
 
                         UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());

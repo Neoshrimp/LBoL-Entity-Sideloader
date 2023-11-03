@@ -161,7 +161,7 @@ namespace GenTests2
 
             Generation.InitTemplateGen();
 
-            PlayerUnitTemplate.AddExtraLoadout(
+            PlayerUnitTemplate.AddLoadout(
             "Sakuya",
             nameof(CirnoUltG),
             nameof(CirnoG),

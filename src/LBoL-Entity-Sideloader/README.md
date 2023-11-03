@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.22` Add EnemyUnitTemplate.AddBossNodeIcon
+
 `0.9.21` Rename PlayerUnitTemplate.AddExtraLoadout to AddLoadout
 
 `0.9.2` Add custom stage gameObjects.

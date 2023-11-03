@@ -53,6 +53,8 @@ namespace LBoLEntitySideloader
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
+                EntityManager.Instance.addBossIconsActions.DoAll();
+
                 EntityManager.Instance.PostAllLoadProcessing();
 
             }
