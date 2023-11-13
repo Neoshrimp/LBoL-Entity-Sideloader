@@ -42,7 +42,8 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 
 
-- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment. Create a new class, for convenience, placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
+- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment.
+- Create a new class for convenience placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
 
 ![image](https://user-images.githubusercontent.com/89428565/236564867-650faa7f-a875-4300-ba7b-2ca92fa46962.png)
 
