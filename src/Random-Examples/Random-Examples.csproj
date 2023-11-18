@@ -8,7 +8,7 @@
     <PropertyGroup>
         <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
         <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
-    </PropertyGroup>
+    </PropertyGroup>    
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
@@ -112,6 +112,7 @@
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Initialize" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.CreateFormatWrapper" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Verify" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.SummonActions" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.NotifyActivating" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.ShouldPreventOtherCardUsage" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_PreventCardUsageMessage" />
@@ -358,11 +359,6 @@
       <EmbeddedResource Include="DirResources\ghibliDeez.jpg" />
       <EmbeddedResource Include="DirResources\ghibli.jpg" />
       <EmbeddedResource Include="DirResources\Youmu.png" />
-    </ItemGroup>
-
-
-    <ItemGroup>
-      <ProjectReference Include="..\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj" />
     </ItemGroup>
 
 

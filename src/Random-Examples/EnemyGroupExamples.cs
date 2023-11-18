@@ -24,6 +24,9 @@ namespace Random_Examples
 
         public const string Vedge = "Vedge";
 
+        public const string Surrounded = "Surrounded";
+
+
 
         static internal void AddFormations()
         {
@@ -40,8 +43,14 @@ namespace Random_Examples
                 { 2, new Vector2(3f, -1.5f+0.5f) },
                 { 3, new Vector2(5f, 1.8f+0.5f) },
                 { 4, new Vector2(5f, -1.8f+0.5f) },
-
             });
+
+            EnemyGroupTemplate.AddFormation(Surrounded, new Dictionary<int, Vector2>() {
+                { 0, new Vector2(3, 0) },
+                { 1, new Vector2(-3, 2) },
+            });
+
+
         }
     }
 

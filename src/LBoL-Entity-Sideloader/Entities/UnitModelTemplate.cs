@@ -95,7 +95,12 @@ namespace LBoLEntitySideloader.Entities
                     HasSpellPortrait : false,
                     SpellPosition : new Vector2(0f, 0f),
                     SpellScale : 1,
-                    SpellColor : new List<Color32>() { }
+                    SpellColor: new List<Color32>() { 
+                        new Color32(101, 229, 71, 255), 
+                        new Color32(131, 221, 117, 255), 
+                        new Color32(137, 221, 117, 150), 
+                        new Color32(153, 220, 127, 255) 
+                    }
                 );
             return config;
         }

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Cysharp.Threading.Tasks;
 using Extensions.Unity.ImageLoader;
 using HarmonyLib;
 using LBoL.ConfigData;
@@ -90,7 +91,10 @@ namespace LBoLEntitySideloader
                 if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
 
                 {
-                    Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
+                    // 2do weird workaround for types not being reloaded bug
+                    Reload(pluginInfo, true);
+
+                    //Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
                 }
                 else
                 {
@@ -107,6 +111,12 @@ namespace LBoLEntitySideloader
         /// <param name="scriptEngineInfo"></param>
         public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
         {
+
+            if (!hardReload)
+            {
+                log.LogInfo("'Soft' reload is not a thing. Use 'hard' reload instead");
+                return;
+            }
 
             foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
             {   
@@ -161,8 +171,8 @@ namespace LBoLEntitySideloader
 
                         if (hardReload)
                         {
-                            EntityManager.Instance.RegisterUsers(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!");
-                            EntityManager.Instance.LoadAssetsForResourceHelper(EntityManager.Instance.sideloaderUsers);
+
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
 
                             // reloads Sideloader loc via hookpoint
                             await L10nManager.ReloadLocalization();
@@ -181,6 +191,8 @@ namespace LBoLEntitySideloader
 
 
                         }
+
+
 
                         EntityManager.Instance.addBossIconsActions.Reload();
                         EntityManager.Instance.PostAllLoadProcessing();

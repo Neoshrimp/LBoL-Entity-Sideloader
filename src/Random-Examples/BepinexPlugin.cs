@@ -2,6 +2,9 @@
 using BepInEx.Configuration;
 using Extensions.Unity.ImageLoader;
 using HarmonyLib;
+using LBoL.Core;
+using LBoL.Core.Stations;
+using LBoL.EntityLib.Stages.NormalStages;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader;
@@ -10,6 +13,7 @@ using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -31,7 +35,6 @@ namespace Random_Examples
 
         // add this for audio loading
         internal static DirectorySource directorySource = new DirectorySource(PluginInfo.GUID, "");
-
 
         internal static TemplateSequenceTable sequenceTable = new TemplateSequenceTable(12000);
 
@@ -106,10 +109,8 @@ namespace Random_Examples
 
             effectsAB = ResourceLoader.LoadAssetBundle("effects", directorySource);
 
-            
+
         }
-
-
 
 
         private void OnDestroy()

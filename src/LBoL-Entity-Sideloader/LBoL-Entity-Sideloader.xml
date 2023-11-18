@@ -196,6 +196,14 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.AddExhibitAtTheStart(LBoL.Core.GameRunController,System.Collections.Generic.HashSet{System.Type})">
+            <summary>
+            Gives player and and exhibit and removes it from the exhibit pool.
+            Should be used on Jadebox.OnAdded method.
+            </summary>
+            <param name="gameRun"></param>
+            <param name="exhibits"></param>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.DefaultConfig">
             <summary>
             Group: restricts JadeBox selection. Only one JadeBox per group can be selected. Empty string list = no restrictions

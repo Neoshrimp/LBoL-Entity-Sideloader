@@ -28,6 +28,7 @@ namespace LBoLEntitySideloader.TemplateGen
         static readonly StringBuilder evaluatorOutput;
         protected static readonly ScriptEvaluator scriptEvaluator = new ScriptEvaluator(new StringWriter(evaluatorOutput = new StringBuilder()));
 
+        // 2do NOT updated on hot reload
         public readonly Assembly originAssembly;
 
         public Assembly newAssembly = null;

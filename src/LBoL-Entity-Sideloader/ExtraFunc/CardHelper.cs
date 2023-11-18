@@ -85,7 +85,6 @@ namespace LBoLEntitySideloader.ExtraFunc
 
             static bool CheckArgs(UseCardAction useCardAction)
             {
-                Log.log.LogDebug(useCardAction.Cause);
                 if (wt_skipConsumeMana.TryGetValue(useCardAction, out var val))
                     return val.skip;
                 return false;

@@ -165,7 +165,7 @@ namespace Random_Examples
 
         static public void AddStages()
         {
-            StageTemplate.ModifyStageList((List<Stage> list) =>
+/*            StageTemplate.ModifyStageList((List<Stage> list) =>
             {
                 list.Insert(1, Library.CreateStage(new NewStageExDef().UniqueId));
                 // more stages can be inserted
@@ -177,13 +177,15 @@ namespace Random_Examples
             {
                 list.Insert(1, Library.CreateStage(new AnotherNewStageExDef().UniqueId));
                 return list;
-            });
+            });*/
 
             StageTemplate.ModifyStageList((List<Stage> list) =>
             {
                 list.Clear();
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+
                 list.Add(Library.CreateStage(typeof(BambooForest)).AsNormalFinal());
-                list.Add(Library.CreateStage(typeof(FinalStage)).AsTrueEndFinal());
+                list.Add(Library.CreateStage(typeof(WindGodLake)).AsTrueEndFinal());
 
                 return list;
             });
