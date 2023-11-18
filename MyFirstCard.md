@@ -42,7 +42,8 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 
 
-- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment. Create a new class, for convenience, placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
+- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment.
+- Create a new class for convenience placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
 
 ![image](https://user-images.githubusercontent.com/89428565/236564867-650faa7f-a875-4300-ba7b-2ca92fa46962.png)
 
@@ -114,7 +115,7 @@ CardId:
 
 - Go back to `FirstCardDef.MakeConfig`. You don't have to close the game just close the collection.
 
-- Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/ae2ef3c77ef28da9035603b182640c711dd55d06/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L47).
+- Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L51).
 
 - The more detailed explanation of each config property can be found in [Entity Reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md). For now change `Index`,  `GunName`, `GunNameBurst`, `Type`, `IsPooled`, `TargetType`, `Colors`, `Cost` and `Damage`. `sequenceTable.Next` is convenient way to keep track of indexes but any positive number can be assigned as index as well.
 ```
