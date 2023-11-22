@@ -2,4 +2,5 @@ Invincible:
   Name: Hit me, bitch!
 
 NoDmgLimitSe:
-  Name: No Damage Limit    
+  Name: No Damage Limit
+  Description: Taken damage amount cannot be reduced by ANY means. (Attacks can still be |Grazed|.)

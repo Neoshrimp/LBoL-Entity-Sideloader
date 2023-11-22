@@ -139,8 +139,8 @@ namespace LBoLEntitySideloader
             //ImageLoader.ClearCache();
 
             // doesn't really help
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+/*            GC.Collect();
+            GC.WaitForPendingFinalizers();*/
 
 
             EntityManager.Instance.loadedFromDiskUsers.Do(a => EntityManager.RegisterAssembly(a));
