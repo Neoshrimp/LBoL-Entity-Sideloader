@@ -1,6 +1,8 @@
 ### Effect Library
 *not a gameplay mod*
 
+`0.0.11` the only SE is currently bugged. Don't use this
+
 Commonly useful entity/effect library for modders.
 
 Very small currently, if during mod dev something seems generically useful I might add it.
