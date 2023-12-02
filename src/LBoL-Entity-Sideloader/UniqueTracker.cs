@@ -349,7 +349,7 @@ namespace LBoLEntitySideloader
             if (ids.Contains(Id))
             {
 
-                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register type with id {Id} which already used by either vanilla entities or other mods.");
+                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {entityDefinition.TemplateType().Name} id {Id} which already used by either vanilla entities or other mods.");
 
                 if (!Instance.entity2uniqueIds.ContainsKey(entityDefinition.GetType()))
                 {
