@@ -138,7 +138,7 @@ Damage: 7,
 
 ```
 
-- Compile the project again and go back to the game. Close Collection, press F3 to refresh the mods. The card should be an `Attack` and have cost and colors.
+- Compile the project again and go back to the game. Close Collection, press F6 to refresh the mods. The card should be an `Attack` and have cost and colors.
 
 ![image](https://user-images.githubusercontent.com/89428565/236587270-0d66f1a2-e384-45d3-99c5-f69cfc63a06b.png)
 
