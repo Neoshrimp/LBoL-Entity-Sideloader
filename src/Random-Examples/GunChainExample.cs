@@ -26,6 +26,7 @@ namespace Random_Examples
                 Animation: "shoot1",
                 ForceHitTime: null,
                 ForceHitAnimation: false,
+                ForceHitAnimationSpeed: 0f,
                 ForceShowEndStartTime: null,
                 Shooter: "Direct",
                 ShakePower: 1f
