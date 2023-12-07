@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.3` Update for LBoL 1.4+. Not compatible with previous game version.
+
 `0.9.231` Added Watermark dependency.
 
 `0.9.23` Made hard/soft reload to always hard reload. Sort of a workaround for reloading bugs.
