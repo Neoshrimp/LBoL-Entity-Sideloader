@@ -107,7 +107,11 @@ namespace LBoLEntitySideloader.Entities
                UpgradedRelativeEffects: new List<string>() { },
                RelativeCards: new List<string>() { },
                UpgradedRelativeCards: new List<string>() { },
+
                Owner: null,
+               ImageId: "",
+               UpgradeImageId: "",
+
                Unfinished: false,
                Illustrator: null,
                SubIllustrator: new List<string>() { }

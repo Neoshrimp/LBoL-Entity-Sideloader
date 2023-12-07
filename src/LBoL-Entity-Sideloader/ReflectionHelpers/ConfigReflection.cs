@@ -66,6 +66,11 @@ namespace LBoLEntitySideloader.ReflectionHelpers
                 typeof(PlayerUnitConfig),
                 AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.Order)))
             },
+
+            {
+                typeof(StatusEffectConfig),
+                AccessTools.Field(typeof(StatusEffectConfig), BackingWrap(nameof(StatusEffectConfig.Index)))
+            },
         };
 
         public static FieldInfo HasIndex(Type configType)

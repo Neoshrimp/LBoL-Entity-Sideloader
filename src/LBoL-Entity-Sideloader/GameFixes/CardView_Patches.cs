@@ -58,7 +58,7 @@ namespace LBoLEntitySideloader.GameFixes
 
             static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return AccessTools.Method(typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass63_0")), "<ViewMiniSelect>b__0");
+                yield return AccessTools.Method(typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass64_0")), "<ViewMiniSelect>b__0");
             }
 
 

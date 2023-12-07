@@ -32,7 +32,6 @@ namespace Random_Examples
         public override LocalizationOption LoadLocalization()
         {
             var gl = new GlobalLocalization(embeddedSource);
-            //var gl = new GlobalLocalization(embeddedSource);
             gl.LocalizationFiles.mergeTerms = true;
             gl.LocalizationFiles.AddLocaleFile(Locale.En, "ExhibitsEn");
             return gl;
