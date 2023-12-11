@@ -772,6 +772,171 @@
             templateType => Id => definitionType
             </summary>
         </member>
+        <member name="T:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher">
+            <summary>
+            Allows adding values to any Enum
+            from: https://github.com/SlimeRancherModding/SRML/blob/main/SRML/EnumPatcher.cs
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.String)">
+            <summary>
+            Add a new enum value to the given <paramref name="T"/> with the first free value
+            </summary>
+            <param name="T">Type of enum to add the value to</param>
+            <param name="name">Name of the new enum value</param>
+            <returns>The new enum value</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue(System.Type,System.String)">
+            <summary>
+            Add a new enum value to the given <paramref name="enumType"/> with the first free value
+            </summary>
+            <param name="enumType">Type of enum to add the value to</param>
+            <param name="name">Name of the new enum value</param>
+            <returns>The new enum value</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.Object,System.String)">
+            <summary>
+            Add a new value to the given <paramref name="T"/> 
+            </summary>
+            <param name="T">Enum to add the new value to</param>
+            <param name="value">Value to add to the enum</param>
+            <param name="name">The name of the new value</param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue(System.Type,System.Object,System.String)">
+            <summary>
+            Add a new value to the given <paramref name="enumType"/> 
+            </summary>
+            <param name="enumType">Enum to add the new value to</param>
+            <param name="value">Value to add to the enum</param>
+            <param name="name">The name of the new value</param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.GetFirstFreeValue``1">
+            <summary>
+            Get first undefined value in an enum
+            </summary>
+            <param name="T"></param>
+            <returns>The first undefined enum value</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.GetFirstFreeValue(System.Type)">
+            <summary>
+            Get first undefined value in an enum
+            </summary>
+            <param name="enumType"></param>
+            <returns>The first undefined enum value</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.Parse(System.Type,System.String)">
+            <summary>
+            Parses an enum in a easier way
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <param name="value">Value to parse</param>
+            <returns>The parsed enum on success, null on failure.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.Parse(System.Type,System.String,System.Boolean)">
+            <summary>
+            Parses an enum in a easier way
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <param name="value">Value to parse</param>
+            <param name="ignoreCase">true to ignore case; false to regard case.</param>
+            <returns>The parsed enum on success, null on failure.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.FromInt(System.Type,System.Int32)">
+            <summary>
+            Converts int to enum
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <param name="value">Int to convert to enum</param>
+            <returns>The enum equal to the int</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.GetAllNames(System.Type)">
+            <summary>
+            Gets all names in an enum
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <returns>The list of names in the enum</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.GetAll(System.Type)">
+            <summary>
+            Gets all enum values in an enum
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <returns>The list of all values in the enum</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.IsDefined(System.Type,System.String)">
+            <summary>
+            Checks if an enum is defined.
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <param name="value">Value to check</param>
+            <returns>true if defined, false if not.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.HasEnumValue(System.Type,System.String)">
+            <summary>
+            Checks all names in an enum to see if what you need exists.
+            </summary>
+            <param name="enumType">Type of the enum</param>
+            <param name="value">Value to find</param>
+            <returns>true if found, false if not.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.Parse``1(System.String,``0)">
+            <summary>
+            Parses an enum in a easier way
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="value">Value to parse</param>
+            <param name="errorReturn">What to return if the parse fails.</param>
+            <returns>The parsed enum on success, <paramref name="errorReturn"/> on failure.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.Parse``1(System.String,System.Boolean,``0)">
+            <summary>
+            Parses an enum in a easier way
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="value">Value to parse</param>
+            <param name="ignoreCase">true to ignore case; false to regard case.</param>
+            <param name="errorReturn">What to return if the parse fails.</param>
+            <returns>The parsed enum on success, <paramref name="errorReturn"/> on failure.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.FromInt``1(System.Int32)">
+            <summary>
+            Converts int to enum
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="value">Int to convert to enum</param>
+            <returns>The enum equal to the int</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.GetAllNames``1">
+            <summary>
+            Gets all names in an enum
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <returns>The list of names in the enum</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.GetAll``1(``0)">
+            <summary>
+            Gets all enum values in an enum
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="errorReturn">What to return if the parse fails.</param>
+            <returns>The list of all values in the enum</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.IsDefined``1(System.String)">
+            <summary>
+            Checks if an enum is defined.
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="value">Value to check</param>
+            <returns>true if defined, false if not.</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumUtils.HasEnumValue``1(System.String)">
+            <summary>
+            Checks all names in an enum to see if what you need exists.
+            </summary>
+            <typeparam name="T">Type of the enum</typeparam>
+            <param name="value">Value to find</param>
+            <returns>true if found, false if not.</returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Utils.GameObjectExtensions.IterateHierarchy(UnityEngine.Transform)">
             <summary>
             Includes root object

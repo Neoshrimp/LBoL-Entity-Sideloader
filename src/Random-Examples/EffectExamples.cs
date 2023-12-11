@@ -59,9 +59,9 @@ namespace Random_Examples
     }
 
 
-    public sealed class ShootRedDef : RedParticleOverwrite {
+    public sealed class ShootRedDef : RedParticleOverwrite 
+    {
         public override IdContainer GetId() => "DanmaFish";
-
     }
 
     //gun = 凤翼天翔

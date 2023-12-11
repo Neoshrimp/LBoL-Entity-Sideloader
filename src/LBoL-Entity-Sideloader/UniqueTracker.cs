@@ -393,20 +393,20 @@ namespace LBoLEntitySideloader
 
         static internal int AddUniqueIndex(int index, EntityDefinition entityDefinition)
         {
-            int i = Instance.indexTable.Next(entityDefinition.ConfigType());
+            int i = Instance.indexTable.Sequence(entityDefinition.ConfigType()).Counter;
             var indexes = Instance.configIndexes[entityDefinition.ConfigType()];
             // 2do optimize this shit
             while (indexes.Contains(index + i))
             {
-                Log.LogDev()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
+                //Log.LogDev()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
                 i = Instance.indexTable.Next(entityDefinition.ConfigType());
-            }
+            }   
 
             indexes.Add(index + i);
             return index + i;
 
         }
-
+            
         
     }
 }
