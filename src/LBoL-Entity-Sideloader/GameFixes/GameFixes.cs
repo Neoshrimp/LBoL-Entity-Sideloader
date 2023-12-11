@@ -18,6 +18,7 @@ using LBoL.Core.Battle;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.EnemyUnits.Character;
 using LBoL.Presentation.UI.ExtraWidgets;
+using LBoL.Presentation;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -280,6 +281,21 @@ namespace LBoLEntitySideloader.GameFixes
 
     }
 
+
+    // 2do keep error handling
+    [HarmonyPatch(typeof(AudioManager), nameof(AudioManager.EnterStage))]
+    class AudioManagerEnterStage_Patch
+    {
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            return new CodeMatcher(instructions, generator)
+                .MatchForward(false, new CodeMatch(OpCodes.Ret))
+                .RemoveInstruction()
+                .InstructionEnumeration();
+        }
+
+    }
 
 
 
