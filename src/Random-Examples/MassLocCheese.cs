@@ -35,7 +35,8 @@ namespace Random_Examples
 
         public override LocalizationOption LoadLocalization()
         {
-            return new GlobalLocalization(embeddedSource, mergeTerms: true);
+            // merge terms does nothing here
+            return new GlobalLocalization(embeddedSource);
         }
 
         [DontOverwrite]
@@ -53,7 +54,7 @@ namespace Random_Examples
         // 2do if this method fails due to loading dupes entire globalLocalization wont load
         public override LocalizationOption LoadLocalization()
         {
-            var globalLoc = new GlobalLocalization(embeddedSource, mergeTerms: true);
+            var globalLoc = new GlobalLocalization(embeddedSource);
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.En, "CardsEn");
             return globalLoc;
         }

@@ -6,6 +6,7 @@ using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
+using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 
 namespace LBoLEntitySideloader
 {
@@ -33,7 +35,10 @@ namespace LBoLEntitySideloader
                 {
                     _instance = new UniqueTracker();
                     _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
-                    _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(5);
+                    _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(6);
+                    // 2do related to collection panel
+                    _instance.indexTable.Sequence(typeof(ExhibitConfig)).SetCounter(800);
+
 
                 }
                 return _instance;
@@ -43,30 +48,45 @@ namespace LBoLEntitySideloader
         internal static void DestroySelf() { _instance = null; }
 
 
-        // config type => used Ids
+
+        /// <summary>
+        /// config type => used Ids
+        /// </summary>
         public Dictionary<Type, HashSet<IdContainer>> configIds = new Dictionary<Type, HashSet<IdContainer>>();
 
         public Dictionary<Type, HashSet<int>> configIndexes = new Dictionary<Type, HashSet<int>>();
 
-        // EntityDefinition type 
+        /// <summary>
+        /// EntityDefinition type 
+        /// </summary>
         public Dictionary<Type, IdContainer> entity2uniqueIds = new Dictionary<Type, IdContainer>();
 
-        // configType => Id => index
+        /// <summary>
+        /// configType => Id => index
+        /// </summary>
         public Dictionary<Type, Dictionary<IdContainer, int>> id2ConfigListIndex = new Dictionary<Type, Dictionary<IdContainer, int>>();
 
         private TemplateSequenceTable tempConfigIndexTable = new TemplateSequenceTable();
 
-        // definition ids
+        /// <summary>
+        /// concrete template type
+        /// </summary>
         public HashSet<Type> invalidRegistrations = new HashSet<Type>();
 
-        // templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
+        /// <summary>
+        /// templateType =>+ id =>+ component string =>+ OverwiteInfo(component, defType, userInfo) 
+        /// </summary>
         public Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>> overwriteTracker = new Dictionary<Type, Dictionary<IdContainer, Dictionary<string, OverwriteInfo>>>();
 
 
-        // user assembly +=> generatedTemplates
+        /// <summary>
+        /// user assembly +=> generatedTemplates
+        /// </summary>
         public Dictionary<Assembly, List<Assembly>> generatedAssemblies = new Dictionary<Assembly, List<Assembly>>();
 
-        // generated assembly +=> generating user assembly
+        /// <summary>
+        /// generated assembly +=> generating user assembly
+        /// </summary>
         public Dictionary<Assembly, Assembly> gen2User = new Dictionary<Assembly, Assembly>();
 
         public Dictionary<Assembly, Type> gen2FacType = new Dictionary<Assembly, Type>();
@@ -78,23 +98,48 @@ namespace LBoLEntitySideloader
             public Func<Type> defTypePromise;
         }
 
-        //  generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+        /// <summary>
+        ///  generating user assembly +=> facType +=> (entityLogicType, defTypePromise)
+        /// </summary>
         public Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>> typePromiseDic = new Dictionary<Assembly, Dictionary<Type, List<DefTypePromisePair>>>();
 
 
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
+        /// <summary>
+        /// user => yaml file
+        /// </summary>
+        public Dictionary<Assembly, LocalizationFiles> unitNamesGlobalLocalizationFiles = new Dictionary<Assembly, LocalizationFiles>();
 
+        public Dictionary<Assembly, HashSet<IdContainer>> unitIdsToLocalize = new Dictionary<Assembly, HashSet<IdContainer>>();
+
+
+        public Dictionary<Assembly, HashSet<LocalizationFiles>> spellEntriesLocFiles = new Dictionary<Assembly, HashSet<LocalizationFiles>>();
+
+        public Dictionary<Assembly, HashSet<string>> spellIdsToLocalize = new Dictionary<Assembly, HashSet<string>>();
+
+        public Dictionary<Assembly, Dictionary<string, SpellTemplate>> spellTemplates = new Dictionary<Assembly, Dictionary<string, SpellTemplate>>();
+
+        public Dictionary<Assembly, Dictionary<string, UltimateSkillTemplate>> ultimateSkillTemplates = new Dictionary<Assembly, Dictionary<string, UltimateSkillTemplate>>();
+
+
+        /// <summary>
+        /// assembly name => method cache
+        /// </summary>
         public Dictionary<string, MethodCache> methodCacheDic = new Dictionary<string, MethodCache>();
 
         [field: DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         internal event Action PostMainLoad;
 
-
         public List<Action> formationAddActions = new List<Action>();
 
-        // 2do cache loaded from disk separately
-        // charId +=> loadoutType +=> LoadoutInfo
+        public List<Action> environmentsAddActions = new List<Action>();
+
+        public Dictionary<Assembly, Dictionary<string, GameObject>> createdEnvObjectCache = new Dictionary<Assembly, Dictionary<string, GameObject>>();
+
+        /// <summary>
+        /// charId +=> loadoutType +=> LoadoutInfo
+        /// </summary>
         public Dictionary<string, List<CharLoadoutInfo>> loadoutInfos = new Dictionary<string, List<CharLoadoutInfo>>();
 
         public List<Action> populateLoadoutInfosActions = new List<Action>();
@@ -102,17 +147,30 @@ namespace LBoLEntitySideloader
         public class CharLoadoutInfo
         {
             public string ultimateSkill;
-            public string exhibit;
+            public string exhibit;  
             public List<string> deck;
             public int complexity;
             public string typeSuffix;
             public string typeName;
         }
 
+
+
+        public List<Func<List<Stage>, List<Stage>>> modifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
+
+        public List<StageModAction> modifyStageActions = new List<StageModAction>();
+
+        public class StageModAction
+        {
+            public string Id;
+            public Func<Stage, Stage> mod;
+        }
+
+
+        public Dictionary<Assembly, List<PlayerUnitTemplate>> user2PlayerTemplates = new Dictionary<Assembly, List<PlayerUnitTemplate>>();
+
         public void RaisePostMainLoad()
         {
-
-
             if (PostMainLoad == null)
             {
                 Log.LogDev()?.LogInfo("No template generation was queued.");
@@ -121,9 +179,7 @@ namespace LBoLEntitySideloader
 
             PostMainLoad();
 
-
             generatedAssemblies.Values.ToList().ForEach(l => l.ForEach(a => EntityManager.Instance.secondaryUsers.AddUser(a)));
-
 
             foreach (var g2u in gen2User)
             {
@@ -159,9 +215,12 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Type, int> entity2uniqueIndexes = new Dictionary<Type, int>();
 
-        // templateType => Id => definitionType
+        /// <summary>
+        /// templateType => Id => definitionType
+        /// </summary>
         public Dictionary<Type, Dictionary<string, EntityDefinition>> onDemandResourceTracker = new Dictionary<Type, Dictionary<string, EntityDefinition>>();
 
+        
         //static private HashSet<IdContainer> uniqueIds = new HashSet<IdContainer>();
 
         public bool IsLoadedOnDemand(Type templateType, string Id, out EntityDefinition entityDefinition)
@@ -290,7 +349,7 @@ namespace LBoLEntitySideloader
             if (ids.Contains(Id))
             {
 
-                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {entityDefinition.EntityType().Name} type with id '{Id}' which already used by either vanilla entities or other mods.");
+                throw new NotImplementedException($"Uniquefying ids is not supported yet. {userInfo.GUID} is trying to register {entityDefinition.TemplateType().Name} id {Id} which already used by either vanilla entities or other mods.");
 
                 if (!Instance.entity2uniqueIds.ContainsKey(entityDefinition.GetType()))
                 {
@@ -334,19 +393,20 @@ namespace LBoLEntitySideloader
 
         static internal int AddUniqueIndex(int index, EntityDefinition entityDefinition)
         {
-            int i = Instance.indexTable.Next(entityDefinition.ConfigType());
+            int i = Instance.indexTable.Sequence(entityDefinition.ConfigType()).Counter;
             var indexes = Instance.configIndexes[entityDefinition.ConfigType()];
+            // 2do optimize this shit
             while (indexes.Contains(index + i))
             {
-                Log.LogDevExtra()?.LogDebug($"(Extra Logging) MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
+                //Log.LogDev()?.LogDebug($"MakeUniqueIndex: duplicate index {index + i} in {entityDefinition.ConfigType().Name} found and handled.");
                 i = Instance.indexTable.Next(entityDefinition.ConfigType());
-            }
+            }   
 
             indexes.Add(index + i);
             return index + i;
 
         }
-
+            
         
     }
 }

@@ -12,6 +12,7 @@ using Spine.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using static LBoLEntitySideloader.BepinexPlugin;
 using static UnityEngine.UI.GridLayoutGroup;
@@ -22,17 +23,32 @@ namespace LBoLEntitySideloader.Entities
     public abstract class EnemyUnitTemplate : EntityDefinition,
         IConfigProvider<EnemyUnitConfig>,
         IGameEntityProvider<EnemyUnit>,
-        IResourceConsumer<LocalizationOption>,
-
-        IResourceConsumer<Sprite>,
-        IResourceConsumer<SkeletonDataAsset>
-        
+        IResourceConsumer<LocalizationOption>        
     {
         public override Type ConfigType() => typeof(EnemyUnitConfig);
 
         public override Type EntityType() => typeof(EnemyUnit);
 
         public override Type TemplateType() => typeof(EntityDefinition);
+
+        /// <summary>
+        /// icon for boss encounter node. Some circular dimension
+        /// </summary>
+        /// <param name="enemyUnitId"></param>
+        /// <param name="getSprite"></param>
+        /// <param name="callingAssembly"></param>
+        public static void AddBossNodeIcon(string enemyUnitId, Func<Sprite> getSprite, Assembly callingAssembly = null)
+        {
+            if (callingAssembly == null)
+                callingAssembly = Assembly.GetCallingAssembly();
+
+            Action action = () => {
+                var sprite = getSprite();
+                ResourcesHelper.BossIcons.AlwaysAdd(enemyUnitId, sprite);
+            };
+
+            EntityManager.Instance.addBossIconsActions.AddAction(enemyUnitId, action, callingAssembly);
+        }
 
         /// <summary>
         /// Id:
@@ -145,19 +161,5 @@ namespace LBoLEntitySideloader.Entities
         }
 
 
-/*        public abstract Sprite LoadSprite();
-
-        public abstract SkeletonDataAsset LoadSkeletonDataAsset();*/
-
-        // load model?
-        public void Consume(SkeletonDataAsset skeletonDataAsset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Consume(Sprite sprite)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

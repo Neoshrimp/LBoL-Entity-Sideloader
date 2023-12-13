@@ -30,11 +30,12 @@ namespace GenTests2
 
                 Func<CardConfig> cardConfig = () => (new DummyCardTemplate()).DefaultConfig();
                 Func<CardImages> cardImages = () => null;
-                Func<LocalizationOption> cardLoc = () => new GlobalLocalization(embeddedSource, true);
+                Func<LocalizationOption> cardLoc = () => new GlobalLocalization(embeddedSource);
 
                 cardGen.QueueGen(nameof(YukariAttack), overwriteVanilla: true, loadLocalization: () =>
                 {
-                    var gl = new GlobalLocalization(embeddedSource, mergeTerms: true);
+                    var gl = new GlobalLocalization(embeddedSource);
+                    gl.LocalizationFiles.mergeTerms = true;
                     gl.LocalizationFiles.AddLocaleFile(LBoL.Core.Locale.En, "CardsEn");
 
                     return gl;
@@ -43,14 +44,14 @@ namespace GenTests2
 
 
 
-                cardGen.QueueGen("NewGenCard", overwriteVanilla: false, cardConfig, null, null, generateEmptyLogic: true);
+                cardGen.QueueGen(Id: "NewGenCard", overwriteVanilla: false, makeConfig: cardConfig, loadCardImages: null, loadLocalization: null, generateEmptyLogic: true);
 
 
-                exhibitGen.QueueGen(nameof(Yaoshi), overwriteVanilla: true, makeConfig: () =>
+                exhibitGen.QueueGen(Id: nameof(Yaoshi), overwriteVanilla: true, makeConfig: () =>
                 {
-
+                    var index = ExhibitConfig.FromId(nameof(Yaoshi)).Index;
                     var exhibitConfig = new ExhibitConfig(
-                        Index: 0,
+                        Index: index,
                         Id: "",
                         Order: 10,
                         IsDebug: false,
@@ -77,7 +78,7 @@ namespace GenTests2
 
                     return exhibitConfig;
 
-                }, null, null);
+                }, loadSprite: null, loadLocalization: null);
 
                 cardGen.OutputCSharpCode(outputToFile: true); // for debug
 

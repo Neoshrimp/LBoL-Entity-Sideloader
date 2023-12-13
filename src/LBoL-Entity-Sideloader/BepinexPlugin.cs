@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using Cysharp.Threading.Tasks;
+using Extensions.Unity.ImageLoader;
 using HarmonyLib;
 using LBoL.ConfigData;
 using LBoL.EntityLib.Exhibits.Shining;
@@ -8,6 +10,7 @@ using LBoL.Presentation.I10N;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Entities.Patches;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,14 +60,17 @@ namespace LBoLEntitySideloader
 
             devExtraLoggingConfig = Config.Bind("DevMode", "ExtraLogging", true, "Enables some additional error feedback when devMode is enabled.");
 
-            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F3), "Reload all entities (requires scriptengine).");
+            reloadKeyConfig = Config.Bind("DevMode", "ReloadKey", new KeyboardShortcut(KeyCode.F6), "Reload all entities (requires scriptengine).");
 
-            hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.F7), "Hard reload localization and all entities (requires scriptengine).");
+            hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.None), "Hard reload localization and all entities (requires scriptengine).");
 
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
 
+            ImageLoader.Init();
 
-            
+            ImageLoader.settings.useDiskCache = false;
+            ImageLoader.settings.debugLevel = DebugLevel.Error;
+
 
             harmony.PatchAll();
 
@@ -85,11 +91,14 @@ namespace LBoLEntitySideloader
                 if (BepInEx.Bootstrap.Chainloader.PluginInfos.TryGetValue("com.bepis.bepinex.scriptengine", out BepInEx.PluginInfo pluginInfo))
 
                 {
-                    Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
+                    // 2do weird workaround for types not being reloaded bug
+                    Reload(pluginInfo, true);
+
+                    //Reload(pluginInfo, hardReloadKeyConfig.Value.IsDown());
                 }
                 else
                 {
-                    log.LogInfo($"BePinEx scriptengine is needed to use runtime reload");
+                    log.LogInfo($"scriptengine is required for runtime reload");
                 }
             }
         }
@@ -103,8 +112,14 @@ namespace LBoLEntitySideloader
         public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
         {
 
-            foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
+            if (!hardReload)
             {
+                log.LogInfo("'Soft' reload is not a thing. Use 'hard' reload instead");
+                return;
+            }
+
+            foreach (var user in EntityManager.Instance.sideloaderUsers.userInfos.Values)
+            {   
                 EntityManager.Instance.UnregisterUser(user);
             }
 
@@ -118,20 +133,29 @@ namespace LBoLEntitySideloader
             EntityManager.Instance.secondaryUsers.userInfos = new Dictionary<Assembly, UserInfo>();
 
 
-
             UniqueTracker.DestroySelf();
+
+            // ??
+            //ImageLoader.ClearCache();
+
             // doesn't really help
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+/*            GC.Collect();
+            GC.WaitForPendingFinalizers();*/
 
 
-            EntityManager.Instance.loadedFromDisk.Do(a => EntityManager.RegisterAssembly(a));
+            EntityManager.Instance.loadedFromDiskUsers.Do(a => EntityManager.RegisterAssembly(a));
             EntityManager.Instance.loadedFromDiskPostAction.Do(a => UniqueTracker.Instance.PostMainLoad += a);
 
             UniqueTracker.Instance.formationAddActions.AddRange(EnemyGroupTemplate.loadedFromDiskCustomFormations);
-
-
             UniqueTracker.Instance.populateLoadoutInfosActions.AddRange(EntityManager.Instance.loadedFromDiskCharLoadouts);
+
+            UniqueTracker.Instance.modifyStageListFuncs.AddRange(EntityManager.Instance.loadedFromDiskmodifyStageListFuncs);
+            UniqueTracker.Instance.modifyStageActions.AddRange(EntityManager.Instance.loadedFromModifyStageActions);
+
+            UniqueTracker.Instance.formationAddActions.AddRange(StageTemplate.loadedFromDiskEnvironments);
+
+            EntityManager.Instance.addBossIconsActions.Clear();
+
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
 
@@ -147,48 +171,55 @@ namespace LBoLEntitySideloader
 
                         if (hardReload)
                         {
-                            EntityManager.Instance.RegisterUsers(EntityManager.Instance.sideloaderUsers);
-                            EntityManager.Instance.LoadAssetsForResourceHelper(EntityManager.Instance.sideloaderUsers);
+
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
 
                             // reloads Sideloader loc via hookpoint
                             await L10nManager.ReloadLocalization();
 
                             UniqueTracker.Instance.RaisePostMainLoad();
 
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
-
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: false);
 
                         }
                         else
                         {
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources");
 
                             UniqueTracker.Instance.RaisePostMainLoad();
-                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
+                            EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources");
+
 
                         }
 
 
+
+                        EntityManager.Instance.addBossIconsActions.Reload();
+                        EntityManager.Instance.PostAllLoadProcessing();
+
                         UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
 
                         if (GameMaster.Instance.CurrentGameRun == null)
-                        { 
+                        {
                             // reload jade boxes
                             UiManager.GetPanel<StartGamePanel>()._jadeBoxToggles.Clear();
                             UiManager.GetPanel<StartGamePanel>().InitialForJadeBox();
                             // formation reload moved to HookPoints.FormationsHotReload_Patch
                             EnemyGroupTemplate.ReloadFormations();
+                            PlayerSpriteLoader.ReloadForMainMenu();
+                        }
+                        else
+                        {
+                            SpellTemplate.LoadAllSpecialLoc();
                         }
 
-
+                        StageTemplate.ReloadEnvs();
 
                         if (autoRestartLevelConfig.Value && GameMaster.Instance.CurrentGameRun != null)
                         {
                             UiManager.GetPanel<SettingPanel>()?.UI_RestartBattle();
                             doingMidRunReload = 1;
                         }
-
-
 
 
                     }

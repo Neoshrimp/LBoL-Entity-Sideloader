@@ -12,7 +12,7 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
       ![image](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/assets/89428565/1b6417b3-e605-426a-8d55-0502c093662e)
 
 
-- [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader-thunderstore.zip).
+- [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip).
 
 - [One time] Setup [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) and create `BepInEx/scripts` folder.
 
@@ -42,7 +42,8 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 
 
-- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment. Create a new class, for convenience, placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
+- This should have generated a bunch of methods. These methods are like slots to be filled up with components which define a card. Disregard them for the moment.
+- Create a new class for convenience placed in the same file: `public sealed class FirstCard : Card`. This class is going to define card's behavior.
 
 ![image](https://user-images.githubusercontent.com/89428565/236564867-650faa7f-a875-4300-ba7b-2ca92fa46962.png)
 
@@ -114,7 +115,7 @@ CardId:
 
 - Go back to `FirstCardDef.MakeConfig`. You don't have to close the game just close the collection.
 
-- Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/ae2ef3c77ef28da9035603b182640c711dd55d06/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L47).
+- Unfortunately, for now, the fastest way to fill out config is to copy code. Copy  CardConfig constructor with named parameters from [here](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/Entities/CardTemplate.cs#L51).
 
 - The more detailed explanation of each config property can be found in [Entity Reference](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md). For now change `Index`,  `GunName`, `GunNameBurst`, `Type`, `IsPooled`, `TargetType`, `Colors`, `Cost` and `Damage`. `sequenceTable.Next` is convenient way to keep track of indexes but any positive number can be assigned as index as well.
 ```
@@ -137,7 +138,7 @@ Damage: 7,
 
 ```
 
-- Compile the project again and go back to the game. Close Collection, press F3 to refresh the mods. The card should be an `Attack` and have cost and colors.
+- Compile the project again and go back to the game. Close Collection, press F6 to refresh the mods. The card should be an `Attack` and have cost and colors.
 
 ![image](https://user-images.githubusercontent.com/89428565/236587270-0d66f1a2-e384-45d3-99c5-f69cfc63a06b.png)
 

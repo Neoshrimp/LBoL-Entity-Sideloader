@@ -19,7 +19,9 @@ namespace LBoLEntitySideloader.Resource
         public readonly static string upgradeString = "Upgrade";
 
         /// <summary>
-        /// primary card image. Any aspect ratio of 452x312 will do. The card image will be scaled to 452x312 no matter the original size. 743x512 is the size vanilla images are using so there's not much point using larger ones.
+        /// primary card image. Any aspect ratio of 452x312 will do. 
+        /// The card image will be scaled to 452x312 no matter the original size. 
+        /// 743x512 is the size vanilla images are using so there's not much point using larger ones.
         /// </summary>
         public Texture2D main;
 

@@ -1,6 +1,48 @@
 Modding framework for working with LBoL entities.
 
+#### Thanks to the contributors!
+
+[IntoxicatedKid](https://github.com/IntoxicatedKid)
+
 #### Change log
+
+`0.9.4000` Change how auto indexing works, stage bgm patch.
+
+`0.9.3000` Fixed version number?
+
+`0.9.3` Update for LBoL 1.4+. Not compatible with previous game version.
+
+`0.9.231` Added Watermark dependency.
+
+`0.9.23` Made hard/soft reload to always hard reload. Sort of a workaround for reloading bugs.
+
+`0.9.22` Add EnemyUnitTemplate.AddBossNodeIcon
+
+`0.9.21` Rename PlayerUnitTemplate.AddExtraLoadout to AddLoadout
+
+`0.9.2` Add custom stage gameObjects.
+
+`0.9.13` Add spell name and title text to bomb splash. Add `SpellTemplate` (practically useless).
+
+`0.9.12` Add `AutoCastAction` in `LBoLEntitySideloader.ExtraFunc.CardHelper`
+
+`0.9.11` Remove error message suppression in ViewConsumeMana. An explicit fix is required to make auto cast work more properly.
+
+`0.9.1` Improve Texture2D scaling quality by adding mipmap generation.
+
+`0.9.0` added template for new playable characters and helpers methods. 
+
+Added methods for manipulating Stage pools and Stage list itself (in `StageTemplate`). 
+
+Routed async sprite loading through ImageLoader library.  
+
+Added cropping templates for various images.
+
+ResourceLoader can load AssetBundle s now.
+
+`0.8.4` better logging. Set ExtraLogging to false to avoid logging individual entities. Added documentation xml.
+
+`0.8.3` enable exhibit dupes (thanks to IntoxicatedKid).
 
 `0.8.1` added UnitModelTemplate. Custom enemy or players models are now possible.
 

@@ -21,8 +21,6 @@ namespace LBoLEntitySideloader.TemplateGen
 
     public abstract class TemplateGen<ED> where ED : EntityDefinition
     {
-
-
         public readonly static Assembly sideLoaderAss = typeof(BepinexPlugin).Assembly;
 
         protected static Sequence dupNameSeq = new Sequence();
@@ -30,6 +28,7 @@ namespace LBoLEntitySideloader.TemplateGen
         static readonly StringBuilder evaluatorOutput;
         protected static readonly ScriptEvaluator scriptEvaluator = new ScriptEvaluator(new StringWriter(evaluatorOutput = new StringBuilder()));
 
+        // 2do NOT updated on hot reload
         public readonly Assembly originAssembly;
 
         public Assembly newAssembly = null;
@@ -54,7 +53,6 @@ namespace LBoLEntitySideloader.TemplateGen
         private Dictionary<string, Type> name2DefTypeCache = new Dictionary<string, Type>();
 
 
-        // 2do add codeDom lib
 
         public TemplateGen(Assembly originAssembly = null)
         {
@@ -157,6 +155,7 @@ namespace LBoLEntitySideloader.TemplateGen
             if (func == null)
                 func = () => default(R);
 
+            
             UniqueTracker.Instance.methodCacheDic[newAssName].AddMethod(typeof(ED), targetClass.Name, name, func);
 
 
@@ -226,7 +225,7 @@ namespace LBoLEntitySideloader.TemplateGen
             }
             else
             {
-                Log.log.LogWarning($"{typeof(ED)} template gen: type {MakeDefName(Id)} was already generated. (ignore this warning if hot reloading)");
+                Log.LogDevExtra()?.LogWarning($"{typeof(ED)} template gen: type {MakeDefName(Id)} was already generated. (ignore this warning if hot reloading)");
                 return generatedTypes[Id];
             }
 

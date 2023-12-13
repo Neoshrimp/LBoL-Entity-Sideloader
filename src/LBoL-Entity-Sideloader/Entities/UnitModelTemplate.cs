@@ -15,11 +15,20 @@ using LBoLEntitySideloader.Resource;
 using HarmonyLib;
 using LBoL.Presentation;
 using Spine.Unity;
+using DG.Tweening.Plugins.Options;
+using LBoL.Base.Extensions;
+using static Mono.CSharp.Argument;
+using System.Data;
+using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.Core;
+using YamlDotNet.RepresentationModel;
 
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class UnitModelTemplate : EntityDefinition,
-        IConfigProvider<UnitModelConfig>
+        IConfigProvider<UnitModelConfig>,
+        IResourceConsumer<LocalizationOption>
+
 
     {
         public override Type ConfigType() => typeof(UnitModelConfig);
@@ -32,7 +41,7 @@ namespace LBoLEntitySideloader.Entities
         /// Type : model type: 0 - Sprite; 1 - Spine model; 3 - effect (like spirits or Kokoro masks);
         /// EffectName : effect Id if Type=2 is used;
         /// Offset : ;
-        /// Flip : ;
+        /// Flip : player models seem to get auto flipped?;
         /// Dielevel : 0, 1 or 2 0 - "UnitDeathSmall", 1 - "UnitDeath", 2 - "UnitDeathLarge";
         /// Box : collision box size. Player sized units it's (0.80f, 1.80f);
         /// Shield : barrier? effect radius;
@@ -86,7 +95,12 @@ namespace LBoLEntitySideloader.Entities
                     HasSpellPortrait : false,
                     SpellPosition : new Vector2(0f, 0f),
                     SpellScale : 1,
-                    SpellColor : new List<Color32>() { }
+                    SpellColor: new List<Color32>() { 
+                        new Color32(101, 229, 71, 255), 
+                        new Color32(131, 221, 117, 255), 
+                        new Color32(137, 221, 117, 150), 
+                        new Color32(153, 220, 127, 255) 
+                    }
                 );
             return config;
         }
@@ -97,6 +111,59 @@ namespace LBoLEntitySideloader.Entities
 
         // never be called if HasSpellPortrait is false
         public abstract UniTask<Sprite> LoadSpellSprite();
+
+        /// <summary>
+        /// Default:, Short: and Long: . Default is mandatory. 
+        /// For name display above model and naming playable character 
+        /// </summary>
+        /// <returns></returns>
+        public abstract LocalizationOption LoadLocalization();
+
+        public void Consume(LocalizationOption locOption)
+        {
+            if (locOption == null) return;
+
+            if (locOption is GlobalLocalization globalLoc)
+            {
+                if (globalLoc.LocalizationFiles.locTable.NotEmpty())
+                {
+                    if (!UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryAdd(userAssembly, globalLoc.LocalizationFiles))
+                    { 
+                    Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global unit name localization files but they've already been set by another {TemplateType().Name}.");
+                    }
+                }
+                UniqueTracker.Instance.unitIdsToLocalize.TryAdd(userAssembly, new HashSet<IdContainer>());
+                UniqueTracker.Instance.unitIdsToLocalize[userAssembly].Add(GetId());
+                return;
+            }
+
+            if (locOption is LocalizationFiles locFiles)
+            {
+
+                var yamlMap = locFiles.Load(Localization.CurrentLocale);
+                var keyNode = new YamlScalarNode(GetId());
+                if (yamlMap.Children.TryGetValue(keyNode, out var yamlNode) && yamlNode is YamlMappingNode valuePairs)
+                {
+                    LocalizationOption.FillUnitNameTable(
+                        new YamlMappingNode( new KeyValuePair<YamlNode, YamlNode>(keyNode, valuePairs)), locFiles.mergeTerms);
+                }
+                else
+                {
+                    locFiles.fileNames.TryGetValue(locFiles.GetAvailableLocale(), out var filename);
+                    Log.log.LogWarning($"{GetId()} not found in {filename}");
+                }
+                return;
+            }
+
+            if (locOption is DirectLocalization rawLoc)
+            {
+                var termDic = rawLoc.WrapTermDic(UniqueId);
+
+                LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(termDic), rawLoc.mergeTerms);
+                return;
+            }
+
+        }
 
 
         bool CheckModelOptions()
@@ -132,7 +199,7 @@ namespace LBoLEntitySideloader.Entities
 
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(UnitModelTemplate), characterName, out var entityDefinition))
                 {
-                    if (entityDefinition is UnitModelTemplate umT && umT.CheckModelOptions())
+                    if (entityDefinition is UnitModelTemplate umT && EntityManager.HandleOverwriteWrap(() => { }, umT, nameof(LoadModelOptions), umT.user) && umT.CheckModelOptions())
                     {
                         __result = umT.LoadModelOptions().loadSpine;
                         return false;
@@ -153,7 +220,7 @@ namespace LBoLEntitySideloader.Entities
 
                 if (UniqueTracker.Instance.IsLoadedOnDemand(typeof(UnitModelTemplate), characterName, out var entityDefinition))
                 {
-                    if (entityDefinition is UnitModelTemplate umT && umT.CheckModelOptions())
+                    if (entityDefinition is UnitModelTemplate umT && EntityManager.HandleOverwriteWrap(() => { }, umT, nameof(LoadModelOptions), umT.user) && umT.CheckModelOptions())
                     {
                         __result = umT.LoadModelOptions().loadSprite;
                         return false;
@@ -172,11 +239,12 @@ namespace LBoLEntitySideloader.Entities
         {
             if (!UnitModelConfig.FromName(UniqueId).HasSpellPortrait)
             {
-                Log.log.LogError($"{this.GetType().Name}: UnitModelConfig.HasSpellPortrait is false but HasSpellPortrait is being loaded anyway");
+                Log.log.LogWarning($"{this.GetType().Name}: UnitModelConfig.HasSpellPortrait is false but HasSpellPortrait is being loaded anyway");
                 return false;
             }
             return true;
         }
+
 
 
         [HarmonyPatch(typeof(ResourcesHelper), nameof(ResourcesHelper.LoadSpellPortraitAsync))]

@@ -51,10 +51,10 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             },
 
             // Id is an index, yes
-            {
+/*            {
                 typeof(GunConfig),
                 AccessTools.Field(typeof(GunConfig), BackingWrap(nameof(GunConfig.Id)))
-            },
+            },*/
 
             {
                 typeof(JadeBoxConfig),
@@ -64,7 +64,12 @@ namespace LBoLEntitySideloader.ReflectionHelpers
             {
                 // kind of an index
                 typeof(PlayerUnitConfig),
-                AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.ShowOrder)))
+                AccessTools.Field(typeof(PlayerUnitConfig), BackingWrap(nameof(PlayerUnitConfig.Order)))
+            },
+
+            {
+                typeof(StatusEffectConfig),
+                AccessTools.Field(typeof(StatusEffectConfig), BackingWrap(nameof(StatusEffectConfig.Index)))
             },
         };
 

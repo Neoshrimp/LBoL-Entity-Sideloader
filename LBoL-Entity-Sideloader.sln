@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Random-Examples", "src\Rand
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateGenTests", "src\TermplateGenTests\TemplateGenTests.csproj", "{819688C4-F749-4CAB-BC7D-7487E3CFFEA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenTests2", "src\GenTests2\GenTests2.csproj", "{5A87B12B-99E5-4579-9FDA-85753A05BE88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenTests2", "src\GenTests2\GenTests2.csproj", "{5A87B12B-99E5-4579-9FDA-85753A05BE88}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GunDesigner", "src\GunDesigner\GunDesigner.csproj", "{C51F9DCE-40A8-47EE-B763-3A4CECC7F9B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffectLib", "src\EffectLib\EffectLib.csproj", "{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A87B12B-99E5-4579-9FDA-85753A05BE88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C51F9DCE-40A8-47EE-B763-3A4CECC7F9B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C51F9DCE-40A8-47EE-B763-3A4CECC7F9B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C51F9DCE-40A8-47EE-B763-3A4CECC7F9B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C51F9DCE-40A8-47EE-B763-3A4CECC7F9B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

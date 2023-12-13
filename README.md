@@ -2,20 +2,18 @@
 Entity manager/loader for modding [Lost Branch of Legend](https://store.steampowered.com/app/1140150/Touhou_Lost_Branch_of_Legend/). \
 Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https://github.com/BepInEx/BepInEx).
 
-## Important! Currently requires latest beta branch to work!
+### *Currently works with alpha, beta and main branches*
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
-## The Mods
-*very tiny modifications, but hopefully there will be more time to focus on content mods after Sideloader reaches desirable state (probably at least [Enemy loading](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/README.md#roadmap))*
-- [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
-- [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
-- [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
-- [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
-- [Dayuu-Mod](https://github.com/IntoxicatedKid/Dayuu-Mod) *by Intoxicated Kid*
+## **[Thunderstore](https://thunderstore.io/c/touhou-lost-branch-of-legend/) is up!**
 
 ### Installation
 
-Download [Sideloader.dll](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.dll) and place it in `BepInEx/plugins` folder.
+Use [r2modman](https://thunderstore.io/c/touhou-lost-branch-of-legend/p/ebkr/r2modman/)
+
+*or*
+
+Download [LBoL-Entity-Sideloader.zip](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip) and extract it in `BepInEx/plugins` folder.
 
 [*Detailed Installation guide*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md)
 
@@ -79,40 +77,43 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Create Exhibits ☑️
   |-- Display modded Exhibits in Collection
 |-- Load custom SFX ☑️
-  |-- SfxConfig
+  |-- SfxConfig ☑️
   |-- BgmConfig ☑️
-|-- Create Enemies
-  |-- Load custom spine models
-    |-- UnitModelConfig
-  |-- Create Enemy groups (Battles)
-    |-- Add modded battles to stage encounter pools
-|-- SpellCards
-  |-- Custom starting decks (if possible)
-    |-- Custom deck selection UI
-  |-- Inherent character mechanics (maybe)
+|-- Create Enemies ☑️
+  |-- Load custom spine models ☑️
+    |-- UnitModelConfig ☑️
+    |-- Spine asset packaging helper in Unity Editor
+  |-- Create Enemy groups (Battles) ☑️
+    |-- Add modded battles to stage encounter pools ☑️
+|-- SpellCards ☑️
+  |-- Custom starting decks (if possible) ☑️
+    |-- Custom deck selection UI ☑️
+|-- (New) Custom Stages ☑️
+  |-- Stage pooling ☑️
 |-- *Playable characters at this point?*
+  |-- Inherent character mechanics (maybe) 
 |-- Create GapOption
-|-- Load Yarn Spinner scripts (devs help!)
+|-- Load Yarn Spinner scripts [???](https://github.com/salyu9/YarnSpinner)
   |-- Create Adventures (Encounters)
     |-- Modded Adventure pooling system
-|-- Create JadeBox challenges
+|-- Create JadeBox challenges ☑️
 
 *Sideloader features and maintenance*
 |-- Better docs/tutorials/wikis..
-|-- Sideloader usage API improvements and polish
 |-- Support Localization ☑️
 |-- Dynamic entity reload for development ☑️
 |-- Overwrite or modify vanilla entities ☑️
   |-- Overwrite individual entity components selectively ☑️
     |-- Merge configs overwritten by different mods (maybe)
-  |-- Make overwriting more convenient by introducing mass overwrite types
+  |-- Make overwriting more convenient by introducing mass overwrite types ☑️
+    |-- Programmatic template generation ☑️
 |-- Error feedback and handling ☑️
   |-- Better error feedback and handling..
 |-- Support loading from AssetBundles
 |-- main/beta double branch support (maybe)
 |-- Handle duplicate entity Ids
 |-- Performance and profiling
-  |-- async loading
+  |-- async loading ☑️
   |-- Addressables
   |-- size reduction/compression
   |-- whatever else..
@@ -120,6 +121,16 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 </pre>
 
 [_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
+
+#### Old mod list
+
+- [Good Examples](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/GoodExamples)
+- [Vanilla Tweaks](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/VanillaTweaks)
+- [Gun](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/GunToolCard)
+- [Help Me Eirin](https://github.com/Neoshrimp/LBoL-Gameplay-mods/tree/master/src/HelpMeEirin) (doesn't need Sideloader)
+- [Dayuu-Mod](https://github.com/IntoxicatedKid/Dayuu-Mod) *by Intoxicated Kid*
+
+
 
 
 

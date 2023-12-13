@@ -17,7 +17,7 @@ namespace LBoLEntitySideloader.Entities
 {
     public abstract class EnemyGroupTemplate : EntityDefinition,
         IConfigProvider<EnemyGroupConfig>
-        // in theory could have custom type logic entity
+        // in theory could have custom logic entity
 
     {
         public override Type ConfigType() => typeof(EnemyGroupConfig);
@@ -44,14 +44,8 @@ namespace LBoLEntitySideloader.Entities
         {
             if(callingAssembly == null)
                 callingAssembly = Assembly.GetCallingAssembly();
-
-
-
                 
             Action action = () => {
-
-                
-
                 if (!GameDirector.Instance.Formations.ContainsKey(name))
                 {
                     var formation_go = new GameObject(name);
@@ -74,7 +68,6 @@ namespace LBoLEntitySideloader.Entities
 
                         enemyFormation.enemyLocations.Add(kv.Key, posGo.transform);
                     }
-
                 }
                 else
                 {

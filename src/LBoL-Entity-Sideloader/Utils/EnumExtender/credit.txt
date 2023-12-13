@@ -1,0 +1,2 @@
+Enum Patcher code taken from Slime Rancher Mod Loader 
+https://github.com/SlimeRancherModding/SRML

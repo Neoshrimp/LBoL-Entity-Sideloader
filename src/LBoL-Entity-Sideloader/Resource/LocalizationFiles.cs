@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using YamlDotNet.Helpers;
 using YamlDotNet.RepresentationModel;
 
 namespace LBoLEntitySideloader.Resource
@@ -13,6 +14,8 @@ namespace LBoLEntitySideloader.Resource
         public Locale fallbackLoc = Locale.En;
 
         internal Dictionary<Locale, Func<YamlMappingNode>> locTable = new Dictionary<Locale, Func<YamlMappingNode>>();
+
+        public Dictionary<Locale, string> fileNames = new Dictionary<Locale, string>();
 
         /// <summary>
         /// should localization terms (Name, Description etc.) should be merged
@@ -46,17 +49,27 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-
         public void AddLocaleFile(Locale locale, string fileName)
         {
 
             fileName = Source.AddExtension(fileName, ".yaml");
 
+
             if (!locTable.TryAdd(locale, () => loadingAction(fileName)))
             {
                 Log.LogDev()?.LogWarning($"{fileName}: LocalizationFiles already have {locale} registered");
             }
+            else
+            {
+                fileNames.TryAdd(locale, fileName);
+            }
         }
+
+        public Locale GetAvailableLocale()
+        {
+            return locTable.ContainsKey(Localization.CurrentLocale) ? Localization.CurrentLocale : fallbackLoc;
+        }
+
 
         public YamlMappingNode Load(Locale locale)
         {
@@ -64,7 +77,12 @@ namespace LBoLEntitySideloader.Resource
             {
                 return getYaml();
             }
-            Log.LogDev()?.LogWarning($"{locale} locale option does not have a file set");
+            else if (locTable.TryGetValue(fallbackLoc, out getYaml))
+            {
+                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc}fallback option.");
+                return getYaml();
+            }
+            Log.LogDev()?.LogWarning($"{this.GetType().Name}: {locale} locale option does not have a file set");
             return null;
         }
 
@@ -72,11 +90,6 @@ namespace LBoLEntitySideloader.Resource
         {
 
             YamlMappingNode yaml = Load(Localization.CurrentLocale);
-            if (yaml == null)
-            {
-                Log.log.LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc}fallback option.");
-                yaml = LoadFallback();
-            }
 
 
             if (yaml != null)
@@ -89,13 +102,48 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
+        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(string[] Ids, bool addEmptyDic = true)
+        {
+            Dictionary<string, Dictionary<string, object>> dictionary = new Dictionary<string, Dictionary<string, object>>();
+
+            YamlMappingNode yaml = Load(Localization.CurrentLocale);
+
+            if (yaml == null)
+            {
+                Log.log.LogWarning($"{nameof(LocalizationFiles)}: No localization found.");
+            }
+
+            IOrderedDictionary<YamlNode, YamlNode> children = yaml.Children;
+            foreach (var id in Ids)
+            {
+                YamlNode yamlNode;
+                if (children.TryGetValue(id, out yamlNode))
+                {
+                    YamlMappingNode yamlMappingNode = yamlNode as YamlMappingNode;
+                    if (yamlMappingNode != null)
+                    {
+                        dictionary.Add(id, Localization.CreatePropertyLocalizeTable(id, yamlMappingNode));
+                        continue;
+                    }
+                }
+                if(addEmptyDic)
+                    dictionary.Add(id, new Dictionary<string, object>());
+            }
+
+            return dictionary;
+        }
+
+
+
+
+
+
         public static void MissingValueError(string enityLogicId)
         {
             Log.log.LogWarning($"{enityLogicId} entity was registered but localization file contains no values for {enityLogicId}. Did you forget to add \"{enityLogicId}:\" entry to .yaml file?");
         }
 
-        public YamlMappingNode LoadFallback() => Load();
-            
+                   
 
         public YamlMappingNode Load() => Load(fallbackLoc);
 

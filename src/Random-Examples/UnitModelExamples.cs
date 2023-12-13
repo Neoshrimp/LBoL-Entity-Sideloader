@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using static Random_Examples.BepinexPlugin;
+
 
 namespace Random_Examples
 {
@@ -19,7 +21,10 @@ namespace Random_Examples
     {
         public override IdContainer GetId() => nameof(Reimu);
 
-        
+        [DontOverwrite]
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+
         public override ModelOption LoadModelOptions()
         {
             return new ModelOption(ResourcesHelper.LoadSpineUnitAsync("Sunny"));
@@ -39,4 +44,36 @@ namespace Random_Examples
             return config;
         }
     }
+    [OverwriteVanilla]
+    public sealed class MarisaIsYoumuDef : UnitModelTemplate
+    {
+        public override IdContainer GetId() => "Marisa";
+        
+        [DontOverwrite]
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+
+        public override ModelOption LoadModelOptions()
+        {
+            // pixels per unit should be pretty high
+            return new ModelOption(ResourceLoader.LoadSpriteAsync("Youmu.png", directorySource, ppu: 565));
+
+        }
+
+
+        public override UniTask<Sprite> LoadSpellSprite()
+        {
+            return ResourceLoader.LoadSpriteAsync("ghibli.jpg", directorySource);
+        }
+
+        public override UnitModelConfig MakeConfig()
+        {
+            var config = UnitModelConfig.FromName("Youmu").Copy();
+            config.Flip = false;
+            config.Type = 0;
+            config.Offset = new Vector2(0, 0.04f);
+            return config;
+        }
+    }
+
+
 }

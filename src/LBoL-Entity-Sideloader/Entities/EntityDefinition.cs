@@ -27,8 +27,8 @@ namespace LBoLEntitySideloader.Entities
     public abstract class EntityDefinition
     {
         
-        internal Assembly userAssembly;
-        internal UserInfo user;
+        public Assembly userAssembly;
+        public UserInfo user;
 
 
 
@@ -89,7 +89,6 @@ namespace LBoLEntitySideloader.Entities
             {
 
                 UniqueTracker.Instance.typesToLocalize.TryAdd(userAssembly, new Dictionary<Type, LocalizationInfo>());
-
                 var typesToLocalize = UniqueTracker.Instance.typesToLocalize[userAssembly];
 
                 typesToLocalize.TryAdd(EntityType(), new LocalizationInfo());

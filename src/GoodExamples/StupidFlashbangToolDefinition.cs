@@ -51,8 +51,8 @@ namespace GoodExamples
                     AutoPerform: true,
                     // perform BirdSing sfx with 0.2s delay and 6 CameraFlash vfx one after the other with 0.2 seconds in between. Delaying vfx and sfx in perform array is sideloader feature.
                     Perform: new string[7][] { new string[] { "4", "BirdSing", "0.2" },   new string[] { "2", "CameraFlash", "0.2" }, new string[] { "2", "CameraFlash", "0.4"}, new string[] { "2", "CameraFlash", "0.6" }, new string[] { "2", "CameraFlash", "0.8" }, new string[] { "2", "CameraFlash", "1" }, new string[] { "2", "CameraFlash", "1.2" } },
-                    GunName: "Simple1",
-                    GunNameBurst: "Simple1",
+                    GunName: "Instant",
+                    GunNameBurst: "Instant",
                     DebugLevel: 0,
                     Revealable: false,
                     IsPooled: true,

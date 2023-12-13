@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine.Events;
+using YamlDotNet.RepresentationModel;
 
 namespace LBoLEntitySideloader
 {
@@ -36,7 +37,7 @@ namespace LBoLEntitySideloader
             }
         }
 
-        public HashSet<Assembly> loadedFromDisk = new HashSet<Assembly>();
+        public HashSet<Assembly> loadedFromDiskUsers = new HashSet<Assembly>();
 
         public HashSet<Action> loadedFromDiskPostAction = new HashSet<Action>();
 
@@ -45,6 +46,12 @@ namespace LBoLEntitySideloader
         public SideloaderUsers secondaryUsers = new SideloaderUsers();
 
         public List<Action> loadedFromDiskCharLoadouts = new List<Action>();
+
+        public List<Func<List<Stage>, List<Stage>>> loadedFromDiskmodifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
+
+        public List<UniqueTracker.StageModAction> loadedFromModifyStageActions = new List<UniqueTracker.StageModAction>();
+
+        internal DeferredActions addBossIconsActions = new DeferredActions();
 
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
@@ -55,7 +62,7 @@ namespace LBoLEntitySideloader
 
             if (!assembly.IsDynamic && BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
             {
-                Instance.loadedFromDisk.Add(assembly);
+                Instance.loadedFromDiskUsers.Add(assembly);
             }
 
             Log.LogDev()?.LogInfo($"Scanning {assembly.GetName().Name}...");
@@ -130,8 +137,6 @@ namespace LBoLEntitySideloader
                         userInfo.entityInfos.TryAdd(facType, new List<EntityInfo>());
 
 
-
-
                         if (type.GetCustomAttribute<EntityLogic>() is EntityLogic entityLogicAtt)
                         {
                             if (foundEntityLogicForDefinitionTypes.Contains(entityLogicAtt.DefinitionType))
@@ -199,6 +204,8 @@ namespace LBoLEntitySideloader
 
             log.LogMessage($"{assembly.GetName().Name} scanned! {userInfo.definitionInfos.Count()} Entity definition(s) found.");
 
+
+
             if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
             {
                 log.LogInfo("(Extra logging) Entity definitions found: ");
@@ -233,7 +240,13 @@ namespace LBoLEntitySideloader
         }
         
         
-        
+        /// <summary>
+        /// Add an action which will be executed after all main entities were loaded.
+        /// Should be called from BePinEx Awake injection point.
+        /// Currently used for template gen.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="callingAssembly"></param>
         public static void AddPostLoadAction(Action action, Assembly callingAssembly = null)
         {
 
@@ -276,18 +289,18 @@ namespace LBoLEntitySideloader
         internal bool RegisterId(UserInfo user, EntityDefinition entityDefinition)
         {
 
-            Log.LogDev()?.LogDebug($"Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
+            Log.LogDevExtra()?.LogDebug($"(Extra logging) Registering id:  template: {entityDefinition.GetType().Name}, id: {entityDefinition.GetId()}, IsForOverwriting: {user.IsForOverwriting(entityDefinition.GetType())}");
 
-            var definitionType = entityDefinition.GetType();
+            var templateType = entityDefinition.GetType();
             try
             {
-                if (user.entitiesToOverwrite.ContainsKey(definitionType))
+                if (user.entitiesToOverwrite.ContainsKey(templateType))
                 {
                     if (!UniqueTracker.Instance.id2ConfigListIndex[entityDefinition.ConfigType()].ContainsKey(entityDefinition.GetId()))
 
                     {
-                        log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (yet, maybe).");
-                        UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
+                        log.LogError($"RegisterId: {entityDefinition.GetId()} was not found among vanilla ids. Overwriting is not supported for non-vanilla entities (for now, maybe).");
+                        UniqueTracker.Instance.invalidRegistrations.Add(templateType);
                         return false;
                     }
                     return true;
@@ -299,7 +312,7 @@ namespace LBoLEntitySideloader
             {
 
                 log.LogError(ex);
-                UniqueTracker.Instance.invalidRegistrations.Add(definitionType);
+                UniqueTracker.Instance.invalidRegistrations.Add(templateType);
                 return false;
             }
 
@@ -314,7 +327,11 @@ namespace LBoLEntitySideloader
         {
             
             log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
+            Log.LogDev()?.LogDebug($"Adding configs..");
 
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            if (BepinexPlugin.devModeConfig.Value)
+                stopwatch.Start();
 
             foreach (var kv in user.definitionInfos)
             {
@@ -354,12 +371,12 @@ namespace LBoLEntitySideloader
 
                             // in case config is overwritten but not the bgm (dont make sense really)
                             if (!user.IsForOverwriting(bt.GetType()) || user.IsForOverwriting(bt.GetType()) && TemplatesReflection.DoOverwrite(bt.GetType(), nameof(BgmTemplate.LoadAudioClipAsync)))
-                            { 
+                            {
                                 // pass ID to LoadBgmAsync
                                 bgmConfig.Path = bgmConfig.ID;
                                 bgmConfig.Folder = "";
                             }
-                            UniqueTracker.Instance.AddOnDemandResource(entityDefinition.TemplateType(), bgmConfig.ID, entityDefinition);
+                            UniqueTracker.Instance.AddOnDemandResource(bt.TemplateType(), bgmConfig.ID, entityDefinition);
 
 
                         }
@@ -389,12 +406,51 @@ namespace LBoLEntitySideloader
                         }
                         else if (entityDefinition is PlayerUnitTemplate puT)
                         {
-                            RegisterConfig(puT, user);
+                            var puTConfig = RegisterConfig(puT, user);
+                            UniqueTracker.Instance.AddOnDemandResource(puT.TemplateType(), puTConfig.Id, puT);
                         }
                         else if (entityDefinition is UnitModelTemplate umT)
                         {
                             var umTConfig = RegisterConfig(umT, user);
                             UniqueTracker.Instance.AddOnDemandResource(umT.TemplateType(), umTConfig.Name, umT);
+                        }
+                        else if (entityDefinition is StageTemplate scT)
+                        {
+                            RegisterConfig(scT, user);
+                        }
+                        else if (entityDefinition is EffectTemplate eft)
+                        {
+                            string ogPath = null;
+                            if (user.IsForOverwriting(eft.GetType()) && TemplatesReflection.DoOverwrite(eft.GetType(), nameof(eft.MakeConfig)))
+                                ogPath = EffectConfig.FromName(entityDefinition.UniqueId).Path;
+
+                            var effectConfig = RegisterConfig(eft, user);
+
+                            if (effectConfig != null)
+                                if (ogPath != null)
+                                    effectConfig.Path = ogPath;
+                                else
+                                    effectConfig.Path = effectConfig.Name;
+                        }
+                        else if (entityDefinition is LaserTemplate lt)
+                        {
+                            RegisterConfig(lt, user);
+                        }
+                        else if (entityDefinition is BulletTemplate bulletT)
+                        {
+                            RegisterConfig(bulletT, user);
+                        }
+                        else if (entityDefinition is GunTemplate gt)
+                        {
+                            RegisterConfig(gt, user);
+                        }
+                        else if (entityDefinition is PieceTemplate pt)
+                        {
+                            RegisterConfig(pt, user);
+                        }
+                        else if (entityDefinition is SpellTemplate spT)
+                        {
+                            RegisterConfig(spT, user);
                         }
                     }
                     catch (Exception ex)
@@ -406,12 +462,21 @@ namespace LBoLEntitySideloader
             }
 
 
-            Log.LogDev()?.LogInfo($"Registering entity logic types from assembly: {user.assembly.GetName().Name}");
+            Log.LogDev()?.LogDebug($"Adding entity logic types..");
             foreach (var kv in user.entityInfos)
             {
                 RegisterTypes(kv.Key, user);
             }
 
+            var msg = $"Registering assembly {user.assembly.GetName().Name} done!";
+            if (BepinexPlugin.devModeConfig.Value)
+            {
+                stopwatch.Stop();
+                msg += $" Elapsed time: {stopwatch.ElapsedMilliseconds}ms";
+            }
+
+
+            log.LogInfo(msg);
         }
 
         internal C RegisterConfig<C>(IConfigProvider<C> configProvider, UserInfo user, EntityDefinition entityDefinition = null) where C : class
@@ -431,7 +496,7 @@ namespace LBoLEntitySideloader
 
 
 
-            Log.LogDev()?.LogDebug($"Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
+            Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
 
 
 
@@ -469,15 +534,37 @@ namespace LBoLEntitySideloader
             if (!user.IsForOverwriting(entityDefinition.GetType()))
             {
 
-                
-
                 var f_Index = ConfigReflection.HasIndex(configType);
                 if (f_Index != null)
                 {
                     f_Index.SetValue(newConfig, UniqueTracker.AddUniqueIndex(IdContainer.CastFromObject(f_Index.GetValue(newConfig)), entityDefinition));
                 }
 
-                ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                switch (entityDefinition.UniqueId.idType)
+                {
+                    case IdContainer.IdType.String:
+                        f_Id.SetValue(newConfig, (string)entityDefinition.UniqueId);
+                        break;
+                    case IdContainer.IdType.Int:
+                        f_Id.SetValue(newConfig, (int)entityDefinition.UniqueId);
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
+                }
+
+                switch (entityDefinition.UniqueId.idType)
+                {
+                    case IdContainer.IdType.String:
+                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                        break;
+                    case IdContainer.IdType.Int:
+                        ((Dictionary<int, C>)f_IdTable.GetValue(null)).Add(entityDefinition.UniqueId, newConfig);
+                        break;
+                    default:
+                        log.LogWarning("RegisterConfig: you shouldn't be here");
+                        break;
+                }
                 ref_Data() = ref_Data().AddToArray(newConfig).ToArray();
 
             }
@@ -492,7 +579,19 @@ namespace LBoLEntitySideloader
 
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
 
-                        ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+
+                        switch (entityDefinition.UniqueId.idType)
+                        {
+                            case IdContainer.IdType.String:
+                                ((Dictionary<string, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                                break;
+                            case IdContainer.IdType.Int:
+                                ((Dictionary<int, C>)f_IdTable.GetValue(null)).AlwaysAdd(entityDefinition.UniqueId, newConfig);
+                                break;
+                            default:
+                                log.LogWarning("RegisterConfig: you shouldn't be here");
+                                break;
+                        }
                         ref_Data()[i] = newConfig;
                     }
                 }
@@ -520,7 +619,7 @@ namespace LBoLEntitySideloader
                 {
                     try
                     {
-                        Log.LogDev()?.LogDebug($"Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
+                        Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
 
                         if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
                         {
@@ -668,9 +767,7 @@ namespace LBoLEntitySideloader
 
 
 
-
-
-        internal void RegisterUsers(SideloaderUsers sideloaderUsers)
+        internal void RegisterUsers(SideloaderUsers sideloaderUsers, string onCompleteMsg = "All sideloader users registered!")
         {
             foreach (var kv in sideloaderUsers.userInfos)
             {
@@ -679,7 +776,7 @@ namespace LBoLEntitySideloader
                 RegisterUser(user);
             }
 
-            log.LogInfo($"All sideloader users registered!");
+            log.LogInfo(onCompleteMsg);
         }
 
         internal void LoadAssetsForResourceHelper(SideloaderUsers sideloaderUsers)
@@ -716,6 +813,16 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => usfxT.Consume(usfxT.LoadSfxListAsync()), definition, nameof(usfxT.LoadSfxListAsync), user);
                     }
+                    else if (definition is PlayerUnitTemplate puT)
+                    {
+                        // overwrite handled later
+                        puT.Consume(puT.LoadPlayerImages());
+                    }
+                    else if (definition is EffectTemplate eft)
+                    {
+                        HandleOverwriteWrap(() => eft.Consume(eft.LoadEffectData()), definition, nameof(eft.LoadEffectData), user);
+                    }
+
 
 
                 }
@@ -736,7 +843,6 @@ namespace LBoLEntitySideloader
 
                 foreach (var template in user.definitionInfos)
                 {
-
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
                     {
@@ -760,7 +866,30 @@ namespace LBoLEntitySideloader
                     }
                     else if (definition is UltimateSkillTemplate ust)
                     {
-                        HandleOverwriteWrap(() => ust.Consume(ust.LoadLocalization()), definition, nameof(ust.LoadLocalization), user);
+                        HandleOverwriteWrap(() =>
+                        {
+                            ust.Consume(ust.LoadLocalization());
+                            UniqueTracker.Instance.ultimateSkillTemplates.TryAdd(ust.userAssembly, new Dictionary<string, UltimateSkillTemplate>());
+                            UniqueTracker.Instance.ultimateSkillTemplates[ust.userAssembly].Add(ust.GetId(), ust);
+                        }, definition, nameof(ust.LoadLocalization), user);
+
+                    }
+                    else if (definition is UnitModelTemplate umT)
+                    {
+                        HandleOverwriteWrap(() => umT.Consume(umT.LoadLocalization()), definition, nameof(umT.LoadLocalization), user);
+                    }
+                    else if (definition is PlayerUnitTemplate puT)
+                    {
+                        HandleOverwriteWrap(() => puT.Consume(puT.LoadLocalization()), definition, nameof(puT.LoadLocalization), user);
+                    }
+                    else if (definition is SpellTemplate spT)
+                    {
+                        HandleOverwriteWrap(() =>
+                        {
+                            spT.Consume(spT.LoadLocalization());
+                            UniqueTracker.Instance.spellTemplates.TryAdd(spT.userAssembly, new Dictionary<string, SpellTemplate>());
+                            UniqueTracker.Instance.spellTemplates[spT.userAssembly].Add(spT.GetId(), spT);
+                        }, definition, nameof(spT.LoadLocalization), user);
                     }
                 }
 
@@ -784,9 +913,14 @@ namespace LBoLEntitySideloader
 
                     var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
 
-
+                    // 2do? one merge terms parameter per global localization
                     LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles.mergeTerms);
 
+                }
+
+                if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var unLocfiles))
+                {
+                    LocalizationOption.FillUnitNameTable(unLocfiles.Load(Localization.CurrentLocale), unLocfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
                 }
 
 
@@ -794,21 +928,52 @@ namespace LBoLEntitySideloader
         }
 
 
-        internal void LoadAll(SideloaderUsers sideloaderUsers)
+        internal void LoadAll(SideloaderUsers sideloaderUsers, string onRegistrationCompleteMsg = "All sideloader users registered!", string onCompleteMsg = "Finished loading custom resources.", bool loadLoc = true)
         {
             try
             {
-                Instance.RegisterUsers(sideloaderUsers);
+                Instance.RegisterUsers(sideloaderUsers, onRegistrationCompleteMsg);
                 Instance.LoadAssetsForResourceHelper(sideloaderUsers);
-                Instance.LoadLocalization(sideloaderUsers);
+                if(loadLoc)
+                    Instance.LoadLocalization(sideloaderUsers);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 
-                log.LogError(e);
+                log.LogError(ex);
             }
 
-            log.LogInfo("Finished loading custom resources.");
+            log.LogInfo(onCompleteMsg);
+        }
+
+        internal void PostAllLoadProcessing()
+        {
+            foreach (var kv in UniqueTracker.Instance.ultimateSkillTemplates)
+            {
+                var ass = kv.Key;
+                var ultTemplates = kv.Value;
+                List<UltimateSkillTemplate> ultWithoutSpell;
+                if (UniqueTracker.Instance.spellTemplates.TryGetValue(ass, out var spellTemplates))
+                {
+                    ultWithoutSpell = ultTemplates.Where(kv => !spellTemplates.ContainsKey(kv.Key)).Select(kv => kv.Value).ToList();
+                }
+                else
+                {
+                    ultWithoutSpell = ultTemplates.Select(kv => kv.Value).ToList();
+                }
+                foreach (var u in ultWithoutSpell)
+                {
+                    u.CreateSpellTemplate();
+                }
+
+            }
+        }
+
+
+        internal void DoForAllUsers(Action<UserInfo> action)
+        {
+            sideloaderUsers.userInfos.Values.Do(ui => action(ui));
+            secondaryUsers.userInfos.Values.Do(ui => action(ui));
         }
 
         static internal bool HandleOverwriteWrap(Action action, EntityDefinition definition, string methodName, UserInfo user)

@@ -39,6 +39,7 @@ namespace LBoLEntitySideloader.Entities
         public StatusEffectConfig DefaultConfig()
         {
             var statusEffectConfig = new StatusEffectConfig(
+                            Index: 0,
                             Id: "",
                             Order: 10,
                             Type: StatusEffectType.Positive,
@@ -56,7 +57,7 @@ namespace LBoLEntitySideloader.Entities
                             ShowPlusByLimit: false,
                             Keywords: Keyword.None,
                             RelativeEffects: new List<string>() { },
-                            VFX: "Default",
+                            VFX: "Default", 
                             VFXloop: "Default",
                             SFX: "Default"
                 );

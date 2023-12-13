@@ -12,6 +12,11 @@ using LBoLEntitySideloader.Resource;
 using UnityEngine;
 using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
+using LBoL.Base.Extensions;
+using YamlDotNet.RepresentationModel;
+using System.Linq;
+using LBoL.Presentation.UI.Panels;
+using LBoLEntitySideloader.Entities.DynamicTemplates;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -21,6 +26,8 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<LocalizationOption>,
         IResourceConsumer<Sprite>
     {
+
+
         public override Type ConfigType() => typeof(UltimateSkillConfig);
 
         public override Type EntityType() => typeof(UltimateSkill);
@@ -72,9 +79,9 @@ namespace LBoLEntitySideloader.Entities
         public abstract Sprite LoadSprite();
 
 
-        public void Consume(LocalizationOption resource)
+        public void Consume(LocalizationOption locOption)
         {
-            ProcessLocalization(resource, EntityType());
+            ProcessLocalization(locOption, EntityType());
         }
 
         public void Consume(Sprite sprite)
@@ -84,5 +91,18 @@ namespace LBoLEntitySideloader.Entities
 
             ResourcesHelper.Sprites[EntityType()].AlwaysAdd(UniqueId, sprite);
         }
+
+        internal SpellTemplate CreateSpellTemplate()
+        {
+            var spell = new DynamicSpell
+            {
+                CreateLoadLoc = () => LoadLocalization(),
+                CreateMakeConfig = () => new SpellConfig(UniqueId, "")
+            };
+            spell.Create(UniqueId, user);
+            return spell;
+        }
+
     }
+
 }

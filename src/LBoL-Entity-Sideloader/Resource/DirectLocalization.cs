@@ -7,6 +7,7 @@ using System.Text;
 
 namespace LBoLEntitySideloader.Resource
 {
+    // 2do test fallback loc
     public class DirectLocalization : LocalizationOption
     {
         public bool mergeTerms;
@@ -33,8 +34,6 @@ namespace LBoLEntitySideloader.Resource
 
         public Dictionary<string, Dictionary<string, object>> WrapTermDic(IdContainer Id)
         {
-
-
             var tDic = new Dictionary<string, Dictionary<string, object>>();
 
             if (termDic.TryGetValue(Localization.CurrentLocale, out var dic))

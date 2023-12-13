@@ -8,7 +8,7 @@
     <PropertyGroup>
         <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
         <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
-    </PropertyGroup>
+    </PropertyGroup>    
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
@@ -112,6 +112,7 @@
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Initialize" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.CreateFormatWrapper" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.Verify" />
+        <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.SummonActions" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.NotifyActivating" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.ShouldPreventOtherCardUsage" />
         <DoNotPublicize Include="LBoL.Core:LBoL.Core.Cards.Card.get_PreventCardUsageMessage" />
@@ -320,6 +321,12 @@
         <Reference Include="spine-unity">
             <HintPath>$(GameFolder)\LBoL_Data\Managed\spine-unity.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UnityEngine.AssetBundleModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
+            <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 
@@ -329,23 +336,39 @@
 
 
     <ItemGroup>
+      <None Remove="DirResources\ghibliDeez.jpg" />
+      <None Remove="DirResources\Suika\histIcon.xcf" />
+      <None Remove="resources\BeaModelEn.yaml" />
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />
       <None Remove="resources\ExhibitsEn.yaml" />
+      <None Remove="Resources\ghibli.jpg" />
+      <None Remove="Resources\goblinPunch.png" />
       <None Remove="Resources\JadeBoxEn.yaml" />
+      <None Remove="resources\PlayerUnitEn.yaml" />
       <None Remove="Resources\reimu_fist.png" />
+      <None Remove="resources\SpellEn.yaml" />
       <None Remove="resources\StatusEffectsEn.yaml" />
       <None Remove="resources\UltimateSkill.yaml" />
+      <None Remove="resources\UnitModelEn.yaml" />
+      <None Remove="Resources\Youmu.png" />
     </ItemGroup>
 
 
     <ItemGroup>
-      <ProjectReference Include="..\LBoL-Entity-Sideloader\LBoL-Entity-Sideloader.csproj" />
+      <EmbeddedResource Include="DirResources\ghibliDeez.jpg" />
+      <EmbeddedResource Include="DirResources\ghibli.jpg" />
+      <EmbeddedResource Include="DirResources\Youmu.png" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="WorkingDir\" />
     </ItemGroup>
 
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts&quot;&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;" />
+        <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot;&#xD;&#xA;xcopy /Y /E &quot;$(ProjectDir)DirResources\*&quot; &quot;$(BepInExFolder)\scripts\$(AssemblyName)&quot; 1&gt; NUL&#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)DirResources\*'  -DestinationPath  '$(ProjectDir)$(AssemblyName).zip' -Force&quot;" />
     </Target>
 
 

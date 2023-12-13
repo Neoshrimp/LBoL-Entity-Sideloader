@@ -14,6 +14,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LBoL.Presentation;
+using System.Runtime.InteropServices;
+using UnityEngine.PlayerLoop;
+using Extensions.Unity.ImageLoader;
+using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -23,6 +28,13 @@ namespace LBoLEntitySideloader.Resource
 
         public static Texture2D LoadTexture(string name, IResourceSource source)
         {
+
+            return LoadTexture(name, source, 1, FilterMode.Bilinear, true);
+
+        }
+
+        public static Texture2D LoadTexture(string name, IResourceSource source, int anisoLevel, FilterMode filterMode, bool generateMipMaps)
+        {
             using Stream resource = source.Load(name);
 
             if (resource == null)
@@ -33,25 +45,30 @@ namespace LBoLEntitySideloader.Resource
             int count;
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, generateMipMaps)
             {
-                anisoLevel = 1,
-                filterMode = 0
+                anisoLevel = anisoLevel,
+                filterMode = filterMode
             };
 
             spriteTexture.LoadImage(memoryStream.ToArray());
             return spriteTexture;
         }
 
+
         public static Sprite LoadSprite(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
+        {
+            return LoadSprite(name, source, ppu, anisoLevel: 1, filterMode: FilterMode.Point, true, rect, pivot);
+        }
+
+
+        public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, bool generateMipMaps = false, Rect? rect = null, Vector2? pivot = null)
         {
             using Stream resource = source.Load(name);
 
             if (resource == null)
                 return null;
 
-            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
-            var assembly = Assembly.GetExecutingAssembly();
             using var memoryStream = new MemoryStream();
             var buffer = new byte[16384];
 
@@ -59,25 +76,46 @@ namespace LBoLEntitySideloader.Resource
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
 
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, false)
+            //var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, true)
+            var texGenFlags = TextureCreationFlags.None;
+            if (generateMipMaps)
+                texGenFlags |= TextureCreationFlags.MipChain;
+            var spriteTexture = new Texture2D(0, 0, GraphicsFormat.R8G8B8A8_SRGB, texGenFlags)
             {
-                anisoLevel = 1,
-                filterMode = 0
+                anisoLevel = anisoLevel,
+                filterMode = filterMode
             };
 
+
+            // can't be used on background threads
             spriteTexture.LoadImage(memoryStream.ToArray());
 
             if (rect == null)
                 rect = new Rect(0, 0, spriteTexture.width, spriteTexture.height);
 
+            if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); }
             var sprite = Sprite.Create(spriteTexture, rect.Value, (Vector2)pivot, ppu);
+
+            //spriteTexture.Apply(true, true);
             return sprite;
+
         }
 
-        public static UniTask<Sprite> GetLoadSpriteTask(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
+        public async static UniTask<Sprite> LoadSpriteAsync(string name, DirectorySource source, int ppu = 100, GraphicsFormat finalGraphicsFormat = GraphicsFormat.R8G8B8A8_SRGB, int anisoLevel = 1, FilterMode filterMode = FilterMode.Bilinear, SpriteMeshType spriteMeshType = SpriteMeshType.Tight, Rect? rect = null, Vector2? pivot = null, string protocol = "file://")
         {
-            return UniTask.RunOnThreadPool<Sprite>(() => LoadSprite(name, source, rect, ppu, pivot));
+
+
+            var path = "";
+            if (source != null)
+                path = source.FullPath(name);
+            else
+                path = name;
+
+            // ImageLoader used: https://github.com/tarunkrishnat0/Unity-ImageLoader
+            return await ImageLoader.LoadSpriteMemoryOptimized(protocol + path, ppu, finalGraphicsFormat, anisoLevel, filterMode, spriteMeshType, pivot, rect, ignoreImageNotFoundError: false);
+
         }
+
 
 
         public static YamlMappingNode LoadYaml(string name, IResourceSource source)
@@ -103,6 +141,19 @@ namespace LBoLEntitySideloader.Resource
 
         }
 
+
+        public static AssetBundle LoadAssetBundle(string name, DirectorySource source)
+        {
+            var path = "";
+            if (source != null)
+                path = source.FullPath(name);
+            else
+                path = name;
+            return AssetBundle.LoadFromFile(path);
+        }
+
+
+
         /// <summary>
         /// Uses UnityWebRequestMultimedia.GetAudioClip to read file from disk. Could use http(s):// protocol to fetch file from URL.
         /// </summary>
@@ -123,7 +174,7 @@ namespace LBoLEntitySideloader.Resource
                 path = name;
 
 
-            Log.LogDev()?.LogInfo($"Loading audio from {path}");
+            Log.LogDevExtra()?.LogInfo($"Loading audio from {path}");
             using var uwr = UnityWebRequestMultimedia.GetAudioClip(protocol + path, audioType);
 
             uwr.timeout = 20;
@@ -133,7 +184,7 @@ namespace LBoLEntitySideloader.Resource
             if (string.IsNullOrEmpty(uwr.error))
             {
                 // DownloadHandlerAudioClip.GetContent is slow and needs to be awaited
-                var clip = await UniTask.RunOnThreadPool<AudioClip>(() => DownloadHandlerAudioClip.GetContent(uwr));
+                var clip = await UniTask.RunOnThreadPool(() => DownloadHandlerAudioClip.GetContent(uwr));
                 return clip;
             }
             else
@@ -151,7 +202,6 @@ namespace LBoLEntitySideloader.Resource
         public static byte[] ResourceBinary(string name, IResourceSource source)
         {
             using var stream = source.Load(name);
-            
 
             if (stream == null) return null;
             byte[] ba = new byte[stream.Length];

@@ -39,6 +39,7 @@ namespace Random_Examples
         {
             var globalLoc = new GlobalLocalization(embeddedSource);
             // for GlobalLocalization add each locale file only once per entity type (Card, StatusEffect etc.)
+            globalLoc.LocalizationFiles.mergeTerms = true;
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.En, "CardsEn");
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.ZhHans, "CardsZhHans");
 
@@ -100,7 +101,8 @@ namespace Random_Examples
 
         public override LocalizationOption LoadLocalization()
         {
-            var globalLoc = new GlobalLocalization(embeddedSource, mergeTerms: true);
+            var globalLoc = new GlobalLocalization(embeddedSource);
+            globalLoc.LocalizationFiles.mergeTerms = true;
             // each type of entity needs to have their own global localization files
             globalLoc.LocalizationFiles.AddLocaleFile(Locale.En, "StatusEffectsEn");
             return globalLoc;

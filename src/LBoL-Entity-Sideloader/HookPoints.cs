@@ -9,10 +9,12 @@ using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
 using LBoL.Presentation.I10N;
+using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.Units;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using MonoMod.Utils;
+using Spine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,8 +32,6 @@ namespace LBoLEntitySideloader
 
 
 
-
-
         /// <summary>
         /// hook after all the vanilla configs, entities, assets and localization have been loaded. Can be used to specifically modify vanilla properties
         /// </summary>
@@ -40,25 +40,28 @@ namespace LBoLEntitySideloader
         class InitializeRestAsync_Patch
         {
 
-
             static public async void Postfix(Task __result)
             {   
                 await __result;
 
 
-                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers);
+                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
 
                 UniqueTracker.Instance.RaisePostMainLoad();
-
-
-                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers);
-
+                // secondary users are populate after RaisePostMainLoad
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: true);
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
+
+                EntityManager.Instance.addBossIconsActions.DoAll();
+
+                EntityManager.Instance.PostAllLoadProcessing();
 
             }
 
         }
+
+
 
 
 
@@ -79,7 +82,6 @@ namespace LBoLEntitySideloader
                 }
                 catch (Exception e)
                 {
-
                     log.LogWarning(e);
                 }
             }
@@ -96,6 +98,19 @@ namespace LBoLEntitySideloader
                 EnemyGroupTemplate.LoadCustomFormations();
             }
         }
+
+
+        [HarmonyPatch(typeof(LBoL.Presentation.Environment), nameof(LBoL.Presentation.Environment.Awake))]
+        [HarmonyPriority(Priority.First)]
+        class AddEnvironments_Patch
+        {
+            static void Postfix()
+            {
+                StageTemplate.LoadCustomEnvironments();
+            }
+        }
+
+
 
         // formation reload needs to be delayed after enemies have cleared
         [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.InternalClearEnemies))]
@@ -114,7 +129,35 @@ namespace LBoLEntitySideloader
 
 
 
+        [HarmonyPatch]
+        class SpellPanelSpecialLoc_Patch
+        {
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                yield return ExtraAccess.InnerMoveNext(typeof(SpellPanel), nameof(SpellPanel.CustomLocalizationAsync));
+            }
 
+            static void LoadLoc(SpellPanel spellPanel)
+            {
+                SpellTemplate.LoadAllSpecialLoc(spellPanel);
+            }
+
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+            {
+                var l10nF = AccessTools.Field(typeof(SpellPanel), nameof(SpellPanel._l10nTable));
+                return new CodeMatcher(instructions, generator)
+                    .End()
+                    .MatchBack(false, new CodeInstruction(OpCodes.Stfld, l10nF))
+                    .Advance(-1)
+                    .MatchBack(false, new CodeInstruction(OpCodes.Stfld, l10nF))
+                    .Advance(1)
+                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpellPanelSpecialLoc_Patch), nameof(LoadLoc))))
+                    .Insert(new CodeInstruction(OpCodes.Ldloc_1))
+                    .InstructionEnumeration();
+            }
+
+
+        }
 
 
 
@@ -143,6 +186,7 @@ namespace LBoLEntitySideloader
                     }
                 }*/
 
+
         //[HarmonyPatch]
         class Loc_IntrusivePatch
         {
@@ -158,9 +202,7 @@ namespace LBoLEntitySideloader
             static void LoadLocWrap()
             {
 
-                // untested
                 EntityManager.Instance.LoadLocalization(EntityManager.Instance.sideloaderUsers);
-                UniqueTracker.Instance.RaisePostMainLoad();
                 EntityManager.Instance.LoadLocalization(EntityManager.Instance.secondaryUsers);
 
             }
@@ -182,8 +224,6 @@ namespace LBoLEntitySideloader
             }
 
         }
-
-
 
 
 
@@ -224,11 +264,6 @@ namespace LBoLEntitySideloader
 
 
         }
-
-
-
-
-
 
 
 

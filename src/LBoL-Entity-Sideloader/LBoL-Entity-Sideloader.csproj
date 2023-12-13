@@ -31,6 +31,8 @@
 	  <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
 	  <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
 	  <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("-", ""))</RootNamespace>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
 
@@ -122,13 +124,24 @@
     <Reference Include="Unity.TextMeshPro">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
+        <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="spriteTemplates\" />
   </ItemGroup>
     
     
 	
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)libs\*&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; &#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md', '$(ProjectDir)libs\*'   -DestinationPath  '$(ProjectDir)$(AssemblyName)-thunderstore.zip' -Force&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)libs\*&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; &#xD;&#xA;IF not exist &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader\&quot; goto noUnityDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader&quot;&#xD;&#xA;:noUnityDir&#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md', '$(ProjectDir)libs\*', '$(OutDir)\$(AssemblyName).xml' -DestinationPath  '$(ProjectDir)$(AssemblyName).zip' -Force&quot;" />
   </Target>
 	
 

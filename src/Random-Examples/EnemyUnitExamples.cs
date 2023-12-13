@@ -8,8 +8,8 @@ using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
+using LBoL.EntityLib.Cards.Enemy;
 using LBoL.EntityLib.Cards.Neutral.Red;
-using LBoL.EntityLib.Cards.Other.Enemy;
 using LBoL.EntityLib.EnemyUnits.Character;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.JadeBoxes;
@@ -172,7 +172,8 @@ deeznuts deeznuts deeznuts"
                 switch (this.Next)
                 {
                     case LightFairy.MoveType.Shoot:
-                        enemyMove = base.AttackMove(base.GetMove(0), base.Gun1, base.Damage1 + base.EnemyBattleRng.NextInt(0, base.Damage2), MultiAttack, false, false, false);
+
+                        enemyMove = base.AttackMove(base.GetMove(0), base.Gun1, base.Damage1 + base.EnemyBattleRng.NextInt(0, base.Damage2), MultiAttack, false, "Instant", false);
                         break;
                     case LightFairy.MoveType.Light:
                         enemyMove = new SimpleEnemyMove(Intention.AddCard(), this.LightActions());

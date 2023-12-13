@@ -25,7 +25,6 @@ namespace LBoLEntitySideloader.Resource
 
         /// <summary>
         /// plugin dir + path.
-        /// If mod is loaded with a script engine this defaults to BeInEx/plugins + subFolder
         /// </summary>
         /// <param name="GUID"></param>
         /// <param name="subFolder"></param>
@@ -40,6 +39,7 @@ namespace LBoLEntitySideloader.Resource
                 if (pluginLoc == null)
                 {
                     // assume mod is loaded through script loader
+                    // should never happen if scriptengine is up to date with my fork
                     this.path = Path.Combine(Path.GetDirectoryName(Paths.PluginPath), subFolder);
                 }
                 else
@@ -50,10 +50,10 @@ namespace LBoLEntitySideloader.Resource
                 this.dirInfo = new DirectoryInfo(path);
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 path = "";
-                Log.log.LogError(e);
+                Log.log.LogError(ex);
             }
         }
 
@@ -78,7 +78,7 @@ namespace LBoLEntitySideloader.Resource
             }
             catch (IOException ex)
             {
-                Log.log.LogError(ex);
+                Log.log.LogError($"{this.GetType()} exception while loading file {id}: {ex}");
                 return null;
             }
 

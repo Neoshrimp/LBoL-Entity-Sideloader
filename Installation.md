@@ -1,6 +1,6 @@
 
 ### Installation
-
+*more relevant for mod developers at this point. Use [r2modman](https://thunderstore.io/c/touhou-lost-branch-of-legend/p/ebkr/r2modman/) if you just want to play modded game.*
 
 1. Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/download/v5.4.21/BepInEx_x64_5.4.21.0.zip).
 2. Locate LBol install directory. Probably at `C:\Program Files (x86)\Steam\steamapps\common\LBoL\` Otherwise, go to Steam > Library > LBoL > Manage(:gear: icon) > Properties > Local files > Browse
