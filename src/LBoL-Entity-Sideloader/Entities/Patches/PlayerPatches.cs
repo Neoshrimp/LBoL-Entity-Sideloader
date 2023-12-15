@@ -76,7 +76,7 @@ namespace LBoLEntitySideloader.Entities.Patches
                     var headSprite = sprites.LoadSelectionCircleIcon();
                     if(headSprite != null)
                         startGamePanel.headPicList.AlwaysAdd(puT.UniqueId, headSprite);
-
+                        
 /*                    st.Stop();
                     Log.log.LogDebug($"selectionIcon LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
