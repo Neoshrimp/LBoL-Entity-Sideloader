@@ -58,7 +58,7 @@ namespace LBoLEntitySideloader.Resource
 
         public static Sprite LoadSprite(string name, IResourceSource source, Rect? rect = null, int ppu = 1, Vector2? pivot = null)
         {
-            return LoadSprite(name: name, source: source, ppu: ppu, anisoLevel: 1, filterMode: FilterMode.Trilinear, generateMipMaps: true, rect: rect, pivot: pivot);
+            return LoadSprite(name: name, source: source, ppu: ppu, anisoLevel: 1, filterMode: FilterMode.Bilinear, generateMipMaps: true, rect: rect, pivot: pivot);
         }
 
 
