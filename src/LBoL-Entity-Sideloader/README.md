@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.4210` Small ult skill title localization fix.
+
 `0.9.4200` Add small character portrait to top-left of main menu if quit mid-run. (thanks lvalon)
 
 `0.9.4100` Adjust sprite loading, make large tooltips fit better.

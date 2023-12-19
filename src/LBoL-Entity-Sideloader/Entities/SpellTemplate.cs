@@ -1,9 +1,12 @@
-﻿using LBoL.Base.Extensions;
+﻿using HarmonyLib;
+using LBoL.Base.Extensions;
 using LBoL.ConfigData;
+using LBoL.EntityLib.Cards.Character.Sakuya;
 using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Resource;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -117,7 +120,7 @@ namespace LBoLEntitySideloader.Entities
 
         internal static void FillSpellPanelLocTable(Dictionary<string, Dictionary<string, object>> termDic, bool mergeTerms, SpellPanel spellPanel)
         {
-            var se = new SpellPanel.Entry() { Title = null, Name = null };
+
 
             if (spellPanel == null)
             {
@@ -135,6 +138,8 @@ namespace LBoLEntitySideloader.Entities
 
             foreach (var kv in termDic)
             {
+                var se = new SpellPanel.Entry() { Title = null, Name = null };
+
                 var id = kv.Key;
                 var terms = kv.Value;
 
@@ -151,27 +156,27 @@ namespace LBoLEntitySideloader.Entities
                     se.Name = n3.ToString() ?? "";
 
 
-/*                foreach (var tv in kv.Value)
-                {
-                    var tKey = tv.Key;
-                    var term = tv.Value;
-                    if (tKey == SpellTemplate.OnCastTitle)
-                    {
-                        se.Title = term.ToString() ?? "";
-                    }
-                    else if (tKey == SpellTemplate.OnCastName)
-                    {
-                        se.Name = term.ToString() ?? "";
-                    }
-                    else if (tKey == "Title" && !kv.Value.ContainsKey(SpellTemplate.OnCastTitle))
-                    {
-                        se.Title = term.ToString() ?? "";
-                    }
-                    else if (tKey == "Content" && !kv.Value.ContainsKey(SpellTemplate.OnCastName))
-                    {
-                        se.Name = term.ToString() ?? "";
-                    }
-                }*/
+                /*                foreach (var tv in kv.Value)
+                                {
+                                    var tKey = tv.Key;
+                                    var term = tv.Value;
+                                    if (tKey == SpellTemplate.OnCastTitle)
+                                    {
+                                        se.Title = term.ToString() ?? "";
+                                    }
+                                    else if (tKey == SpellTemplate.OnCastName)
+                                    {
+                                        se.Name = term.ToString() ?? "";
+                                    }
+                                    else if (tKey == "Title" && !kv.Value.ContainsKey(SpellTemplate.OnCastTitle))
+                                    {
+                                        se.Title = term.ToString() ?? "";
+                                    }
+                                    else if (tKey == "Content" && !kv.Value.ContainsKey(SpellTemplate.OnCastName))
+                                    {
+                                        se.Name = term.ToString() ?? "";
+                                    }
+                                }*/
 
                 if (mergeTerms)
                 {
@@ -191,8 +196,8 @@ namespace LBoLEntitySideloader.Entities
                 {
                     table.AlwaysAdd(id, se);
                 }
-
             }
+
         }
 
         /// <summary>

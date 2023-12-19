@@ -1,4 +1,5 @@
-﻿using LBoL.Core;
+﻿using HarmonyLib;
+using LBoL.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -116,8 +117,7 @@ namespace LBoLEntitySideloader.Resource
             IOrderedDictionary<YamlNode, YamlNode> children = yaml.Children;
             foreach (var id in Ids)
             {
-                YamlNode yamlNode;
-                if (children.TryGetValue(id, out yamlNode))
+                if (children.TryGetValue(id, out var yamlNode))
                 {
                     YamlMappingNode yamlMappingNode = yamlNode as YamlMappingNode;
                     if (yamlMappingNode != null)
@@ -129,6 +129,7 @@ namespace LBoLEntitySideloader.Resource
                 if(addEmptyDic)
                     dictionary.Add(id, new Dictionary<string, object>());
             }
+
 
             return dictionary;
         }
