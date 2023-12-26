@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.4300` Fix locale change bug. Add `GlobalLocalization.DiscoverAndLoadLocFiles`.
+
 `0.9.4210` Small ult skill title localization fix.
 
 `0.9.4200` Add small character portrait to top-left of main menu if quit mid-run. (thanks lvalon)

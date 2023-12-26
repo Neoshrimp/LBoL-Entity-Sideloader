@@ -23,7 +23,7 @@ namespace LBoLEntitySideloader.Resource
         /// </summary>
         public bool mergeTerms = false;
 
-        IResourceSource source;
+        public readonly IResourceSource source;
 
         Func<string, YamlMappingNode> loadingAction;
 
@@ -80,7 +80,7 @@ namespace LBoLEntitySideloader.Resource
             }
             else if (locTable.TryGetValue(fallbackLoc, out getYaml))
             {
-                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc}fallback option.");
+                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc} fallback option.");
                 return getYaml();
             }
             Log.LogDev()?.LogWarning($"{this.GetType().Name}: {locale} locale option does not have a file set");

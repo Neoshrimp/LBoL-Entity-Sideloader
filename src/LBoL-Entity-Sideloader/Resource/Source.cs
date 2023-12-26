@@ -13,7 +13,7 @@ namespace LBoLEntitySideloader.Resource
 
         
         public abstract Stream Load(string id);
-
+        public abstract bool TryGetFileName(string id, out string name);
 
 
         public static string LegalizeFileName(string fileName)
@@ -32,5 +32,6 @@ namespace LBoLEntitySideloader.Resource
             }
             return name;
         }
+
     }
 }
