@@ -79,7 +79,6 @@ namespace LBoLEntitySideloader.Resource
             // breaks if file is deleted
             if (fileNames.Contains(id))
             {
-                Log.log.LogDebug("deez");
                 name = id;
                 return true;
             }
@@ -89,7 +88,6 @@ namespace LBoLEntitySideloader.Resource
                 fileNames.Add(fi.Name);
                 if (fi.Name.StartsWith(id))
                 {
-                    Log.log.LogDebug("nuts");
                     name = id;
                     return true;
                 }
