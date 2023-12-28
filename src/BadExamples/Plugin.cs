@@ -121,6 +121,7 @@ using Debug = UnityEngine.Debug;
 namespace BadExamples
 {
     [BepInPlugin(GUID, "BadExamples", version)]
+    [BepInDependency(LBoLEntitySideloader.PluginInfo.GUID)]
     [BepInProcess("LBoL.exe")]
     public class Plugin : BaseUnityPlugin
     {

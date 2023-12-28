@@ -1,4 +1,5 @@
-﻿using LBoL.Core;
+﻿using HarmonyLib;
+using LBoL.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +23,7 @@ namespace LBoLEntitySideloader.Resource
         /// </summary>
         public bool mergeTerms = false;
 
-        IResourceSource source;
+        public readonly IResourceSource source;
 
         Func<string, YamlMappingNode> loadingAction;
 
@@ -79,7 +80,7 @@ namespace LBoLEntitySideloader.Resource
             }
             else if (locTable.TryGetValue(fallbackLoc, out getYaml))
             {
-                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc}fallback option.");
+                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc} fallback option.");
                 return getYaml();
             }
             Log.LogDev()?.LogWarning($"{this.GetType().Name}: {locale} locale option does not have a file set");
@@ -116,8 +117,7 @@ namespace LBoLEntitySideloader.Resource
             IOrderedDictionary<YamlNode, YamlNode> children = yaml.Children;
             foreach (var id in Ids)
             {
-                YamlNode yamlNode;
-                if (children.TryGetValue(id, out yamlNode))
+                if (children.TryGetValue(id, out var yamlNode))
                 {
                     YamlMappingNode yamlMappingNode = yamlNode as YamlMappingNode;
                     if (yamlMappingNode != null)
@@ -129,6 +129,7 @@ namespace LBoLEntitySideloader.Resource
                 if(addEmptyDic)
                     dictionary.Add(id, new Dictionary<string, object>());
             }
+
 
             return dictionary;
         }

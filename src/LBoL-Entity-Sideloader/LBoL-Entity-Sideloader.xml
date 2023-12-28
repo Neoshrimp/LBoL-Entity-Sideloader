@@ -553,6 +553,20 @@
             <param name="source"></param>
             <param name="mergeTerms"></param>
         </member>
+        <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.DiscoverAndLoadLocFiles(LBoLEntitySideloader.Entities.EntityDefinition)">
+            <summary>
+            Automatically discovers localization files in given resource source.
+            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml
+            </summary>
+            <param name="entityTemplate">concrete templaet instance, probably `this`</param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.DiscoverAndLoadLocFiles(System.String)">
+            <summary>
+            Automatically discovers localization files in given resource source.
+            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e.,  UltimateSkillKo.yaml
+            </summary>
+            <param name="templateName">general template type</param>
+        </member>
         <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">
             <summary>
             should localization terms (Name, Description etc.) should be merged

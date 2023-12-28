@@ -870,7 +870,7 @@ namespace LBoLEntitySideloader
                         {
                             ust.Consume(ust.LoadLocalization());
                             UniqueTracker.Instance.ultimateSkillTemplates.TryAdd(ust.userAssembly, new Dictionary<string, UltimateSkillTemplate>());
-                            UniqueTracker.Instance.ultimateSkillTemplates[ust.userAssembly].Add(ust.GetId(), ust);
+                            UniqueTracker.Instance.ultimateSkillTemplates[ust.userAssembly].AlwaysAdd(ust.GetId(), ust);
                         }, definition, nameof(ust.LoadLocalization), user);
 
                     }
@@ -888,9 +888,9 @@ namespace LBoLEntitySideloader
                         {
                             spT.Consume(spT.LoadLocalization());
                             UniqueTracker.Instance.spellTemplates.TryAdd(spT.userAssembly, new Dictionary<string, SpellTemplate>());
-                            UniqueTracker.Instance.spellTemplates[spT.userAssembly].Add(spT.GetId(), spT);
+                            UniqueTracker.Instance.spellTemplates[spT.userAssembly].AlwaysAdd(spT.GetId(), spT);
                         }, definition, nameof(spT.LoadLocalization), user);
-                    }
+                    }   
                 }
 
                 // load global localization
@@ -999,7 +999,7 @@ namespace LBoLEntitySideloader
             }
             catch (Exception ex)
             {
-                Log.log.LogError($"Error while processing {definition.GetType().Name}.{methodName}: {ex}");
+                Log.log.LogError($"Error while processing {definition.TemplateType().Name} {definition.GetType().Name}.{methodName}: {ex}");
 
             }
             return false;

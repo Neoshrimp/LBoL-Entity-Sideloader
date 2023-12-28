@@ -1,6 +1,7 @@
 ﻿using BepInEx;  
 using LBoLEntitySideloader.Resource;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,6 +17,21 @@ namespace LBoLEntitySideloader.Resource
         string path;
 
         public DirectoryInfo dirInfo;
+
+        HashSet<string> fileNames= new HashSet<string>(new IdEqualFilename());
+
+        class IdEqualFilename : IEqualityComparer<string>
+        {
+            public bool Equals(string x, string y)
+            {
+                return y.StartsWith(x);
+            }
+
+            public int GetHashCode(string obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
 
         public DirectorySource(string path)
         {
@@ -57,6 +73,29 @@ namespace LBoLEntitySideloader.Resource
             }
         }
 
+        public override bool TryGetFileName(string id, out string name)
+        {
+            id = LegalizeFileName(id);
+            // breaks if file is deleted
+            if (fileNames.Contains(id))
+            {
+                name = id;
+                return true;
+            }
+
+            foreach(var fi in dirInfo.EnumerateFiles())
+            {
+                fileNames.Add(fi.Name);
+                if (fi.Name.StartsWith(id))
+                {
+                    name = id;
+                    return true;
+                }
+            }
+            name = null;
+            return false;
+        }
+
 
         public string FullPath(string id)
         {
@@ -84,6 +123,8 @@ namespace LBoLEntitySideloader.Resource
 
 
         }
+
+
     }
 
 }

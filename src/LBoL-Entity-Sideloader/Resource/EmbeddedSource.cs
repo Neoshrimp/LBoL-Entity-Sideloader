@@ -26,13 +26,18 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
+        public override bool TryGetFileName(string id, out string name)
+        {
+            id = LegalizeFileName(id);
+            name = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(id));
+            return name != null;
+        }
+
 
         public override Stream Load(string id)
         {
-            id = LegalizeFileName(id);
 
-
-            var fullName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(id));
+            TryGetFileName(id, out var fullName);
 
             if (fullName == null) 
             {
@@ -42,5 +47,7 @@ namespace LBoLEntitySideloader.Resource
 
             return assembly.GetManifestResourceStream(fullName);
         }
+
+
     }
 }

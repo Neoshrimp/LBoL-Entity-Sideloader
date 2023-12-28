@@ -42,7 +42,29 @@ namespace LBoLEntitySideloader.Entities.Patches
 
                 if (UiManager.Instance._panelTable.ContainsKey(typeof(GameResultPanel)))
                     LoadForGameResultPanel(UiManager.GetPanel<GameResultPanel>());
+
+                if (UiManager.Instance._panelTable.ContainsKey(typeof(ProfilePanel)))
+                    LoadForProfilePanel(UiManager.GetPanel<ProfilePanel>());
             }
+        }
+
+        internal static void LoadForProfilePanel(ProfilePanel profilePanel) 
+        {
+            Wrap ((PlayerUnitTemplate puT) =>
+            {
+                EntityManager.HandleOverwriteWrap(() =>
+                {
+                    /*                    var st = new Stopwatch();
+                                        st.Start();*/
+
+                    var headSprite = puT.LoadPlayerImages().LoadSelectionCircleIcon();
+                    if (headSprite != null)
+                        profilePanel.headPicList.AlwaysAdd(puT.UniqueId, headSprite);
+
+                    /*                    st.Stop();
+                                        Log.log.LogDebug($"selectionIcon LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");*/
+                }, puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
+            });
         }
 
         internal static void LoadForStartPanel(StartGamePanel startGamePanel)
@@ -76,7 +98,7 @@ namespace LBoLEntitySideloader.Entities.Patches
                     var headSprite = sprites.LoadSelectionCircleIcon();
                     if(headSprite != null)
                         startGamePanel.headPicList.AlwaysAdd(puT.UniqueId, headSprite);
-
+                        
 /*                    st.Stop();
                     Log.log.LogDebug($"selectionIcon LoadForStartPanel load in: {st.ElapsedMilliseconds}ms");*/
                 }, puT, OverwriteName(PISuffixes.selectionCircleIcon), puT.user);
@@ -241,6 +263,18 @@ namespace LBoLEntitySideloader.Entities.Patches
     }
 
 
+
+    [HarmonyPatch(typeof(ProfilePanel), nameof(ProfilePanel.Awake))]
+    class ProfilePanel_Patch
+    {
+        static void Prefix(ProfilePanel __instance)
+        {
+            PlayerSpriteLoader.LoadForProfilePanel(__instance);
+        }
+    }
+
+
+
     [HarmonyPatch(typeof(HistoryPanel), nameof(HistoryPanel.Awake))]
     class HistoryPanel_Patch
     {
@@ -280,7 +314,6 @@ namespace LBoLEntitySideloader.Entities.Patches
         static void Prefix(MuseumPanel __instance)
         {
             PlayerSpriteLoader.LoadForMuseumPanel(__instance);
-
         }
     }
 
