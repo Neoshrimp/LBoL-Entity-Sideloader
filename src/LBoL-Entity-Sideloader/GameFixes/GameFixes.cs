@@ -297,7 +297,19 @@ namespace LBoLEntitySideloader.GameFixes
 
     }
 
-
+    // Make CantLose exhibits actually can't lose
+    [HarmonyPatch(typeof(Debut), nameof(Debut.ExchangeExhibit))]
+    class DebutCantLoseFix_Patch
+    {
+        static bool Prefix(Debut __instance)
+        {
+            if (GameMaster.Instance.CurrentGameRun != null && GameMaster.Instance.CurrentGameRun.Player.Exhibits[0].LosableType == ExhibitLosableType.CantLose)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
 
 
 }
