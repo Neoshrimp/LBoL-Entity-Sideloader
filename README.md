@@ -66,12 +66,12 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 <pre>
 *Game Entity loading*
 |-- Create Cards ☑️
-  |-- Create custom Effects
+  |-- Create custom Effects ☑️
     |-- Workflow/templates for working with Effect prefabs in Unity
-  |-- Create custom Guns (attack vfx)
-    |-- PieceConfig (Gun particle of sorts?)
-    |-- BulletConfig
-    |-- LaserConfig
+  |-- Create custom Guns (attack vfx) ☑️ (technically possible but very inconvenient to design)
+    |-- PieceConfig ☑️
+    |-- BulletConfig ☑️
+    |-- LaserConfig ☑️
     |-- whatever else..
 |-- Create StatusEffects (Abilities) ☑️
 |-- Create Exhibits ☑️
@@ -90,7 +90,7 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
     |-- Custom deck selection UI ☑️
 |-- (New) Custom Stages ☑️
   |-- Stage pooling ☑️
-|-- *Playable characters at this point?*
+|-- *Playable characters at this point?* ☑️
   |-- Inherent character mechanics (maybe) 
 |-- Create GapOption
 |-- Load Yarn Spinner scripts [???](https://github.com/salyu9/YarnSpinner)
@@ -109,11 +109,11 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
     |-- Programmatic template generation ☑️
 |-- Error feedback and handling ☑️
   |-- Better error feedback and handling..
-|-- Support loading from AssetBundles
+|-- Support loading from AssetBundles ☑️
 |-- main/beta double branch support (maybe)
 |-- Handle duplicate entity Ids
 |-- Performance and profiling
-  |-- async loading ☑️
+  |-- async loading
   |-- Addressables
   |-- size reduction/compression
   |-- whatever else..
