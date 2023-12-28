@@ -72,25 +72,27 @@ namespace Random_Examples
 
             JadeBoxExamples.GenJadeBoxes();
 
-/*            EntityManager.AddPostLoadAction(() =>
-            {
-                for (int i = 0; i < 14 * 4; i++)
-                {
-                    var id = "NilTestExhibit" + i.ToString();
-                    exhibitGen.QueueGen(
-                        Id: id,
-                        overwriteVanilla: false,
-                        makeConfig: () => new LunarVeilDef().DefaultConfig(),
-                        loadSprite: null,
-                        loadLocalization: GenHelper.WrapFunc((int i) => new DirectLocalization(new Dictionary<string, object>()
+            /*            EntityManager.AddPostLoadAction(() =>
                         {
-                            { "Name", "Deez" + i.ToString() },
-                            { "Description", "nuts" }
-                        }), i),
-                        generateEmptyLogic: true);
-                }
-                exhibitGen.FinalizeGen();
-            });*/
+                            for (int i = 0; i < 14 * 4; i++)
+                            {
+                                var id = "NilTestExhibit" + i.ToString();
+                                exhibitGen.QueueGen(
+                                    Id: id,
+                                    overwriteVanilla: false,
+                                    makeConfig: () => new LunarVeilDef().DefaultConfig(),
+                                    loadSprite: null,
+                                    loadLocalization: GenHelper.WrapFunc((int i) => new DirectLocalization(new Dictionary<string, object>()
+                                    {
+                                        { "Name", "Deez" + i.ToString() },
+                                        { "Description", "nuts" }
+                                    }), i),
+                                    generateEmptyLogic: true);
+                            }
+                            exhibitGen.FinalizeGen();
+                        });*/
+
+
 
             CustomFormations.AddFormations();
 

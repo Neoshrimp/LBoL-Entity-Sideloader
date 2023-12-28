@@ -10,7 +10,7 @@ namespace LBoLEntitySideloader.Resource
     /// <summary>
     /// Should have been called BatchLocalization.
     /// </summary>
-    [Obsolete("Use BatchLocalization instead", error: false)]
+    //[Obsolete("Use BatchLocalization instead", error: false)]
     public class GlobalLocalization : LocalizationOption
     {
         public readonly LocalizationFiles LocalizationFiles;
@@ -38,9 +38,11 @@ namespace LBoLEntitySideloader.Resource
 
         /// <summary>
         /// Automatically discovers localization files in given resource source.
-        /// Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml
+        /// Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml.
+        /// Does NOT work with certain templates which do not implement EntityType
         /// </summary>
         /// <param name="entityTemplate">concrete templaet instance, probably `this`</param>
+        [Obsolete("Use the other overload")]
         public void DiscoverAndLoadLocFiles(EntityDefinition entityTemplate)
         {
             var templateName = entityTemplate.EntityType().Name;

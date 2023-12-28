@@ -556,7 +556,8 @@
         <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.DiscoverAndLoadLocFiles(LBoLEntitySideloader.Entities.EntityDefinition)">
             <summary>
             Automatically discovers localization files in given resource source.
-            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml
+            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml.
+            Does NOT work with certain templates which do not implement EntityType
             </summary>
             <param name="entityTemplate">concrete templaet instance, probably `this`</param>
         </member>
