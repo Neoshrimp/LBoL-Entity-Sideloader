@@ -80,10 +80,11 @@ namespace LBoLEntitySideloader.Resource
             }
             else if (locTable.TryGetValue(fallbackLoc, out getYaml))
             {
-                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc} fallback option.");
+                var fileName = fileNames.GetValueSafe(fallbackLoc);
+                Log.LogDev().LogInfo($"Localization for {Localization.CurrentLocale} not found. Trying to use {fallbackLoc} fallback option from file: {fileName}.");
                 return getYaml();
             }
-            Log.LogDev()?.LogWarning($"{this.GetType().Name}: {locale} locale option does not have a file set");
+            Log.LogDev()?.LogWarning($"{this.GetType().Name}: {locale} locale option does not have a file set.");
             return null;
         }
 

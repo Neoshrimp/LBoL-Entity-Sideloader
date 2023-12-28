@@ -99,7 +99,7 @@ namespace LBoLEntitySideloader.Entities
                     if (locInfo.locFiles == null)
                         locInfo.locFiles = globalLoc.LocalizationFiles;
                     else
-                        Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
+                        Log.LogDevExtra()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
                 }
                 locInfo.entityLogicTypes.Add(entityLogicType);
                     
@@ -107,12 +107,8 @@ namespace LBoLEntitySideloader.Entities
 
             if (locOption is LocalizationFiles locFiles)
             {
-
                 var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
-
-
                 LocalizationOption.FillLocalizationTables(termDic, facType, locFiles.mergeTerms);
-
             }
 
             if (locOption is DirectLocalization rawLoc)

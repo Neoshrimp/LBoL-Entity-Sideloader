@@ -10,6 +10,7 @@ namespace LBoLEntitySideloader.Resource
     /// <summary>
     /// Should have been called BatchLocalization.
     /// </summary>
+    [Obsolete("Use BatchLocalization instead", error: false)]
     public class GlobalLocalization : LocalizationOption
     {
         public readonly LocalizationFiles LocalizationFiles;
