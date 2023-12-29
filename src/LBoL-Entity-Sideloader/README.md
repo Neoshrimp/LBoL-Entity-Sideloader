@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.4500` Fix localization files error.
+
 `0.9.4400` Prevent unlosable exhibits from being swap in debut. Thanks Intoxicated.
 
 `0.9.4300` Fix locale change bug. Add `GlobalLocalization.DiscoverAndLoadLocFiles`.
