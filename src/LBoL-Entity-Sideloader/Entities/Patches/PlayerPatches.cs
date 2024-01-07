@@ -519,6 +519,7 @@ namespace LBoLEntitySideloader.Entities.Patches
 
 
         [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectPlayer))]
+        [HarmonyDebug]
         internal class SelectPlayer_Patch
         {
 
@@ -582,7 +583,10 @@ namespace LBoLEntitySideloader.Entities.Patches
             static void Prefix(StartGamePanel __instance)
             {
                 var standGo = __instance.characterStandPicList[0].gameObject;
-                for (var i = 0; i < __instance._players.Length - __instance.characterStandPicList.Count; i++)
+
+                var initialCount = __instance.characterStandPicList.Count;
+
+                for (var i = 0; i < __instance._players.Length - initialCount; i++)
                 {
                     var newStandGo = GameObject.Instantiate(standGo, standGo.transform.parent);
                     newStandGo.transform.localScale = Vector3.one;

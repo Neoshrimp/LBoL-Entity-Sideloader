@@ -2,6 +2,7 @@
 using LBoL.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using YamlDotNet.Helpers;
@@ -104,7 +105,7 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(string[] Ids, bool addEmptyDic = true)
+        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(IEnumerable<string> Ids, bool addEmptyDic = true)
         {
             Dictionary<string, Dictionary<string, object>> dictionary = new Dictionary<string, Dictionary<string, object>>();
 
@@ -136,7 +137,10 @@ namespace LBoLEntitySideloader.Resource
         }
 
 
-
+        internal Dictionary<string, Dictionary<string, object>> LoadLocTable(IEnumerable<IdContainer> idContainers, bool addEmptyDic = true)
+        {
+            return LoadLocTable(idContainers.Select(id => id.ToString()), addEmptyDic);
+        }
 
 
 
@@ -153,5 +157,7 @@ namespace LBoLEntitySideloader.Resource
         {
             return null;
         }
+
+
     }
 }

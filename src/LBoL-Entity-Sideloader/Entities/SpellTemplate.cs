@@ -47,6 +47,7 @@ namespace LBoLEntitySideloader.Entities
 
         public void Consume(LocalizationOption locOption)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             if (locOption is GlobalLocalization globalLoc)
             {
                 if (globalLoc.LocalizationFiles.locTable.NotEmpty())
@@ -65,6 +66,12 @@ namespace LBoLEntitySideloader.Entities
                 UniqueTracker.Instance.spellIdsToLocalize[userAssembly].Add(GetId());
                 return;
             }
+#pragma warning restore CS0618 // Type or member is obsolete
+            if (locOption is BatchLocalization batchLocalization)
+            {
+                batchLocalization.RegisterSelf(userAssembly);
+                return;
+            }
         }
 
 
@@ -78,7 +85,7 @@ namespace LBoLEntitySideloader.Entities
                     spT.LoadSpecialLoc(spT.LoadLocalization(), spellPanel);
                 }
             }
-                
+
         }
 
         /// <summary>
@@ -88,17 +95,19 @@ namespace LBoLEntitySideloader.Entities
         internal void LoadSpecialLoc(LocalizationOption locOption, SpellPanel spellPanel)
         {
 
+#pragma warning disable CS0618 // Type or member is obsolete
             if (locOption is GlobalLocalization)
             {
                 if (UniqueTracker.Instance.spellEntriesLocFiles.TryGetValue(user.assembly, out var spellLocfiles))
                 {
                     foreach (var lf in spellLocfiles)
                     {
-                        FillSpellPanelLocTable(lf.LoadLocTable(UniqueTracker.Instance.spellIdsToLocalize[user.assembly].ToArray(), addEmptyDic: false), lf.mergeTerms, spellPanel);
+                        FillSpellPanelLocTable(lf.LoadLocTable(UniqueTracker.Instance.spellIdsToLocalize[user.assembly], addEmptyDic: false), lf.mergeTerms, spellPanel);
                     }
                 }
                 return;
             }
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (locOption is LocalizationFiles locFiles)
             {
@@ -112,6 +121,14 @@ namespace LBoLEntitySideloader.Entities
             {
                 var termDic = rawLoc.WrapTermDic(UniqueId);
                 FillSpellPanelLocTable(termDic, rawLoc.mergeTerms, spellPanel);
+                return;
+            }
+
+            // actually loaded several times
+            if (locOption is BatchLocalization batchLoc)
+            {
+                var lf = batchLoc.localizationFiles;
+                FillSpellPanelLocTable(lf.LoadLocTable(batchLoc.entityIds, addEmptyDic: false), lf.mergeTerms, spellPanel);
                 return;
             }
         }

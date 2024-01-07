@@ -106,6 +106,10 @@ namespace LBoLEntitySideloader
 
         public Dictionary<Assembly, Dictionary<Type, LocalizationInfo>> typesToLocalize = new Dictionary<Assembly, Dictionary<Type, LocalizationInfo>>();
 
+
+        public Dictionary<Assembly, Dictionary<Type, HashSet<BatchLocalization>>> batchLocalization = new Dictionary<Assembly, Dictionary<Type, HashSet<BatchLocalization>>>();
+
+
         /// <summary>
         /// user => yaml file
         /// </summary>

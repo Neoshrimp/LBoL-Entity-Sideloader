@@ -45,6 +45,7 @@ namespace Random_Examples
 
         internal static AssetBundle effectsAB;
 
+        internal static BatchLocalization UnitModelBatchLoc = new BatchLocalization(embeddedSource, typeof(UnitModelTemplate), Locale.En, "UnitModelEn");
 
         private void Awake()
         {
@@ -69,8 +70,8 @@ namespace Random_Examples
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
 
-
-            JadeBoxExamples.GenJadeBoxes();
+            //2do doesnt work in 1.4 for some reason
+            //JadeBoxExamples.GenJadeBoxes();
 
             /*            EntityManager.AddPostLoadAction(() =>
                         {

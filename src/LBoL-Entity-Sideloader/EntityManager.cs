@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine.Events;
 using YamlDotNet.RepresentationModel;
+using static Mono.CSharp.Argument;
 
 namespace LBoLEntitySideloader
 {
@@ -894,34 +895,86 @@ namespace LBoLEntitySideloader
                 }
 
                 // load global localization
-                foreach (var kv2 in UniqueTracker.Instance.typesToLocalize[user.assembly])
-                {
-                    var facType = kv2.Key;
-                    var locInfo = kv2.Value;
-
-                    if (locInfo.locFiles == null)
+                if(UniqueTracker.Instance.typesToLocalize.ContainsKey(user.assembly))
+                    foreach (var kv2 in UniqueTracker.Instance.typesToLocalize[user.assembly])
                     {
-                        Log.log.LogError($"{user.assembly.GetName().Name}: localization files parameter was never initialized for global localization option of {facType.Name}");
-                        continue;
+                        try
+                        {
+                            var facType = kv2.Key;
+                            var locInfo = kv2.Value;
+
+                            if (locInfo.locFiles == null)
+                            {
+                                Log.log.LogError($"{user.assembly.GetName().Name}: localization files parameter was never initialized for global localization option of {facType.Name}");
+                                continue;
+                            }
+
+                            if (locInfo.locFiles.locTable.Empty())
+                            {
+                                Log.log.LogError($"{user.GUID}: no files were given for global localization option of {facType.Name}");
+                                continue;
+                            }
+
+                            var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
+
+                            // 2do? one merge terms parameter per global localization
+                            LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles.mergeTerms);
+                        }
+                        catch (Exception ex)
+                        {
+                            log.LogError(ex);
+                        }
                     }
-
-                    if (locInfo.locFiles.locTable.Empty())
-                    {
-                        Log.log.LogError($"{user.GUID}: no files were given for global localization option of {facType.Name}");
-                        continue;
-                    }
-
-                    var termDic = locInfo.locFiles.LoadLocTable(facType, locInfo.entityLogicTypes.ToArray());
-
-                    // 2do? one merge terms parameter per global localization
-                    LocalizationOption.FillLocalizationTables(termDic, facType, locInfo.locFiles.mergeTerms);
-
-                }
 
                 if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var unLocfiles))
-                {
-                    LocalizationOption.FillUnitNameTable(unLocfiles.Load(Localization.CurrentLocale), unLocfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
+                {                   
+                    try
+                    {
+                        LocalizationOption.FillUnitNameTable(unLocfiles.Load(Localization.CurrentLocale), unLocfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        log.LogError(ex);
+                    }
+
                 }
+
+
+
+
+                // load batch loc
+                if(UniqueTracker.Instance.batchLocalization.ContainsKey(user.assembly))
+                    foreach (var types2Set in UniqueTracker.Instance.batchLocalization[user.assembly])
+                    {
+                        // special localization cases
+                        if (types2Set.Key == typeof(SpellTemplate))
+                            continue;
+
+                        foreach (var bl in types2Set.Value)
+                        {
+
+                            try
+                            {
+                                var lf = bl.localizationFiles;
+
+                                if (bl.templateType == typeof(UnitModelTemplate))
+                                {
+                                    Log.log.LogDebug($"unit model batch loc");
+                                    //LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(lf.LoadLocTable(bl.entityIds)), lf.mergeTerms);
+                                    LocalizationOption.FillUnitNameTable(lf.Load(Localization.CurrentLocale), lf.mergeTerms, bl.entityIds);
+
+                                    continue;
+                                }
+
+                                LocalizationOption.FillLocalizationTables(lf.LoadLocTable(bl.entityIds), bl.factoryType, lf.mergeTerms);
+                            }
+                            catch (Exception ex)
+                            {
+                                log.LogError(ex);
+                            }
+                        }
+                    }
 
 
             }

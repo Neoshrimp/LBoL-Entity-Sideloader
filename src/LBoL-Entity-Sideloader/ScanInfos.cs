@@ -16,11 +16,9 @@ namespace LBoLEntitySideloader
 {
     public class UserInfo
     {
-
         public string GUID;
 
         public Assembly assembly;
-
 
         // 2do refactor
 
@@ -51,10 +49,6 @@ namespace LBoLEntitySideloader
         {
             return entitiesToOverwrite.ContainsKey(definitionType);
         }
-
-
-        
-
     }
 
     public class EntityInfo

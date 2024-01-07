@@ -22,6 +22,7 @@ using System.Data;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Core;
 using YamlDotNet.RepresentationModel;
+using LBoL.Presentation.UI.Panels;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -123,6 +124,7 @@ namespace LBoLEntitySideloader.Entities
         {
             if (locOption == null) return;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             if (locOption is GlobalLocalization globalLoc)
             {
                 if (globalLoc.LocalizationFiles.locTable.NotEmpty())
@@ -136,6 +138,7 @@ namespace LBoLEntitySideloader.Entities
                 UniqueTracker.Instance.unitIdsToLocalize[userAssembly].Add(GetId());
                 return;
             }
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (locOption is LocalizationFiles locFiles)
             {
@@ -160,6 +163,14 @@ namespace LBoLEntitySideloader.Entities
                 var termDic = rawLoc.WrapTermDic(UniqueId);
 
                 LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(termDic), rawLoc.mergeTerms);
+                return;
+            }
+
+            // 2do test
+            if (locOption is BatchLocalization batchLoc)
+            {
+                batchLoc.RegisterSelf(userAssembly);
+
                 return;
             }
 

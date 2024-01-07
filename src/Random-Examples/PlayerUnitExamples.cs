@@ -260,13 +260,7 @@ namespace Random_Examples
         
         public override IdContainer GetId() => new SuikaPlayerDef().UniqueId;
 
-        public override LocalizationOption LoadLocalization()
-        {
-            var gl = new GlobalLocalization(embeddedSource);
-            gl.LocalizationFiles.mergeTerms = true;
-            gl.LocalizationFiles.AddLocaleFile(Locale.En, "UnitModelEn");
-            return gl;
-        }
+        public override LocalizationOption LoadLocalization() => UnitModelBatchLoc.AddEntity(this);
 
         public override ModelOption LoadModelOptions()
         {
@@ -305,10 +299,11 @@ namespace Random_Examples
 
         public override LocalizationOption LoadLocalization()
         {
-            var lf = new LocalizationFiles(embeddedSource);
+            return UnitModelBatchLoc.AddEntity(this);
+/*            var lf = new LocalizationFiles(embeddedSource);
             lf.AddLocaleFile(Locale.En, "BeaModelEn");
             lf.mergeTerms = true;
-            return lf;
+            return lf;*/
         }
 
 
