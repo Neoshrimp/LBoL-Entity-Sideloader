@@ -519,7 +519,6 @@ namespace LBoLEntitySideloader.Entities.Patches
 
 
         [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectPlayer))]
-        [HarmonyDebug]
         internal class SelectPlayer_Patch
         {
 
