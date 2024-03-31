@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6000` Update for LBoL v1.42.
+
 `0.9.5000` Add `BatchLocalization` support. Deprecate `GlobalLocalization`.
 
 `0.9.4500` Fix localization files error.
