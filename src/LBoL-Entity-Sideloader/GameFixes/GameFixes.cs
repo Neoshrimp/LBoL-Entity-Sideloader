@@ -20,6 +20,8 @@ using LBoL.EntityLib.EnemyUnits.Character;
 using LBoL.Presentation.UI.ExtraWidgets;
 using LBoL.Presentation;
 using LBoL.EntityLib.Adventures;
+using LBoL.Base.Extensions;
+using LBoL.Core.StatusEffects;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -312,5 +314,14 @@ namespace LBoLEntitySideloader.GameFixes
         }
     }
 
-
+    // Fix Seija's damage limiter to work properly
+    [HarmonyPatch(typeof(LimitedDamage), nameof(LimitedDamage.OnDamageReceived))]
+    class LimitedDamageFix_Patch
+    {
+        static bool Prefix(LimitedDamage __instance, ref DamageEventArgs args)
+        {
+            __instance.Count -= Math.Min(args.DamageInfo.Damage.RoundToInt(), __instance.Count);
+            return false;
+        }
+    }
 }
