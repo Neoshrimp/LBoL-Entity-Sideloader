@@ -44,6 +44,18 @@
             </summary>
             <param name="scriptEngineInfo"></param>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">
+            <summary>
+            No: 0,
+            Id: "",
+            HostId: "",
+            HostId2: "",
+            Music: play specific event bgm with id "Adventure" + {music},
+            HideUlt: false,
+            TempArt: false
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.BulletTemplate.DefaultConfig">
             <summary>
             Name: ;
@@ -469,6 +481,41 @@
             Reflection methods for working with Config types.
             </summary>
         </member>
+        <member name="M:LBoLEntitySideloader.Resource.BatchLocalization.#ctor(LBoLEntitySideloader.Resource.IResourceSource,System.Type,LBoL.Core.Locale,System.String,System.Boolean)">
+            <summary>
+            Adds default locale file.
+            </summary>
+            <param name="resourceSource"></param>
+            <param name="templateType"></param>
+            <param name="defaultLocale"></param>
+            <param name="fileName"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.BatchLocalization.AddEntity(LBoLEntitySideloader.Entities.EntityDefinition)">
+            <summary>
+            Register an entity for that particular batch localization.
+            The corresponding batch yaml file(s) 
+            </summary>
+            <param name="entityTemplate"></param>
+            <returns>The same BatchLocalization which should be returned by LoadLocalization</returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.BatchLocalization.#ctor(LBoLEntitySideloader.Resource.IResourceSource,System.Type,System.String,LBoL.Core.Locale,System.Boolean)">
+            <summary>
+            Automatically tries to discover localization files for any possible locale. 
+            Calls DiscoverAndLoadLocFiles(fileNamePrefix).
+            </summary>
+            <param name="resourceSource"></param>
+            <param name="templateType"></param>
+            <param name="fileNamePrefix"></param>
+            <param name="fallbackLocale"></param>
+            <param name="mergeTerms"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.Resource.BatchLocalization.DiscoverAndLoadLocFiles(System.String)">
+            <summary>
+            Automatically discovers localization files in given resource source. 
+            Should be called once per instance of BatchLocalization. 
+            </summary>
+            <param name="fileNamePrefix">File name without locale code and ".yaml", i.e, Cards</param>
+        </member>
         <member name="T:LBoLEntitySideloader.Resource.CardImages">
             <summary>
             Container class for storing any Texture2D a card might use
@@ -556,9 +603,10 @@
         <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.DiscoverAndLoadLocFiles(LBoLEntitySideloader.Entities.EntityDefinition)">
             <summary>
             Automatically discovers localization files in given resource source.
-            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml
+            Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e., UltimateSkillKo.yaml.
+            Does NOT work with certain templates which do not implement EntityType.
             </summary>
-            <param name="entityTemplate">concrete templaet instance, probably `this`</param>
+            <param name="entityTemplate">concrete template instance, probably `this`</param>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.GlobalLocalization.DiscoverAndLoadLocFiles(System.String)">
             <summary>

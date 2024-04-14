@@ -19,6 +19,7 @@ using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.EnemyUnits.Character;
 using LBoL.Presentation.UI.ExtraWidgets;
 using LBoL.Presentation;
+using LBoL.EntityLib.Adventures;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -303,7 +304,7 @@ namespace LBoLEntitySideloader.GameFixes
     {
         static bool Prefix(Debut __instance)
         {
-            if (GameMaster.Instance.CurrentGameRun != null && GameMaster.Instance.CurrentGameRun.Player.Exhibits[0].LosableType == ExhibitLosableType.CantLose)
+            if (GameMaster.Instance.CurrentGameRun?.Player.Exhibits.FirstOrDefault()?.LosableType == ExhibitLosableType.CantLose)
             {
                 return false;
             }

@@ -85,6 +85,7 @@ namespace LBoLEntitySideloader.Entities
 
             var entityLogicType = SideloaderUsers.GetEntityLogicType(userAssembly, GetType());
 
+#pragma warning disable CS0618 // Type or member is obsolete
             if (locOption is GlobalLocalization globalLoc)
             {
 
@@ -99,29 +100,33 @@ namespace LBoLEntitySideloader.Entities
                     if (locInfo.locFiles == null)
                         locInfo.locFiles = globalLoc.LocalizationFiles;
                     else
-                        Log.LogDev()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
+                        Log.LogDevExtra()?.LogWarning($"{userAssembly.GetName().Name}: {GetType()} tries to set global localization files but they've already been set by another {TemplateType().Name}.");
                 }
                 locInfo.entityLogicTypes.Add(entityLogicType);
+                return;
                     
             }
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (locOption is LocalizationFiles locFiles)
             {
-
                 var termDic = locFiles.LoadLocTable(EntityType(), new Type[] { entityLogicType });
-
-
                 LocalizationOption.FillLocalizationTables(termDic, facType, locFiles.mergeTerms);
-
+                return;
             }
 
             if (locOption is DirectLocalization rawLoc)
             {
-
                 var termDic = rawLoc.WrapTermDic(UniqueId);
 
                 LocalizationOption.FillLocalizationTables(termDic, facType, rawLoc.mergeTerms);
+                return;
+            }
 
+            if (locOption is BatchLocalization batchLocalization)
+            {
+                batchLocalization.RegisterSelf(userAssembly);
+                return;
             }
 
         }

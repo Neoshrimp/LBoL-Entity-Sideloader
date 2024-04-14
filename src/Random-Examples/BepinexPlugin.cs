@@ -45,6 +45,7 @@ namespace Random_Examples
 
         internal static AssetBundle effectsAB;
 
+        internal static BatchLocalization UnitModelBatchLoc = new BatchLocalization(embeddedSource, typeof(UnitModelTemplate), Locale.En, "UnitModelEn");
 
         private void Awake()
         {
@@ -69,28 +70,30 @@ namespace Random_Examples
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
 
+            //2do doesnt work in 1.4 for some reason
+            //JadeBoxExamples.GenJadeBoxes();
 
-            JadeBoxExamples.GenJadeBoxes();
-
-/*            EntityManager.AddPostLoadAction(() =>
-            {
-                for (int i = 0; i < 14 * 4; i++)
-                {
-                    var id = "NilTestExhibit" + i.ToString();
-                    exhibitGen.QueueGen(
-                        Id: id,
-                        overwriteVanilla: false,
-                        makeConfig: () => new LunarVeilDef().DefaultConfig(),
-                        loadSprite: null,
-                        loadLocalization: GenHelper.WrapFunc((int i) => new DirectLocalization(new Dictionary<string, object>()
+            /*            EntityManager.AddPostLoadAction(() =>
                         {
-                            { "Name", "Deez" + i.ToString() },
-                            { "Description", "nuts" }
-                        }), i),
-                        generateEmptyLogic: true);
-                }
-                exhibitGen.FinalizeGen();
-            });*/
+                            for (int i = 0; i < 14 * 4; i++)
+                            {
+                                var id = "NilTestExhibit" + i.ToString();
+                                exhibitGen.QueueGen(
+                                    Id: id,
+                                    overwriteVanilla: false,
+                                    makeConfig: () => new LunarVeilDef().DefaultConfig(),
+                                    loadSprite: null,
+                                    loadLocalization: GenHelper.WrapFunc((int i) => new DirectLocalization(new Dictionary<string, object>()
+                                    {
+                                        { "Name", "Deez" + i.ToString() },
+                                        { "Description", "nuts" }
+                                    }), i),
+                                    generateEmptyLogic: true);
+                            }
+                            exhibitGen.FinalizeGen();
+                        });*/
+
+
 
             CustomFormations.AddFormations();
 

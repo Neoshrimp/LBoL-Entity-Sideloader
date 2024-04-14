@@ -22,7 +22,7 @@ namespace Random_Examples
         public override IdContainer GetId() => nameof(Reimu);
 
         [DontOverwrite]
-        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+        public override LocalizationOption LoadLocalization() => UnitModelBatchLoc.AddEntity(this);
 
 
         public override ModelOption LoadModelOptions()
@@ -48,9 +48,9 @@ namespace Random_Examples
     public sealed class MarisaIsYoumuDef : UnitModelTemplate
     {
         public override IdContainer GetId() => "Marisa";
-        
+
         [DontOverwrite]
-        public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
+        public override LocalizationOption LoadLocalization() => UnitModelBatchLoc.AddEntity(this);
 
         public override ModelOption LoadModelOptions()
         {
