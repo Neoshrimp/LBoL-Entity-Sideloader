@@ -91,7 +91,7 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- (New) Custom Stages ☑️
   |-- Stage pooling ☑️
 |-- *Playable characters at this point?* ☑️
-  |-- Inherent character mechanics (maybe) 
+  |-- Inherent character mechanics ☑️ (it was here all along. Units can register reactors.)
 |-- Create GapOption
 |-- Load Yarn Spinner scripts [???](https://github.com/salyu9/YarnSpinner)
   |-- Create Adventures (Encounters)
