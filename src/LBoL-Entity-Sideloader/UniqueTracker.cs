@@ -5,6 +5,7 @@ using LBoL.Core.Units;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
@@ -158,7 +159,7 @@ namespace LBoLEntitySideloader
             public string typeName;
         }
 
-
+        internal Dictionary<SaveDataID, CustomGameRunSaveData> customGrSaveData = new Dictionary<SaveDataID, CustomGameRunSaveData>();
 
         public List<Func<List<Stage>, List<Stage>>> modifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
 

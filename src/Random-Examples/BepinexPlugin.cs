@@ -47,6 +47,7 @@ namespace Random_Examples
 
         internal static BatchLocalization UnitModelBatchLoc = new BatchLocalization(embeddedSource, typeof(UnitModelTemplate), Locale.En, "UnitModelEn");
 
+
         private void Awake()
         {
             log = Logger;
@@ -69,6 +70,8 @@ namespace Random_Examples
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
+
+            (new SuikaGrData()).RegisterSelf(PluginInfo.GUID);
 
             //2do doesnt work in 1.4 for some reason
             //JadeBoxExamples.GenJadeBoxes();

@@ -5,8 +5,11 @@ using HarmonyLib;
 using LBoL.Base;
 using LBoL.ConfigData;
 using LBoL.Core;
+using LBoL.Core.Battle;
+using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
 using LBoL.Core.Randoms;
+using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Cards.Character.Reimu;
 using LBoL.EntityLib.Cards.Neutral.NoColor;
@@ -95,11 +98,77 @@ namespace Random_Examples
         }
 
 
-        [EntityLogic(typeof(SuikaPlayerDef))]
-        public sealed class Suika : PlayerUnit { }
 
     }
 
+
+    [EntityLogic(typeof(SuikaPlayerDef))]
+    public sealed class Suika : PlayerUnit 
+    {
+
+        public int drunkedness;
+        public List<MiniMe> miniMes = new List<MiniMe>(); // not actually used
+
+        public void PrintDebug() 
+        {
+            log.LogInfo($"Suika unit");
+            log.LogInfo($"drunkedness: {drunkedness}");
+            log.LogInfo($"{rng?.State}");
+            log.LogInfo("miniMes: ");
+            foreach ( MiniMe me in miniMes ) { log.LogInfo(me); }
+        }
+
+        public RandomGen rng;
+
+        // suikaRng only need to be initialized once
+        [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.Create))]
+        class GameRunController_Create_Patch
+        {
+            static void Postfix(GameRunController __result)
+            {
+                if(__result.Player is Suika suika)
+                    suika.rng = new RandomGen(__result.RootRng.NextULong());
+            }
+        }
+
+
+        // happens before restoring save state
+        protected override void OnEnterGameRun(GameRunController gameRun)
+        {
+            log.LogInfo("Suika entering...");
+        }
+
+        protected override void OnEnterBattle(BattleController battle)
+        {
+            
+
+            ReactBattleEvent(battle.BattleStarting, OnBattleStarting);
+
+            HandleBattleEvent(battle.BattleEnded, OnBattleEnding);
+        }
+
+        private void OnBattleEnding(GameEventArgs args)
+        {
+            drunkedness += 1;
+            miniMes.Add(new MiniMe() { deez = rng.NextInt(1, 10), nuts = rng.NextInt(1, 10) }); 
+        }
+
+        IEnumerable<BattleAction> OnBattleStarting(GameEventArgs gameEventArgs)
+        {
+            if(drunkedness > 0)
+                yield return new ApplyStatusEffectAction<Firepower>(this, drunkedness);
+        }
+
+
+    }
+
+    public class MiniMe
+    {
+        public int deez;
+        public int nuts;
+
+        public override string ToString() => $"deez: {deez}, nuts: {nuts}";
+    }
 
     public sealed class GoblinPunchCardDef : CardTemplate
     {

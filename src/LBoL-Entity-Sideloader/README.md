@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6100` New feature. Added template class for storing game run load persistent values.
+
 `0.9.6010` Fix Seija damage cap when dealing over 300 damage.
 
 `0.9.6000` Update for LBoL v1.42.
