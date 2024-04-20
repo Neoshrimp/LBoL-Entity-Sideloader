@@ -42,7 +42,7 @@ namespace LBoLEntitySideloader
             }
             else
             {
-                throw new ArgumentException($"IdContainer: {o.GetType()} is not a valid type to cast from");
+                throw new ArgumentException($"IdContainer: {o.GetType()} is not a valid type to cast from.");
             }
 
         }

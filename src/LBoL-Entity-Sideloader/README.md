@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6200` Add animations for `AddCardsToExileAction`.
+
 `0.9.6100` New feature. Added template class for storing game run load persistent values.
 
 `0.9.6010` Fix Seija damage cap when dealing over 300 damage.
