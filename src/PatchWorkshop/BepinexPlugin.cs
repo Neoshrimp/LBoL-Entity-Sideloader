@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
 using System.Reflection;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace PatchWorkshop
 
         // add this for audio loading
         internal static DirectorySource directorySource = new DirectorySource(PatchWorkshop.PInfo.GUID, "");
+
+        internal static BatchLocalization exBatchLoc = new BatchLocalization(directorySource, typeof(ExhibitTemplate), "Exhibits");
 
 
         private void Awake()

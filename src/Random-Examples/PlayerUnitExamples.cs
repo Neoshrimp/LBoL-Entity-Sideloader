@@ -13,6 +13,7 @@ using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Cards.Character.Reimu;
 using LBoL.EntityLib.Cards.Neutral.NoColor;
+using LBoL.EntityLib.Cards.Neutral.Red;
 using LBoL.EntityLib.Exhibits.Common;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.PlayerUnits;
@@ -27,7 +28,9 @@ using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.UIhelpers;
 using LBoLEntitySideloader.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -136,6 +139,41 @@ namespace Random_Examples
         protected override void OnEnterGameRun(GameRunController gameRun)
         {
             log.LogInfo("Suika entering...");
+            HandleGameRunEvent(gameRun.DeckCardsAdded, OnDeckCardsAdded);
+        }
+
+
+        private void OnDeckCardsAdded(CardsEventArgs args)
+        {
+            log.LogInfo("Add cards event");
+            if (args.Cards.FirstOrDefault(c => c.Id == nameof(GoblinPunchCardDef.GoblinPunch)) != null)
+            {
+                if (!this.HasExhibit<Pijiu>())
+                {
+
+                    GameMaster.Instance.StartCoroutine(GainExhibits(
+                        gameRun: this.GameRun,
+                        exhibits: new HashSet<Type>() { typeof(Pijiu) },
+                        triggerVisual: true,
+                        exhibitSource: new VisualSourceData() {
+                            SourceType = VisualSourceType.Debug,
+                            Source = this,
+                        }));
+                }
+            }
+        }
+
+        private IEnumerator GainExhibits(GameRunController gameRun, HashSet<Type> exhibits, bool triggerVisual = false, VisualSourceData exhibitSource = null)
+        {
+            foreach (var et in exhibits)
+            {
+                var ex = Library.CreateExhibit(et);
+                ex.GameRun = gameRun;
+                
+                yield return gameRun.GainExhibitRunner(ex, triggerVisual, exhibitSource);
+            }
+
+            gameRun.ExhibitPool.RemoveAll(e => exhibits.Contains(e));
         }
 
         protected override void OnEnterBattle(BattleController battle)

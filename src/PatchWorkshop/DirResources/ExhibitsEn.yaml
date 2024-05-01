@@ -1,0 +1,6 @@
+StringEx:
+  Name: String
+  Description: |-
+    default shit {Value1}
+    {Custom1}
+  Custom1: deez {Value1} {Custom1}
