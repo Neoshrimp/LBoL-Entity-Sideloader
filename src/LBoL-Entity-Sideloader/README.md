@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6300` Add custom handlers for gameRun and Battle.
+
 `0.9.6200` Add animations for `AddCardsToExileAction`.
 
 `0.9.6100` New feature. Added template class for storing game run load persistent values.

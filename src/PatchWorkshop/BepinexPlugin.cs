@@ -1,9 +1,20 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using LBoL.Core;
+using LBoL.Core.Battle;
+using LBoL.Core.Battle.BattleActions;
+using LBoL.Core.StatusEffects;
+using LBoL.EntityLib.EnemyUnits.Normal.Bats;
+using LBoL.Presentation;
 using LBoLEntitySideloader;
+using LBoLEntitySideloader.CustomHandlers;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Resource;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 
@@ -29,10 +40,12 @@ namespace PatchWorkshop
 
         internal static BatchLocalization exBatchLoc = new BatchLocalization(directorySource, typeof(ExhibitTemplate), "Exhibits");
 
+        public static BepinexPlugin Instance;
 
         private void Awake()
         {
             log = Logger;
+            Instance = this;
 
             // very important. Without this the entry point MonoBehaviour gets destroyed
             DontDestroyOnLoad(gameObject);
@@ -44,13 +57,34 @@ namespace PatchWorkshop
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(AddWatermark.API.GUID))
                 WatermarkWrapper.ActivateWatermark();
+
+            // event is registered at the start/load of a gameRun
+            CHandlerManager.RegisterGameEventHandler(
+                (GameRunController gr) => gr.DeckCardsAdded,
+                CustomHandlers.LogCardName
+                );
+
+            // dublicate handlers will not be added
+            CHandlerManager.RegisterGameEventHandler(
+                (GameRunController gr) => gr.DeckCardsAdded,
+                CustomHandlers.LogCardName
+                );
+
+
+            CustomHandlers.RegisterAddFpOnDmg();
+
+
         }
+
+
+
 
         private void OnDestroy()
         {
             if (harmony != null)
                 harmony.UnpatchSelf();
         }
+
 
 
     }
