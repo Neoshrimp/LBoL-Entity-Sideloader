@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6400` Move BattleModifiers, a system for modifying units via lambdas and delegates, from FullElite.
+
 `0.9.6300` Add custom handlers for gameRun and Battle.
 
 `0.9.6200` Add animations for `AddCardsToExileAction`.

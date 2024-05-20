@@ -38,6 +38,15 @@
             For entities which have EntityLogic type component entity logic will not be changed if a type with [EntityLogic] is omitted
             </summary>
         </member>
+        <member name="M:LBoLEntitySideloader.BattleModifiers.ModFactory.LazyArg``1(System.Func{``0},System.Func{``0,LBoLEntitySideloader.BattleModifiers.ModUnit})">
+            <summary>
+            Avoids freezing the argument during early initialization.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="getArg"></param>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.BepinexPlugin.Reload(BepInEx.PluginInfo,System.Boolean)">
             <summary>
             Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and development. Requires scriptengine. 

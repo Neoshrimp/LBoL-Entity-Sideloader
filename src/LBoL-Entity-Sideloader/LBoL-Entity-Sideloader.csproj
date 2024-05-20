@@ -24,9 +24,16 @@
   </ItemGroup>
 	
   <ItemGroup>
-      <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.Core;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
+      <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
+      <Publicize Include="LBoL.Core" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
+      <Publicize Include="LBoL.Core:LBoL.Core.GameEntity.React"/>
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.Unit.React"/>
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.React"/>
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.React"/>
+
+
   </ItemGroup>
-	
+    
   <PropertyGroup>
 	  <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
 	  <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
