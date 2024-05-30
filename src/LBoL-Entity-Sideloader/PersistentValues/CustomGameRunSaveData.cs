@@ -1,5 +1,7 @@
 ﻿using LBoL.Core;
 using System.Collections.Generic;
+using System.Linq;
+using YamlDotNet.Serialization;
 
 namespace LBoLEntitySideloader.PersistentValues
 {
@@ -54,9 +56,19 @@ namespace LBoLEntitySideloader.PersistentValues
         /// <summary>
         /// Encode yaml save files to binary? (not implemented)
         /// </summary>
-        internal virtual bool Encode
+        internal virtual bool EncodeToBinary
         {
             get => true;
+        }
+
+
+        /// <summary>
+        /// Provide type converters for yaml serialization/deserialization 
+        /// </summary>
+        /// <returns></returns>
+        public virtual IEnumerable<IYamlTypeConverter> TypeConverters()
+        {
+            yield break;
         }
 
         /// <summary>

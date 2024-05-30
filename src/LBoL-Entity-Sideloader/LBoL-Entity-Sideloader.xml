@@ -517,10 +517,16 @@
             Optional override for unique name of save data file. Needed if using several CustomSaveData per mod.
             </summary>
         </member>
-        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.Encode">
+        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.EncodeToBinary">
             <summary>
             Encode yaml save files to binary? (not implemented)
             </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.TypeConverters">
+            <summary>
+            Provide type converters for yaml serialization/deserialization 
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.ReasonableUniqueName">
             <summary>

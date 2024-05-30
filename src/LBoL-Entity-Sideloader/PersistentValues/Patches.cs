@@ -6,6 +6,7 @@ using System;
 using System.Text;
 using YamlDotNet.Serialization;
 using System.IO;
+using static UnityEngine.InputSystem.Layouts.InputControlLayout;
 
 namespace LBoLEntitySideloader.PersistentValues
 {
@@ -22,7 +23,15 @@ namespace LBoLEntitySideloader.PersistentValues
                 var csd = customData[id];
                 csd.Save(__instance);
 
-                GameMaster.WriteSaveData(id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value), SaveDataHelper.Serialize(csd, false));
+                using StringWriter stringWriter = new StringWriter { NewLine = "\n" };
+                var seBuilder = new SerializerBuilder().DisableAliases();
+                csd.TypeConverters().Do((tc) => { seBuilder = seBuilder.WithTypeConverter(tc); });
+
+                seBuilder.Build().Serialize(stringWriter, csd);
+                var data = SaveDataHelper.EncodeYaml(stringWriter.ToString(), false);
+
+
+                GameMaster.WriteSaveData(id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value), data);
 
             }
         }
@@ -51,7 +60,12 @@ namespace LBoLEntitySideloader.PersistentValues
 
                 try
                 {
-                    object csdObject = new DeserializerBuilder().IgnoreUnmatchedProperties().Build().Deserialize(SaveDataHelper.DecodeYaml(File.ReadAllBytes(filePath)), csd.GetType());
+
+                    var deBuilder = new DeserializerBuilder().IgnoreUnmatchedProperties();
+
+                    csd.TypeConverters().Do((tc) => { deBuilder = deBuilder.WithTypeConverter(tc); });
+
+                    object csdObject = deBuilder.Build().Deserialize(SaveDataHelper.DecodeYaml(File.ReadAllBytes(filePath)), csd.GetType());
 
                     var loadedData = (CustomGameRunSaveData)csdObject;
 

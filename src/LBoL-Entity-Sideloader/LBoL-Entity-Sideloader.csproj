@@ -26,10 +26,10 @@
   <ItemGroup>
       <Publicize Include="LBoL.Base;LBoL.ConfigData;LBoL.EntityLib;LBoL.Presentation;Untitled.ConfigDataBuilder.Base" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
       <Publicize Include="LBoL.Core" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
-      <Publicize Include="LBoL.Core:LBoL.Core.GameEntity.React"/>
-      <Publicize Include="LBoL.Core:LBoL.Core.Units.Unit.React"/>
-      <Publicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.React"/>
-      <Publicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.React"/>
+      <Publicize Include="LBoL.Core:LBoL.Core.GameEntity.React" />
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.Unit.React" />
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.EnemyUnit.React" />
+      <Publicize Include="LBoL.Core:LBoL.Core.Units.PlayerUnit.React" />
 
 
   </ItemGroup>

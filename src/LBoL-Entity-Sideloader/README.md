@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6410` Add ITypeConverter option for custom persistent data.
+
 `0.9.6400` Move BattleModifiers, a system for modifying units via lambdas and delegates, from FullElite.
 
 `0.9.6300` Add custom handlers for gameRun and Battle.
