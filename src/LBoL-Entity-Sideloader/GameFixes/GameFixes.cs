@@ -22,6 +22,8 @@ using LBoL.Presentation;
 using LBoL.EntityLib.Adventures;
 using LBoL.Base.Extensions;
 using LBoL.Core.StatusEffects;
+using JetBrains.Annotations;
+using Mono.CSharp;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -64,73 +66,14 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
+
+
+
+
+
     [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseCardWeight))]
     class UncapColorLimitation_Patch
     {
-
-        // cba'd to transpile jump table
-        static bool Prefix(ref float __result, CardConfig config, bool applyFactors, GameRunController __instance)
-        {
-
-            int trivialColorCount = Math.Max(config.Colors.Count, config.Cost.TrivialColorCount);
-            if (trivialColorCount <= 3)
-                return true;
-
-            float num;
-
-            switch (trivialColorCount)
-            {
-                case 4:
-                    num = 1.3f;
-                    break;
-                case 5:
-                    num = 1.4f;
-                    break;
-                default:
-                    throw new InvalidDataException($"{trivialColorCount} is too many colors in either {config.Cost} or {config.Colors} of card {config.Id}");
-            }
-
-
-            float num3 = num;
-            float num4 = 1f;
-            int count = config.Colors.Count;
-            if (count <= 0)
-            {
-                if (count == 0)
-                {
-                    num4 = 0.8f;
-                }
-            }
-            else
-            {
-                foreach (ManaColor manaColor in config.Colors)
-                {
-                    float num5 = __instance.BaseMana.GetValue(manaColor) / (float)__instance.BaseMana.Amount;
-                    num5 -= 0.5f;
-                    num5 *= 0.8f;
-                    num4 += num5;
-                }
-                num4 = Math.Max(num4, 0.8f);
-            }
-            num3 *= num4;
-            if (applyFactors)
-            {
-                if (config.Rarity == Rarity.Rare)
-                {
-                    num3 *= __instance._cardRareWeightFactor;
-                }
-                float num6;
-                if (__instance._cardRewardWeightFactors.TryGetValue(config.Id, out num6))
-                {
-                    num3 *= num6;
-                }
-            }
-            __result = num3;
-
-            return false;
-        }
-
-
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             int i = 0;
@@ -184,7 +127,35 @@ namespace LBoLEntitySideloader.GameFixes
 
     }
 
+    [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseCardWeight))]
+    [HarmonyPriority(Priority.LowerThanNormal)]
+    class UncapColorLimitation_Patch2
+    {
+        static float SetWeight(int trivialColors)
+        {
+            var num = trivialColors switch
+            {
+                4 => 1.3f,
+                5 => 1.4f,
+                _ => 1f,
+            };
+            return num;
+        }
 
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            return new CodeMatcher(instructions)
+                .MatchForward(true, new CodeMatch[] { OpCodes.Call, OpCodes.Call, OpCodes.Stloc_S })
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Dup))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UncapColorLimitation_Patch2), nameof(UncapColorLimitation_Patch2.SetWeight))))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stloc_3))
+
+                .MatchForward(true, OpCodes.Throw)
+                .Set(OpCodes.Pop, null)
+
+                .InstructionEnumeration();
+        }
+    }
 
     [HarmonyPatch(typeof(CardUi), nameof(CardUi.Awake))]
     class _13thCard_Patch
@@ -211,7 +182,7 @@ namespace LBoLEntitySideloader.GameFixes
     
 
 
-    // makes 3 fairies a bit more compatible with being grouped with another enemies
+    // makes 3 fairies a bit more compatible with being grouped with other enemies
     [HarmonyPatch(typeof(Sunny), "OnEnterBattle")]
     class SunnyCastBug_Patch
     {
