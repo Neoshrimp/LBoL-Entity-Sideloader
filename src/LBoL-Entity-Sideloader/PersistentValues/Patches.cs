@@ -6,11 +6,12 @@ using System;
 using System.Text;
 using YamlDotNet.Serialization;
 using System.IO;
-using static UnityEngine.InputSystem.Layouts.InputControlLayout;
+
 
 namespace LBoLEntitySideloader.PersistentValues
 {
     [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.Save))]
+    [HarmonyPriority(Priority.VeryLow)]
     class GameRunController_Save_Patch
     {
 
@@ -21,17 +22,24 @@ namespace LBoLEntitySideloader.PersistentValues
             foreach (var id in customData.Keys)
             {
                 var csd = customData[id];
-                csd.Save(__instance);
+                try
+                {
+                    csd.Save(__instance);
 
-                using StringWriter stringWriter = new StringWriter { NewLine = "\n" };
-                var seBuilder = new SerializerBuilder().DisableAliases();
-                csd.TypeConverters().Do((tc) => { seBuilder = seBuilder.WithTypeConverter(tc); });
+                    using StringWriter stringWriter = new StringWriter { NewLine = "\n" };
+                    var seBuilder = new SerializerBuilder().DisableAliases();
+                    csd.TypeConverters().Do((tc) => { seBuilder = seBuilder.WithTypeConverter(tc); });
 
-                seBuilder.Build().Serialize(stringWriter, csd);
-                var data = SaveDataHelper.EncodeYaml(stringWriter.ToString(), false);
+                    seBuilder.Build().Serialize(stringWriter, csd);
+                    var data = SaveDataHelper.EncodeYaml(stringWriter.ToString(), false);
 
 
-                GameMaster.WriteSaveData(id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value), data);
+                    GameMaster.WriteSaveData(id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value), data);
+                }
+                catch (Exception ex)
+                {
+                    BepinexPlugin.log.LogError($"Error while saving custom save data {id}: {ex}");
+                }
 
             }
         }
@@ -39,6 +47,7 @@ namespace LBoLEntitySideloader.PersistentValues
 
 
     [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.Restore))]
+    [HarmonyPriority(Priority.VeryHigh)]
     class GameRunController_Restore_Patch
     {
 
