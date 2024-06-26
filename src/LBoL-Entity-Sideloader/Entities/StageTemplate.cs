@@ -299,25 +299,28 @@ namespace LBoLEntitySideloader.Entities
                 {
                     list = f.Invoke(list);
                 }
-                var id2Stage = new Dictionary<string, Stage>();
-                var id2Index = new Dictionary<string, int>();
+                var id2Indexes = new Dictionary<string, List<int>>();
                 int i = 0;
                 foreach (var s in list)
                 {
-                    id2Stage.Add(s.Id, s);
-                    id2Index.Add(s.Id, i);
+                    id2Indexes.TryAdd(s.Id, new List<int>());
+                    id2Indexes[s.Id].Add(i);
                     i++;
                 }
-                list.ToDictionary(s => s.Id);
 
                 foreach (var sm in UniqueTracker.Instance.modifyStageActions)
                 {
-                    if (!id2Stage.ContainsKey(sm.Id))
+                    if (!id2Indexes.ContainsKey(sm.Id))
                     {
                         Log.LogDev()?.LogWarning($"Trying to modify stage with Id:{sm.Id} but it wasn't loaded. It either doesn't exist or was removed from stage list");
                         continue;
                     }
-                    list[id2Index[sm.Id]] = sm.mod.Invoke(id2Stage[sm.Id]);
+
+                    foreach(var sIndex in id2Indexes[sm.Id])
+                    {
+                        var stage = list[sIndex];
+                        list[sIndex] = sm.mod.Invoke(stage);
+                    }
                 }
 
                 return list.ToArray();
