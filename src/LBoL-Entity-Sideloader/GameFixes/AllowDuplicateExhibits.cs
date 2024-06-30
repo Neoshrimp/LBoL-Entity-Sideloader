@@ -90,9 +90,9 @@ namespace LBoLEntitySideloader.GameFixes
                 CodeInstruction prevCi = null;
                 foreach (var ci in instructions)
                 {
-                    if (prevCi != null && prevCi.opcode == OpCodes.Brfalse_S && ci.opcode == OpCodes.Ret)
+                    if (prevCi != null && prevCi.opcode == OpCodes.Brfalse && ci.opcode == OpCodes.Ret)
                     {
-                        yield return new CodeInstruction(OpCodes.Pop);
+                        yield return new CodeInstruction(OpCodes.Nop);
                     }
                     else
                     {
