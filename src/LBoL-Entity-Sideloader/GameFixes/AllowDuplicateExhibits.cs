@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using LBoL.Core.Units;
 using LBoL.Core;
+using LBoL.Presentation.UI.Panels;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -76,6 +77,27 @@ namespace LBoLEntitySideloader.GameFixes
                         yield return ci;
                     }
                     prevprevCi = prevCi;
+                    prevCi = ci;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(BossExhibitPanel), nameof(BossExhibitPanel.OnClickExhibit))]
+        class AllowDuplicateExhibits3_Patch
+        {
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                CodeInstruction prevCi = null;
+                foreach (var ci in instructions)
+                {
+                    if (prevCi != null && prevCi.opcode == OpCodes.Brfalse_S && ci.opcode == OpCodes.Ret)
+                    {
+                        yield return new CodeInstruction(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        yield return ci;
+                    }
                     prevCi = ci;
                 }
             }
