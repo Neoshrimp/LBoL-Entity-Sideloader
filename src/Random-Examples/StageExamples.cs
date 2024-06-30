@@ -183,6 +183,12 @@ namespace Random_Examples
             {
                 list.Clear();
                 list.Add(Library.CreateStage(typeof(FinalStage)));
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+                list.Add(Library.CreateStage(typeof(FinalStage)));
+
 
                 list.Add(Library.CreateStage(typeof(BambooForest)).AsNormalFinal());
                 list.Add(Library.CreateStage(typeof(WindGodLake)).AsTrueEndFinal());
@@ -195,9 +201,12 @@ namespace Random_Examples
                 // can be new 
                 stage.EnemyPoolAct1.Add(new BallsAndGirlDef().UniqueId, 1.5f);
                 stage.EnemyPoolAct1.Add(new ThreeCrowsGroupDef().UniqueId, 1.5f);
+                
 
                 return stage;
             });
+
+            StageTemplate.ModifyStage(nameof(FinalStage), s => { s.BossPool.Add("Aya", 300f); return s; });
 
         }
 

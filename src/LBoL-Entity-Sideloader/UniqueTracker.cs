@@ -4,7 +4,9 @@ using LBoL.Core.Cards;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation.UI.Widgets;
+using LBoLEntitySideloader.CustomHandlers;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
@@ -158,7 +160,7 @@ namespace LBoLEntitySideloader
             public string typeName;
         }
 
-
+        internal Dictionary<SaveDataID, CustomGameRunSaveData> customGrSaveData = new Dictionary<SaveDataID, CustomGameRunSaveData>();
 
         public List<Func<List<Stage>, List<Stage>>> modifyStageListFuncs = new List<Func<List<Stage>, List<Stage>>>();
 
@@ -172,6 +174,11 @@ namespace LBoLEntitySideloader
 
 
         public Dictionary<Assembly, List<PlayerUnitTemplate>> user2PlayerTemplates = new Dictionary<Assembly, List<PlayerUnitTemplate>>();
+
+
+        public CHandlerManager cHandlerManager = new CHandlerManager();
+
+        
 
         public void RaisePostMainLoad()
         {

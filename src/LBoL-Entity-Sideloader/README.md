@@ -6,6 +6,20 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6413` Fix ModifyStageList bug when adding multiples of the same stage.
+
+`0.9.6410` Add ITypeConverter option for custom persistent data.
+
+`0.9.6400` Move BattleModifiers, a system for modifying units via lambdas and delegates, from FullElite.
+
+`0.9.6300` Add custom handlers for gameRun and Battle.
+
+`0.9.6200` Add animations for `AddCardsToExileAction`.
+
+`0.9.6100` New feature. Added template class for storing game run load persistent values.
+
+`0.9.6010` Fix Seija damage cap when dealing over 300 damage.
+
 `0.9.6000` Update for LBoL v1.42.
 
 `0.9.5000` Add `BatchLocalization` support. Deprecate `GlobalLocalization`.

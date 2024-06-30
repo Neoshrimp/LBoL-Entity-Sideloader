@@ -38,6 +38,15 @@
             For entities which have EntityLogic type component entity logic will not be changed if a type with [EntityLogic] is omitted
             </summary>
         </member>
+        <member name="M:LBoLEntitySideloader.BattleModifiers.ModFactory.LazyArg``1(System.Func{``0},System.Func{``0,LBoLEntitySideloader.BattleModifiers.ModUnit})">
+            <summary>
+            Avoids freezing the argument during early initialization.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="getArg"></param>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.BepinexPlugin.Reload(BepInEx.PluginInfo,System.Boolean)">
             <summary>
             Method for reloading all registered users while the game is running. Press F3 (by default) to reload in game. For debugging and development. Requires scriptengine. 
@@ -475,6 +484,67 @@
             Can be either string or int and switch between the two (almost) seamlessly.
             However, almost all entities use string as Id except for Piece and Exp 
             </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData">
+            <summary>
+            Template for persistent data container class.
+            Extending types should contain fields for values to be stored.
+            Logic for saving/restoring the values should be implemented in appropriate methods.
+            
+            Note1: Values are encoded/decoded as yaml so some limitations apply. Example: LBoL.Core.SaveData.GameSaveData
+            Note2: Binary yaml files, suffixed with profile index and ".modd", are stored in game's save data folder. The files are never deleted, only overwritten.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.filePrefix">
+            <summary>
+            Gr for "gameRun".
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.RegisterCustomSaveData(LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData,System.String)">
+            <summary>
+            Registers CustomGameRunSaveData.
+            </summary>
+            <param name="GUID">Must be a unique GUID. Best to use the same GUID as Bepinex plugin.</param>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.RegisterSelf(System.String)">
+            <summary>
+            Registers self.
+            </summary>
+            <param name="GUID">Must be a unique GUID. Best to use the same GUID as Bepinex plugin.</param>
+        </member>
+        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.Name">
+            <summary>
+            Optional override for unique name of save data file. Needed if using several CustomSaveData per mod.
+            </summary>
+        </member>
+        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.EncodeToBinary">
+            <summary>
+            Encode yaml save files to binary? (not implemented)
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.TypeConverters">
+            <summary>
+            Provide type converters for yaml serialization/deserialization 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.ReasonableUniqueName">
+            <summary>
+            A good override for unique name.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.Save(LBoL.Core.GameRunController)">
+            <summary>
+            One of two main requirements for data container class. The method is called when gameRun attempts to save. Should assign the relevant custom values from gameRun data to data container fields.
+            </summary>
+            <param name="gameRun"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.Restore(LBoL.Core.GameRunController)">
+            <summary>
+            One of two main requirements for data container class. The method is called when gameRun is being loaded. Should populate custom gameRun values with values from container fields.
+            </summary>
+            <param name="gameRun"></param>
         </member>
         <member name="T:LBoLEntitySideloader.ReflectionHelpers.ConfigReflection">
             <summary>
