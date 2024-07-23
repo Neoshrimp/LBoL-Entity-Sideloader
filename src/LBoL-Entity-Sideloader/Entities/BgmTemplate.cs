@@ -11,6 +11,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using LBoL.Base.Extensions;
 using UnityEngine.AddressableAssets;
+using YamlDotNet.Core.Tokens;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -44,6 +45,7 @@ namespace LBoLEntitySideloader.Entities
                     Name: "",
                     Folder: "",
                     Path: "",
+                    Volume : 1f,
                     LoopStart: null,
                     LoopEnd: null,
                     TrackName: "",

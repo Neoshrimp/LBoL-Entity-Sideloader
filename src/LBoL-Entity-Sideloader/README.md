@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6430` Patch some UI crap.
+
 `0.9.6420` Allow gain Empty Exhibit Box from boss. Thanks, int.
 
 `0.9.6413` Fix ModifyStageList bug when adding multiples of the same stage.
