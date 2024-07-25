@@ -195,3 +195,10 @@ public sealed class FirstCard : Card
 - Both upgraded and unupgraded card versions seems to function as intended and console is clean of errors. The only thing left to do is to finish writing the description. I've chosen to differentiate upgraded card description by using 'UpgradedDescription:' node.
 
 ## [[First Card code]](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/FirstCard)
+
+## What's next?
+Check out [example project/template](https://gitlab.com/rmrfmaxxc1/lbol_sample_character_mod) by rmrfmaxxc. The intended way to organize Sidloader templates for larger projects, i.e., new characters. Also contains example code for many generic card types like Teammates, Abilities, XCost etc.
+
+Join [modding Discord](https://discord.gg/WT4qdfYhhG)
+
+
