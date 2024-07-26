@@ -7,6 +7,7 @@ using LBoL.Core;
 using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using Mono.Cecil.Cil;
@@ -53,6 +54,8 @@ namespace LBoLEntitySideloader
         public List<UniqueTracker.StageModAction> loadedFromModifyStageActions = new List<UniqueTracker.StageModAction>();
 
         internal DeferredActions addBossIconsActions = new DeferredActions();
+
+        internal Dictionary<SaveDataID, CustomGameRunSaveData> loadedFromDsikCustomGrSaveData = new Dictionary<SaveDataID, CustomGameRunSaveData>();
 
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)

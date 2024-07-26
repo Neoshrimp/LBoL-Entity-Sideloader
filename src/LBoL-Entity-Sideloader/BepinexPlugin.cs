@@ -11,6 +11,7 @@ using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Entities.Patches;
+using MonoMod.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,6 +156,8 @@ namespace LBoLEntitySideloader
             UniqueTracker.Instance.formationAddActions.AddRange(StageTemplate.loadedFromDiskEnvironments);
 
             EntityManager.Instance.addBossIconsActions.Clear();
+
+            UniqueTracker.Instance.customGrSaveData.AddRange(EntityManager.Instance.loadedFromDsikCustomGrSaveData);
 
 
             ScriptEngineWrapper.ReloadPlugins(scriptEngineInfo.Instance);
