@@ -1,9 +1,9 @@
 # LBoL-Entity-Sideloader
 Entity manager/loader for modding [Lost Branch of Legend](https://store.steampowered.com/app/1140150/Touhou_Lost_Branch_of_Legend/). \
+
 Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https://github.com/BepInEx/BepInEx).
 
-### *Currently works with alpha, beta and main branches*
-*[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
+
 
 ## **[Thunderstore](https://thunderstore.io/c/touhou-lost-branch-of-legend/) is up!**
 
@@ -39,6 +39,9 @@ Sideloader has many convenience methods and types designed to reduce clutter and
 ##### First card
 [*tutorial and introduction to Sideloader*](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md)
 
+##### A neat way to organize Sideloader templates
+Writing entity templates can result in quite a bit of boilerplate. Custom template hierarchy can address this issue. 
+[Example project/template](https://gitlab.com/rmrfmaxxc1/lbol_sample_character_mod) by *rmrfmaxxc* using class hierarchy to solve the issue. Also includes generic card examples.
 
 ##### Hot reload
 
@@ -121,6 +124,8 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 </pre>
 
 [_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
+
+*[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
 #### Old mod list
 
