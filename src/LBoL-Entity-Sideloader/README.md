@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.6500` Add support for multiple SE icons via optional `LoadExtraIcons` override in `StatusEffectTemplate`.
+
 `0.9.6440` Fix custom save data from disk loaded assemblies not registering when hotreloading.
 
 `0.9.6430` Patch some UI crap.

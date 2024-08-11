@@ -100,12 +100,20 @@ namespace LBoLEntitySideloader.Entities
         /// <returns></returns>
         public abstract Sprite LoadSprite();
 
+        public virtual ExtraIcons LoadExtraIcons() { return null; }
+
         public void Consume(Sprite sprite)
         {
-            if (sprite == null)
-                return;
+            if (sprite != null)
+                ResourcesHelper.Sprites[typeof(StatusEffect)].AlwaysAdd(UniqueId, sprite);
 
-            ResourcesHelper.Sprites[typeof(StatusEffect)].AlwaysAdd(UniqueId, sprite);
+            var extraIcons = LoadExtraIcons();
+            if (extraIcons != null)
+                foreach (var kv in extraIcons.LoadMany())
+                {
+                    if (kv.Key != "" && kv.Value != null)
+                        ResourcesHelper.Sprites[typeof(StatusEffect)].AlwaysAdd(UniqueId + kv.Key, kv.Value);
+                }
         }
 
         public abstract LocalizationOption LoadLocalization();

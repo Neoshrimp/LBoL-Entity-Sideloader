@@ -21,7 +21,6 @@ namespace LBoLEntitySideloader
             try
             {
                 userInfos.Add(assembly, EntityManager.ScanAssembly(assembly));
-
             }
             catch (Exception ex)
             {
