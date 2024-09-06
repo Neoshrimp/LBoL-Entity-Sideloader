@@ -1,5 +1,7 @@
 ## First Card
 
+*Stuck? MyFirstCard.md is outdated yet again? Join and get help in [modding Discord](https://discord.gg/WT4qdfYhhG)*
+
 Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug errors ~~(and ability to read the bloody error messages)~~.
 
 - [One time] Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/).
