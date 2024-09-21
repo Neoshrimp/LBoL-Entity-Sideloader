@@ -347,6 +347,7 @@
       <None Remove="resources\ExhibitsEn.yaml" />
       <None Remove="Resources\ghibli.jpg" />
       <None Remove="Resources\goblinPunch.png" />
+      <None Remove="resources\IntentionsEn.yaml" />
       <None Remove="Resources\JadeBoxEn.yaml" />
       <None Remove="resources\PlayerUnitEn.yaml" />
       <None Remove="Resources\reimu_fist.png" />

@@ -217,6 +217,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.IntentionTemplate.SelectAltIconsSuffix(LBoL.Core.Units.Intention)">
+            <summary>
+            Intention can switch between several icons. Icons are identified by suffix keys supplied in IntentionImages.subSprites.
+            </summary>
+            <param name="intention">The custom intention</param>
+            <returns>Suffix of a sub icon</returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.AddExhibitAtTheStart(LBoL.Core.GameRunController,System.Collections.Generic.HashSet{System.Type})">
             <summary>
             Gives player and and exhibit and removes it from the exhibit pool.
@@ -700,6 +707,11 @@
             Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e.,  UltimateSkillKo.yaml
             </summary>
             <param name="templateName">general template type</param>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.IntentionImages.subSprites">
+            <summary>
+            [optional] suffix => subSprite
+            </summary>
         </member>
         <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">
             <summary>

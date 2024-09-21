@@ -27,7 +27,6 @@ using LBoL.EntityLib.Cards.Character.Reimu;
 namespace LBoLEntitySideloader.GameFixes
 {
     [HarmonyPatch(typeof(ReimuSilence), "Actions", MethodType.Enumerator)]
-    [HarmonyDebug]
     class ReimuSilencePatch
     {
 

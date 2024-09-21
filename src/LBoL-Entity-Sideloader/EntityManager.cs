@@ -7,6 +7,7 @@ using LBoL.Core;
 using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
+using LBoLEntitySideloader.Entities.MockConfigs;
 using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
@@ -495,6 +496,12 @@ namespace LBoLEntitySideloader
             var configType = entityDefinition.ConfigType();
             var defType = entityDefinition.GetType();
 
+            if (configType == null)
+                return null;
+
+            if (configType.IsSubclassOf(typeof(MockConfig)))
+                return null;
+
 
             var f_Id = ConfigReflection.GetIdField(configType);
 
@@ -826,6 +833,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => eft.Consume(eft.LoadEffectData()), definition, nameof(eft.LoadEffectData), user);
                     }
+                    else if (definition is IntentionTemplate it)
+                    {
+                        HandleOverwriteWrap(() => it.Consume(it.LoadSprites()), definition, nameof(it.LoadSprites), user);
+                    }
 
 
 
@@ -894,7 +905,11 @@ namespace LBoLEntitySideloader
                             UniqueTracker.Instance.spellTemplates.TryAdd(spT.userAssembly, new Dictionary<string, SpellTemplate>());
                             UniqueTracker.Instance.spellTemplates[spT.userAssembly].AlwaysAdd(spT.GetId(), spT);
                         }, definition, nameof(spT.LoadLocalization), user);
-                    }   
+                    }
+                    else if (definition is IntentionTemplate it)
+                    {
+                        HandleOverwriteWrap(() => it.Consume(it.LoadLocalization()), definition, nameof(it.LoadLocalization), user);
+                    }
                 }
 
                 // load global localization

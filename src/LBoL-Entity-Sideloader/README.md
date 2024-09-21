@@ -6,6 +6,10 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7000` Add enemy intention template `IntentionTemplate`. 
+Add method for adding custom Eiki summon `PlayerUnitTemplate.AssociateEikiSummon`.
+Fix *Fantasy Seal -Worn-* not dealing increased damage after upgrade.
+
 `0.9.6500` Add support for multiple SE icons via optional `LoadExtraIcons` override in `StatusEffectTemplate`.
 
 `0.9.6440` Fix custom save data from disk loaded assemblies not registering when hotreloading.
