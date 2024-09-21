@@ -57,7 +57,7 @@ namespace LBoLEntitySideloader.ExtraFunc
 
         public IEnumerator GetEnumerator()
         {
-            while (preEnum.MoveNext()) yield return preEnum.Current;
+            while (preEnum?.MoveNext() ?? false) yield return preEnum.Current;
             int i = 0;
             while (target_enumerator.MoveNext())
             {
@@ -69,7 +69,7 @@ namespace LBoLEntitySideloader.ExtraFunc
                 }
                 i++;
             }
-            while (postEnum.MoveNext()) yield return preEnum.Current;
+            while (postEnum?.MoveNext() ?? false) yield return preEnum.Current;
         }
     }
 

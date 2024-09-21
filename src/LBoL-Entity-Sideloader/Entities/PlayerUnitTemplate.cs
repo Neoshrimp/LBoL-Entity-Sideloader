@@ -32,7 +32,6 @@ using LBoLEntitySideloader.Entities.Patches;
     
 namespace LBoLEntitySideloader.Entities
 {
-    // soon(tm)
     public abstract class PlayerUnitTemplate : EntityDefinition,
         IConfigProvider<PlayerUnitConfig>,
         IGameEntityProvider<PlayerUnit>,
@@ -91,6 +90,33 @@ namespace LBoLEntitySideloader.Entities
         }
 
 
+        public class EikiSummonInfo
+        {
+            public Type summonType;
+
+            public EikiSummonInfo(Type summonType, string spellcardId = null)
+            {
+                this.summonType = summonType;
+                if(spellcardId != null)
+                    this.spellcardId = spellcardId;
+            }
+
+
+            /// <summary>
+            /// Determines summoning spellcard visual effect and title.
+            /// </summary>
+            public string spellcardId = "净颇梨审判";
+        }
+
+
+        /// <summary>
+        /// Set mirror summon for Eiki fight. Default is Reimu.
+        /// </summary>
+        /// <returns></returns>
+        public virtual EikiSummonInfo AssociateEikiSummon()
+        {
+            return null;
+        }
 
 
 
@@ -198,9 +224,6 @@ namespace LBoLEntitySideloader.Entities
             }
         }
 
-
-
-   
 
     }
 

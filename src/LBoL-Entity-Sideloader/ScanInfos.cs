@@ -25,7 +25,7 @@ namespace LBoLEntitySideloader
         /// <summary>
         /// EntityDefinition type => EntityDefinition instance
         /// </summary>
-        public Dictionary<Type, EntityDefinition> definitionInfos = new Dictionary<Type, EntityDefinition>();
+        public Dictionary<Type, EntityDefinition> definitionInstances = new Dictionary<Type, EntityDefinition>();
 
         /// <summary>
         /// entity factory type => concrete entity type

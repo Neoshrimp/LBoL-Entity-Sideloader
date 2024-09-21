@@ -14,6 +14,8 @@ using LBoL.Core.Units;
 using LBoL.EntityLib.Cards.Character.Reimu;
 using LBoL.EntityLib.Cards.Neutral.NoColor;
 using LBoL.EntityLib.Cards.Neutral.Red;
+using LBoL.EntityLib.EnemyUnits.Normal;
+using LBoL.EntityLib.EnemyUnits.Opponent;
 using LBoL.EntityLib.Exhibits.Common;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.PlayerUnits;
@@ -68,8 +70,13 @@ namespace Random_Examples
             return sprites;
         
         }
-            
-        
+
+
+
+        public override EikiSummonInfo AssociateEikiSummon()
+        {
+            return new EikiSummonInfo(typeof(LBoL.EntityLib.EnemyUnits.Opponent.Sakuya));
+        }
 
         public override PlayerUnitConfig MakeConfig()
         {

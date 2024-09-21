@@ -107,7 +107,7 @@ namespace Random_Examples
 
             EnemyUnitTemplate.AddBossNodeIcon("Reimu", () => ResourceLoader.LoadSprite("SelectionCircleIcon.png", SuikaPlayerDef.dir));
 
-            StageExamples.AddStages();
+            //StageExamples.AddStages();
 
             // unload asset bundles OnDestroy
             suikaAB = ResourceLoader.LoadAssetBundle("suikaBundle", SuikaPlayerDef.dir);

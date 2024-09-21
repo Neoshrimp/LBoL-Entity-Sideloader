@@ -251,6 +251,17 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="F:LBoLEntitySideloader.Entities.PlayerUnitTemplate.EikiSummonInfo.spellcardId">
+            <summary>
+            Determines summoning spellcard visual effect and title.
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.AssociateEikiSummon">
+            <summary>
+            Set mirror summon for Eiki fight. Default is Reimu.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.DefaultConfig">
             <summary> 
             Id : 
@@ -818,7 +829,7 @@
             <param name="protocol"></param>
             <returns></returns>
         </member>
-        <member name="F:LBoLEntitySideloader.UserInfo.definitionInfos">
+        <member name="F:LBoLEntitySideloader.UserInfo.definitionInstances">
             <summary>
             EntityDefinition type => EntityDefinition instance
             </summary>

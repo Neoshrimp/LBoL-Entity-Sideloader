@@ -111,7 +111,7 @@ namespace LBoLEntitySideloader
 
                         var definition = (EntityDefinition)Activator.CreateInstance(type);
 
-                        userInfo.definitionInfos.Add(type, definition);
+                        userInfo.definitionInstances.Add(type, definition);
 
                         definition.userAssembly = userInfo.assembly;
                         definition.user = userInfo;
@@ -186,7 +186,7 @@ namespace LBoLEntitySideloader
                 // all definitions needs to be instantiated at the point of this check
                 foreach (var ed in foundEntityLogicForDefinitionTypes)
                 {
-                    if (userInfo.definition2customEntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInfos.TryGetValue(ed, out EntityDefinition definition))
+                    if (userInfo.definition2customEntityLogicType.TryGetValue(ed, out Type entityLogicType) && userInfo.definitionInstances.TryGetValue(ed, out EntityDefinition definition))
 
                         if (!entityLogicType.IsSubclassOf(definition.EntityType()))
                         {
@@ -194,7 +194,7 @@ namespace LBoLEntitySideloader
                         }
                 }
 
-                foreach (var kv in userInfo.definitionInfos)
+                foreach (var kv in userInfo.definitionInstances)
                 {
                     var defType = kv.Key;
                     var defVal = kv.Value;
@@ -206,14 +206,14 @@ namespace LBoLEntitySideloader
                 }
             }
 
-            log.LogMessage($"{assembly.GetName().Name} scanned! {userInfo.definitionInfos.Count()} Entity definition(s) found.");
+            log.LogMessage($"{assembly.GetName().Name} scanned! {userInfo.definitionInstances.Count()} Entity definition(s) found.");
 
 
 
             if (BepinexPlugin.devModeConfig.Value && BepinexPlugin.devExtraLoggingConfig.Value)
             {
                 log.LogInfo("(Extra logging) Entity definitions found: ");
-                userInfo.definitionInfos.Do(kv => log.LogInfo(kv.Key.Name));
+                userInfo.definitionInstances.Do(kv => log.LogInfo(kv.Key.Name));
             }
 
             return userInfo;
@@ -337,7 +337,7 @@ namespace LBoLEntitySideloader
             if (BepinexPlugin.devModeConfig.Value)
                 stopwatch.Start();
 
-            foreach (var kv in user.definitionInfos)
+            foreach (var kv in user.definitionInstances)
             {
                 var type = kv.Key;
 
@@ -625,14 +625,14 @@ namespace LBoLEntitySideloader
                     {
                         Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering entity logic type in TypeFactory<{facType.Name}>, typeName: {ei.entityType.Name}, from template: {ei.definitionType.Name}");
 
-                        if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
+                        if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInstances.ContainsKey(ei.definitionType))
                         {
                             log.LogError($"TypeFactory<{facType.Name}>: Cannot register entity logic {ei.entityType.Name} because template {ei.definitionType.Name} was not properly loaded.");
                             // entity could be removed from typesToRegister
                             continue;
                         }
                         // should be type.name for now
-                        var definition = user.definitionInfos[ei.definitionType];
+                        var definition = user.definitionInstances[ei.definitionType];
                         var uId = definition.UniqueId;
 
                         if (uId != ei.entityType.Name)
@@ -719,10 +719,10 @@ namespace LBoLEntitySideloader
                 foreach (var ei in typesToRegister)
                 {
 
-                    if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInfos.ContainsKey(ei.definitionType))
+                    if (UniqueTracker.Instance.invalidRegistrations.Contains(ei.definitionType) || !user.definitionInstances.ContainsKey(ei.definitionType))
                         continue;
 
-                    var definition = user.definitionInfos[ei.definitionType];
+                    var definition = user.definitionInstances[ei.definitionType];
                     var uId = definition.UniqueId;
 
                     if (!user.IsForOverwriting(ei.definitionType))
@@ -788,7 +788,7 @@ namespace LBoLEntitySideloader
             foreach (var kv in sideloaderUsers.userInfos)
             {
                 var user = kv.Value;
-                foreach (var kv2 in kv.Value.definitionInfos)
+                foreach (var kv2 in kv.Value.definitionInstances)
                 {
                     var defType = kv2.Key;
 
@@ -845,7 +845,7 @@ namespace LBoLEntitySideloader
                 UniqueTracker.Instance.typesToLocalize[user.assembly] = new Dictionary<Type, LocalizationInfo>();
                 //user.ClearTypesToLocalize();
 
-                foreach (var template in user.definitionInfos)
+                foreach (var template in user.definitionInstances)
                 {
                     var definition = template.Value;
                     if (definition is CardTemplate ct)
@@ -1023,6 +1023,11 @@ namespace LBoLEntitySideloader
                 }
 
             }
+        }
+
+        public IEnumerable<(Assembly ass, UserInfo userInfo)> AllUsers 
+        { 
+            get => sideloaderUsers.userInfos.Concat(secondaryUsers.userInfos).Select(kv => (kv.Key, kv.Value)); 
         }
 
 
