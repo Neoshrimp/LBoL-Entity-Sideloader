@@ -8,6 +8,7 @@ using LBoL.Core;
 using LBoL.Core.Battle;
 using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
+using LBoL.Core.Exhibits;
 using LBoL.Core.Randoms;
 using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
@@ -91,13 +92,16 @@ namespace Random_Examples
             NarrativeColor: "#e58c27",
             IsSelectable: true,
             MaxHp: 90,
-            InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },
+            //InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },
+            InitialMana: new LBoL.Base.ManaGroup() { Blue = 1, Colorless = 2 },
+
             InitialMoney: 3,
             InitialPower: 30,
             //temp
             UltimateSkillA: reimuConfig.UltimateSkillA,
             UltimateSkillB: reimuConfig.UltimateSkillB,
-            ExhibitA: reimuConfig.ExhibitA,
+            //ExhibitA: reimuConfig.ExhibitA,
+            ExhibitA: nameof(YichuiPiao),
             ExhibitB: reimuConfig.ExhibitB,
             DeckA: reimuConfig.DeckA,
             DeckB: reimuConfig.DeckB,
@@ -234,9 +238,13 @@ namespace Random_Examples
             var config = DefaultConfig();
 
             config.GunName = "Simple1";
-            config.Colors = new List<ManaColor>() { ManaColor.Red };
-            config.Cost = new ManaGroup() { Any = 1, Red = 1 };
+            //config.Colors = new List<ManaColor>() { ManaColor.Red };
+            config.Colors = new List<ManaColor>() { ManaColor.Blue };
 
+            //config.Cost = new ManaGroup() { Any = 1, Red = 1 };
+            config.Cost = new ManaGroup() { Any = 1, Blue = 1 };
+
+            config.Rarity = Rarity.Uncommon;
             config.Owner = "Suika";
 
             config.Type = CardType.Attack;

@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7100` Fix shop softlock when there are not enough cards in the pool (somehow).
+
 `0.9.7000` Add enemy intention template `IntentionTemplate`. 
 Add method for adding custom Eiki summon `PlayerUnitTemplate.AssociateEikiSummon`.
 Fix *Fantasy Seal -Worn-* not dealing increased damage after upgrade.
