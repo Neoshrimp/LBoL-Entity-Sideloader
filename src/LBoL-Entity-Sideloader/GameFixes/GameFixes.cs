@@ -247,7 +247,7 @@ namespace LBoLEntitySideloader.GameFixes
             catch (Exception ex)
             {
 
-                Log.log.LogError(ex);
+                Log.log.LogWarning(ex);
             }
 
 
