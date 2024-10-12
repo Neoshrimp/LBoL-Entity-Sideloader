@@ -353,7 +353,8 @@ namespace LBoLEntitySideloader
                     {
                         if (entityDefinition is CardTemplate ct)
                         {
-                            RegisterConfig(ct, user);
+                            var cardConfig = RegisterConfig(ct, user);
+                            cardConfig.Colors = cardConfig.Colors.OrderBy(c => (int)c).ToList();
                         }
                         else if (entityDefinition is StatusEffectTemplate st)
                         {

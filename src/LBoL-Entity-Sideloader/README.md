@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7300` Auto sort card colours in WUBRGC order.
+
 `0.9.7100` Fix shop softlock when there are not enough cards in the pool (somehow).
 
 `0.9.7000` Add enemy intention template `IntentionTemplate`. 
