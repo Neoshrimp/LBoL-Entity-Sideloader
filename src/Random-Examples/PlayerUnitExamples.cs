@@ -239,7 +239,7 @@ namespace Random_Examples
 
             config.GunName = "Simple1";
             //config.Colors = new List<ManaColor>() { ManaColor.Red };
-            config.Colors = new List<ManaColor>() { ManaColor.Blue };
+            config.Colors = new List<ManaColor>() { ManaColor.Blue, ManaColor.White };
 
             //config.Cost = new ManaGroup() { Any = 1, Red = 1 };
             config.Cost = new ManaGroup() { Any = 1, Blue = 1 };
