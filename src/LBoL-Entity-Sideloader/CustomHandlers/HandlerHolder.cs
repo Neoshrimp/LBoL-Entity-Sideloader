@@ -26,7 +26,8 @@ namespace LBoLEntitySideloader.CustomHandlers
         public override bool Equals(object obj)
         {
             if (obj is HandlerHolder<T, PT> otherHh)
-                return (handler?.Equals(otherHh.handler) ?? otherHh.handler == null)
+                return (eventProvider?.Equals(otherHh.eventProvider) ?? otherHh.eventProvider == null)
+                       && (handler?.Equals(otherHh.handler) ?? otherHh.handler == null)
                        && (filter?.Equals(otherHh.filter) ?? otherHh.filter == null)
                        && priority == otherHh.priority;
             return false;
@@ -34,7 +35,7 @@ namespace LBoLEntitySideloader.CustomHandlers
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(handler, filter, priority);
+            return HashCode.Combine(eventProvider, handler, filter, priority);
         }
 
         public GameEventPriority GetPriority()
