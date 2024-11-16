@@ -97,6 +97,8 @@ namespace LBoLEntitySideloader.Entities
                UpgradedPassiveCost : null,
                ActiveCost : null,
                UpgradedActiveCost : null,
+               ActiveCost2 : null,
+               UpgradedActiveCost2 : null,
                UltimateCost : null,
                UpgradedUltimateCost : null,
 

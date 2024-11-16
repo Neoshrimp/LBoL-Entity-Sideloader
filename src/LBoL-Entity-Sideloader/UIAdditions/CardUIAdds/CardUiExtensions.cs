@@ -32,8 +32,8 @@ namespace LBoLEntitySideloader.UIAdditions.CardUIAdds
             Vector3? vector = cardUi._playBoard.FindActionSourceWorldPosition(action.Source);
             List<Card> list2 = action.Args.Cards.ToList();
             List<CardWidget> list = new List<CardWidget>();
-            Vector3 localPosition = cardUi.exileZoneButton.transform.localPosition;
-            Vector3 endPosition = cardUi.exileZoneButton.transform.localPosition;
+            Vector3 localPosition = cardUi.ExileLocalPosition;
+            Vector3 endPosition = cardUi.ExileLocalPosition;
             DG.Tweening.Sequence val = DOTween.Sequence();
             int count = list2.Count;
             if (count > 5)
@@ -104,7 +104,7 @@ namespace LBoLEntitySideloader.UIAdditions.CardUIAdds
                     UnityEngine.Object.Destroy(item4.gameObject);
                 }
 
-                CardUi.ImageBlink(cardUi.exileZoneButton.image);
+                //CardUi.ImageBlink(cardUi.exileZoneButton.image);
                 cardUi.ExileCount = cardUi.Battle.ExileZone.Count;
                 foreach (Transform item5 in parents)
                 {

@@ -164,6 +164,8 @@ namespace LBoLEntitySideloader.Entities
         {
             var config = new EnemyGroupConfig(
                     Id : "",
+                    IsSub: false,
+                    Subs: new List<string>() { },
                     Name : "",
                     FormationName : VanillaFormations.Single,
                     Enemies : new List<string>() { },
