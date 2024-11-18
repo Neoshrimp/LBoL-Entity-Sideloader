@@ -70,6 +70,8 @@ namespace Random_Examples
                 // because of the way 3 fairies are coded they really need to stick together <3
                 // needs a slight code fix for Sunny to work but it's included in the Sideloader
                 Enemies: new List<string>() { nameof(Aya), "Sunny", "Luna", "Star" },
+                IsSub: false,
+                Subs: new string[] { },
                 EnemyType: EnemyType.Elite,
                 DebutTime: 1f,
                 RollBossExhibit: false,
@@ -95,6 +97,8 @@ namespace Random_Examples
                 Name: "BallsAndGirl",
                 FormationName: CustomFormations.Vedge,
                 Enemies: new List<string>() { "SickGirl", "YinyangyuBlue", "YinyangyuBlue", "YinyangyuRed", "YinyangyuRed" },
+                IsSub: false,
+                Subs: new string[] { },
                 EnemyType: EnemyType.Normal,
                 DebutTime: 1f,
                 RollBossExhibit: false,
@@ -118,6 +122,8 @@ namespace Random_Examples
                 Name: "ThreeCrows",
                 FormationName: VanillaFormations.Triangle,
                 Enemies: new List<string>() { nameof(RavenWen), nameof(RavenGuo), nameof(RavenGuo) },
+                IsSub: false,
+                Subs: new string[] { },
                 EnemyType: EnemyType.Normal,
                 DebutTime: 1f,
                 RollBossExhibit: false,

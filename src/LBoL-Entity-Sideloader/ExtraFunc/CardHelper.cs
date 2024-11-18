@@ -74,7 +74,7 @@ namespace LBoLEntitySideloader.ExtraFunc
         class UseCardAction_Patch
         {
 
-            static Type delegateType = typeof(UseCardAction).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass16_0"));
+            static Type delegateType = typeof(UseCardAction).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass17_0"));
 
             static FieldInfo useCardAtionInstField = AccessTools.Field(delegateType, "<>4__this");
 

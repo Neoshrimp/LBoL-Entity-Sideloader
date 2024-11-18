@@ -6,6 +6,9 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+
+`0.9.7401` Update for LBoL 1.6.0 beta. **Not compatible with previous versions.**
+
 `0.9.7400` Fix custom handler hash not being computed correctly.
 
 `0.9.7300` Auto sort card colours in WUBRGC order.
