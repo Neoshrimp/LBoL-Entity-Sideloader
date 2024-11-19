@@ -207,7 +207,7 @@ basically denotes a path to visual effect prefab. Effect is a GameObject with an
 
 Version 1.6.0 introduced card autoplay. Now card effects can be resolved when they are **used** by the player or **played** by another card or entity.
 
-How the effect are gonna be resolved is controlled by the action used, either `UseCardAction` or `PlayCardAction`, respectively. Despite being similar they are by all right separate actions with their own set of events:
+How the effects are gonna be resolved is controlled by the action used, either `UseCardAction` or `PlayCardAction`, respectively. Despite being similar they are by all right separate actions with their own set of events:
 `Battle.CardUsed/Battle.CardUsing` vs `Battle.CardPlaying/Battle.CardPlayed`. In special case, `UseCardAction` can trigger `PlayCardAction` if `CardUsingEventArgs.PlayTwice` is flagged on `Battle.CardUsing` event. If this is the case, the card used will be automatically played a second time.
 
 **Important addition** from Card's perspective is `Card.AfterFollowPlayAction`. That's a twin method for `Card.AfterUseAction` which is responsible for clean-up after card is used. Clean-up includes moving card to discard, banishing Ability etc. `AfterFollowPlayAction` perform similar clean up, except only after `PlayCardAction` finishes instead. Usually there's no need to worry about the clean-up bit but the after use methods can be overriden. This usually used to achieve some finer timing or set states so if your code **overrides `AfterUseAction`** it will need an update to make sure that the card targeted by `PlayCardAction` functions correctly.
