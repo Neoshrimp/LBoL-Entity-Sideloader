@@ -8,8 +8,8 @@ using LBoL.Core.Battle.BattleActions;
 namespace LBoLEntitySideloader.GameFixes
 {
 
-
-    [HarmonyPatch(typeof(PlayCardAction), nameof(PlayCardAction.ReTargeting))]
+    // devs fixed it
+    //[HarmonyPatch(typeof(PlayCardAction), nameof(PlayCardAction.ReTargeting))]
     class ReTargeting_Patch
     {
 
