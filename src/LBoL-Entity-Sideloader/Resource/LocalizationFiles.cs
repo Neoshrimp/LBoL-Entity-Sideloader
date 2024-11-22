@@ -113,7 +113,8 @@ namespace LBoLEntitySideloader.Resource
 
             if (yaml == null)
             {
-                Log.log.LogWarning($"{nameof(LocalizationFiles)}: No localization found.");
+                Log.log.LogWarning($"{nameof(LocalizationFiles)}: No localization file found.");
+                return dictionary;
             }
 
             IOrderedDictionary<YamlNode, YamlNode> children = yaml.Children;
