@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7405` Add fix to precalculated block/shield rounding.
+
 `0.9.7402` Koishi random retargeting fix.
 
 `0.9.7401` Update for LBoL 1.6.0 beta. **Not compatible with previous versions.**
