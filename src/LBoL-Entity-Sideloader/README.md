@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7500` Add API for custom keywords. deez
+
 `0.9.7405` Add fix to precalculated block/shield rounding.
 
 `0.9.7402` Koishi random retargeting fix.

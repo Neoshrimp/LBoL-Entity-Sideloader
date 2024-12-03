@@ -53,6 +53,51 @@
             </summary>
             <param name="scriptEngineInfo"></param>
         </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.KwDescPos">
+            <summary>
+            Keyword position in card's description.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.CardKeyword">
+            <summary>
+            Core class for custom keywords. Meant to be subclassed if keyword needs extra properties.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.kwSEid">
+            <summary>
+            Identity of the keyword. Should be an Id of an existing StatusEffect which is used as localization middleman.
+            Safety checks if SE actually exists are NOT performed.
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Clone(LBoLEntitySideloader.CustomKeywords.CloningMethod)">
+            <summary>
+            How keyword properties should be cloned. Returning null means keyword is not clonable.
+            </summary>
+            <param name="cloningMethod">Optionally filter by method which performs the cloning.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Merge(LBoLEntitySideloader.CustomKeywords.CardKeyword)">
+            <summary>
+            How should current keyword be merged with another of the same type. Only matters if keyword has extra properties. 
+            Performed on cloning and KeywordManager.AddCustomKeyword
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.KeywordManager">
+            <summary>
+            API for adding/removing/checking custom Keywords.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IOnTooltipDisplay">
+            <summary>
+            Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IOverrideSEBrief">
+            <summary>
+            Effectively override(via postfix) non-virtual StatusEffect.Brief getter. Brief description is used to display SE(keyword) tooltip.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">
             <summary>
             No: 0,
