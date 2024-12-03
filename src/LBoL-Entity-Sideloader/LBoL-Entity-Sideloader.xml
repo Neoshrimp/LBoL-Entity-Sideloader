@@ -985,9 +985,8 @@
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.String)">
             <summary>
-            Add a new enum value to the given <paramref name="T"/> with the first free value
+            Add a new enum value to the given <paramref name="name"/> with the first free value
             </summary>
-            <param name="T">Type of enum to add the value to</param>
             <param name="name">Name of the new enum value</param>
             <returns>The new enum value</returns>
         </member>
@@ -1001,9 +1000,8 @@
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.Object,System.String)">
             <summary>
-            Add a new value to the given <paramref name="T"/> 
+            Add a new value to the given <paramref name="value"/> 
             </summary>
-            <param name="T">Enum to add the new value to</param>
             <param name="value">Value to add to the enum</param>
             <param name="name">The name of the new value</param>
         </member>
@@ -1019,7 +1017,6 @@
             <summary>
             Get first undefined value in an enum
             </summary>
-            <param name="T"></param>
             <returns>The first undefined enum value</returns>
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.GetFirstFreeValue(System.Type)">
