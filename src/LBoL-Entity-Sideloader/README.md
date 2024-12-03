@@ -6,7 +6,7 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
-`0.9.7500` Add API for custom keywords. deez
+`0.9.7500` Add API for custom keywords. [Docs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/CustomKeywords) in the code. [Examples](https://github.com/Neoshrimp/LBoL_Doremy/blob/master/LBoL_Doremy/DoremyChar/Keywords/DoremyKw.cs) in Doremy codebase.
 
 `0.9.7405` Add fix to precalculated block/shield rounding.
 
