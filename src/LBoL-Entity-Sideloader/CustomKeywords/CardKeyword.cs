@@ -39,9 +39,17 @@ namespace LBoLEntitySideloader.CustomKeywords
         /// </summary>
         public readonly string kwSEid;
 
-        public readonly KwDescPos descPos;
 
-        public readonly bool isVerbose;
+        /// <summary>
+        /// Not readonly but probably shouldn't be changed past construction.
+        /// </summary>
+        public KwDescPos descPos = KwDescPos.Last;
+
+
+        /// <summary>
+        /// Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
+        /// </summary>
+        public readonly bool isVerbose = false;
 
 
         /// <summary>
@@ -52,7 +60,7 @@ namespace LBoLEntitySideloader.CustomKeywords
         [return: MaybeNull]
         public virtual CardKeyword Clone(CloningMethod cloningMethod) 
         { 
-            return new CardKeyword(kwSEid, descPos, isVerbose); 
+            return new CardKeyword(kwSEid, isVerbose) { descPos = this.descPos }; 
         }
 
 
@@ -63,10 +71,9 @@ namespace LBoLEntitySideloader.CustomKeywords
         /// <param name="other"></param>
         public virtual void Merge(CardKeyword other) { }
 
-        public CardKeyword(string kwSEid, KwDescPos descPos = KwDescPos.Last, bool isVerbose = false)
+        public CardKeyword(string kwSEid, bool isVerbose = false)
         {
             this.kwSEid = kwSEid;
-            this.descPos = descPos;
             this.isVerbose = isVerbose;
         }
 

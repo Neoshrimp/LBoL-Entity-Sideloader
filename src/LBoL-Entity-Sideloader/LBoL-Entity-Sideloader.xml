@@ -69,6 +69,16 @@
             Safety checks if SE actually exists are NOT performed.
             </summary>
         </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.descPos">
+            <summary>
+            Not readonly but probably shouldn't be changed past construction.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.isVerbose">
+            <summary>
+            Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Clone(LBoLEntitySideloader.CustomKeywords.CloningMethod)">
             <summary>
             How keyword properties should be cloned. Returning null means keyword is not clonable.

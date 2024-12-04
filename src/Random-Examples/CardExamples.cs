@@ -4,10 +4,12 @@ using LBoL.Core;
 using LBoL.Core.Battle;
 using LBoL.Core.Battle.Interactions;
 using LBoL.Core.Cards;
+using LBoL.Core.StatusEffects;
 using LBoL.EntityLib.Cards.Character.Sakuya;
 using LBoL.Presentation;
 using LBoLEntitySideloader;
 using LBoLEntitySideloader.Attributes;
+using LBoLEntitySideloader.CustomKeywords;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ExtraFunc;
 using LBoLEntitySideloader.Resource;
@@ -71,9 +73,30 @@ namespace Random_Examples
     }
 
 
+    public static class ExampleKeywords
+    {
+        public static CardKeyword SomeKw => new CardKeyword(nameof(ExtraTurn));
+
+        public static Testkw Testkw = new Testkw();
+    }
+
+    public class Testkw : CardKeyword
+    {
+        public Testkw(string kwSEid = nameof(ExtraTurn), bool isVerbose = false) : base(kwSEid, isVerbose)
+        {
+            descPos = KwDescPos.Last;
+        }
+    }
+
     [EntityLogic(typeof(AutoPlayHavocDef))]
     public sealed class AutoPlayHavoc : Card
     {
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            this.AddCustomKeyword(ExampleKeywords.Testkw);
+        }
 
         public override Interaction Precondition()
         {
