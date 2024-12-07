@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7601` Fix `UnitModelTemplate.CheckModelOptions` null check.
+
 `0.9.7600` Slight but breaking change in keyword API. `descPos` argument removed from `CardKeyword` constructor. Now it's meant to be supplied via object initializer. Reason for the change is the fact that mono or mono.cecil behaves weirdly with enum constants/default arguments when the enum definition is from another loaded plugin (Sideloader).
 
 `0.9.7500` Add API for custom keywords. [Docs](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/CustomKeywords) in the code. [Examples](https://github.com/Neoshrimp/LBoL_Doremy/blob/DLrework/LBoL_Doremy/DoremyChar/Keywords/DoremyKw.cs) in Doremy codebase.
