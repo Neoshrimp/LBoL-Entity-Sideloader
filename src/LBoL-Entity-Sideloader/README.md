@@ -5,6 +5,7 @@ Modding framework for working with LBoL entities.
 [IntoxicatedKid](https://github.com/IntoxicatedKid)
 
 #### Change log
+`0.9.7602` Add `StartGameUI` patches to unlock all difficulties, requests and jadeboxes
 
 `0.9.7601` Fix `UnitModelTemplate.CheckModelOptions` null check.
 
