@@ -6,6 +6,10 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+`0.9.7710` Fix embedded resource file name matching bug.
+
+`0.9.7700` Update for LBoL 1.6.1 beta. **Not compatible with previous versions.**
+
 `0.9.7602` Add `StartGameUI` patches to unlock all difficulties, requests and jadeboxes. *thanks, cyaneko*
 
 `0.9.7601` Fix `UnitModelTemplate.CheckModelOptions` null check.

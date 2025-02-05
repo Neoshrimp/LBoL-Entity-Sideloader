@@ -225,9 +225,14 @@ namespace Random_Examples
 
 
 
-        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+        //public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("GoblinPunch.png", embeddedSource));
 
-
+        public override CardImages LoadCardImages()
+        {
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png");
+            return imgs;
+        }
 
         public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
@@ -270,15 +275,21 @@ namespace Random_Examples
 
 
 
-    public sealed class GoblinPunchRareCardDef : CardTemplate
+    public sealed class EpicGoblinPunchCardDef : CardTemplate
     {
-        public override IdContainer GetId() => nameof(GoblinPunchRare);
+        public override IdContainer GetId() => nameof(EpicGoblinPunch);
 
 
 
-        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+        //public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("EpicGoblinPunch.png", embeddedSource));
 
 
+        public override CardImages LoadCardImages()
+        {
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png");
+            return imgs;
+        }
 
         public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
@@ -294,8 +305,8 @@ namespace Random_Examples
         }
 
 
-        [EntityLogic(typeof(GoblinPunchRareCardDef))]
-        public sealed class GoblinPunchRare : Card
+        [EntityLogic(typeof(EpicGoblinPunchCardDef))]
+        public sealed class EpicGoblinPunch : Card
         {
 
         }
