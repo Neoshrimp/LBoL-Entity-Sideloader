@@ -521,7 +521,6 @@ namespace LBoLEntitySideloader.Entities.Patches
 
 
         [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.SelectPlayer))]
-        [HarmonyDebug]
         internal class SelectPlayer_Patch
         {
 
@@ -619,6 +618,7 @@ namespace LBoLEntitySideloader.Entities.Patches
             {
 
                 return new CodeMatcher(instructions)
+                    // 1.7.0 why tf index range bounds were needed in the first place?
                     // main loop
 /*                    .MatchForward(false, new CodeMatch[] { OpCodes.Ldc_I4_5, OpCodes.Blt })
                     .ThrowIfInvalid("5 literal not found")
