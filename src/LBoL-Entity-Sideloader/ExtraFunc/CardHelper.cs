@@ -24,7 +24,7 @@ namespace LBoLEntitySideloader.ExtraFunc
 
         static ConditionalWeakTable<UseCardAction, SkipConsumeMana> wt_skipConsumeMana = new ConditionalWeakTable<UseCardAction, SkipConsumeMana>();
 
-
+        [Obsolete("Use vanilla PlayCardAction instead", error: false)]
         /// <summary>
         /// Returns card action for autoplaying a card.
         /// AutoCast skips ConsumeManaAction in UseCardAction phases thus never consumes actual mana or triggers associated listeners.
@@ -40,7 +40,8 @@ namespace LBoLEntitySideloader.ExtraFunc
             if (!skipConsumeManaAction)
                 consmingMana = new ManaGroup();
 
-            var uca = new UseCardAction(card, unitSelector, consmingMana);
+            // 1.7.0 assumes kicker is false
+            var uca = new UseCardAction(card, unitSelector, consmingMana, false);
 
             if (!skipConsumeManaAction)
             {

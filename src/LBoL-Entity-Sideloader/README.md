@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+`0.9.7800` Update for LBoL version 1.7.0. **Not backwards compatible**. Mod breaking changelist (non-exhaustive).
+
 `0.9.7710` Fix embedded resource file name matching bug.
 
 `0.9.7700` Update for LBoL 1.6.1 beta. **Not compatible with previous versions.**

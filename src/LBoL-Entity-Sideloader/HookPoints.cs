@@ -100,7 +100,7 @@ namespace LBoLEntitySideloader
         }
 
 
-        [HarmonyPatch(typeof(LBoL.Presentation.Environment), nameof(LBoL.Presentation.Environment.Awake))]
+        [HarmonyPatch(typeof(LBoL.Presentation.Environments.Environment), nameof(LBoL.Presentation.Environments.Environment.Awake))]
         [HarmonyPriority(Priority.First)]
         class AddEnvironments_Patch
         {

@@ -77,7 +77,9 @@ namespace Random_Examples
                 RollBossExhibit: false,
                 PlayerRoot: new Vector2(-4f, 0.5f),
                 PreBattleDialogName: "",
-                PostBattleDialogName: ""
+                PostBattleDialogName: "",
+                Hidden: false,
+                Environment: ""
             );
             return config;
         }
@@ -104,7 +106,9 @@ namespace Random_Examples
                 RollBossExhibit: false,
                 PlayerRoot: new Vector2(-4f, 0.5f),
                 PreBattleDialogName: "",
-                PostBattleDialogName: ""
+                PostBattleDialogName: "",
+                Hidden: false,
+                Environment: ""
             );
             return config;
         }
@@ -129,7 +133,9 @@ namespace Random_Examples
                 RollBossExhibit: false,
                 PlayerRoot: new Vector2(-4f, 0.5f),
                 PreBattleDialogName: "",
-                PostBattleDialogName: ""
+                PostBattleDialogName: "",
+                Hidden: false,
+                Environment: ""
             );
             return config;
         }

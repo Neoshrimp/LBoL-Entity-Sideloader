@@ -14,7 +14,7 @@ namespace LBoLEntitySideloader.UIAdditions.StartGameUI
         {
             StartGamePanel p = __instance;
 
-            if (p._playerIndex >= 0 && p._playerIndex <= p._players.Length &&
+            if (p._playerIndex >= 0 && p._playerIndex <= p._players.Count &&
                 null != p._players[p._playerIndex].Config.UnlockLevel)
             {
                 p.characterHintRoot.gameObject.SetActive(false);

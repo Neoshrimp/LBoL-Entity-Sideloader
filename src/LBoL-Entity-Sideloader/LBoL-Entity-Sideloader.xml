@@ -516,18 +516,6 @@
             <param name="action"></param>
             <param name="callingAssembly"></param>
         </member>
-        <member name="M:LBoLEntitySideloader.ExtraFunc.CardHelper.AutoCastAction(LBoL.Core.Cards.Card,LBoL.Core.UnitSelector,LBoL.Base.ManaGroup,System.Boolean)">
-            <summary>
-            Returns card action for autoplaying a card.
-            AutoCast skips ConsumeManaAction in UseCardAction phases thus never consumes actual mana or triggers associated listeners.
-            </summary>
-            <param name="card"></param>
-            <param name="unitSelector"></param>
-            <param name="consmingMana">passes consumed mana information. Useful for X cost cards.</param>
-            <param name="skipConsumeManaAction">probably should always be true. 
-            If false autocast won't skip ConsumeManaAction but consumingMana will be forced to be empty</param>
-            <returns></returns>
-        </member>
         <member name="M:LBoLEntitySideloader.ExtraFunc.CardHelper.FakeQueueConsumingMana">
             <summary>
             Queues empty entry to BattleManaPanel._consumingDequeu

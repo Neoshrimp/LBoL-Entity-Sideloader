@@ -19,7 +19,9 @@ using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
 using YamlDotNet.Core.Tokens;
-using Environment = LBoL.Presentation.Environment;
+using LBoL.Presentation.Environments;
+using Environment = LBoL.Presentation.Environments.Environment;
+using Mono.CSharp;
 
 namespace LBoLEntitySideloader.Entities
 {
@@ -345,7 +347,11 @@ namespace LBoLEntitySideloader.Entities
 
             static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return ExtraAccess.InnerMoveNext(typeof(Environment), nameof(Environment.LoadEnvironment));
+                var enumMethod = AccessTools.EnumeratorMoveNext(AccessTools.Method(typeof(Environment), nameof(Environment.LoadEnvironment), new Type[] { typeof(string) }));
+                if (enumMethod == null)
+                    throw new InvalidOperationException("Inner enumeration method not found");
+                yield return enumMethod;
+                //yield return ExtraAccess.InnerMoveNext(typeof(Environment), nameof(Environment.LoadEnvironment));
             }
 
             static void Postfix()

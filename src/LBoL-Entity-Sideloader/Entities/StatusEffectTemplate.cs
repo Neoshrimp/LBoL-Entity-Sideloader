@@ -57,6 +57,7 @@ namespace LBoLEntitySideloader.Entities
                             ShowPlusByLimit: false,
                             Keywords: Keyword.None,
                             RelativeEffects: new List<string>() { },
+                            ImageId: null,
                             VFX: "Default", 
                             VFXloop: "Default",
                             SFX: "Default"
