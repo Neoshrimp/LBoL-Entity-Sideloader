@@ -6,6 +6,8 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+`0.9.7820` Make Sideloader compatible with both beta and main branches of the game. Dual support will not be a thing in the future but, in this case, the issue was very minor and technical. Other mods are also likely to function properly on either branch.
+
 `0.9.7810` Small fix for 1.7.1.
 
 `0.9.7800` Update for LBoL version 1.7.0. **Not backwards compatible**. [Mod breaking changelist](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/1.7.0_update_change_checklist.md) (non-exhaustive yet).

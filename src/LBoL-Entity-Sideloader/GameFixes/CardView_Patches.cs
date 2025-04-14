@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Reflection;
 using LBoL.Presentation.UI.Panels;
 using UnityEngine;
+using System;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -59,7 +60,19 @@ namespace LBoLEntitySideloader.GameFixes
             static IEnumerable<MethodBase> TargetMethods()
             {
                 // pre 1.7.1 - DisplayClass64_0
-                yield return AccessTools.Method(typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass68_0")), "<ViewMiniSelect>b__0");
+                var nestedTypes = typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared);
+
+                // pre 1.7.1 should not contain type with this name
+                var targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass68_0"));
+
+                if (targetDelegateType == null)
+                    targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass64_0"));
+                if (targetDelegateType == null)
+                    throw new InvalidOperationException("No target delegate type found");
+
+                yield return AccessTools.Method(targetDelegateType, "<ViewMiniSelect>b__0");
+
+                //yield return AccessTools.Method(typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass68_0")), "<ViewMiniSelect>b__0");
             }
 
 
