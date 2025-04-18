@@ -292,7 +292,7 @@ namespace Random_Examples
         public override CardImages LoadCardImages()
         {
             var imgs = new CardImages(embeddedSource);
-            imgs.AutoLoad(this, ".png", hasUpgradeImage: true);
+            imgs.AutoLoad(this, ".png", hasUpgradeImage: true); //or manually load and set CardImages.upgrade
             return imgs;
         }
 
