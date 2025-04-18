@@ -345,6 +345,7 @@
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />
       <None Remove="Resources\EpicGoblinPunch.png" />
+      <None Remove="Resources\EpicGoblinPunchUpgrade.png" />
       <None Remove="resources\ExhibitsEn.yaml" />
       <None Remove="Resources\ghibli.jpg" />
       <None Remove="Resources\goblinPunch.png" />

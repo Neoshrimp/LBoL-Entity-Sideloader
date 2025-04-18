@@ -262,6 +262,7 @@ namespace Random_Examples
             config.Damage = 13;
             config.UpgradedDamage = 16;
 
+
             config.Illustrator = "MTB";
 
             return config;
@@ -291,7 +292,7 @@ namespace Random_Examples
         public override CardImages LoadCardImages()
         {
             var imgs = new CardImages(embeddedSource);
-            imgs.AutoLoad(this, ".png");
+            imgs.AutoLoad(this, ".png", hasUpgradeImage: true);
             return imgs;
         }
 
@@ -305,6 +306,9 @@ namespace Random_Examples
             config.Rarity = Rarity.Rare;
             config.Damage = 14;
             config.UpgradedDamage = 17;
+
+            config.UpgradeImageId = $"{GetId()}{CardImages.upgradeString}";
+
             return config;
         }
 
