@@ -56,17 +56,19 @@ namespace LBoLEntitySideloader.GameFixes
         [HarmonyPatch]
         class MiniPanelFadeDelegate_Patch
         {
-
+            // target delegate is declared in SelectCardPanel.OnShowing
             static IEnumerable<MethodBase> TargetMethods()
             {
                 // pre 1.7.1 - DisplayClass64_0
+                // pre 1.7.2 - DisplayClass68_0
+
                 var nestedTypes = typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared);
 
-                // pre 1.7.1 should not contain type with this name
-                var targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass68_0"));
+                var targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass70_0"));
 
+                // 1.7.2 this check should be w/e
                 if (targetDelegateType == null)
-                    targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass64_0"));
+                    targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass68_0"));
                 if (targetDelegateType == null)
                     throw new InvalidOperationException("No target delegate type found");
 
