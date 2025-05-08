@@ -22,9 +22,9 @@ namespace LBoLEntitySideloader.ExtraFunc
 
         class SkipConsumeMana { public bool skip; public SkipConsumeMana(bool val) => this.skip = val; }
 
-        static ConditionalWeakTable<UseCardAction, SkipConsumeMana> wt_skipConsumeMana = new ConditionalWeakTable<UseCardAction, SkipConsumeMana>();
+        static ConditionalWeakTable<UseCardAction, SkipConsumeMana> wt_skipConsumeMana = null;// new ConditionalWeakTable<UseCardAction, SkipConsumeMana>();
 
-        [Obsolete("Use vanilla PlayCardAction instead", error: false)]
+        [Obsolete("Use vanilla PlayCardAction instead", error: true)]
         /// <summary>
         /// Returns card action for autoplaying a card.
         /// AutoCast skips ConsumeManaAction in UseCardAction phases thus never consumes actual mana or triggers associated listeners.
@@ -37,6 +37,8 @@ namespace LBoLEntitySideloader.ExtraFunc
         /// <returns></returns>
         public static UseCardAction AutoCastAction(Card card, UnitSelector unitSelector, ManaGroup consmingMana, bool skipConsumeManaAction = true)
         {
+            throw new NotSupportedException("Don't use AutoCastAction, use vanilla PlayCardAction instead");
+
             if (!skipConsumeManaAction)
                 consmingMana = new ManaGroup();
 
@@ -61,8 +63,11 @@ namespace LBoLEntitySideloader.ExtraFunc
         /// Should not be used unless some very specific behavior is desired.
         /// Use AutoCastAction instead.
         /// </summary>
+        [Obsolete("Why are you using this", error: true)]
         public static void FakeQueueConsumingMana()
         {
+            throw new NotSupportedException("Why are you using this");
+
             // should not be changed
             var cost = new ManaGroup() { Any = 0 };
             var manaPanel = UiManager.GetPanel<BattleManaPanel>();
@@ -71,7 +76,7 @@ namespace LBoLEntitySideloader.ExtraFunc
         }
 
 
-        [HarmonyPatch]
+        //[HarmonyPatch]
         class UseCardAction_Patch
         {
 

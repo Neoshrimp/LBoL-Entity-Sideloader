@@ -9,6 +9,7 @@ using System;
 
 namespace LBoLEntitySideloader.GameFixes
 {
+    // sideloader 0.9.7840, remove this fix for now
     // patches to fix card panel 
     class CardView_Patches
     {
@@ -17,7 +18,7 @@ namespace LBoLEntitySideloader.GameFixes
         static public bool miniPanelShowing = false;
 
 
-        [HarmonyPatch(typeof(SelectCardPanel), nameof(SelectCardPanel.ViewMiniSelect))]
+        //[HarmonyPatch(typeof(SelectCardPanel), nameof(SelectCardPanel.ViewMiniSelect))]
         class ViewMiniSelect_Patch
         {
 
@@ -29,7 +30,7 @@ namespace LBoLEntitySideloader.GameFixes
 
 
 
-        [HarmonyPatch]
+        //[HarmonyPatch]
         class SelectCardPanel_Patch
         {
 
@@ -53,7 +54,7 @@ namespace LBoLEntitySideloader.GameFixes
 
 
 
-        [HarmonyPatch]
+        //[HarmonyPatch]
         class MiniPanelFadeDelegate_Patch
         {
             // target delegate is declared in SelectCardPanel.OnShowing
