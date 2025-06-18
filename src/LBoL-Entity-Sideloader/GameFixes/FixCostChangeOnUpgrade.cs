@@ -17,7 +17,7 @@ namespace LBoLEntitySideloader.GameFixes
         {
             if (__instance.IsXCost || null == __instance.Config.UpgradedCost)
             {
-                return false;
+                return true;
             }
 
             ManaGroup configDecrease =

@@ -6,7 +6,7 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
-`0.9.7842` Fix some interactions between cost reductions and in-battle upgrades. Mostly affects 1XX -> 2X style upgrades.
+`0.9.7842` Fix some interactions between cost reductions and in-battle upgrades. Mostly affects 1XX -> 2X style upgrades. *thanks, cyaneko*
 
 `0.9.7840` Hard deprecate `LBoLEntitySideloader.ExtraFunc.AutoCastAction`.
 
