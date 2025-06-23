@@ -1,29 +1,30 @@
 ﻿using HarmonyLib;
+using JetBrains.Annotations;
 using LBoL.Base;
+using LBoL.Base.Extensions;
 using LBoL.ConfigData;
+using LBoL.Core;
+using LBoL.Core.Battle;
 using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
-using LBoL.Core;
+using LBoL.Core.StatusEffects;
+using LBoL.EntityLib.Adventures;
+using LBoL.EntityLib.EnemyUnits.Character;
+using LBoL.EntityLib.Exhibits.Shining;
+using LBoL.Presentation;
+using LBoL.Presentation.UI.ExtraWidgets;
+using LBoL.Presentation.UI.Panels;
+using LBoLEntitySideloader.ReflectionHelpers;
+using Mono.CSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using System.Reflection;
-using LBoL.Presentation.UI.Panels;
-using LBoLEntitySideloader.ReflectionHelpers;
-using System.Collections;
-using LBoL.Core.Battle;
-using LBoL.EntityLib.Exhibits.Shining;
-using LBoL.EntityLib.EnemyUnits.Character;
-using LBoL.Presentation.UI.ExtraWidgets;
-using LBoL.Presentation;
-using LBoL.EntityLib.Adventures;
-using LBoL.Base.Extensions;
-using LBoL.Core.StatusEffects;
-using JetBrains.Annotations;
-using Mono.CSharp;
+using UnityEngine;
 
 namespace LBoLEntitySideloader.GameFixes
 {
@@ -294,6 +295,23 @@ namespace LBoLEntitySideloader.GameFixes
         {
             __instance.Count -= Math.Min(args.DamageInfo.Damage.RoundToInt(), __instance.Count);
             return false;
+        }
+    }
+
+    // Automatically adjusts volume of ManaLose sfx
+    [HarmonyPatch(typeof(BattleManaPanel), nameof(BattleManaPanel.ViewLoseMana))]
+    class ViewLoseManaEarrapeFix_Patch
+    {
+        static readonly List<AudioClip> audioClips = new List<AudioClip>() { ResourcesHelper.LoadUiSound("Zackary/ManaLose_1.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_2.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_3.wav") };
+        static void Prefix(BattleManaPanel __instance, ref LoseManaAction action)
+        {
+            if (AudioManager.Instance?._uiTable.ContainsKey("ManaLose") == true)
+            {
+                AudioManager.UiEntry uiEntry = new AudioManager.UiEntry(0.3f / (1f + ((action.Args.Value.Amount - 1) * 0.1f)));
+                uiEntry.Clips.AddRange(audioClips);
+                AudioManager.Instance._uiTable.Remove("ManaLose");
+                AudioManager.Instance._uiTable.Add("ManaLose", uiEntry);
+            }
         }
     }
 }
