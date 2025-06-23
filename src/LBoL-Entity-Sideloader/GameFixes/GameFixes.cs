@@ -302,9 +302,29 @@ namespace LBoLEntitySideloader.GameFixes
     [HarmonyPatch(typeof(BattleManaPanel), nameof(BattleManaPanel.ViewLoseMana))]
     class ViewLoseManaEarrapeFix_Patch
     {
-        static readonly List<AudioClip> audioClips = new List<AudioClip>() { ResourcesHelper.LoadUiSound("Zackary/ManaLose_1.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_2.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_3.wav") };
+        static List<AudioClip> audioClips = null;
+
         static void Prefix(BattleManaPanel __instance, ref LoseManaAction action)
         {
+            if (audioClips == null || audioClips.Empty())
+            {
+                try
+                {
+                    audioClips = new List<AudioClip>()
+                    {
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_1.wav"),
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_2.wav"),
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_3.wav")
+                    };
+
+                }
+                catch (Exception)
+                {
+                    BepinexPlugin.log.LogWarning("Audio files not found, lose mana sound fix not applied.");
+                    return;
+                }
+            }
+
             if (AudioManager.Instance?._uiTable.ContainsKey("ManaLose") == true)
             {
                 AudioManager.UiEntry uiEntry = new AudioManager.UiEntry(0.3f / (1f + ((action.Args.Value.Amount - 1) * 0.1f)));
