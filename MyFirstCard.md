@@ -1,5 +1,7 @@
 ## First Card
 
+*Stuck? MyFirstCard.md is outdated yet again? Join and get help in [modding Discord](https://discord.gg/WT4qdfYhhG)*
+
 Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug errors ~~(and ability to read the bloody error messages)~~.
 
 - [One time] Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/).
@@ -13,6 +15,8 @@ Prerequisites: basic C#, basic Object Oriented Programming, resolve to debug err
 
 
 - [One time] Setup [BepInEx](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/Installation.md) with [Sideloader](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/LBoL-Entity-Sideloader.zip).
+
+- [One time] After installing Sideloader run the game once and close it after it loads to main menu. There should .cfg file generated `BepInEx\config\neo.lbol.frameworks.entitySideloader.cfg`. Open it with a text editor and change `DevMode` to `true`. Else hot-reloading and extra logging will be disabled.
 
 - [One time] Setup [scriptengine](https://github.com/Neoshrimp/BepInEx.Debug/blob/master/src/ScriptEngine/ScriptEngine.dll) and create `BepInEx/scripts` folder.
 
@@ -195,3 +199,10 @@ public sealed class FirstCard : Card
 - Both upgraded and unupgraded card versions seems to function as intended and console is clean of errors. The only thing left to do is to finish writing the description. I've chosen to differentiate upgraded card description by using 'UpgradedDescription:' node.
 
 ## [[First Card code]](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/FirstCard)
+
+## What's next?
+Check out [example project/template](https://gitlab.com/rmrfmaxxc1/lbol_sample_character_mod) by rmrfmaxxc. The intended way to organize Sidloader templates for larger projects, i.e., new characters. Also contains example code for many generic card types like Teammates, Abilities, XCost etc.
+
+Join [modding Discord](https://discord.gg/WT4qdfYhhG)
+
+

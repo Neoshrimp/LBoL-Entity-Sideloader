@@ -53,6 +53,61 @@
             </summary>
             <param name="scriptEngineInfo"></param>
         </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.KwDescPos">
+            <summary>
+            Keyword position in card's description.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.CardKeyword">
+            <summary>
+            Core class for custom keywords. Meant to be subclassed if keyword needs extra properties.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.kwSEid">
+            <summary>
+            Identity of the keyword. Should be an Id of an existing StatusEffect which is used as localization middleman.
+            Safety checks if SE actually exists are NOT performed.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.descPos">
+            <summary>
+            Not readonly but probably shouldn't be changed past construction.
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.isVerbose">
+            <summary>
+            Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Clone(LBoLEntitySideloader.CustomKeywords.CloningMethod)">
+            <summary>
+            How keyword properties should be cloned. Returning null means keyword is not clonable.
+            </summary>
+            <param name="cloningMethod">Optionally filter by method which performs the cloning.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Merge(LBoLEntitySideloader.CustomKeywords.CardKeyword)">
+            <summary>
+            How should current keyword be merged with another of the same type. Only matters if keyword has extra properties. 
+            Performed on cloning and KeywordManager.AddCustomKeyword
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.KeywordManager">
+            <summary>
+            API for adding/removing/checking custom Keywords.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IOnTooltipDisplay">
+            <summary>
+            Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IOverrideSEBrief">
+            <summary>
+            Effectively override(via postfix) non-virtual StatusEffect.Brief getter. Brief description is used to display SE(keyword) tooltip.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">
             <summary>
             No: 0,
@@ -217,6 +272,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LBoLEntitySideloader.Entities.IntentionTemplate.SelectAltIconsSuffix(LBoL.Core.Units.Intention)">
+            <summary>
+            Intention can switch between several icons. Icons are identified by suffix keys supplied in IntentionImages.subSprites.
+            </summary>
+            <param name="intention">The custom intention</param>
+            <returns>Suffix of a sub icon</returns>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.JadeBoxTemplate.AddExhibitAtTheStart(LBoL.Core.GameRunController,System.Collections.Generic.HashSet{System.Type})">
             <summary>
             Gives player and and exhibit and removes it from the exhibit pool.
@@ -248,6 +310,17 @@
             HitBlockSfx : ,
             Graze : ,
             GrazeSfx : ,
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:LBoLEntitySideloader.Entities.PlayerUnitTemplate.EikiSummonInfo.spellcardId">
+            <summary>
+            Determines summoning spellcard visual effect and title.
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.Entities.PlayerUnitTemplate.AssociateEikiSummon">
+            <summary>
+            Set mirror summon for Eiki fight. Default is Reimu.
             </summary>
             <returns></returns>
         </member>
@@ -442,18 +515,6 @@
             </summary>
             <param name="action"></param>
             <param name="callingAssembly"></param>
-        </member>
-        <member name="M:LBoLEntitySideloader.ExtraFunc.CardHelper.AutoCastAction(LBoL.Core.Cards.Card,LBoL.Core.UnitSelector,LBoL.Base.ManaGroup,System.Boolean)">
-            <summary>
-            Returns card action for autoplaying a card.
-            AutoCast skips ConsumeManaAction in UseCardAction phases thus never consumes actual mana or triggers associated listeners.
-            </summary>
-            <param name="card"></param>
-            <param name="unitSelector"></param>
-            <param name="consmingMana">passes consumed mana information. Useful for X cost cards.</param>
-            <param name="skipConsumeManaAction">probably should always be true. 
-            If false autocast won't skip ConsumeManaAction but consumingMana will be forced to be empty</param>
-            <returns></returns>
         </member>
         <member name="M:LBoLEntitySideloader.ExtraFunc.CardHelper.FakeQueueConsumingMana">
             <summary>
@@ -654,7 +715,12 @@
         </member>
         <member name="F:LBoLEntitySideloader.Resource.ExhibitSprites.customSprites">
             <summary>
-            [optional] alternative images when some conditions have beenmet. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji. Additional sprites will cached to ResourcesHelper.Sprites dictionary. UniqueId will be prefixed for each of the keys in this dictionary when caching which will be needed when OverrideIconName tries to set a sprite
+            [optional] alternative images when some conditions have been met. Override OverrideIconName method to specify the condition, example, Mokou's Lighter LBoL.EntityLib.Exhibits.Adventure.Dahuoji. Additional sprites will cached to ResourcesHelper.Sprites dictionary. UniqueId will be prefixed for each of the keys in this dictionary when caching which will be needed when OverrideIconName tries to set a sprite
+            </summary>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.ExtraIcons.icons">
+            <summary>
+            Keys should be suffixes for values returned in OverrideIconName. OverrideIconName should return entityId + suffix.
             </summary>
         </member>
         <member name="T:LBoLEntitySideloader.Resource.GlobalLocalization">
@@ -684,6 +750,11 @@
             Files names should follow convention of {templateType} + {2 letter lang code} + ".yaml", i.e.,  UltimateSkillKo.yaml
             </summary>
             <param name="templateName">general template type</param>
+        </member>
+        <member name="F:LBoLEntitySideloader.Resource.IntentionImages.subSprites">
+            <summary>
+            [optional] suffix => subSprite
+            </summary>
         </member>
         <member name="F:LBoLEntitySideloader.Resource.LocalizationFiles.mergeTerms">
             <summary>
@@ -813,7 +884,7 @@
             <param name="protocol"></param>
             <returns></returns>
         </member>
-        <member name="F:LBoLEntitySideloader.UserInfo.definitionInfos">
+        <member name="F:LBoLEntitySideloader.UserInfo.definitionInstances">
             <summary>
             EntityDefinition type => EntityDefinition instance
             </summary>
@@ -912,9 +983,8 @@
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.String)">
             <summary>
-            Add a new enum value to the given <paramref name="T"/> with the first free value
+            Add a new enum value to the given <paramref name="name"/> with the first free value
             </summary>
-            <param name="T">Type of enum to add the value to</param>
             <param name="name">Name of the new enum value</param>
             <returns>The new enum value</returns>
         </member>
@@ -928,9 +998,8 @@
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.AddEnumValue``1(System.Object,System.String)">
             <summary>
-            Add a new value to the given <paramref name="T"/> 
+            Add a new value to the given <paramref name="value"/> 
             </summary>
-            <param name="T">Enum to add the new value to</param>
             <param name="value">Value to add to the enum</param>
             <param name="name">The name of the new value</param>
         </member>
@@ -946,7 +1015,6 @@
             <summary>
             Get first undefined value in an enum
             </summary>
-            <param name="T"></param>
             <returns>The first undefined enum value</returns>
         </member>
         <member name="M:LBoLEntitySideloader.Utils.EnumExtender.EnumPatcher.GetFirstFreeValue(System.Type)">

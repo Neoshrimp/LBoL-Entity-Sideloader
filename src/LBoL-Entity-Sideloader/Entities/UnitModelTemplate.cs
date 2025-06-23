@@ -180,6 +180,12 @@ namespace LBoLEntitySideloader.Entities
         bool CheckModelOptions()
         {
             ModelOption modelOption = LoadModelOptions();
+            if (modelOption == null)
+            {
+                Log.LogDev().LogWarning($"ModelOption not provided by {this.GetType().Name}.");
+                return false;
+            }
+
             UnitView.ModelType modelType = 0;
             try
             {

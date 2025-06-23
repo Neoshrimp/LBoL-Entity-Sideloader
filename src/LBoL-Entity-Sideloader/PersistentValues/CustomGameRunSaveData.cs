@@ -1,6 +1,8 @@
 ﻿using LBoL.Core;
+using LBoLEntitySideloader.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using YamlDotNet.Serialization;
 
 namespace LBoLEntitySideloader.PersistentValues
@@ -26,24 +28,46 @@ namespace LBoLEntitySideloader.PersistentValues
         /// <param name="GUID">Must be a unique GUID. Best to use the same GUID as Bepinex plugin.</param>
         public static void RegisterCustomSaveData(CustomGameRunSaveData customSaveData, string GUID)
         {
-            var saveDataID = new SaveDataID()
-            {
-                GUID = GUID,
-                Name = customSaveData.Name,
-                midfix = filePrefix
-            };
+            var saveDataID = customSaveData.GetID(GUID);
 
-            if (!UniqueTracker.Instance.customGrSaveData.TryAdd(saveDataID, customSaveData))
-            {
-                Log.log.LogError($"Failed to register custom save data {saveDataID}. Save data with the same name was already registered.");
-            }
+            var ass = Assembly.GetCallingAssembly();
+
+            InternalRegisterCustomData(ass, saveDataID, customSaveData);
+
+
         }
 
         /// <summary>
         /// Registers self.
         /// </summary>
         /// <param name="GUID">Must be a unique GUID. Best to use the same GUID as Bepinex plugin.</param>
-        public void RegisterSelf(string GUID) => RegisterCustomSaveData(this, GUID);
+        public void RegisterSelf(string GUID) 
+        {
+            var saveDataID = this.GetID(GUID);
+
+            var ass = Assembly.GetCallingAssembly();
+
+            InternalRegisterCustomData(ass, saveDataID, this);
+        }
+
+        public SaveDataID GetID(string GUID) => new SaveDataID()
+        {
+            GUID = GUID,
+            Name = this.Name,
+            midfix = filePrefix
+        };
+
+        private static void InternalRegisterCustomData(Assembly assembly, SaveDataID id, CustomGameRunSaveData customData)
+        {
+            if (assembly.IsLoadedFromDisk())
+                EntityManager.Instance.loadedFromDsikCustomGrSaveData.TryAdd(id, customData);
+
+            if (!UniqueTracker.Instance.customGrSaveData.TryAdd(id, customData))
+            {
+                Log.log.LogError($"Failed to register custom save data {id}. Save data with the same name was already registered.");
+            }
+
+        }
 
         /// <summary>
         /// Optional override for unique name of save data file. Needed if using several CustomSaveData per mod.

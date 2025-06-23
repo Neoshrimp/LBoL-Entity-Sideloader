@@ -8,12 +8,15 @@ using LBoL.Core;
 using LBoL.Core.Battle;
 using LBoL.Core.Battle.BattleActions;
 using LBoL.Core.Cards;
+using LBoL.Core.Exhibits;
 using LBoL.Core.Randoms;
 using LBoL.Core.StatusEffects;
 using LBoL.Core.Units;
 using LBoL.EntityLib.Cards.Character.Reimu;
 using LBoL.EntityLib.Cards.Neutral.NoColor;
 using LBoL.EntityLib.Cards.Neutral.Red;
+using LBoL.EntityLib.EnemyUnits.Normal;
+using LBoL.EntityLib.EnemyUnits.Opponent;
 using LBoL.EntityLib.Exhibits.Common;
 using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.EntityLib.PlayerUnits;
@@ -68,8 +71,13 @@ namespace Random_Examples
             return sprites;
         
         }
-            
-        
+
+
+
+        public override EikiSummonInfo AssociateEikiSummon()
+        {
+            return new EikiSummonInfo(typeof(LBoL.EntityLib.EnemyUnits.Opponent.Sakuya));
+        }
 
         public override PlayerUnitConfig MakeConfig()
         {
@@ -81,16 +89,23 @@ namespace Random_Examples
             Order: 0,
             UnlockLevel: 0,
             ModleName: "",
+            HasHomeName: false,
             NarrativeColor: "#e58c27",
             IsSelectable: true,
+            BasicRingOrder: null,
+            LeftColor: LBoL.Base.ManaColor.Philosophy,
+            RightColor: LBoL.Base.ManaColor.Colorless,
             MaxHp: 90,
-            InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },
+            //InitialMana: new LBoL.Base.ManaGroup() { Red = 2, Blue = 1, White = 1 },
+            InitialMana: new LBoL.Base.ManaGroup() { Blue = 1, Colorless = 2 },
+
             InitialMoney: 3,
             InitialPower: 30,
             //temp
             UltimateSkillA: reimuConfig.UltimateSkillA,
             UltimateSkillB: reimuConfig.UltimateSkillB,
-            ExhibitA: reimuConfig.ExhibitA,
+            //ExhibitA: reimuConfig.ExhibitA,
+            ExhibitA: nameof(YichuiPiao),
             ExhibitB: reimuConfig.ExhibitB,
             DeckA: reimuConfig.DeckA,
             DeckB: reimuConfig.DeckB,
@@ -214,9 +229,14 @@ namespace Random_Examples
 
 
 
-        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+        //public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("GoblinPunch.png", embeddedSource));
 
-
+        public override CardImages LoadCardImages()
+        {
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png");
+            return imgs;
+        }
 
         public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
@@ -227,9 +247,13 @@ namespace Random_Examples
             var config = DefaultConfig();
 
             config.GunName = "Simple1";
-            config.Colors = new List<ManaColor>() { ManaColor.Red };
-            config.Cost = new ManaGroup() { Any = 1, Red = 1 };
+            //config.Colors = new List<ManaColor>() { ManaColor.Red };
+            config.Colors = new List<ManaColor>() { ManaColor.Blue, ManaColor.White };
 
+            //config.Cost = new ManaGroup() { Any = 1, Red = 1 };
+            config.Cost = new ManaGroup() { Any = 1, Blue = 1 };
+
+            config.Rarity = Rarity.Uncommon;
             config.Owner = "Suika";
 
             config.Type = CardType.Attack;
@@ -237,6 +261,7 @@ namespace Random_Examples
 
             config.Damage = 13;
             config.UpgradedDamage = 16;
+
 
             config.Illustrator = "MTB";
 
@@ -255,15 +280,21 @@ namespace Random_Examples
 
 
 
-    public sealed class GoblinPunchRareCardDef : CardTemplate
+    public sealed class EpicGoblinPunchCardDef : CardTemplate
     {
-        public override IdContainer GetId() => nameof(GoblinPunchRare);
+        public override IdContainer GetId() => nameof(EpicGoblinPunch);
 
 
 
-        public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("goblinPunch.png", embeddedSource));
+        //public override CardImages LoadCardImages() => new CardImages(embeddedSource, ResourceLoader.LoadTexture("EpicGoblinPunch.png", embeddedSource));
 
 
+        public override CardImages LoadCardImages()
+        {
+            var imgs = new CardImages(embeddedSource);
+            imgs.AutoLoad(this, ".png", hasUpgradeImage: true); //or manually load and set CardImages.upgrade
+            return imgs;
+        }
 
         public override LocalizationOption LoadLocalization() => new GlobalLocalization(embeddedSource);
 
@@ -275,12 +306,15 @@ namespace Random_Examples
             config.Rarity = Rarity.Rare;
             config.Damage = 14;
             config.UpgradedDamage = 17;
+
+            config.UpgradeImageId = $"{GetId()}{CardImages.upgradeString}";
+
             return config;
         }
 
 
-        [EntityLogic(typeof(GoblinPunchRareCardDef))]
-        public sealed class GoblinPunchRare : Card
+        [EntityLogic(typeof(EpicGoblinPunchCardDef))]
+        public sealed class EpicGoblinPunch : Card
         {
 
         }

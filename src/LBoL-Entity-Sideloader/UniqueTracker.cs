@@ -47,6 +47,8 @@ namespace LBoLEntitySideloader
             }
         }
 
+      
+
         internal static void DestroySelf() { _instance = null; }
 
 
@@ -178,7 +180,23 @@ namespace LBoLEntitySideloader
 
         public CHandlerManager cHandlerManager = new CHandlerManager();
 
-        
+        private Dictionary<string, Func<Intention, string>> intentionSuffixFuncs = null;
+
+        public Dictionary<string, Func<Intention, string>> IntentionSuffixFuncs
+        {
+            get
+            {
+                if (intentionSuffixFuncs == null)
+                {
+                    intentionSuffixFuncs = EntityManager.Instance.AllUsers.Select(tu => tu.userInfo)
+                    .SelectMany(ui => ui.definitionInstances.Values)
+                    .Where(d => d is IntentionTemplate)
+                    .Cast<IntentionTemplate>()
+                    .ToDictionary(it => it.UniqueId.ToString(), it => new Func<Intention, string>(it.SelectAltIconsSuffix));
+                }
+                return intentionSuffixFuncs;
+            }
+        }
 
         public void RaisePostMainLoad()
         {

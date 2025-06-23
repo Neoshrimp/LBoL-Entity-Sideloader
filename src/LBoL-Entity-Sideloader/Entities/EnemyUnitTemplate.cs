@@ -29,7 +29,7 @@ namespace LBoLEntitySideloader.Entities
 
         public override Type EntityType() => typeof(EnemyUnit);
 
-        public override Type TemplateType() => typeof(EntityDefinition);
+        public override Type TemplateType() => typeof(EnemyUnitTemplate);
 
         /// <summary>
         /// icon for boss encounter node. Some circular dimension
@@ -49,6 +49,9 @@ namespace LBoLEntitySideloader.Entities
 
             EntityManager.Instance.addBossIconsActions.AddAction(enemyUnitId, action, callingAssembly);
         }
+
+
+
 
         /// <summary>
         /// Id:

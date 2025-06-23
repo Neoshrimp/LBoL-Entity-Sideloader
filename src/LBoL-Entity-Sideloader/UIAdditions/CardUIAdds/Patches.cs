@@ -7,7 +7,8 @@ using System.Text;
 
 namespace LBoLEntitySideloader.UIAdditions.CardUIAdds
 {
-    [HarmonyPatch(typeof(CardUi), nameof(CardUi.EnterBattle))]
+    // 1.6.0 added exile viewer
+    //[HarmonyPatch(typeof(CardUi), nameof(CardUi.EnterBattle))]
     class CardUi_EnterBattle_Patch
     {
         static void Postfix(CardUi __instance, BattleController battle)
@@ -17,7 +18,7 @@ namespace LBoLEntitySideloader.UIAdditions.CardUIAdds
     }
 
 
-    [HarmonyPatch(typeof(CardUi), nameof(CardUi.LeaveBattle))]
+    //[HarmonyPatch(typeof(CardUi), nameof(CardUi.LeaveBattle))]
     class CardUi_LeaveBattle_Patch
     {
         static void Postfix(CardUi __instance, BattleController battle)

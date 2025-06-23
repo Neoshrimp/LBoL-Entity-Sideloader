@@ -29,7 +29,7 @@ namespace LBoLEntitySideloader.Resource
         public override bool TryGetFileName(string id, out string name)
         {
             id = LegalizeFileName(id);
-            name = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(id));
+            name = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("." + id)); // omega smart
             return name != null;
         }
 

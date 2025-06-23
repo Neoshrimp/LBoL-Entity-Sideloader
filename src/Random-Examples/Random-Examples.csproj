@@ -344,9 +344,12 @@
       <None Remove="resources\BeaModelEn.yaml" />
       <None Remove="resources\CardsEn.yaml" />
       <None Remove="resources\CardsZhHans.yaml" />
+      <None Remove="Resources\EpicGoblinPunch.png" />
+      <None Remove="Resources\EpicGoblinPunchUpgrade.png" />
       <None Remove="resources\ExhibitsEn.yaml" />
       <None Remove="Resources\ghibli.jpg" />
       <None Remove="Resources\goblinPunch.png" />
+      <None Remove="resources\IntentionsEn.yaml" />
       <None Remove="Resources\JadeBoxEn.yaml" />
       <None Remove="resources\PlayerUnitEn.yaml" />
       <None Remove="Resources\reimu_fist.png" />

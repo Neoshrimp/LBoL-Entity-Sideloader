@@ -22,9 +22,9 @@ namespace LBoLEntitySideloader.ExtraFunc
 
         class SkipConsumeMana { public bool skip; public SkipConsumeMana(bool val) => this.skip = val; }
 
-        static ConditionalWeakTable<UseCardAction, SkipConsumeMana> wt_skipConsumeMana = new ConditionalWeakTable<UseCardAction, SkipConsumeMana>();
+        static ConditionalWeakTable<UseCardAction, SkipConsumeMana> wt_skipConsumeMana = null;// new ConditionalWeakTable<UseCardAction, SkipConsumeMana>();
 
-
+        [Obsolete("Use vanilla PlayCardAction instead", error: true)]
         /// <summary>
         /// Returns card action for autoplaying a card.
         /// AutoCast skips ConsumeManaAction in UseCardAction phases thus never consumes actual mana or triggers associated listeners.
@@ -37,10 +37,13 @@ namespace LBoLEntitySideloader.ExtraFunc
         /// <returns></returns>
         public static UseCardAction AutoCastAction(Card card, UnitSelector unitSelector, ManaGroup consmingMana, bool skipConsumeManaAction = true)
         {
+            throw new NotSupportedException("Don't use AutoCastAction, use vanilla PlayCardAction instead");
+
             if (!skipConsumeManaAction)
                 consmingMana = new ManaGroup();
 
-            var uca = new UseCardAction(card, unitSelector, consmingMana);
+            // 1.7.0 assumes kicker is false
+            var uca = new UseCardAction(card, unitSelector, consmingMana, false);
 
             if (!skipConsumeManaAction)
             {
@@ -60,8 +63,11 @@ namespace LBoLEntitySideloader.ExtraFunc
         /// Should not be used unless some very specific behavior is desired.
         /// Use AutoCastAction instead.
         /// </summary>
+        [Obsolete("Why are you using this", error: true)]
         public static void FakeQueueConsumingMana()
         {
+            throw new NotSupportedException("Why are you using this");
+
             // should not be changed
             var cost = new ManaGroup() { Any = 0 };
             var manaPanel = UiManager.GetPanel<BattleManaPanel>();
@@ -70,11 +76,11 @@ namespace LBoLEntitySideloader.ExtraFunc
         }
 
 
-        [HarmonyPatch]
+        //[HarmonyPatch]
         class UseCardAction_Patch
         {
 
-            static Type delegateType = typeof(UseCardAction).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass16_0"));
+            static Type delegateType = typeof(UseCardAction).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass17_0"));
 
             static FieldInfo useCardAtionInstField = AccessTools.Field(delegateType, "<>4__this");
 

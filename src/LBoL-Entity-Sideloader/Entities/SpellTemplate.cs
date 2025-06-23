@@ -217,10 +217,7 @@ namespace LBoLEntitySideloader.Entities
 
         }
 
-        /// <summary>
-        /// Not used
-        /// </summary>
-        /// <returns></returns>
+        // Not used
         //public virtual GameObject LoadResource() { return null; }
 
 

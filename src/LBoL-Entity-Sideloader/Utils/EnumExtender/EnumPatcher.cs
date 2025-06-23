@@ -39,9 +39,8 @@ namespace LBoLEntitySideloader.Utils.EnumExtender
         }
 
         /// <summary>
-        /// Add a new enum value to the given <paramref name="T"/> with the first free value
+        /// Add a new enum value to the given <paramref name="name"/> with the first free value
         /// </summary>
-        /// <param name="T">Type of enum to add the value to</param>
         /// <param name="name">Name of the new enum value</param>
         /// <returns>The new enum value</returns>
         public static TEnum AddEnumValue<TEnum>(string name) where TEnum : Enum => (TEnum)AddEnumValue(typeof(TEnum), name);
@@ -60,9 +59,8 @@ namespace LBoLEntitySideloader.Utils.EnumExtender
         }
 
         /// <summary>
-        /// Add a new value to the given <paramref name="T"/> 
+        /// Add a new value to the given <paramref name="value"/> 
         /// </summary>
-        /// <param name="T">Enum to add the new value to</param>
         /// <param name="value">Value to add to the enum</param>
         /// <param name="name">The name of the new value</param>
         public static void AddEnumValue<T>(object value, string name) => AddEnumValue(typeof(T), value, name);
@@ -126,7 +124,6 @@ namespace LBoLEntitySideloader.Utils.EnumExtender
         /// <summary>
         /// Get first undefined value in an enum
         /// </summary>
-        /// <param name="T"></param>
         /// <returns>The first undefined enum value</returns>
         public static TEnum GetFirstFreeValue<TEnum>() => (TEnum)GetFirstFreeValue(typeof(TEnum));
 

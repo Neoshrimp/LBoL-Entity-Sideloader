@@ -21,7 +21,6 @@ namespace LBoLEntitySideloader
             try
             {
                 userInfos.Add(assembly, EntityManager.ScanAssembly(assembly));
-
             }
             catch (Exception ex)
             {
@@ -76,7 +75,7 @@ namespace LBoLEntitySideloader
                     {
                         return entityType;
                     }
-                    if (user.IsForOverwriting(definitionType) && user.definitionInfos.TryGetValue(definitionType, out EntityDefinition entityDefinition))
+                    if (user.IsForOverwriting(definitionType) && user.definitionInstances.TryGetValue(definitionType, out EntityDefinition entityDefinition))
                     {
                         var typeDic = TypeFactoryReflection.AccessTypeDicts(entityDefinition.EntityType(), TypeFactoryReflection.TableFieldName.TypeDict);
 

@@ -164,15 +164,19 @@ namespace LBoLEntitySideloader.Entities
         {
             var config = new EnemyGroupConfig(
                     Id : "",
+                    IsSub: false,
+                    Subs: new List<string>() { },
                     Name : "",
                     FormationName : VanillaFormations.Single,
                     Enemies : new List<string>() { },
                     EnemyType : EnemyType.Normal,
+                    Hidden: false,
                     DebutTime : 1f,
                     RollBossExhibit : false,
                     PlayerRoot : new Vector2(-4f, 0.5f),
                     PreBattleDialogName : "",
-                    PostBattleDialogName : ""
+                    PostBattleDialogName : "",
+                    Environment: ""
                 );
             return config;
         }

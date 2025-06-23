@@ -47,6 +47,8 @@ namespace Random_Examples
 
         internal static BatchLocalization UnitModelBatchLoc = new BatchLocalization(embeddedSource, typeof(UnitModelTemplate), Locale.En, "UnitModelEn");
 
+        internal static BatchLocalization IntentionBatchLoc = new BatchLocalization(embeddedSource, typeof(IntentionTemplate), Locale.En, "IntentionsEn");
+
 
         private void Awake()
         {
@@ -107,7 +109,7 @@ namespace Random_Examples
 
             EnemyUnitTemplate.AddBossNodeIcon("Reimu", () => ResourceLoader.LoadSprite("SelectionCircleIcon.png", SuikaPlayerDef.dir));
 
-            StageExamples.AddStages();
+            //StageExamples.AddStages();
 
             // unload asset bundles OnDestroy
             suikaAB = ResourceLoader.LoadAssetBundle("suikaBundle", SuikaPlayerDef.dir);

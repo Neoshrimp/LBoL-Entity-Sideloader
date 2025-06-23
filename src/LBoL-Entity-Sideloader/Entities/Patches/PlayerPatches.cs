@@ -425,7 +425,9 @@ namespace LBoLEntitySideloader.Entities.Patches
 
 
             // 2do maybe extend PlayerType enum
-            [HarmonyPatch(typeof(StartGamePanel), "<Awake>b__68_9")]
+            // difficultyConfirmButton delegate, formerly <Awake>b__68_9
+            // pre 1.7.0: formerly <Awake>b__68_8
+            [HarmonyPatch(typeof(StartGamePanel), "<Awake>b__70_7")]
             class StartRunButton_Patch
             {
 
@@ -585,7 +587,7 @@ namespace LBoLEntitySideloader.Entities.Patches
 
                 var initialCount = __instance.characterStandPicList.Count;
 
-                for (var i = 0; i < __instance._players.Length - initialCount; i++)
+                for (var i = 0; i < __instance._players.Count - initialCount; i++)
                 {
                     var newStandGo = GameObject.Instantiate(standGo, standGo.transform.parent);
                     newStandGo.transform.localScale = Vector3.one;
@@ -597,12 +599,12 @@ namespace LBoLEntitySideloader.Entities.Patches
 
             static int PlayerNumber(StartGamePanel startGamePanel)
             {
-                return startGamePanel._players.Length;
+                return startGamePanel._players.Count;
             }
 
             static int PlayerNumberMinus1(StartGamePanel startGamePanel)
             {
-                return startGamePanel._players.Length - 1;
+                return startGamePanel._players.Count - 1;
             }
 
             static internal int ModuloStandNum(int i, StartGamePanel startGamePanel)
@@ -616,12 +618,15 @@ namespace LBoLEntitySideloader.Entities.Patches
             {
 
                 return new CodeMatcher(instructions)
+                    // 1.7.0 why tf index range bounds were needed in the first place?
                     // main loop
-                    .MatchForward(false, new CodeMatch[] { OpCodes.Ldc_I4_5, OpCodes.Blt })
+/*                    .MatchForward(false, new CodeMatch[] { OpCodes.Ldc_I4_5, OpCodes.Blt })
+                    .ThrowIfInvalid("5 literal not found")
                     .SetAndAdvance(OpCodes.Ldarg_0, null)
                     .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.PlayerNumber))))
                     // on button press
-                    .MatchBack(false, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldc_I4_4, OpCodes.Bne_Un })
+                    .MatchBack(false, new CodeMatch[] { MiniMatcherExtension.op_iteratorLoad, OpCodes.Ldc_I4_4, OpCodes.Bne_Un })
+                    .ThrowIfInvalid("i == 4 not found")
                     .Advance(1)
                     .SetAndAdvance(OpCodes.Ldarg_0, null)
                     .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.PlayerNumberMinus1))))
@@ -640,7 +645,8 @@ namespace LBoLEntitySideloader.Entities.Patches
                     .Wrap_iPlusNum()
                     .Wrap_i(true)
                     .Wrap_i()
-                    .Wrap_iPlusNum()
+                    .Wrap_iPlusNum()*/
+
                     // setting _typeCandidates
                     .End()
                     .MatchBack(false, new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(StartGamePanel), nameof(StartGamePanel._typeCandidates))))
@@ -707,9 +713,13 @@ namespace LBoLEntitySideloader.Entities.Patches
 
     static internal class MiniMatcherExtension
     {
+        internal readonly static OpCode op_iteratorStore = OpCodes.Stloc_2;
+        internal readonly static OpCode op_iteratorLoad = OpCodes.Ldloc_2;
+
+
         static internal CodeMatcher Wrap_i(this CodeMatcher _this, bool justMatch = false)
         {
-            _this.MatchForward(false, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldelem_R4 });
+            _this.MatchForward(false, new CodeMatch[] { op_iteratorLoad, OpCodes.Ldelem_R4 });
             if (!justMatch)
                 _this.Advance(1)
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
@@ -720,7 +730,7 @@ namespace LBoLEntitySideloader.Entities.Patches
         static internal CodeMatcher Wrap_iPlusNum(this CodeMatcher _this)
         {
 
-            return _this.MatchForward(true, new CodeMatch[] { OpCodes.Ldloc_3, OpCodes.Ldloc_0, OpCodes.Add, OpCodes.Ldelem_R4 })
+            return _this.MatchForward(true, new CodeMatch[] { op_iteratorLoad, OpCodes.Ldloc_0, OpCodes.Add, OpCodes.Ldelem_R4 })
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
                 .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SelectPlayer_Patch), nameof(SelectPlayer_Patch.ModuloStandNum))));
         }

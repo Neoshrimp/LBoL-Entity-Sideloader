@@ -73,6 +73,10 @@ namespace LBoLEntitySideloader.Entities
                IsXCost: false,
                Cost: new ManaGroup() { },
                UpgradedCost: null,
+
+               Kicker: null,
+               UpgradedKicker: null,
+
                MoneyCost: null,
                Damage: null,
                UpgradedDamage: null,
@@ -97,6 +101,8 @@ namespace LBoLEntitySideloader.Entities
                UpgradedPassiveCost : null,
                ActiveCost : null,
                UpgradedActiveCost : null,
+               ActiveCost2 : null,
+               UpgradedActiveCost2 : null,
                UltimateCost : null,
                UpgradedUltimateCost : null,
 

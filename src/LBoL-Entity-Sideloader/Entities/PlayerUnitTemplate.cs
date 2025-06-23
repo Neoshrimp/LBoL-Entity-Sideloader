@@ -32,7 +32,6 @@ using LBoLEntitySideloader.Entities.Patches;
     
 namespace LBoLEntitySideloader.Entities
 {
-    // soon(tm)
     public abstract class PlayerUnitTemplate : EntityDefinition,
         IConfigProvider<PlayerUnitConfig>,
         IGameEntityProvider<PlayerUnit>,
@@ -91,6 +90,33 @@ namespace LBoLEntitySideloader.Entities
         }
 
 
+        public class EikiSummonInfo
+        {
+            public Type summonType;
+
+            public EikiSummonInfo(Type summonType, string spellcardId = null)
+            {
+                this.summonType = summonType;
+                if(spellcardId != null)
+                    this.spellcardId = spellcardId;
+            }
+
+
+            /// <summary>
+            /// Determines summoning spellcard visual effect and title.
+            /// </summary>
+            public string spellcardId = "净颇梨审判";
+        }
+
+
+        /// <summary>
+        /// Set mirror summon for Eiki fight. Default is Reimu.
+        /// </summary>
+        /// <returns></returns>
+        public virtual EikiSummonInfo AssociateEikiSummon()
+        {
+            return null;
+        }
 
 
 
@@ -123,10 +149,14 @@ namespace LBoLEntitySideloader.Entities
                     ShowOrder : 0,
                     Order : 0,
                     UnlockLevel : 0,
+                    HasHomeName: false,
                     ModleName : "",
                     NarrativeColor : "#f241a8",
                     IsSelectable : true,
-                    MaxHp : 1,
+                    BasicRingOrder: null, //?
+                    LeftColor: LBoL.Base.ManaColor.White,
+                    RightColor: LBoL.Base.ManaColor.Red,
+                    MaxHp: 1,
                     InitialMana : new LBoL.Base.ManaGroup() { },
                     InitialMoney : 1,
                     InitialPower : 0,
@@ -198,9 +228,6 @@ namespace LBoLEntitySideloader.Entities
             }
         }
 
-
-
-   
 
     }
 
