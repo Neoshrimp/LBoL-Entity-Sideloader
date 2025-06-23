@@ -100,27 +100,6 @@ namespace LBoLEntitySideloader.GameFixes
                 prevCi = ci;
             }
         }
-
-        [HarmonyPatch(typeof(BossExhibitPanel), nameof(BossExhibitPanel.OnClickExhibit))]
-        class AllowDuplicateExhibits3_Patch
-        {
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                CodeInstruction prevCi = null;
-                foreach (var ci in instructions)
-                {
-                    if (prevCi != null && prevCi.opcode == OpCodes.Brfalse && ci.opcode == OpCodes.Ret)
-                    {
-                        yield return new CodeInstruction(OpCodes.Nop);
-                    }
-                    else
-                    {
-                        yield return ci;
-                    }
-                    prevCi = ci;
-                }
-            }
-        }
     }
 
 
