@@ -7,6 +7,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7844` Add overridable `CardKeyword.CloneWithCard` method which exposes info of the cards being cloned. *thanks, cramps-man*
+
 `0.9.7843` Prevent loud sfx when losing lots of mana. *thanks, IntoxicatedKid*
 
 `0.9.7842` Fix some interactions between cost reductions and in-battle upgrades. Mostly affects 1XX -> 2X style upgrades. *thanks, cyaneko*

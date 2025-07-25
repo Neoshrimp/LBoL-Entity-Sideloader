@@ -79,6 +79,15 @@
             Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
             </summary>
         </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.CloneWithCard(LBoL.Core.Cards.Card,LBoL.Core.Cards.Card,LBoLEntitySideloader.CustomKeywords.CloningMethod)">
+            <summary>
+            Wrapper method exposing card information when cloning a card with keyword.
+            </summary>
+            <param name="og"></param>
+            <param name="other"></param>
+            <param name="cloningMethod"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Clone(LBoLEntitySideloader.CustomKeywords.CloningMethod)">
             <summary>
             How keyword properties should be cloned. Returning null means keyword is not clonable.

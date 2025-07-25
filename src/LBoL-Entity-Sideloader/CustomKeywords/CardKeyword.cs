@@ -53,6 +53,18 @@ namespace LBoLEntitySideloader.CustomKeywords
 
 
         /// <summary>
+        /// Wrapper method exposing card information when cloning a card with keyword.
+        /// </summary>
+        /// <param name="og"></param>
+        /// <param name="other"></param>
+        /// <param name="cloningMethod"></param>
+        /// <returns></returns>
+        public virtual CardKeyword CloneWithCard(Card og, [MaybeNull]Card other, CloningMethod cloningMethod)
+        {
+            return Clone(cloningMethod);
+        }
+
+        /// <summary>
         /// How keyword properties should be cloned. Returning null means keyword is not clonable.
         /// </summary>
         /// <param name="cloningMethod">Optionally filter by method which performs the cloning.</param>

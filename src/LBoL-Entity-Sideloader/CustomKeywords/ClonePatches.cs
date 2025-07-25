@@ -38,7 +38,7 @@ namespace LBoLEntitySideloader.CustomKeywords
 
             foreach (var kw in og.AllCustomKeywords())
             {
-                var clone = kw.Clone(cloningMethod);
+                var clone = kw.CloneWithCard(og, copy, cloningMethod);
                 if (clone != null)
                 { 
                     copy.AddCustomKeyword(clone);
