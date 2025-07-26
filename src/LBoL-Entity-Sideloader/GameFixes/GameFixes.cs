@@ -231,6 +231,7 @@ namespace LBoLEntitySideloader.GameFixes
 
 
     // 2do mysterious bug. cannot reproduce
+    // fixed?
     [HarmonyPatch(typeof(CardUi), nameof(CardUi.SetPendingCardsAlpha))]
     class CardUi_SetPendingCardsAlpha_Patch
     {
@@ -241,7 +242,7 @@ namespace LBoLEntitySideloader.GameFixes
                 if(__instance._pendingUseWidgets != null)
                     foreach (HandCard handCard in __instance._pendingUseWidgets)
                     {
-                        if(handCard?.CanvasGroup?.alpha != null)
+                        if(handCard != null && handCard.CanvasGroup != null)
                             handCard.CanvasGroup.alpha = alpha;
                     }
             }

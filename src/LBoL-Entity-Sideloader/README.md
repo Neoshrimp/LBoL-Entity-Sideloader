@@ -7,6 +7,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7845` Fix a rare softlock bug (hopefully).
+
 `0.9.7844` Add overridable `CardKeyword.CloneWithCard` method which exposes info of the cards being cloned. *thanks, cramps-man*
 
 `0.9.7843` Prevent loud sfx when losing lots of mana. *thanks, IntoxicatedKid*
