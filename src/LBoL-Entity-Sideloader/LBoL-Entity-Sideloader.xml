@@ -79,6 +79,12 @@
             Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
             </summary>
         </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.hasExtendedKeywordName">
+            <summary>
+            Display customizable string when listing keyword in card description?
+            Should be set only keyword construction only. If true keyword SE MUST implement IExtendedKeywordName. 
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.CloneWithCard(LBoL.Core.Cards.Card,LBoL.Core.Cards.Card,LBoLEntitySideloader.CustomKeywords.CloningMethod)">
             <summary>
             Wrapper method exposing card information when cloning a card with keyword.
@@ -109,12 +115,18 @@
         </member>
         <member name="T:LBoLEntitySideloader.CustomKeywords.IOnTooltipDisplay">
             <summary>
-            Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
+            Meant to be implemented on keyword SE. Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
             </summary>
         </member>
         <member name="T:LBoLEntitySideloader.CustomKeywords.IOverrideSEBrief">
             <summary>
             Effectively override(via postfix) non-virtual StatusEffect.Brief getter. Brief description is used to display SE(keyword) tooltip.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IExtendedKeywordName">
+            <summary>
+            Method controlling how extended keyword name should be displayed on card description.
+            Meant to be implemented on keyword SE. CardKeyword needs hasExtendedKeywordName set for the method to be invoked.
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">

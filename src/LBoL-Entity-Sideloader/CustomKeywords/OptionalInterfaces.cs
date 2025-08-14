@@ -6,7 +6,7 @@ using System.Text;
 namespace LBoLEntitySideloader.CustomKeywords
 {
     /// <summary>
-    /// Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
+    /// Meant to be implemented on keyword SE. Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
     /// </summary>
     public interface IOnTooltipDisplay
     {
@@ -20,5 +20,14 @@ namespace LBoLEntitySideloader.CustomKeywords
     public interface IOverrideSEBrief
     {
         public string OverrideBrief(string rawBrief);
+    }
+
+    /// <summary>
+    /// Method controlling how extended keyword name should be displayed on card description.
+    /// Meant to be implemented on keyword SE. CardKeyword needs hasExtendedKeywordName set for the method to be invoked.
+    /// </summary>
+    public interface IExtendedKeywordName
+    {
+        public string ExtendedKeywordName(Card card);
     }
 }

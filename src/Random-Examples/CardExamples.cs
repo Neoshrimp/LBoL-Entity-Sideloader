@@ -13,6 +13,7 @@ using LBoLEntitySideloader.CustomKeywords;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ExtraFunc;
 using LBoLEntitySideloader.Resource;
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,19 +83,63 @@ namespace Random_Examples
 
     public class Testkw : CardKeyword
     {
-        public Testkw(string kwSEid = nameof(ExtraTurn), bool isVerbose = false) : base(kwSEid, isVerbose)
+        public Testkw(string kwSEid = nameof(TestKwSe), bool isVerbose = false) : base(kwSEid, isVerbose)
         {
             descPos = KwDescPos.Last;
+            hasExtendedKeywordName = true;
+        }
+
+
+    }
+
+
+    public sealed class TestKwSeDef : StatusEffectTemplate
+    {
+        public override IdContainer GetId() => nameof(TestKwSe);
+
+        public override LocalizationOption LoadLocalization() => new GlobalLocalization(BepinexPlugin.embeddedSource);
+
+        public override Sprite LoadSprite() => null;
+
+        public override StatusEffectConfig MakeConfig() => this.DefaultConfig();
+    }
+
+    [EntityLogic(typeof(TestKwSeDef))]
+    public sealed class TestKwSe : StatusEffect, IExtendedKeywordName
+    {
+
+        public string SecretNumber
+        {
+            get
+            {
+                if(SourceCard is AutoPlayHavoc havoc)
+                    return havoc.secretNumber.ToString();
+                return "";
+            }
+        }
+
+        public string ExtendedKeywordName(Card card)
+        {
+            return LocalizeProperty("ExtendedName", true, true).RuntimeFormat(this);
+
+            BepinexPlugin.log.LogDebug("deez");
+            var rez = this.LocalizeProperty("SpecialName", true);
+            if (card is AutoPlayHavoc havoc)
+                rez = $"{rez} <{havoc.secretNumber}> <sprite=\"Point\" name=\"Power\">";
+            return rez;
         }
     }
 
     [EntityLogic(typeof(AutoPlayHavocDef))]
     public sealed class AutoPlayHavoc : Card
     {
+        public int secretNumber = -69;
 
         public override void Initialize()
         {
             base.Initialize();
+            if(Battle != null)
+                secretNumber = UnityEngine.Random.Range(0, 100);
             this.AddCustomKeyword(ExampleKeywords.Testkw);
         }
 
@@ -111,8 +156,10 @@ namespace Random_Examples
         {
             if (precondition is SelectCardInteraction selection)
             {
-                yield return CardHelper.AutoCastAction(selection.SelectedCards.First(), UnitSelector.RandomEnemy, consumingMana, true);
+                //yield return CardHelper.AutoCastAction(selection.SelectedCards.First(), UnitSelector.RandomEnemy, consumingMana, true);
             }
+            secretNumber = UnityEngine.Random.Range(0, 100);
+            yield break;
         }
     }
 }

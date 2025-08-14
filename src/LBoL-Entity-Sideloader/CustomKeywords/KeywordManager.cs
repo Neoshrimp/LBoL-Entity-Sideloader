@@ -130,9 +130,28 @@ namespace LBoLEntitySideloader.CustomKeywords
         {
             static void Postfix(Card __instance, ref IEnumerable<string> __result)
             {
+
                 var card = __instance;
                 var kwToAppend = card.AllCustomKeywords().Where(kw => kw.descPos != KwDescPos.DoNotDisplay)
-                    .GroupBy(kw => kw.descPos, kw => TypeFactory<StatusEffect>.LocalizeProperty(kw.kwSEid, "Name", true, false) );
+                    .GroupBy(kw => kw.descPos, kw =>
+                    {
+                        if (kw.hasExtendedKeywordName)
+                        {
+                            var kwSe = TypeFactory<StatusEffect>.CreateInstance(kw.kwSEid);
+                            kwSe.SourceCard = card;
+
+                            if (kwSe is IExtendedKeywordName extendedKeywordName)
+                            {
+                                return extendedKeywordName.ExtendedKeywordName(card);
+                            }
+                            else
+                            {
+                                Log.LogDev()?.LogWarning($"Keyword {nameof(kw)} expects extended keyword name but {kw.kwSEid} does not implement {nameof(IExtendedKeywordName)}");
+                            }
+                        }
+
+                        return TypeFactory<StatusEffect>.LocalizeProperty(kw.kwSEid, "Name", true, false);
+                    });
 
                 __result = kwToAppend.SelectMany(g => g.Key == KwDescPos.First ? g : Enumerable.Empty<string>())
                     .Concat(__result)
