@@ -120,6 +120,7 @@ namespace Random_Examples
 
         public string ExtendedKeywordName(Card card)
         {
+            SourceCard = card;
             return LocalizeProperty("ExtendedName", true, true).RuntimeFormat(this);
 
             BepinexPlugin.log.LogDebug("deez");

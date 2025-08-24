@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using Extensions.Unity.ImageLoader;
 using HarmonyLib;
+using LBoL.Base;
 using LBoL.Core;
 using LBoL.Core.Stations;
 using LBoL.EntityLib.Stages.NormalStages;
@@ -12,6 +13,7 @@ using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -119,6 +121,76 @@ namespace Random_Examples
 
         }
 
+
+        KeyboardShortcut debgugBind = new KeyboardShortcut(KeyCode.Q, new KeyCode[] { KeyCode.LeftShift });
+
+
+        private void Update()
+        {
+            if (debgugBind.IsDown())
+            {
+
+                var seed = (ulong)DateTime.Now.Ticks;
+                var rng = new RandomGen(seed);
+
+
+
+                log.LogInfo($"seed:{seed}");
+
+                List<ColorContainer> toGroup = new List<ColorContainer>() {
+                    (0, "U"),
+                    (1, "UR"),
+                    (2, "UR"),
+                    (3, "URW"),
+
+                };
+
+                toGroup = BipartiteColours.CreateInput(new List<string>() { 
+                    "U",
+                    "U",
+                    "U",
+                    "C",
+                    "C",
+
+                    "UR",
+                    "GB",
+                    "RB",
+                    "RB",
+                    "BU",
+
+                    "WUGBR",
+                    "WUGBRC",
+                });
+
+
+
+                toGroup = BipartiteColours.CreateInput(new List<string>() {
+                    "U",
+
+                    "UR",
+                    "UR",
+                    "UR",
+                    "UR",
+                    "UR",
+                    "UR",
+                    "UR",
+                    "UR",
+
+
+                });
+
+                // this case has 1/4 probability to rerun attempt, if UR happens to be placed in U slot before U
+                toGroup = BipartiteColours.CreateInput(new List<string>() {
+                    "U",
+
+                    "UR",
+                });
+
+                var grouped = BipartiteColours.MakeGroupings(toGroup, rng);
+
+                BipartiteColours.PrintGroups(grouped);
+            }
+        }
 
         private void OnDestroy()
         {

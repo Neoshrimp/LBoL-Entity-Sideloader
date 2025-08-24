@@ -54,7 +54,6 @@ namespace LBoLEntitySideloader.CustomKeywords
         /// <summary>
         /// Display customizable string when listing keyword in card description?
         /// Should be set only keyword construction only. If true keyword SE MUST implement IExtendedKeywordName. 
-        /// StatusEffect.SourceCard will be set to card containing the keyword.
         /// </summary>
         public bool hasExtendedKeywordName = false;
 
