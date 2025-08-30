@@ -137,7 +137,7 @@ namespace Random_Examples
     }
 
     [EntityLogic(typeof(AutoPlayHavocDef))]
-    public sealed class AutoPlayHavoc : Card
+    public sealed class AutoPlayHavoc : Card, IExtendedCardClone
     {
         public int secretNumber = -69;
 
@@ -176,7 +176,7 @@ namespace Random_Examples
                     tokenCard._loyalty -= card.UltimateCost;
                     tokenCard.IsPlayTwiceToken = true;
 
-                    tokenCard.PlayTwiceSourceCard = this; //adapt deez
+                    tokenCard.PlayTwiceSourceCard = this; //adapt deez !!!!!
 
                     yield return new PlayTwiceAction(tokenCard, args);
                 }
@@ -226,6 +226,7 @@ namespace Random_Examples
 
             private static Interaction ModPrecond(Interaction ogInteraction, PlayCardAction action)
             {
+                // !!!! change the type check
                 if (action.Args.Card?.PlayTwiceSourceCard is AutoPlayHavoc)
                 {
                     var ultFound = false;
@@ -265,6 +266,24 @@ namespace Random_Examples
             }
             secretNumber = UnityEngine.Random.Range(0, 100);
             yield break;
+        }
+
+        public void ExtendedCardClone(Card clonedCard, CloningMethod cloningMethod)
+        {
+            switch (cloningMethod)
+            {
+                case CloningMethod.NonBattle:
+                    BepinexPlugin.log.LogInfo("Deez");
+                    break;
+                case CloningMethod.Copy:
+                    BepinexPlugin.log.LogInfo("nuts");
+                    break;
+                case CloningMethod.TwiceToken:
+                    break;
+                case CloningMethod.DoesntMatter:
+                default:
+                    break;
+            }
         }
     }
 }

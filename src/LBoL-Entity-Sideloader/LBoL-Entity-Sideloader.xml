@@ -129,6 +129,12 @@
             Meant to be implemented on keyword SE. CardKeyword needs hasExtendedKeywordName set for the method to be invoked.
             </summary>
         </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IExtendedCardClone">
+            <summary>
+            Extend Card cloning methods regardless of keywords. Happens after keywords are cloned.
+            cloningMethod never has value CloningMethod.DoesntMatter supplied.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">
             <summary>
             No: 0,

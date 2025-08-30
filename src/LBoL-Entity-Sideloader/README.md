@@ -7,6 +7,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7847` Add optional `IExtendedCardClone`, intended to be implemented on `Card`, for more controlled card cloning logic.
+
 `0.9.7846` Add optional `IExtendedKeywordName` interface for displaying more detailed keyword information on card's description.
 
 `0.9.7845` Fix a rare softlock bug (hopefully).

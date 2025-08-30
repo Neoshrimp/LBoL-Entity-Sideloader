@@ -17,6 +17,8 @@ namespace LBoLEntitySideloader.CustomKeywords
         static void NonBattle(Card __instance, Card __result)
         {
             CopyKeywords(__instance, __result, CloningMethod.NonBattle);
+            if (__instance is IExtendedCardClone ogCard)
+                ogCard.ExtendedCardClone(__result, CloningMethod.NonBattle);
         }
 
         [HarmonyPatch(typeof(Card), nameof(Card.CloneBattleCard))]
@@ -24,6 +26,8 @@ namespace LBoLEntitySideloader.CustomKeywords
         static void Copy(Card __instance, Card __result)
         {
             CopyKeywords(__instance, __result, CloningMethod.Copy);
+            if (__instance is IExtendedCardClone ogCard)
+                ogCard.ExtendedCardClone(__result, CloningMethod.Copy);
         }
 
         [HarmonyPatch(typeof(Card), nameof(Card.CloneTwiceToken))]
@@ -31,6 +35,8 @@ namespace LBoLEntitySideloader.CustomKeywords
         static void TwiceToken(Card __instance, Card __result)
         {
             CopyKeywords(__instance, __result, CloningMethod.TwiceToken);
+            if (__instance is IExtendedCardClone ogCard)
+                ogCard.ExtendedCardClone(__result, CloningMethod.TwiceToken);
         }
 
         static void CopyKeywords(Card og, Card copy, CloningMethod cloningMethod)

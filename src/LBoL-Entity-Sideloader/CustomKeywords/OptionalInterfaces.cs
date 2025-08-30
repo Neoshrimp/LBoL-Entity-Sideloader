@@ -30,4 +30,13 @@ namespace LBoLEntitySideloader.CustomKeywords
     {
         public string ExtendedKeywordName(Card card);
     }
+
+    /// <summary>
+    /// Extend Card cloning methods regardless of keywords. Happens after keywords are cloned.
+    /// cloningMethod never has value CloningMethod.DoesntMatter supplied.
+    /// </summary>
+    public interface IExtendedCardClone
+    {
+        public void ExtendedCardClone(Card clonedCard, CloningMethod cloningMethod);
+    }
 }
