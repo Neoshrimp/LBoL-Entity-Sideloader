@@ -610,6 +610,11 @@
             Encode yaml save files to binary? (not implemented)
             </summary>
         </member>
+        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.DeleteFileOnGamerunEnd">
+            <summary>
+            Should custom save file be deleted after gamerun has ended.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.TypeConverters">
             <summary>
             Provide type converters for yaml serialization/deserialization 
@@ -633,6 +638,11 @@
             One of two main requirements for data container class. The method is called when gameRun is being loaded. Should populate custom gameRun values with values from container fields.
             </summary>
             <param name="gameRun"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.OnGamerunEnded">
+            <summary>
+            Execute code after gamerun has ended. GameMaster.Instance.CurrentGameRun might still be available at that point.
+            </summary>
         </member>
         <member name="T:LBoLEntitySideloader.ReflectionHelpers.ConfigReflection">
             <summary>

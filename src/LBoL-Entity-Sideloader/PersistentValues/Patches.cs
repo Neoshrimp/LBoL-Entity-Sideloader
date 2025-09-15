@@ -24,6 +24,7 @@ namespace LBoLEntitySideloader.PersistentValues
                 var csd = customData[id];
                 try
                 {
+                    BepinexPlugin.log.LogDebug($"SAVING {id}");
                     csd.Save(__instance);
 
                     using StringWriter stringWriter = new StringWriter { NewLine = "\n" };
@@ -58,6 +59,7 @@ namespace LBoLEntitySideloader.PersistentValues
             foreach (var id in customData.Keys)
             {
 
+
                 var csd = customData[id];
 
                 var fileName = id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value);
@@ -67,6 +69,7 @@ namespace LBoLEntitySideloader.PersistentValues
                 if (!File.Exists(filePath))
                     return;
 
+                BepinexPlugin.log.LogDebug($"RESTORING {id}");
                 try
                 {
 
@@ -91,7 +94,7 @@ namespace LBoLEntitySideloader.PersistentValues
 
 
     // custom save file deletion isn't really necessary
-/*    [HarmonyPatch(typeof(GameMaster), nameof(GameMaster.TryDeleteSaveData))]
+    [HarmonyPatch(typeof(GameMaster), nameof(GameMaster.TryDeleteSaveData))]
     class GameMaster_Patch
     {
 
@@ -99,13 +102,40 @@ namespace LBoLEntitySideloader.PersistentValues
         {
             var index = GameMaster.Instance.CurrentSaveIndex;
             // if deleting game run save file..
-            if (index != null && GameMaster.GetGameRunFileName(index.Value) == filename)
+            if (index == null)
+                return;
+            if (GameMaster.GetGameRunFileName(index.Value) != filename)
+                return;
+
+            var customData = UniqueTracker.Instance.customGrSaveData;
+
+            foreach (var id in customData.Keys)
             {
-                
+                var csd = customData[id];
+                var fileName = id.GetFileName(GameMaster.Instance.CurrentSaveIndex.Value);
+                var filePath = Path.Combine(GameMaster.PlatformHandler.GetSaveDataFolder(), fileName);
+                if (!File.Exists(filePath))
+                    return;
+
+
+                try
+                {
+                    csd.OnGamerunEnded();
+
+                    if(csd.DeleteFileOnGamerunEnd)
+                        File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    BepinexPlugin.log.LogError($"Error while deleting custom save data {id}: {ex}");
+                }
+
+
+
             }
 
         }
-    }*/
+    }
 
 
 
