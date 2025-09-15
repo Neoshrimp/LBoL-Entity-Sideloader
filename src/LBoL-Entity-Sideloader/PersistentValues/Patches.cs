@@ -24,7 +24,6 @@ namespace LBoLEntitySideloader.PersistentValues
                 var csd = customData[id];
                 try
                 {
-                    BepinexPlugin.log.LogDebug($"SAVING {id}");
                     csd.Save(__instance);
 
                     using StringWriter stringWriter = new StringWriter { NewLine = "\n" };
@@ -69,7 +68,6 @@ namespace LBoLEntitySideloader.PersistentValues
                 if (!File.Exists(filePath))
                     return;
 
-                BepinexPlugin.log.LogDebug($"RESTORING {id}");
                 try
                 {
 
