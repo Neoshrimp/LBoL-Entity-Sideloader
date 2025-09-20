@@ -335,4 +335,17 @@ namespace LBoLEntitySideloader.GameFixes
             }
         }
     }
+
+
+
+    [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseDeckInBossRemoveReward), MethodType.Getter)]
+    class BaseDeckInBossRemoveReward_Patch
+    {
+        static void Postfix(ref IEnumerable<Card> __result)
+        {
+            __result = __result.Where(c => !c.Unremovable);
+        }
+    }
+
+
 }
