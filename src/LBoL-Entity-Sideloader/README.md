@@ -7,6 +7,8 @@ Modding framework for working with LBoL entities.
 
 #### Change log
 
+`0.9.7849` Update for Steam workshop update. **Not compatible with previous versions**. Fix "Prepare" boss reward being able to remove unremovable cards.
+
 `0.9.7848` Make `CustomGamerunSaveData` save files delete themselves when run ends. Add optional `DeleteFileOnGamerunEnd` control and `OnGamerunEnded` hook for `CustomGamerunSaveData`.
 
 `0.9.7847` Add optional `IExtendedCardClone` interface, intended to be implemented on `Card`, for more controlled card cloning logic.

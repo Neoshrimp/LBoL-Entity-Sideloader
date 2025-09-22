@@ -1,0 +1,20 @@
+{
+  "Title": "Entity Sideloader",
+  "Description": "Modding framework for working with LBoL entities",
+  "Brief": "Modding framework for working with LBoL entities.",
+  "Changelog": [
+    "v0.9.7849: \nInitial Release."
+  ],
+  "Version": "0.9.7849",
+  "Author": "Neo",
+  "Tags": [
+    "API",
+    "Generic"
+  ],
+  "PublishedFileId": 3572815053,
+  "AuthorId": 0,
+  "GUID": "neo.lbol.frameworks.entitySideloader",
+  "Dependencies": [ "BepInEx-BepInExPack-5.4.2100" ],
+  "LastUpdateTime": 0,
+  "OnlyUploadFiles": true
+}

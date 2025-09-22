@@ -274,7 +274,7 @@ namespace LBoLEntitySideloader.Resource
         internal Func<Sprite> collectionIcon;
         internal Func<Sprite> selectionCircleIcon;
 
-        public readonly static Sprite emptySprite = Sprite.Create(new Texture2D(0, 0, TextureFormat.ARGB32, false), new Rect(), new Vector2(0.5f, 0.5f));
+        public readonly static Sprite emptySprite = Sprite.Create(new Texture2D(1, 1, TextureFormat.ARGB32, false), new Rect(), new Vector2(0.5f, 0.5f));
 
     }
 }
