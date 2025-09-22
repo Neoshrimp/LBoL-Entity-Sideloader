@@ -427,7 +427,8 @@ namespace LBoLEntitySideloader.Entities.Patches
             // 2do maybe extend PlayerType enum
             // difficultyConfirmButton delegate, formerly <Awake>b__68_9
             // pre 1.7.0: formerly <Awake>b__68_8
-            [HarmonyPatch(typeof(StartGamePanel), "<Awake>b__70_7")]
+            // pre workshop: formerly <Awake>b__71_7
+            [HarmonyPatch(typeof(StartGamePanel), "<Awake>b__71_7")]
             class StartRunButton_Patch
             {
 

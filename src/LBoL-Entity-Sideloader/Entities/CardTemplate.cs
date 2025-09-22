@@ -118,6 +118,8 @@ namespace LBoLEntitySideloader.Entities
                UpgradedRelativeCards: new List<string>() { },
 
                Owner: null,
+               Pack: "",
+
                ImageId: "",
                UpgradeImageId: "",
 
