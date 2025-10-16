@@ -803,6 +803,11 @@
             Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
             </summary>
         </member>
+        <member name="T:LBoLEntitySideloader.Resource.PackIcons">
+            <summary>
+            Container for 2 pack sprites, representing whether the pack is enabled or not.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.Resource.PieceTemplate.DefaultConfig">
             <summary>
             Id : ,

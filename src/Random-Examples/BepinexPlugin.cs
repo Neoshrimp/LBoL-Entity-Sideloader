@@ -51,6 +51,9 @@ namespace Random_Examples
 
         internal static BatchLocalization IntentionBatchLoc = new BatchLocalization(embeddedSource, typeof(IntentionTemplate), Locale.En, "IntentionsEn");
 
+        internal static BatchLocalization PackBatchLoc = new BatchLocalization(embeddedSource, typeof(PackTemplate), Locale.En, "PacksEn");
+
+
 
         private void Awake()
         {
