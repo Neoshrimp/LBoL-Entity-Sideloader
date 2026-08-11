@@ -16,7 +16,6 @@ namespace LBoLEntitySideloader.Resource
 {
     public abstract class LocalizationOption
     {
-
         internal static void FillLocalizationTables(Dictionary<string, Dictionary<string, object>>  termDic, Type facType, bool mergeTerms)
         {
             if (termDic != null)
@@ -107,12 +106,5 @@ namespace LBoLEntitySideloader.Resource
                 }
             }
         }
-
-
-
-
-
-     
-
     }
 }
