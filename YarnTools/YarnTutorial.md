@@ -58,8 +58,6 @@ public sealed class TrukeGunLocalization
         IsUnitNameSource = true
     };
 
-    // public static BatchLocalization UnitModelBatchLoc = new BatchLocalization(BepinexPlugin.directorySource, typeof(UnitModelTemplate), UnitModel);
-
     public static void Init()
     {
         AdventuresBatchLoc.DiscoverAndLoadLocFiles(Adventure);
