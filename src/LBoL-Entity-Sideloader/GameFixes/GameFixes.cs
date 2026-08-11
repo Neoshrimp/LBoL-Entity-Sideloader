@@ -180,7 +180,7 @@ namespace LBoLEntitySideloader.GameFixes
 
         }
     }
-    
+
 
 
     // makes 3 fairies a bit more compatible with being grouped with other enemies
@@ -231,6 +231,7 @@ namespace LBoLEntitySideloader.GameFixes
 
 
     // 2do mysterious bug. cannot reproduce
+    // fixed?
     [HarmonyPatch(typeof(CardUi), nameof(CardUi.SetPendingCardsAlpha))]
     class CardUi_SetPendingCardsAlpha_Patch
     {
@@ -238,10 +239,10 @@ namespace LBoLEntitySideloader.GameFixes
         {
             try
             {
-                if(__instance._pendingUseWidgets != null)
+                if (__instance._pendingUseWidgets != null)
                     foreach (HandCard handCard in __instance._pendingUseWidgets)
                     {
-                        if(handCard?.CanvasGroup?.alpha != null)
+                        if (handCard != null && handCard.CanvasGroup != null)
                             handCard.CanvasGroup.alpha = alpha;
                     }
             }
@@ -302,9 +303,29 @@ namespace LBoLEntitySideloader.GameFixes
     [HarmonyPatch(typeof(BattleManaPanel), nameof(BattleManaPanel.ViewLoseMana))]
     class ViewLoseManaEarrapeFix_Patch
     {
-        static readonly List<AudioClip> audioClips = new List<AudioClip>() { ResourcesHelper.LoadUiSound("Zackary/ManaLose_1.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_2.wav"), ResourcesHelper.LoadUiSound("Zackary/ManaLose_3.wav") };
+        static List<AudioClip> audioClips = null;
+
         static void Prefix(BattleManaPanel __instance, ref LoseManaAction action)
         {
+            if (audioClips == null || audioClips.Empty())
+            {
+                try
+                {
+                    audioClips = new List<AudioClip>()
+                    {
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_1.wav"),
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_2.wav"),
+                        ResourcesHelper.LoadUiSound("Zackary/ManaLose_3.wav")
+                    };
+
+                }
+                catch (Exception)
+                {
+                    BepinexPlugin.log.LogWarning("Audio files not found, lose mana sound fix not applied.");
+                    return;
+                }
+            }
+
             if (AudioManager.Instance?._uiTable.ContainsKey("ManaLose") == true)
             {
                 AudioManager.UiEntry uiEntry = new AudioManager.UiEntry(0.3f / (1f + ((action.Args.Value.Amount - 1) * 0.1f)));
@@ -315,8 +336,20 @@ namespace LBoLEntitySideloader.GameFixes
         }
     }
 
-    // Fix Tenshi attempts to heal herself after she's dead.
-    // This also fix HealAction causing issue when target is null.
+
+
+    [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseDeckInBossRemoveReward), MethodType.Getter)]
+    class BaseDeckInBossRemoveReward_Patch
+    {
+        static void Postfix(ref IEnumerable<Card> __result)
+        {
+            __result = __result.Where(c => !c.Unremovable);
+        }
+    }
+
+
+    // Fix Tenshi attempts to heal herself after she's dead
+    // This also fix HealAction causing issue when target is null
     [HarmonyPatch(typeof(HealAction), "GetPhases")]
     class HealActionFix_Patch
     {
@@ -336,8 +369,8 @@ namespace LBoLEntitySideloader.GameFixes
         }
     }
 
-    // Fix Tenshi attempts to gain power after she's dead.
-    // This also fix ApplyStatusEffectAction causing issue when target is null.
+    // Fix Tenshi attempts to gain power after she's dead
+    // This also fix ApplyStatusEffectAction causing issue when target is null
     [HarmonyPatch(typeof(ApplyStatusEffectAction), "PreEventPhase")]
     class ApplyStatusEffectActionFix_Patch
     {
