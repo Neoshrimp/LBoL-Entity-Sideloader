@@ -45,7 +45,7 @@ namespace LBoLEntitySideloader.Resource
             int count;
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
-            var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, generateMipMaps)
+            var spriteTexture = new Texture2D(1, 1, TextureFormat.ARGB32, generateMipMaps)
             {
                 anisoLevel = anisoLevel,
                 filterMode = filterMode
@@ -76,11 +76,11 @@ namespace LBoLEntitySideloader.Resource
             while ((count = resource!.Read(buffer, 0, buffer.Length)) > 0)
                 memoryStream.Write(buffer, 0, count);
 
-            //var spriteTexture = new Texture2D(0, 0, TextureFormat.ARGB32, true)
+            //var spriteTexture = new Texture2D(1, 1, TextureFormat.ARGB32, true)
             var texGenFlags = TextureCreationFlags.None;
             if (generateMipMaps)
                 texGenFlags |= TextureCreationFlags.MipChain;
-            var spriteTexture = new Texture2D(0, 0, GraphicsFormat.R8G8B8A8_SRGB, texGenFlags)
+            var spriteTexture = new Texture2D(1, 1, GraphicsFormat.R8G8B8A8_SRGB, texGenFlags)
             {
                 anisoLevel = anisoLevel,
                 filterMode = filterMode

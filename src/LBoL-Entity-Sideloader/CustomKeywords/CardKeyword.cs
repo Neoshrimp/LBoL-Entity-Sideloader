@@ -51,6 +51,25 @@ namespace LBoLEntitySideloader.CustomKeywords
         /// </summary>
         public readonly bool isVerbose = false;
 
+        /// <summary>
+        /// Display customizable string when listing keyword in card description?
+        /// Should be set only keyword construction only. If true keyword SE MUST implement IExtendedKeywordName. 
+        /// </summary>
+        public bool hasExtendedKeywordName = false;
+
+
+
+        /// <summary>
+        /// Wrapper method exposing card information when cloning a card with keyword.
+        /// </summary>
+        /// <param name="og"></param>
+        /// <param name="other"></param>
+        /// <param name="cloningMethod"></param>
+        /// <returns></returns>
+        public virtual CardKeyword CloneWithCard(Card og, [MaybeNull]Card other, CloningMethod cloningMethod)
+        {
+            return Clone(cloningMethod);
+        }
 
         /// <summary>
         /// How keyword properties should be cloned. Returning null means keyword is not clonable.

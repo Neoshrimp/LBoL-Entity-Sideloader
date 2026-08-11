@@ -461,6 +461,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(spT, user);
                         }
+                        else if (entityDefinition is PackTemplate packT)
+                        {
+                            RegisterConfig(packT, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -841,7 +845,11 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => it.Consume(it.LoadSprites()), definition, nameof(it.LoadSprites), user);
                     }
+                    else if (definition is PackTemplate pt)
+                    {
+                        HandleOverwriteWrap(() => pt.Consume(pt.LoadPackIcon()), definition, nameof(pt.LoadPackIcon), user);
 
+                    }
 
 
                 }
@@ -914,6 +922,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => it.Consume(it.LoadLocalization()), definition, nameof(it.LoadLocalization), user);
                     }
+                    else if (definition is PackTemplate pt)
+                    {
+                        HandleOverwriteWrap(() => pt.Consume(pt.LoadLocalization()), definition, nameof(pt.LoadLocalization), user);
+                    }
                 }
 
                 // load global localization
@@ -973,6 +985,7 @@ namespace LBoLEntitySideloader
                         if (types2Set.Key == typeof(SpellTemplate))
                             continue;
 
+
                         foreach (var bl in types2Set.Value)
                         {
 
@@ -988,6 +1001,13 @@ namespace LBoLEntitySideloader
 
                                     continue;
                                 }
+
+                                if (bl.templateType == typeof(PackTemplate))
+                                {
+                                    PackTemplate.FillPacksLocTable(lf.LoadLocTable(bl.entityIds, addEmptyDic: false), lf.mergeTerms);
+                                    continue;
+                                }
+
 
                                 LocalizationOption.FillLocalizationTables(lf.LoadLocTable(bl.entityIds), bl.factoryType, lf.mergeTerms);
                             }

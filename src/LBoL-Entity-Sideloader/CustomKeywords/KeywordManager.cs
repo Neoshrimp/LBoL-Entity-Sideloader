@@ -66,9 +66,12 @@ namespace LBoLEntitySideloader.CustomKeywords
 
         public static bool TryGetCustomKeyword<T>(this Card card, string kwId, out T rezKeyword) where T : CardKeyword
         {
-            var rez = TryGetCustomKeyword(card, kwId, out var foundKw);
-            rezKeyword = (T)foundKw;
-            return rez;
+            var wasFound = TryGetCustomKeyword(card, kwId, out var foundKw);
+            //BepinexPlugin.log.LogDebug($"arg_kwId:{kwId};T:{typeof(T)};foundKw:{foundKw?.kwSEid};foundKw_type:{foundKw?.GetType()};isNull{foundKw==null}");
+            rezKeyword = null;
+            if(wasFound)
+                rezKeyword = (T)foundKw;
+            return wasFound;
         }
 
         public static CardKeyword GetCustomKeyword(this Card card, string kwId)
@@ -130,9 +133,29 @@ namespace LBoLEntitySideloader.CustomKeywords
         {
             static void Postfix(Card __instance, ref IEnumerable<string> __result)
             {
+
                 var card = __instance;
                 var kwToAppend = card.AllCustomKeywords().Where(kw => kw.descPos != KwDescPos.DoNotDisplay)
-                    .GroupBy(kw => kw.descPos, kw => TypeFactory<StatusEffect>.LocalizeProperty(kw.kwSEid, "Name", true, false) );
+                    .GroupBy(kw => kw.descPos, kw =>
+                    {
+                        if (kw.hasExtendedKeywordName)
+                        {
+                            var kwSe = TypeFactory<StatusEffect>.CreateInstance(kw.kwSEid);
+                            // mod code should store sourceCard instead since it's assigned under specific circumstances
+                            //kwSe.SourceCard = card;
+
+                            if (kwSe is IExtendedKeywordName extendedKeywordName)
+                            {
+                                return extendedKeywordName.ExtendedKeywordName(card);
+                            }
+                            else
+                            {
+                                Log.LogDev()?.LogWarning($"Keyword {nameof(kw)} expects extended keyword name but {kw.kwSEid} does not implement {nameof(IExtendedKeywordName)}");
+                            }
+                        }
+
+                        return TypeFactory<StatusEffect>.LocalizeProperty(kw.kwSEid, "Name", true, false);
+                    });
 
                 __result = kwToAppend.SelectMany(g => g.Key == KwDescPos.First ? g : Enumerable.Empty<string>())
                     .Concat(__result)

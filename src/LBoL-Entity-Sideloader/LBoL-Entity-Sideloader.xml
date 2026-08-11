@@ -79,6 +79,21 @@
             Should tooltip be NOT displayed? Overridden by key SE config.IsVerbose
             </summary>
         </member>
+        <member name="F:LBoLEntitySideloader.CustomKeywords.CardKeyword.hasExtendedKeywordName">
+            <summary>
+            Display customizable string when listing keyword in card description?
+            Should be set only keyword construction only. If true keyword SE MUST implement IExtendedKeywordName. 
+            </summary>
+        </member>
+        <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.CloneWithCard(LBoL.Core.Cards.Card,LBoL.Core.Cards.Card,LBoLEntitySideloader.CustomKeywords.CloningMethod)">
+            <summary>
+            Wrapper method exposing card information when cloning a card with keyword.
+            </summary>
+            <param name="og"></param>
+            <param name="other"></param>
+            <param name="cloningMethod"></param>
+            <returns></returns>
+        </member>
         <member name="M:LBoLEntitySideloader.CustomKeywords.CardKeyword.Clone(LBoLEntitySideloader.CustomKeywords.CloningMethod)">
             <summary>
             How keyword properties should be cloned. Returning null means keyword is not clonable.
@@ -100,12 +115,24 @@
         </member>
         <member name="T:LBoLEntitySideloader.CustomKeywords.IOnTooltipDisplay">
             <summary>
-            Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
+            Meant to be implemented on keyword SE. Execute extra logic when tooltip is displayed, i.e., move properties from keyword to SE.
             </summary>
         </member>
         <member name="T:LBoLEntitySideloader.CustomKeywords.IOverrideSEBrief">
             <summary>
             Effectively override(via postfix) non-virtual StatusEffect.Brief getter. Brief description is used to display SE(keyword) tooltip.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IExtendedKeywordName">
+            <summary>
+            Method controlling how extended keyword name should be displayed on card description.
+            Meant to be implemented on keyword SE. CardKeyword needs hasExtendedKeywordName set for the method to be invoked.
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.CustomKeywords.IExtendedCardClone">
+            <summary>
+            Extend Card cloning methods regardless of keywords. Happens after keywords are cloned.
+            cloningMethod never has value CloningMethod.DoesntMatter supplied.
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.Entities.AdventureTemplate.DefaultConfig">
@@ -583,6 +610,11 @@
             Encode yaml save files to binary? (not implemented)
             </summary>
         </member>
+        <member name="P:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.DeleteFileOnGamerunEnd">
+            <summary>
+            Should custom save file be deleted after gamerun has ended.
+            </summary>
+        </member>
         <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.TypeConverters">
             <summary>
             Provide type converters for yaml serialization/deserialization 
@@ -606,6 +638,11 @@
             One of two main requirements for data container class. The method is called when gameRun is being loaded. Should populate custom gameRun values with values from container fields.
             </summary>
             <param name="gameRun"></param>
+        </member>
+        <member name="M:LBoLEntitySideloader.PersistentValues.CustomGameRunSaveData.OnGamerunEnded">
+            <summary>
+            Execute code after gamerun has ended. GameMaster.Instance.CurrentGameRun might still be available at that point.
+            </summary>
         </member>
         <member name="T:LBoLEntitySideloader.ReflectionHelpers.ConfigReflection">
             <summary>
@@ -764,6 +801,11 @@
         <member name="F:LBoLEntitySideloader.Resource.ModelOption.loadSpine">
             <summary>
             Spine must have "idle" animation. Can also have "blink", "pose1" and "fly" animations. 
+            </summary>
+        </member>
+        <member name="T:LBoLEntitySideloader.Resource.PackIcons">
+            <summary>
+            Container for 2 pack sprites, representing whether the pack is enabled or not.
             </summary>
         </member>
         <member name="M:LBoLEntitySideloader.Resource.PieceTemplate.DefaultConfig">

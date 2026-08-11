@@ -1,5 +1,7 @@
 ﻿using LBoL.Core;
+using LBoL.Presentation;
 using LBoLEntitySideloader.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -85,6 +87,11 @@ namespace LBoLEntitySideloader.PersistentValues
             get => true;
         }
 
+        /// <summary>
+        /// Should custom save file be deleted after gamerun has ended.
+        /// </summary>
+        public virtual bool DeleteFileOnGamerunEnd { get => true; }
+
 
         /// <summary>
         /// Provide type converters for yaml serialization/deserialization 
@@ -114,5 +121,11 @@ namespace LBoLEntitySideloader.PersistentValues
         /// <param name="gameRun"></param>
         public abstract void Restore(GameRunController gameRun);
 
+        /// <summary>
+        /// Execute code after gamerun has ended. GameMaster.Instance.CurrentGameRun might still be available at that point.
+        /// </summary>
+        public virtual void OnGamerunEnded()
+        {
+        }
     }
 }

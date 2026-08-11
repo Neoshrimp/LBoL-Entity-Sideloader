@@ -309,6 +309,8 @@ namespace Random_Examples
 
             config.UpgradeImageId = $"{GetId()}{CardImages.upgradeString}";
 
+            config.Pack = DeezPackDef.id;
+
             return config;
         }
 
@@ -317,6 +319,35 @@ namespace Random_Examples
         public sealed class EpicGoblinPunch : Card
         {
 
+        }
+
+
+    }
+
+    public sealed class DeezPackDef : PackTemplate
+    {
+        public const string id = "DeezPack";
+
+        public override IdContainer GetId()
+        {
+            return id;
+        }
+
+        public override PackIcons LoadPackIcon()
+        {
+            var pi = new PackIcons();
+            pi.mainIcon = ResourcesHelper.TryGetSticker("TdmSticker", false);
+            pi.disabledIcon = ResourcesHelper.TryGetSticker("TdmSticker");
+            return pi;
+        }
+
+        public override LocalizationOption LoadLocalization()
+        {
+            return PackBatchLoc.AddEntity(this);
+
+            var lf = new LocalizationFiles(embeddedSource);
+            lf.AddLocaleFile(Locale.En, "PacksEn.yaml");
+            return lf;
         }
 
 

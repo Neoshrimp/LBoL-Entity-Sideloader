@@ -4,3 +4,9 @@ Invincible:
 NoDmgLimitSe:
   Name: No Damage Limit
   Description: Taken damage amount cannot be reduced by ANY means. (Attacks can still be |Grazed|.)
+
+TestKwSe:
+  Name: testDeez
+  Description: testNuts
+  ExtendedName: dezus nutus |n:{SecretNumber}| <sprite="Point" name="Gold">
+  

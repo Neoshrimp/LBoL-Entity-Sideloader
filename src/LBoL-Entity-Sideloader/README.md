@@ -6,6 +6,23 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+
+`0.9.7850` Add `PackTemplate` for card packs.
+
+`0.9.7849` Update for Steam workshop update. **Not compatible with previous versions**. Fix "Prepare" boss reward being able to remove unremovable cards.
+
+`0.9.7848` Make `CustomGamerunSaveData` save files delete themselves when run ends. Add optional `DeleteFileOnGamerunEnd` control and `OnGamerunEnded` hook for `CustomGamerunSaveData`.
+
+`0.9.7847` Add optional `IExtendedCardClone` interface, intended to be implemented on `Card`, for more controlled card cloning logic.
+
+`0.9.7846` Add optional `IExtendedKeywordName` interface for displaying more detailed keyword information on card's description.
+
+`0.9.7845` Fix a rare softlock bug (hopefully).
+
+`0.9.7844` Add overridable `CardKeyword.CloneWithCard` method which exposes info of the cards being cloned. *thanks, cramps-man*
+
+`0.9.7843` Prevent loud sfx when losing lots of mana. *thanks, IntoxicatedKid*
+
 `0.9.7842` Fix some interactions between cost reductions and in-battle upgrades. Mostly affects 1XX -> 2X style upgrades. *thanks, cyaneko*
 
 `0.9.7840` Hard deprecate `LBoLEntitySideloader.ExtraFunc.AutoCastAction`.
