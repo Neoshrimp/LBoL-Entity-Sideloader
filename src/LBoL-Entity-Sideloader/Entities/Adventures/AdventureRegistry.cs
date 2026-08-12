@@ -49,9 +49,9 @@ namespace LBoLEntitySideloader
         {
             BepinexPlugin.log.LogInfo($"[DialogRunnerPatch] Intercepted LoadAsync for dialog name: '{name}'");
 
+            // Adventure not in registry, so loading a vanilla event.
             if (!AdventureRegistry.YarnPrograms.TryGetValue(name, out YarnData yarnData) || yarnData == null)
             {
-                BepinexPlugin.log.LogWarning($"[DialogRunnerPatch] Dialog '{name}' NOT found in AdventureRegistry. Skipping patch.");
                 return true;
             }
 
@@ -61,16 +61,13 @@ namespace LBoLEntitySideloader
                 return true;
             }
 
+
+            // Fetch string table for current locale (with English fallback)
             BepinexPlugin.log.LogInfo($"[DialogRunnerPatch] Found YarnData for '{name}'. Getting string table...");
             Dictionary<string, string> stringTable = yarnData.GetStringTableForCurrentLocale();
 
-            ConstructorInfo ctor = typeof(DialogRunner).GetConstructor(
-                BindingFlags.NonPublic | BindingFlags.Instance,
-                null,
-                new[] { typeof(string), typeof(byte[]), typeof(IDictionary<string, string>), typeof(IVariableStorage), typeof(Yarn.Library) },
-                null);
+            var runner = new DialogRunner(name, yarnData.compiledBytes, stringTable, storage, library);
 
-            var runner = (DialogRunner)ctor.Invoke(new object[] { name, yarnData.compiledBytes, stringTable, storage, library });
 
             __result = UniTask.FromResult(runner);
             BepinexPlugin.log.LogInfo($"[DialogRunnerPatch] Successfully created DialogRunner for '{name}' with {stringTable.Count} string table entries.");

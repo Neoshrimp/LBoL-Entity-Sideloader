@@ -75,6 +75,14 @@ namespace LBoLEntitySideloader.Resource
             }
         }
 
+        /// <summary>
+        /// Finds a file of name id within the directory.
+        /// Returns name for found path.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="searchSubdirectories">If true, will search for subdirectories within the path. (e.g., searching events/event.png searches for event.png in all subdirectories under "events/"). Otherwise, searches only the exact path in id.</param>
+        /// <returns></returns>
         public override bool TryGetFileName(string id, out string name, bool searchSubdirectories = true)
         {
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(path))
@@ -83,7 +91,7 @@ namespace LBoLEntitySideloader.Resource
                 return false;
             }
 
-            // 1. Direct O(1) Check for exact path
+            // Check for exact path, slash agnostic.
             string relativePath = id.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
             string fullPath = Path.Combine(path, relativePath);
 
@@ -93,7 +101,7 @@ namespace LBoLEntitySideloader.Resource
                 return true;
             }
 
-            // 2. If recursive subfolder search is disabled, give up immediately
+            // If recursive subfolder search is disabled, give up immediately
             if (!searchSubdirectories)
             {
                 name = null;
@@ -101,7 +109,7 @@ namespace LBoLEntitySideloader.Resource
                 return false;
             }
 
-            // 3. Recursive search starting from the specified folder prefix (if any)
+            // Recursive search starting from the specified folder prefix (if any)
             if (dirInfo != null && dirInfo.Exists)
             {
                 string targetFileName = Path.GetFileName(id); // e.g., "event.yaml" from "en/event.yaml"

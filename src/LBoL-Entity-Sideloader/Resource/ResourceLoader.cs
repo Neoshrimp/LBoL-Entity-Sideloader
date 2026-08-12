@@ -35,7 +35,7 @@ namespace LBoLEntitySideloader.Resource
 
         public static Texture2D LoadTexture(string name, IResourceSource source, int anisoLevel, FilterMode filterMode, bool generateMipMaps)
         {
-            // Resolve subfolder relative path if present (e.g. searching for "image.png" searches through subfolder "events/image.png")
+            // Searches through subfolders if possible (e.g. searching for "image.png" searches through subfolder "events/image.png")
             if (source.TryGetFileName(name, out var resolvedName))
             {
                 name = resolvedName;

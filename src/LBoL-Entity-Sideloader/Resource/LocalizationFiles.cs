@@ -162,6 +162,7 @@ namespace LBoLEntitySideloader.Resource
         /// <summary>
         /// Automatically discovers localization files in the resource source matching {fileNamePrefix}{Locale}.yaml.
         /// Example prefix: "events/YuukaGarden" -> finds "events/YuukaGardenEn.yaml", "events/YuukaGardenZhHans.yaml", etc.
+        /// Also looks through subdirectories, so it can find "events/en/YuukaGardenEn.yaml" as well.
         /// </summary>
         /// <param name="fileNamePrefix">File path/prefix relative to resource source, without locale suffix and .yaml</param>
         public void DiscoverAndLoadLocFiles(string fileNamePrefix)
