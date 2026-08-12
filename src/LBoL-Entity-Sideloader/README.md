@@ -6,6 +6,7 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+`0.9.7851` Fix an edge case related to hybrid mana in interactions between cost reductions and in-battle upgrades.
 
 `0.9.7850` Add `PackTemplate` for card packs.
 

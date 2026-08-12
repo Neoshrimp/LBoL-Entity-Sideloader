@@ -54,7 +54,7 @@ namespace LBoLEntitySideloader.GameFixes
 
             ManaGroup result = ManaGroup.Empty;
 
-            // redistribute surplus to hybrid/any mana in deficit
+            // redistribute surplus pips to hybrid
             if (0 < deficit.Hybrid)
             {
                 foreach (ManaColor c in deficit.GetHybridColors)
@@ -69,12 +69,25 @@ namespace LBoLEntitySideloader.GameFixes
                 }
             }
 
+            // redistribute any excess left to generic
             foreach (ManaColor c in surplus.EnumerateColors())
             {
                 int pips = Math.Min(deficit[ManaColor.Any], surplus[c]);
 
                 surplus -= ManaGroup.FromColor(c, pips);
                 result -= ManaGroup.FromColor(c, pips);
+
+                deficit -= ManaGroup.Anys(pips);
+                result += ManaGroup.Anys(pips);
+            }
+
+            // redistribute surplus hybrid mana to generic
+            if (0 < surplus.Hybrid)
+            {
+                int pips = Math.Min(deficit[ManaColor.Any], surplus[ManaColor.Hybrid]);
+
+                surplus.Hybrid -= pips;
+                result.Hybrid -= pips;
 
                 deficit -= ManaGroup.Anys(pips);
                 result += ManaGroup.Anys(pips);

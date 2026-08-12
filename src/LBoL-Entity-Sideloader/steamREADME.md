@@ -6,6 +6,9 @@ Modding framework for working with LBoL entities.
 [url=https://github.com/cyaneko]cyaneko[/url]
 
 [h1]Change log[/h1]
+'0.9.7851' Fix an edge case related to hybrid mana in interactions between cost reductions and in-battle upgrades.
+
+'0.9.7850' Add 'PackTemplate' for card packs.
 
 '0.9.7849' Update for Steam workshop update. [b]Not compatible with previous versions[/b]. Fix "Prepare" boss reward being able to remove unremovable cards.
 
