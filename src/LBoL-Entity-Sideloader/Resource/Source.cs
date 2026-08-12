@@ -13,7 +13,7 @@ namespace LBoLEntitySideloader.Resource
 
         
         public abstract Stream Load(string id);
-        public abstract bool TryGetFileName(string id, out string name);
+        public abstract bool TryGetFileName(string id, out string name, bool searchSubdirectories = true);
 
 
         public static string LegalizeFileName(string fileName)

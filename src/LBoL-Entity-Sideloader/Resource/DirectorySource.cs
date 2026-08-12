@@ -18,6 +18,8 @@ namespace LBoLEntitySideloader.Resource
 
         public DirectoryInfo dirInfo;
 
+        // Redundant now? Might be removed
+
         HashSet<string> fileNames= new HashSet<string>(new IdEqualFilename());
 
         class IdEqualFilename : IEqualityComparer<string>
@@ -73,37 +75,69 @@ namespace LBoLEntitySideloader.Resource
             }
         }
 
-        public override bool TryGetFileName(string id, out string name)
+        /// <summary>
+        /// Finds a file of name id within the directory.
+        /// Returns name for found path.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="searchSubdirectories">If true, will search for subdirectories within the path. (e.g., searching events/event.png searches for event.png in all subdirectories under "events/"). Otherwise, searches only the exact path in id.</param>
+        /// <returns></returns>
+        public override bool TryGetFileName(string id, out string name, bool searchSubdirectories = true)
         {
-            id = LegalizeFileName(id);
-            // breaks if file is deleted
-            if (fileNames.Contains(id))
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(path))
             {
-                name = id;
+                name = null;
+                return false;
+            }
+
+            // Check for exact path, slash agnostic.
+            string relativePath = id.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            string fullPath = Path.Combine(path, relativePath);
+
+            if (File.Exists(fullPath))
+            {
+                name = relativePath.Replace('\\', '/');
                 return true;
             }
 
-            foreach(var fi in dirInfo.EnumerateFiles())
+            // If recursive subfolder search is disabled, give up immediately
+            if (!searchSubdirectories)
             {
-                fileNames.Add(fi.Name);
-                if (fi.Name.StartsWith(id))
+                name = null;
+                BepinexPlugin.log.LogWarning($"[DirectorySource] Could not find file in path: {id}");
+                return false;
+            }
+
+            // Recursive search starting from the specified folder prefix (if any)
+            if (dirInfo != null && dirInfo.Exists)
+            {
+                string targetFileName = Path.GetFileName(id); // e.g., "event.yaml" from "en/event.yaml"
+                string specifiedSubDir = Path.GetDirectoryName(relativePath); // e.g., "en" from "en/event.yaml"
+
+                // Determine search root: if "en/event.yaml" was passed, search inside "Yourmod/en/"
+                string searchRootPath = string.IsNullOrEmpty(specifiedSubDir)
+                    ? path
+                    : Path.Combine(path, specifiedSubDir);
+
+                if (Directory.Exists(searchRootPath))
                 {
-                    name = id;
-                    return true;
+                    var searchDirInfo = new DirectoryInfo(searchRootPath);
+                    foreach (var fi in searchDirInfo.EnumerateFiles("*", SearchOption.AllDirectories))
+                    {
+                        if (fi.Name.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Calculate relative path from the mod root directory
+                            string foundRelPath = Path.GetRelativePath(path, fi.FullName).Replace('\\', '/');
+                            name = foundRelPath;
+                            return true;
+                        }
+                    }
                 }
             }
+
             name = null;
             return false;
-        }
-
-
-        public string FullPath(string id)
-        {
-            id = LegalizeFileName(id);
-
-            var filePath = Path.Combine(path, id);
-
-            return filePath;
         }
 
         public override Stream Load(string id)
@@ -112,16 +146,26 @@ namespace LBoLEntitySideloader.Resource
 
             try
             {
-                FileStream stream = new FileStream(filePath, FileMode.Open);
-                return stream;
+                if (File.Exists(filePath))
+                {
+                    return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                }
+                Log.log.LogWarning($"{this.GetType()}: File not found at path '{filePath}' for id '{id}'");
+                return null;
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
                 Log.log.LogError($"{this.GetType()} exception while loading file {id}: {ex}");
                 return null;
             }
+        }
 
 
+        public string FullPath(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return path;
+            string relativePath = id.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            return Path.Combine(path, relativePath);
         }
 
 

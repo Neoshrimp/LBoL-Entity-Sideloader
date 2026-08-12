@@ -159,6 +159,26 @@ namespace LBoLEntitySideloader.Resource
             return null;
         }
 
+        /// <summary>
+        /// Automatically discovers localization files in the resource source matching {fileNamePrefix}{Locale}.yaml.
+        /// Example prefix: "events/YuukaGarden" -> finds "events/YuukaGardenEn.yaml", "events/YuukaGardenZhHans.yaml", etc.
+        /// Also looks through subdirectories, so it can find "events/en/YuukaGardenEn.yaml" as well.
+        /// </summary>
+        /// <param name="fileNamePrefix">File path/prefix relative to resource source, without locale suffix and .yaml</param>
+        public void DiscoverAndLoadLocFiles(string fileNamePrefix)
+        {
+            foreach (Locale l in Enum.GetValues(typeof(Locale)).Cast<Locale>())
+            {
+                string id = $"{fileNamePrefix}{l}";
+                string fullFileName = Source.AddExtension(id, ".yaml");
 
+                // TryGetFileName outputs the true relative path (e.g. "events/YuukaGardenEn.yaml") into resolvedName
+                if (source.TryGetFileName(fullFileName, out var resolvedName))
+                {
+                    // Pass resolvedName so the subfolder path is preserved!
+                    AddLocaleFile(l, resolvedName);
+                }
+            }
+        }
     }
 }

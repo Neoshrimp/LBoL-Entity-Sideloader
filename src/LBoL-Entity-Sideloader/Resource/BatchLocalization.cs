@@ -20,6 +20,7 @@ namespace LBoLEntitySideloader.Resource
         public readonly Type templateType;
 
         public readonly Type factoryType;
+        public bool IsUnitNameSource { get; set; } = false;
 
 
         //internal bool IsProcessed { get; set; } = false;
@@ -99,8 +100,8 @@ namespace LBoLEntitySideloader.Resource
             foreach (var l in Enum.GetValues(typeof(Locale)).Cast<Locale>())
             {
                 var id = $"{fileNamePrefix}{l}";
-                if (localizationFiles.source.TryGetFileName(Source.AddExtension(id, ".yaml"), out var _))
-                    localizationFiles.AddLocaleFile(l, id);
+                if (localizationFiles.source.TryGetFileName(Source.AddExtension(id, ".yaml"), out var resolvedName))
+                    localizationFiles.AddLocaleFile(l, resolvedName);
             }
         }
 

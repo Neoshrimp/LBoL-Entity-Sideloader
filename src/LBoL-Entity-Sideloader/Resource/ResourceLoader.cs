@@ -35,6 +35,12 @@ namespace LBoLEntitySideloader.Resource
 
         public static Texture2D LoadTexture(string name, IResourceSource source, int anisoLevel, FilterMode filterMode, bool generateMipMaps)
         {
+            // Searches through subfolders if possible (e.g. searching for "image.png" searches through subfolder "events/image.png")
+            if (source.TryGetFileName(name, out var resolvedName))
+            {
+                name = resolvedName;
+            }
+
             using Stream resource = source.Load(name);
 
             if (resource == null)
@@ -64,6 +70,11 @@ namespace LBoLEntitySideloader.Resource
 
         public static Sprite LoadSprite(string name, IResourceSource source, int ppu, int anisoLevel, FilterMode filterMode, bool generateMipMaps = false, Rect? rect = null, Vector2? pivot = null)
         {
+
+            if (source.TryGetFileName(name, out var resolvedName))
+            {
+                name = resolvedName;
+            }
             using Stream resource = source.Load(name);
 
             if (resource == null)
@@ -120,7 +131,18 @@ namespace LBoLEntitySideloader.Resource
 
         public static YamlMappingNode LoadYaml(string name, IResourceSource source)
         {
+            if (source.TryGetFileName(name, out var resolvedName))
+            {
+                name = resolvedName;
+            }
+
             using var stream = source.Load(name);
+
+            if (stream == null)
+            {
+                log.LogWarning($"[ResourceLoader] Could not load stream for yaml resource: {name}");
+                return null;
+            }
 
             using var reader = new StreamReader(stream, encoding: System.Text.Encoding.UTF8);
 
@@ -194,13 +216,13 @@ namespace LBoLEntitySideloader.Resource
             }
 
         }
-
-
-
-
-
         public static byte[] ResourceBinary(string name, IResourceSource source)
         {
+            if (source.TryGetFileName(name, out var resolvedName))
+            {
+                name = resolvedName;
+            }
+
             using var stream = source.Load(name);
 
             if (stream == null) return null;

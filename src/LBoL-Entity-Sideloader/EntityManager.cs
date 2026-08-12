@@ -465,6 +465,10 @@ namespace LBoLEntitySideloader
                         {
                             RegisterConfig(packT, user);
                         }
+                        else if (entityDefinition is AdventureTemplate advTemplate)
+                        {
+                            RegisterConfig(advTemplate, user);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -721,7 +725,7 @@ namespace LBoLEntitySideloader
             }
             else if (facType == typeof(Adventure))
             {
-                throw new NotImplementedException();
+                // Implement later
             }
         }
 
@@ -850,7 +854,11 @@ namespace LBoLEntitySideloader
                         HandleOverwriteWrap(() => pt.Consume(pt.LoadPackIcon()), definition, nameof(pt.LoadPackIcon), user);
 
                     }
-
+                    else if (definition is AdventureTemplate at)
+                    {
+                        HandleOverwriteWrap(() => at.Consume(at.LoadAdventureImages()), definition, nameof(at.LoadAdventureImages), user);
+                        HandleOverwriteWrap(() => at.Consume(at.LoadYarnData()), definition, nameof(at.LoadYarnData), user);
+                    }
 
                 }
             }
@@ -926,6 +934,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => pt.Consume(pt.LoadLocalization()), definition, nameof(pt.LoadLocalization), user);
                     }
+                    else if (definition is AdventureTemplate at)
+                    {
+                        HandleOverwriteWrap(() => at.Consume(at.LoadLocalization()), definition, nameof(at.LoadLocalization), user);
+                    }
                 }
 
                 // load global localization
@@ -993,13 +1005,14 @@ namespace LBoLEntitySideloader
                             {
                                 var lf = bl.localizationFiles;
 
-                                if (bl.templateType == typeof(UnitModelTemplate))
+                                if (bl.templateType == typeof(UnitModelTemplate) || bl.IsUnitNameSource)
                                 {
                                     Log.log.LogDebug($"unit model batch loc");
                                     //LocalizationOption.FillUnitNameTable(LocalizationOption.TermDic2YamlMapping(lf.LoadLocTable(bl.entityIds)), lf.mergeTerms);
                                     LocalizationOption.FillUnitNameTable(lf.Load(Localization.CurrentLocale), lf.mergeTerms, bl.entityIds);
 
-                                    continue;
+                                    // Idk why this is here
+                                    // continue;
                                 }
 
                                 if (bl.templateType == typeof(PackTemplate))
@@ -1008,7 +1021,7 @@ namespace LBoLEntitySideloader
                                     continue;
                                 }
 
-
+                                // If needed just make a strict exclusion from unit model template
                                 LocalizationOption.FillLocalizationTables(lf.LoadLocTable(bl.entityIds), bl.factoryType, lf.mergeTerms);
                             }
                             catch (Exception ex)

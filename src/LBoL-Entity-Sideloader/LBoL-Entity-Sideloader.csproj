@@ -35,8 +35,8 @@
   </ItemGroup>
     
   <PropertyGroup>
-	  <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\LBoL</GameFolder>
-	  <BepInExFolder>$(GameFolder)\BepInEx</BepInExFolder>
+	  <GameFolder>E:\Steam\steamapps\common\LBoL</GameFolder>
+	  <BepInExFolder>E:\Steam\steamapps\workshop\content\1140150\3483706823\BepInEx</BepInExFolder>
 	  <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("-", ""))</RootNamespace>
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	  <DocumentationFile></DocumentationFile>
@@ -137,22 +137,20 @@
     <Reference Include="UnityEngine.UnityEngine.ParticleSystemModule">
         <HintPath>$(GameFolder)\LBoL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
+      <Reference Include="YarnSpinner">
+          <HintPath>$(GameFolder)\LBoL_Data\Managed\YarnSpinner.dll</HintPath>
+      </Reference>
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="spriteTemplates\" />
   </ItemGroup>
-    
-    
-	
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;$(ProjectDir)&quot;&#xD;&#xA;IF exist &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; goto skipDir&#xD;&#xA;mkdir &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;:skipDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)libs\*&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; &#xD;&#xA;IF not exist &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader\&quot; goto noUnityDir&#xD;&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader&quot;&#xD;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;E:\unity\LBoL-Asset-Designer\Assets\ModdingAssembllies\SideLoader&quot;&#xD;&#xA;:noUnityDir&#xD;&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md', '$(ProjectDir)steamREADME.md', '$(ProjectDir)modinfo.json', '$(ProjectDir)libs\*', '$(OutDir)\$(AssemblyName).xml' -DestinationPath  '$(ProjectDir)$(AssemblyName).zip' -Force&quot;&#xD;&#xA;copy /Y &quot;$(ProjectDir)$(AssemblyName).zip&quot; &quot;$(GameFolder)\Mods&quot;" />
-  </Target>
-	
-
-	
 
 
+
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="&#xA;echo --- Starting Post-Build Script ---&#xA;&#xA;rem --- Deploy to BepInEx plugins folder ---&#xA;echo Deploying to BepInEx plugins: $(BepInExFolder)\plugins\$(AssemblyName)&#xA;IF NOT EXIST &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot; (&#xA;    mkdir &quot;$(BepInExFolder)\plugins\$(AssemblyName)&quot;&#xA;)&#xA;copy /Y &quot;$(TargetPath)&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)\&quot;&#xA;copy /Y &quot;$(OutDir)\$(AssemblyName).xml&quot; &quot;$(BepInExFolder)\plugins\$(AssemblyName)\&quot;&#xA;&#xA;rem --- Deploy to Local Mods Folder ---&#xA;echo Deploying to Local Mods Folder: $(GameFolder)\Mods&#xA;powershell -command &quot;Compress-Archive -Path '$(TargetPath)', '$(ProjectDir)manifest.json', '$(ProjectDir)icon.png', '$(ProjectDir)README.md', '$(ProjectDir)steamREADME.md', '$(ProjectDir)modinfo.json', '$(ProjectDir)libs\*', '$(OutDir)\$(AssemblyName).xml' -DestinationPath '$(ProjectDir)$(AssemblyName).zip' -Force&quot;&#xA;copy /Y &quot;$(ProjectDir)$(AssemblyName).zip&quot; &quot;$(GameFolder)\Mods&quot;&#xA;&#xA;echo --- Post-Build Script Finished ---&#xA;" />
+    </Target>
 </Project>
