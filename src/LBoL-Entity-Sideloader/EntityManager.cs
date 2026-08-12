@@ -725,7 +725,15 @@ namespace LBoLEntitySideloader
             }
             else if (facType == typeof(Adventure))
             {
-                // Implement later
+                var advInfo = entityType.GetCustomAttribute<AdventureInfoAttribute>();
+                if (advInfo?.WeighterType != null)
+                {
+                    var weighter = (IAdventureWeighter)Activator.CreateInstance(advInfo.WeighterType);
+                    if (weighter != null)
+                    {
+                        Library._adventureWeighterTable.AlwaysAdd(entityType, weighter);
+                    }
+                }
             }
         }
 

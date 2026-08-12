@@ -362,4 +362,94 @@ The `.csproj` target added in Step 1 will automatically invoke `YarnTools/ysc.ex
 2. Open the debug panel and navigate to the **Events** tab (3rd tab).
 3. You will find it at the end.
 
-This won't add your event to the actual game (I haven't figured out that yet), but it's a good start to event modding.
+However, your event hasn't been added to the actual pool of encounterable events within the act yet.
+
+---
+
+### Step 11: Adding the event to an act.
+
+To actually make your event encounterable during gameplay, you must add it to the pool of available adventures in the required stage.
+
+Stages have two distinct adventure pools:
+* **`FirstAdventurePool`**: Events in this pool will always be encountered as your **very first event node** of the act. (For example, Patchouli, Junko, or Shinmyoumaru in Act 2. Act 1's first adventure pool is empty in vanilla).
+* **`AdventurePool`**: The general pool of events encountered throughout the rest of the act.
+
+For example, let's say we have two events: `YuukaGarden` and `ReimuSteal`. We want `YuukaGarden` to always be a candidate for the first event node of Act 1, and `ReimuSteal` to be in the general event pool for Act 1.
+
+
+Inside your BepinexPlugin class (or whichever class registers your mod's harmony patches and to entity manager), add the delegate to modify the stage `BambooForest`, which is the class for act 1.
+```
+private void Awake()
+{
+    log = Logger; 
+
+    DontDestroyOnLoad(gameObject);
+    gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+    EntityManager.RegisterSelf();
+
+    harmony.PatchAll();
+
+    // Add the delegate here.
+    // You can also add enemies and other stuff to the pool here.
+    StageTemplate.ModifyStage(nameof(BambooForest), stage =>
+    {
+        stage.FirstAdventurePool.Add(typeof(YuukaGarden), 1.2f); // (AdventureType, Weight)
+        stage.AdventurePool.Add(typeof(ReimuSteal), 1.2f); // (AdventureType, Weight)
+
+        return stage;
+    });
+}
+```
+
+#### Modifying ALL Stages (`StageTemplate.ModifyStageList`)
+`StageTemplate.ModifyStageList` can be used to iterate over all stages that would appear in the run instead. This can be used, for example, to ensure your event always appears in act 1, including in custom ones.
+
+```csharp
+// Example: Add YuukaGarden to ALL Act 1 stages in the run
+StageTemplate.ModifyStageList(stages =>
+{
+    foreach (var stage in stages)
+    {
+        if (stage.Level == 1) // Act 1
+        {
+            stage.AdventurePool.Add(typeof(YuukaGarden), 1.0f);
+        }
+    }
+    return stages;
+});
+```
+
+(Though a custom act 1 might have its own events and doesn't want other events added to it, so use with caution.)
+
+---
+
+### Step 12 (Optional): Adding Custom Encounter Weights (`IAdventureWeighter`)
+
+Say you want your event to only trigger under specific conditions, or for it to trigger at higher odds depending on game state (e.g., current player character, money, HP, or exhibits).
+
+To do this, add an `[AdventureInfo]` attribute to your adventure class and point it to a custom `IAdventureWeighter` class.
+
+For example, `ReimuSteal` is an event where you can fight Reimu for gold. We want it to be **impossible** to appear if you're playing as Reimu, and **much more likely** to appear if you're low on money:
+```
+[AdventureInfo(WeighterType = typeof(ReimuStealWeighter))]
+[EntityLogic(typeof(ReimuStealDef))]
+public sealed class ReimuSteal : Adventure
+{
+    public class ReimuStealWeighter : IAdventureWeighter
+    {
+        public float WeightFor(Type type, GameRunController gameRun)
+        {
+            if (gameRun.Player is Reimu) return 0; // Weights are multiplied by 0 if you are Reimu
+            if (gameRun.Money < 50) return 5; // If you are not Reimu, and are poor, then you are 5x more likely to encounter this event.
+            
+            return 1; // Otherwise this has a normal appearance rate.
+        }
+    }
+    protected override void InitVariables(IVariableStorage storage)
+    {
+        storage.SetValue("$goldGain", 200f);
+        storage.SetValue("$reimuOpponent", "Reimu");
+    }
+}
+```

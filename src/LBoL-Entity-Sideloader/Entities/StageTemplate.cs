@@ -34,11 +34,13 @@ namespace LBoLEntitySideloader.Entities
         public override Type TemplateType() => typeof(StageTemplate);
 
         /// <summary>
-        /// Stage RandomPools should be added or removed from rather than completely replaced
+        /// Registers a modification delegate targeting a specific stage by ID (e.g., "BambooForest").
+        /// Use this to add/remove custom enemies, elites, bosses, or events from stage pools.
+        /// Pools should generally be added to or removed from rather than completely replaced.
         /// </summary>
-        /// <param name="Id"></param>
-        /// <param name="stageMod"></param>
-        /// <param name="callingAssembly"></param>
+        /// <param name="Id">The target stage ID to modify (e.g., "BambooForest", "XuanwuRavine").</param>
+        /// <param name="stageMod">Delegate function that receives the stage instance, modifies it, and returns it.</param>
+        /// <param name="callingAssembly">The calling assembly for tracking. Automatically detected if null.</param>
         public static void ModifyStage(string Id, Func<Stage, Stage> stageMod, Assembly callingAssembly = null)
         {
             if (callingAssembly == null)
@@ -50,9 +52,15 @@ namespace LBoLEntitySideloader.Entities
                 EntityManager.Instance.loadedFromModifyStageActions.Add(stageModAction);
 
             UniqueTracker.Instance.modifyStageActions.Add(stageModAction);
-
         }
 
+
+        /// <summary>
+        /// Registers a delegate function that modifies the full list of available stages when a run is being created.
+        /// Use this to add custom stages, remove vanilla stages, or reorder stage sequences.
+        /// </summary>
+        /// <param name="listMod">Delegate function taking the current stage list and returning the modified list.</param>
+        /// <param name="callingAssembly">The calling assembly for tracking. Automatically detected if null.</param>
         public static void ModifyStageList(Func<List<Stage>, List<Stage>> listMod, Assembly callingAssembly = null)
         {
             if (callingAssembly == null)
@@ -64,6 +72,67 @@ namespace LBoLEntitySideloader.Entities
             UniqueTracker.Instance.modifyStageListFuncs.Add(listMod);
         }
 
+
+        /// <summary>
+        /// Copies all base enemy pools, elite pools, boss pools, adventure pools, level settings, 
+        /// and story flags from a vanilla Stage type onto a target custom stage instance.
+        /// </summary>
+        /// <param name="vanillaType">The Type of the vanilla stage to copy from (e.g., typeof(BambooForest)).</param>
+        /// <param name="moddedStage">The target custom stage instance receiving the copied pools and settings.</param>
+        public static void CopyFromVanilla(Type vanillaType, Stage moddedStage)
+        {
+            if (vanillaType != typeof(Stage))
+            {
+                BepinexPlugin.log.LogError($"The stage type being copied: {vanillaType.Name} is not a stage at all.");
+            }
+            var vanilla = Library.CreateStage(vanillaType);
+
+            moddedStage.Level = vanilla.Level;
+            moddedStage.CardUpgradedChance = vanilla.CardUpgradedChance;
+            moddedStage.IsSelectingBoss = vanilla.IsSelectingBoss;
+            moddedStage.StoryBossId = vanilla.StoryBossId;
+
+            // Copy enemy, elite, boss, and adventure pools
+            moddedStage.EnemyPoolAct1 = vanilla.EnemyPoolAct1;
+            moddedStage.EnemyPoolAct2 = vanilla.EnemyPoolAct2;
+            moddedStage.EnemyPoolAct3 = vanilla.EnemyPoolAct3;
+            moddedStage.EliteEnemyPool = vanilla.EliteEnemyPool;
+            moddedStage.BossPool = vanilla.BossPool;
+            moddedStage.AdventurePool = vanilla.AdventurePool;
+            moddedStage.FirstAdventurePool = vanilla.FirstAdventurePool;
+        }
+
+
+        /// <summary>
+        /// Copies all base enemy pools, elite pools, boss pools, adventure pools, level settings, 
+        /// and story flags from a vanilla Stage type T onto a target custom stage instance.
+        /// </summary>
+        /// <typeparam name="T">The vanilla stage type to copy from (e.g., BambooForest).</typeparam>
+        /// <param name="moddedStage">The target custom stage instance receiving the copied pools and settings.</param>
+        public static void CopyFromVanilla<T>(Stage moddedStage) where T : Stage
+        {
+            CopyFromVanilla(typeof(T), moddedStage);
+        }
+
+
+        /// <summary>
+        /// Subscribes a custom stage instance to execute all Sideloader StageModActions registered 
+        /// by other mods targeting the specified vanilla stage T (e.g., BambooForest).
+        /// This ensures custom stages automatically receive modded enemies, elites, and events.
+        /// </summary>
+        /// <typeparam name="T">The vanilla stage type whose modifications should be applied.</typeparam>
+        /// <param name="moddedStage">The target custom stage instance receiving the modifications.</param>
+        public void ListenToVanilla<T>(Stage moddedStage) where T : Stage
+        {
+            string targetVanillaId = typeof(T).Name;
+            foreach (var sm in UniqueTracker.Instance.modifyStageActions)
+            {
+                if (sm.Id == targetVanillaId)
+                {
+                    sm.mod.Invoke(moddedStage);
+                }
+            }
+        }
 
         internal static HashSet<string> customEnvs = new HashSet<string>();
         internal static HashSet<Action> loadedFromDiskEnvironments = new HashSet<Action>();
