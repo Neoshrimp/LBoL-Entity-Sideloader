@@ -6,7 +6,7 @@ Events (also known as adventures in the source code) are a bit of a complex web 
 
 ### Step 1: Install YarnTools & Update `.csproj` (One-time setup)
 
-1. Download **[YarnTools.zip](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/Custom_Adventure_Implementation/YarnTools/YarnTools.zip)** from the Sideloader repo.
+1. Download **[YarnTools.zip](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/YarnTools/YarnTools.zip)** from the Sideloader repo.
 2. Unzip it into a `YarnTools` folder located at the top level of your mod project (right next to your `Resources` folder and `.csproj`).
 
 Next, open your mod's `.csproj` file, scroll down to the bottom (right above your `<Target Name="PostBuild"...`), and paste this snippet:
