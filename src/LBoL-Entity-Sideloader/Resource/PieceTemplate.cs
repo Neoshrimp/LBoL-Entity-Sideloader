@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using LBoLEntitySideloader.ExtraFunc.GunHelpers;
 
 namespace LBoLEntitySideloader.Resource
 {
@@ -26,46 +27,48 @@ namespace LBoLEntitySideloader.Resource
         }
 
         /// <summary>
-        /// Id : ,
-        /// Type : ,
-        /// Projectile : ,
-        /// ShootType : 0/1/2/3,
-        /// ParentPiece : ,
-        /// AddParentAngle : ,
-        /// LastWave : ,
-        /// FollowPiece : ,
-        /// ShootEnd : ,
-        /// HitAmount : ,
-        /// HitInterval : ,
-        /// ZeroHitNotDie : ,
-        /// Scale : ,
-        /// Color : ,
-        /// RootType : ,
-        /// X : ,
-        /// Y : ,
-        /// Radius : ,
-        /// RadiusA : ,
-        /// Aim : ,
-        /// StartTime : ,
-        /// GInterval : ,
-        /// Group : ,
-        /// Way : ,
-        /// GAngle : ,
-        /// Range : ,
-        /// Life : ,
-        /// LaserLastWave : ,
-        /// StartSpeed : ,
-        /// StartAcc : ,
-        /// StartAccAngle : ,
-        /// EvStart : ,
-        /// EvDuration : ,
-        /// EvNumber : ,
-        /// EvType : ,
-        /// VanishV3 : ,
-        /// LaunchSfx : ,
-        /// HitBodySfx : ,
-        /// HitAnimationSpeed : 
+        /// 2d arrays have a maximum 4x2 most of the time. (Up to 4 subarrays, each up to 2 values).  <see cref="PieceMatrixHelper"/>.
+        /// Id : Unique id. Must equal gun ID * 100; last two digits being its index within the gun,
+        /// Type : false for normal bullet; true for laser,
+        /// Projectile : name of the projectile; see readable bullet or laser configs,
+        /// ShootType : 0/1/2/3. Determines how the bullet spawns in relation to its parent piece,
+        /// ParentPiece : index of parent piece. only used with shoot type 2 and 3,
+        /// AddParentAngle : adds the parent's current angle when spawning,
+        /// LastWave : damage update only triggers when this piece hits the enemy,
+        /// FollowPiece : id of an earlier piece; copies the pos and angle of bullets with the same group and way indices,
+        /// ShootEnd : frames until the player's shoot animation stops,
+        /// HitAmount : must be over 1. How many times a bullet can hit an enemy before dying,
+        /// HitInterval : only for lasers. Time between each hit,
+        /// ZeroHitNotDie : bullet will not die when its hit amount reaches 0,
+        /// Scale : Size of bullets,
+        /// Color : Color of bullets. See <see cref="PieceColorHelper"/>.,
+        /// RootType : 0/1/2. Bullet spawns relative to the shooter/target/the world (0,0 is center),
+        /// X : Offset from the spawn point,
+        /// Y : Offset from the spawn point,
+        /// Radius : Spawns bullet at a distance from the spawnpoint,
+        /// RadiusA : Changes angle of bullet after Radius,
+        /// Aim : 0 for aimed bullets, 1 for unaimed bullets.,
+        /// StartTime : Frames till piece starts,
+        /// GInterval : Interval between each group,
+        /// Group : how many times bullets are spawns,
+        /// Way : how many bullets spawned per group,
+        /// GAngle : angle of the group,
+        /// Range : Spread angle of the bullets for each group,
+        /// Life : frame lifetime of bullets,
+        /// LaserLastWave : Timer before laser registers its first hit,
+        /// StartSpeed : Speed of bullets,
+        /// StartAcc : Acceleration (Change in speed) of bullets,
+        /// StartAccAngle : Angle acceleration of bullets,
+        /// EvStart : Start of events,
+        /// EvDuration : Duration of events,
+        /// EvNumber : Value for the event,
+        /// EvType : Type of event,
+        /// VanishV3 : 0.08,
+        /// LaunchSfx : SFX when launching bullet,
+        /// HitBodySfx : SFX when hitting an enemy,
+        /// HitAnimationSpeed : changes speed of enemy animation when they are hit
         /// </summary>
+        /// <seealso href="https://docs.google.com/document/d/1GqY8VSSLTyk6j2RIo6P19wc49Jo4wRsbS6zacgGEkDI/edit?tab=t.0"/>
         /// <returns></returns>
         public PieceConfig DefaultConfig()
         {
