@@ -9,6 +9,10 @@ Made using  [Harmony](https://github.com/pardeike/Harmony) and [BepInEx](https:/
 
 ### Installation
 
+Use [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3572815053)
+
+*or*
+
 Use [r2modman](https://thunderstore.io/c/touhou-lost-branch-of-legend/p/ebkr/r2modman/)
 
 *or*
@@ -22,7 +26,7 @@ This modding framework attempts to streamline, simplify and standardize common g
 
 The general idea is that the Sideloader provides abstract [template](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master/src/LBoL-Entity-Sideloader/Entities) types which should be extended and implemented concretely in your own plugin. Each abstract template method corresponds to one component of the game entity. For example, `CardTemplate` expects `LoadCardImages` to load CardImages, `MakeConfig` to define CardConfig. Additionally, entity logic type should be written and marked with [`EntityLogic`](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/Attributes/EntityLogicAttribute.cs) attribute. In case of a card, entity logic will be extending a `Card` type and defining its behavior in the same manner as a vanilla card would. That is, overriding `Actions` adding custom triggers (reactors/handlers) and so on.
 
-Sideloader has many convenience methods and types designed to reduce clutter and speed up development. Examples include `ResourceLoader`, `CardImages.AutoLoad`, `GlobalLocalization`. It also provides thorough error feedback to help define templates correctly and feature to [reload mods](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md) while the game is running.
+Sideloader has many convenience methods and types designed to reduce clutter and speed up development. Examples include `ResourceLoader`, `CardImages.AutoLoad`, `BatchLocalization`. It also provides thorough error feedback to help define templates correctly and feature to [reload mods](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/MyFirstCard.md) while the game is running.
 
 
 #### Modding guides
@@ -61,6 +65,9 @@ Sometimes the game freezes and crashes at the moment of reloading plugins. This 
 ##### Game Entity reference
 [Mini wiki](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/src/LBoL-Entity-Sideloader/EntityReference.md) detailing game entity and config specifics.
 
+##### Custom Adventures/Events
+[Tutorial](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/YarnTools/YarnTutorial.md) detailing how you can add a custom event to the game.
+
 ### Roadmap
 
 Suggestions, contributions, issues, bug reports/fixes and critique are all very welcome.
@@ -71,8 +78,9 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Create Cards ☑️
   |-- Create custom Effects ☑️
     |-- Workflow/templates for working with Effect prefabs in Unity
-  |-- Create custom Guns (attack vfx) ☑️ (technically possible but very inconvenient to design)
+  |-- Create custom Guns (attack vfx) ☑️
     |-- PieceConfig ☑️
+      |-- Piece Helpers ☑️
     |-- BulletConfig ☑️
     |-- LaserConfig ☑️
     |-- whatever else..
@@ -96,9 +104,9 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- *Playable characters at this point?* ☑️
   |-- Inherent character mechanics ☑️ (it was here all along. Units can register reactors.)
 |-- Create GapOption
-|-- Load Yarn Spinner scripts [???](https://github.com/salyu9/YarnSpinner)
-  |-- Create Adventures (Encounters)
-    |-- Modded Adventure pooling system
+|-- Load [Yarn Spinner](https://github.com/salyu9/YarnSpinner) scripts ☑️
+  |-- Create Adventures (Encounters) ☑️
+    |-- Modded Adventure pooling system ☑️
 |-- Create JadeBox challenges ☑️
 
 *Sideloader features and maintenance*
@@ -123,7 +131,6 @@ Suggestions, contributions, issues, bug reports/fixes and critique are all very 
 |-- Rewritting and refactoring Sideloader backend..
 </pre>
 
-[_Yarn script problem_](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/faq#how-do-i-generate-a-yarn-project-at-runtime-how-do-i-load-compile-yarn-scripts-at-runtime)
 
 *[Switching to beta branch](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/blob/master/BetaBranch.md)*
 
