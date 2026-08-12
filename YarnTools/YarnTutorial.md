@@ -431,7 +431,7 @@ Say you want your event to only trigger under specific conditions, or for it to 
 To do this, add an `[AdventureInfo]` attribute to your adventure class and point it to a custom `IAdventureWeighter` class.
 
 For example, `ReimuSteal` is an event where you can fight Reimu for gold. We want it to be **impossible** to appear if you're playing as Reimu, and **much more likely** to appear if you're low on money:
-```
+```csharp
 [AdventureInfo(WeighterType = typeof(ReimuStealWeighter))]
 [EntityLogic(typeof(ReimuStealDef))]
 public sealed class ReimuSteal : Adventure
