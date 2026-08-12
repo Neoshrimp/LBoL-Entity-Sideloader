@@ -180,7 +180,7 @@ namespace LBoLEntitySideloader.GameFixes
 
         }
     }
-    
+
 
 
     // makes 3 fairies a bit more compatible with being grouped with other enemies
@@ -239,10 +239,10 @@ namespace LBoLEntitySideloader.GameFixes
         {
             try
             {
-                if(__instance._pendingUseWidgets != null)
+                if (__instance._pendingUseWidgets != null)
                     foreach (HandCard handCard in __instance._pendingUseWidgets)
                     {
-                        if(handCard != null && handCard.CanvasGroup != null)
+                        if (handCard != null && handCard.CanvasGroup != null)
                             handCard.CanvasGroup.alpha = alpha;
                     }
             }
@@ -348,4 +348,40 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
+    // Fix Tenshi attempts to heal herself after she's dead
+    // This also fix HealAction causing issue when target is null
+    [HarmonyPatch(typeof(HealAction), "GetPhases")]
+    class HealActionFix_Patch
+    {
+        static bool Prefix(HealAction __instance, ref IEnumerable<Phase> __result)
+        {
+            if (__instance.Args.Source == null)
+            {
+                __result = GetPhases(__instance);
+                return false;
+            }
+            return true;
+        }
+        static IEnumerable<Phase> GetPhases(HealAction __instance)
+        {
+            __instance.Args.ForceCancelBecause(CancelCause.InvalidTarget);
+            yield break;
+        }
+    }
+
+    // Fix Tenshi attempts to gain power after she's dead
+    // This also fix ApplyStatusEffectAction causing issue when target is null
+    [HarmonyPatch(typeof(ApplyStatusEffectAction), "PreEventPhase")]
+    class ApplyStatusEffectActionFix_Patch
+    {
+        static bool Prefix(ApplyStatusEffectAction __instance)
+        {
+            if (__instance.Args.Unit == null)
+            {
+                __instance.Args.ForceCancelBecause(CancelCause.InvalidTarget);
+                return false;
+            }
+            return true;
+        }
+    }
 }
