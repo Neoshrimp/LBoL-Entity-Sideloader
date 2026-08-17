@@ -1,11 +1,23 @@
 Modding framework for working with LBoL entities.
 
+[h1]1.0 is out![/h1]
+
 [h1]Thanks to the contributors![/h1]
 
 [url=https://github.com/IntoxicatedKid]IntoxicatedKid[/url],
 [url=https://github.com/cyaneko]cyaneko[/url]
 
 [h1]Change log[/h1]
+`1.0.0` 
+[b]Major Update: Custom Adventures & Event Architecture[/b]
+[list]
+[*] [b]Custom Adventures System:[/b] Full event / adventure architecture added (`AdventureTemplate`, `YarnData`, `AdventureImages`, `DialogRunnerPatch`, `AdventureImagePatch`). Modders can now create custom events much more easily.
+[*] [b]DirectorySource Fix:[/b] Fixed file lookup in `DirectorySource` so files in the mod's directory can now search through subfolders. Meaning you can put your yamls inside folders.
+[*] [b]Guns & Pieces Improvements:[/b] Added documentation and helper functions for `GunTemplate` and `PieceTemplate`.
+[*] [b]Stage System Enhancements:[/b] Added `CopyFromVanilla` and `ListenToVanilla` helper functions to `StageTemplate` to easily clone vanilla stage pools and automatically receive event/enemy modifications from other mods.
+[*] [b]Bug Fixes:[/b] Fixed Tenshi trying to heal or gain power after she's dead. (Thank you intKid)
+[/list]
+
 '0.9.7851' Fix an edge case related to hybrid mana in interactions between cost reductions and in-battle upgrades.
 
 '0.9.7850' Add 'PackTemplate' for card packs.
