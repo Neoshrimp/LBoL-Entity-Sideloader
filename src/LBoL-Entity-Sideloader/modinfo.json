@@ -3,9 +3,9 @@
   "Description": "Modding framework for working with LBoL entities",
   "Brief": "Modding framework for working with LBoL entities.",
   "Changelog": [
-    "v1.0.0: \nOfficial Full release."
+    "v1.X.X: Probably something important."
   ],
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Author": "Neo",
   "Tags": [
     "API",

@@ -7,7 +7,11 @@ Modding framework for working with LBoL entities.
 [url=https://github.com/IntoxicatedKid]IntoxicatedKid[/url],
 [url=https://github.com/cyaneko]cyaneko[/url]
 
+
 [h1]Change log[/h1]
+
+`1.0.1` Fixed a bug with cards showing duplicate tooltips if two or more status effects had the same relative effect.
+
 `1.0.0` 
 [b]Major Update: Custom Adventures & Event Architecture[/b]
 [list]
