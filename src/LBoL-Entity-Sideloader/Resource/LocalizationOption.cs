@@ -18,6 +18,11 @@ namespace LBoLEntitySideloader.Resource
     {
         internal static void FillLocalizationTables(Dictionary<string, Dictionary<string, object>>  termDic, Type facType, bool mergeTerms)
         {
+            if (facType == null)
+            {
+                Log.log.LogError("[LocalizationOption] FillLocalizationTables was given a null facType.");
+                return;
+            }
             if (termDic != null)
             {
                 foreach (var term in termDic)

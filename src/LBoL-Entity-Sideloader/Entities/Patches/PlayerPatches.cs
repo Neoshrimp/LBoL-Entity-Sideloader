@@ -13,7 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -334,12 +336,12 @@ namespace LBoLEntitySideloader.Entities.Patches
         static Vector3 contentLocalPos;
 
         [HarmonyPatch(typeof(StartGamePanel), nameof(StartGamePanel.Awake))]
-        class Awake_Patch
+        internal class Awake_Patch
         {
 
             static public void Prefix(StartGamePanel __instance)
             {
-
+                Log.log.LogInfo($"[Diag] StartGamePanel.Awake firing. GetSelectablePlayers count: {LBoL.Core.Library.GetSelectablePlayers().Count()}");
                 PlayerSpriteLoader.LoadForStartPanel(__instance);
 
 
@@ -423,40 +425,125 @@ namespace LBoLEntitySideloader.Entities.Patches
 
             }
 
+            // Finds the compiler-generated lambda inside StartGamePanel whose body
+            // contains `newobj ArgumentOutOfRangeException()` immediately followed by `throw`.
+            // This survives recompiles that shuffle <Awake>b__X_Y names around.
+            internal static MethodInfo FindArgumentOutOfRangeThrowSite(Type declaringType)
+            {
+                var ctor = AccessTools.Constructor(typeof(ArgumentOutOfRangeException), Type.EmptyTypes);
+                if (ctor == null)
+                    return null;
 
+                var candidates = new List<MethodInfo>();
+
+                var typesToScan = new List<Type> { declaringType };
+                typesToScan.AddRange(declaringType.GetNestedTypes(AccessTools.all));
+
+                foreach (var type in typesToScan)
+                {
+                    foreach (var method in type.GetMethods(AccessTools.all | BindingFlags.DeclaredOnly))
+                    {
+                        // Only interested in compiler-generated lambda bodies, not real API methods,
+                        // to avoid accidentally matching something unrelated.
+                        if (type == declaringType && method.GetCustomAttribute<CompilerGeneratedAttribute>() == null)
+                            continue;
+
+                        if (method.IsGenericMethodDefinition || method.ContainsGenericParameters)
+                            continue;
+
+                        List<CodeInstruction> instructions;
+                        try
+                        {
+                            instructions = PatchProcessor.GetCurrentInstructions(method);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                        if (instructions == null)
+                            continue;
+
+                        for (int i = 0; i < instructions.Count - 1; i++)
+                        {
+                            if (instructions[i].opcode == OpCodes.Newobj &&
+                                instructions[i].operand is ConstructorInfo ci && ci == ctor &&
+                                instructions[i + 1].opcode == OpCodes.Throw)
+                            {
+                                candidates.Add(method);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (candidates.Count == 1)
+                    return candidates[0];
+
+                if (candidates.Count > 1)
+                {
+                    Log.log.LogWarning($"[StartGamePanel patch] Found {candidates.Count} candidates: " +
+                                        string.Join(", ", candidates.Select(m => $"{m.DeclaringType.Name}.{m.Name}")));
+                    var narrowed = candidates.Where(m => !m.IsStatic && m.GetParameters().Length == 0).ToList();
+                    if (narrowed.Count == 1)
+                        return narrowed[0];
+                }
+
+                return null;
+            }
+
+            public static void ApplyStartRunButtonPatch(Harmony harmony)
+            {
+                try
+                {
+                    var target = FindArgumentOutOfRangeThrowSite(typeof(StartGamePanel));
+                    if (target == null)
+                    {
+                        Log.log.LogError("[LBoLEntitySideloader] Could not locate the StartGamePanel " +
+                                          "ArgumentOutOfRangeException throw site — custom loadouts beyond " +
+                                          "TypeA/TypeB may not work correctly. This usually means the game's " +
+                                          "Awake() method changed shape; please report this with the game version.");
+                        return;
+                    }
+
+                    harmony.Patch(target, transpiler: new HarmonyMethod(
+                        typeof(StartRunButton_Patch), nameof(StartRunButton_Patch.Transpiler)));
+
+                    Log.log.LogInfo("[StartRun Patch]: Patch applied.");
+                }
+                catch (Exception ex)
+                {
+                    Log.log.LogError($"[LBoLEntitySideloader] Failed to patch StartGamePanel run button: {ex}");
+                }
+            }
+
+            // Old comment:
             // 2do maybe extend PlayerType enum
             // difficultyConfirmButton delegate, formerly <Awake>b__68_9
             // pre 1.7.0: formerly <Awake>b__68_8
             // pre workshop: formerly <Awake>b__71_7
-            [HarmonyPatch(typeof(StartGamePanel), "<Awake>b__71_7")]
-            class StartRunButton_Patch
+            // No longer an attribute-driven class — just holds the Transpiler method to be applied manually.
+            internal static class StartRunButton_Patch
             {
-
-                static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+                internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
                 {
+                    Log.log.LogInfo("[StartRun Patch]: Applying Transpiler.");
                     return new CodeMatcher(instructions)
                         .MatchForward(false, new CodeMatch[] {
-                new CodeMatch(new CodeInstruction(OpCodes.Newobj, AccessTools.Constructor(typeof(ArgumentOutOfRangeException), new Type[] { }))),
-                new CodeMatch(new CodeInstruction(OpCodes.Throw))
+                    new CodeMatch(new CodeInstruction(OpCodes.Newobj, AccessTools.Constructor(typeof(ArgumentOutOfRangeException), new Type[] { }))),
+                    new CodeMatch(new CodeInstruction(OpCodes.Throw))
                         })
                         .Advance(1)
                         .Set(OpCodes.Pop, null)
                         .InstructionEnumeration();
-
                 }
-
             }
 
 
 
             internal static void TyrCreateLoadoutWidget(int index, UniqueTracker.CharLoadoutInfo loadoutInfo, StartGamePanel startGamePanel)
             {
-
-
                 var startSetupWidgetA = startGamePanel.characterSetupList[0].gameObject;
                 var startSetupWidgetB = startGamePanel.characterSetupList[1].gameObject;
-
-
 
                 if (index == startGamePanel.characterSetupList.Count)
                 {
@@ -517,7 +604,6 @@ namespace LBoLEntitySideloader.Entities.Patches
                 }
                 );
             }
-
         }
 
 

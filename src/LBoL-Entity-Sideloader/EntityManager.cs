@@ -40,6 +40,8 @@ namespace LBoLEntitySideloader
             }
         }
 
+        internal static volatile bool AllUsersLoaded = false;
+
         public HashSet<Assembly> loadedFromDiskUsers = new HashSet<Assembly>();
 
         public HashSet<Action> loadedFromDiskPostAction = new HashSet<Action>();
@@ -946,6 +948,10 @@ namespace LBoLEntitySideloader
                     {
                         HandleOverwriteWrap(() => at.Consume(at.LoadLocalization()), definition, nameof(at.LoadLocalization), user);
                     }
+                    else if (definition is BgmTemplate bt)
+                    {
+                        HandleOverwriteWrap(() => bt.Consume(bt.LoadLocalization()), definition, nameof(bt.LoadLocalization), user);
+                    }
                 }
 
                 // load global localization
@@ -956,6 +962,12 @@ namespace LBoLEntitySideloader
                         {
                             var facType = kv2.Key;
                             var locInfo = kv2.Value;
+
+                            if (facType == null)
+                            {
+                                log.LogError($"{user.assembly.GetName().Name}: a localization option was registered with a null type; skipping. locFiles={locInfo?.locFiles}");
+                                continue;
+                            }
 
                             if (locInfo.locFiles == null)
                             {
@@ -994,9 +1006,6 @@ namespace LBoLEntitySideloader
 
                 }
 
-
-
-
                 // load batch loc
                 if(UniqueTracker.Instance.batchLocalization.ContainsKey(user.assembly))
                     foreach (var types2Set in UniqueTracker.Instance.batchLocalization[user.assembly])
@@ -1026,6 +1035,12 @@ namespace LBoLEntitySideloader
                                 if (bl.templateType == typeof(PackTemplate))
                                 {
                                     PackTemplate.FillPacksLocTable(lf.LoadLocTable(bl.entityIds, addEmptyDic: false), lf.mergeTerms);
+                                    continue;
+                                }
+
+                                if (bl.templateType == typeof(BgmTemplate))
+                                {
+                                    BgmTemplate.FillBgmLocTable(lf.LoadLocTable(bl.entityIds, addEmptyDic: false), lf.mergeTerms);
                                     continue;
                                 }
 

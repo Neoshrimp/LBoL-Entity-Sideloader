@@ -60,22 +60,24 @@ namespace LBoLEntitySideloader.GameFixes
             // target delegate is declared in SelectCardPanel.OnShowing
             static IEnumerable<MethodBase> TargetMethods()
             {
-                // pre 1.7.1 - DisplayClass64_0
-                // pre 1.7.2 - DisplayClass68_0
-
+                var setActive = AccessTools.Method(typeof(GameObject), nameof(GameObject.SetActive));
                 var nestedTypes = typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared);
 
-                var targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass70_0"));
+                foreach (var t in nestedTypes)
+                {
+                    foreach (var m in t.GetMethods(AccessTools.allDeclared))
+                    {
+                        // Only look at compiler-generated lambdas from ViewMiniSelect
+                        if (!m.Name.Contains("ViewMiniSelect")) continue;
 
-                // 1.7.2 this check should be w/e
-                if (targetDelegateType == null)
-                    targetDelegateType = nestedTypes.SingleOrDefault(t => t.Name.Contains("DisplayClass68_0"));
-                if (targetDelegateType == null)
-                    throw new InvalidOperationException("No target delegate type found");
+                        // Skip abstract/empty
+                        if (m.GetMethodBody() == null) continue;
 
-                yield return AccessTools.Method(targetDelegateType, "<ViewMiniSelect>b__0");
-
-                //yield return AccessTools.Method(typeof(SelectCardPanel).GetNestedTypes(AccessTools.allDeclared).Single(t => t.Name.Contains("DisplayClass68_0")), "<ViewMiniSelect>b__0");
+                        var instr = PatchProcessor.GetCurrentInstructions(m);
+                        if (instr.Any(ci => ci.Calls(setActive)))
+                            yield return m;
+                    }
+                }
             }
 
 

@@ -14,6 +14,7 @@ using LBoL.EntityLib.Exhibits.Shining;
 using LBoL.Presentation;
 using LBoL.Presentation.UI.ExtraWidgets;
 using LBoL.Presentation.UI.Panels;
+using LBoL.Presentation.UI.Widgets;
 using LBoLEntitySideloader.ReflectionHelpers;
 using Mono.CSharp;
 using System;
@@ -207,8 +208,11 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
-    // might cause issues with future updates. Only ReimuR is actually using the spell cache
-    [HarmonyPatch(typeof(SpellPanel), nameof(SpellPanel.Awake))]
+    /// <summary>
+    /// Old Comment: might cause issues with future updates. Only ReimuR is actually using the spell cache
+    /// Probably unneeded now.
+    /// </summary>
+    //[HarmonyPatch(typeof(SpellPanel), nameof(SpellPanel.Awake))]
     class SpellPanel_ClearSpellCache_Patch
     {
 
@@ -225,7 +229,6 @@ namespace LBoLEntitySideloader.GameFixes
                 .Insert(new CodeInstruction(OpCodes.Br, afterLoopLabel))
                 .InstructionEnumeration();
         }
-
     }
 
 
@@ -241,55 +244,129 @@ namespace LBoLEntitySideloader.GameFixes
             {
                 if (__instance._pendingUseWidgets != null)
                     foreach (HandCard handCard in __instance._pendingUseWidgets)
-                    {
                         if (handCard != null && handCard.CanvasGroup != null)
                             handCard.CanvasGroup.alpha = alpha;
-                    }
             }
             catch (Exception ex)
             {
-
                 Log.log.LogWarning(ex);
             }
 
-
+            try
+            {
+                if (__instance._followPlayWidgets != null)
+                    foreach (CardWidget cardWidget in __instance._followPlayWidgets)
+                        if (cardWidget != null && cardWidget.CanvasGroup != null)
+                            cardWidget.CanvasGroup.alpha = alpha;
+            }
+            catch (Exception ex)
+            {
+                Log.log.LogWarning(ex);
+            }
             return false;
         }
-
     }
 
 
-    // 2do keep error handling
+    /// <summary>
+    /// Vanilla guards music from playing if the stage is not between 1 and 4.
+    /// Old version just skipped that check.
+    /// Now, simply throws a warning if there is no music attached to a stage.
+    /// However, will need to be updated with the game since this replaces the entire method.
+    /// 1.8.1
+    /// </summary>
     [HarmonyPatch(typeof(AudioManager), nameof(AudioManager.EnterStage))]
     class AudioManagerEnterStage_Patch
     {
-
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        static bool Prefix(int level, bool intoLayer0 = true)
         {
-            return new CodeMatcher(instructions, generator)
-                .MatchForward(false, new CodeMatch(OpCodes.Ret))
-                .RemoveInstruction()
-                .InstructionEnumeration();
-        }
+            AudioManager.GuardedGetInstance().StopUiBgm();
 
+            string text = "Stage" + level;
+
+            if (BgmConfig.FromID(text) == null)
+            {
+                Debug.LogWarning($"No corresponding stage music: No BGM is configured for Stage {level}; playback skipped.");
+                if (!intoLayer0)
+                {
+                    Singleton<AudioManager>.Instance.layer0Id = text;
+                    Singleton<AudioManager>.Instance.layer0Time = 0f;
+                }
+                return false; // skip original
+            }
+
+            if (intoLayer0)
+            {
+                if (text != Singleton<AudioManager>.Instance.layer0Id)
+                {
+                    Singleton<AudioManager>.Instance.layer0Id = text;
+                    Singleton<AudioManager>.Instance.layer0Time = 0f;
+                    Singleton<AudioManager>.Instance.inLayer0 = true;
+                    AudioManager.PlayBgm(Singleton<AudioManager>.Instance.layer0Id, 0f, layer0: true);
+                }
+                else if (!Singleton<AudioManager>.Instance.inLayer0)
+                {
+                    AudioManager.EnterLayer0();
+                }
+            }
+            else
+            {
+                Singleton<AudioManager>.Instance.layer0Id = text;
+                Singleton<AudioManager>.Instance.layer0Time = 0f;
+            }
+
+            return false; // skip original. Fully replaced its logic
+        }
     }
 
-    // Make CantLose exhibits actually can't lose
+    /// <summary>
+    /// Make CantLose exhibits actually can't lose
+    /// Might need to change to try and get the first removable exhibit instead
+    /// </summary>
     [HarmonyPatch(typeof(Debut), nameof(Debut.ExchangeExhibit))]
     class DebutCantLoseFix_Patch
     {
-        static bool Prefix(Debut __instance)
+        static bool Prefix(Debut __instance, ref IEnumerator __result)
         {
             if (GameMaster.Instance.CurrentGameRun?.Player.Exhibits.FirstOrDefault()?.LosableType == ExhibitLosableType.CantLose)
             {
+                __result = Enumerable.Empty<object>().GetEnumerator();
                 return false;
             }
             return true;
         }
+        
+        /// <summary>
+        /// Proposed fix by claude. Unsure of implementing till the issue actually comes up (a modded character with an unremovable exhibit)
+        /// </summary>
+        static IEnumerator Replacement(Debut instance, int optionIndex)
+        {
+            var exhibits = instance.GameRun.Player.Exhibits;
+            Exhibit toRemove = exhibits.FirstOrDefault(e => e.LosableType != ExhibitLosableType.CantLose);
+
+            if (toRemove != null)
+                instance.GameRun.LoseExhibit(toRemove, triggerVisual: false, removeFromRecord: true);
+            // else: everything is CantLose — decide fallback (see below)
+
+            yield return instance.GameRun.GainExhibitRunner(instance._exhibit, triggerVisual: true, new VisualSourceData
+            {
+                SourceType = VisualSourceType.Vn,
+                Index = optionIndex
+            });
+        }
+        //static bool Prefix(Debut __instance, int optionIndex, ref IEnumerator __result)
+        //{
+        //    __result = Replacement(__instance, optionIndex);
+        //    return false;
+        //}
     }
 
-    // Fix Seija's damage limiter to work properly
-    [HarmonyPatch(typeof(LimitedDamage), nameof(LimitedDamage.OnDamageReceived))]
+    /// <summary>
+    /// Used to Fix Seija's damage limiter to work properly
+    /// But now game seems to have fixed it already.
+    /// This patch also skips the highlight, so it's a regression.
+    /// </summary>
+    //[HarmonyPatch(typeof(LimitedDamage), nameof(LimitedDamage.OnDamageReceived))]
     class LimitedDamageFix_Patch
     {
         static bool Prefix(LimitedDamage __instance, ref DamageEventArgs args)
@@ -299,7 +376,9 @@ namespace LBoLEntitySideloader.GameFixes
         }
     }
 
-    // Automatically adjusts volume of ManaLose sfx
+    /// <summary>
+    /// Automatically adjusts volume of ManaLose sfx
+    /// </summary>
     [HarmonyPatch(typeof(BattleManaPanel), nameof(BattleManaPanel.ViewLoseMana))]
     class ViewLoseManaEarrapeFix_Patch
     {
@@ -337,8 +416,11 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
-
-    [HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseDeckInBossRemoveReward), MethodType.Getter)]
+    /// <summary>
+    /// From the existence of this patch, prepare used to let you remove unremovable cards, huh?
+    /// The filter already exists so this is no longer needed
+    /// </summary>
+    //[HarmonyPatch(typeof(GameRunController), nameof(GameRunController.BaseDeckInBossRemoveReward), MethodType.Getter)]
     class BaseDeckInBossRemoveReward_Patch
     {
         static void Postfix(ref IEnumerable<Card> __result)
@@ -348,8 +430,10 @@ namespace LBoLEntitySideloader.GameFixes
     }
 
 
-    // Fix Tenshi attempts to heal herself after she's dead
-    // This also fix HealAction causing issue when target is null
+    /// <summary>
+    /// Fix Tenshi attempts to heal herself after she's dead
+    /// This also fix HealAction causing issue when target is null
+    /// </summary>
     [HarmonyPatch(typeof(HealAction), "GetPhases")]
     class HealActionFix_Patch
     {
@@ -369,8 +453,10 @@ namespace LBoLEntitySideloader.GameFixes
         }
     }
 
-    // Fix Tenshi attempts to gain power after she's dead
-    // This also fix ApplyStatusEffectAction causing issue when target is null
+    /// <summary>
+    /// Fix Tenshi attempts to gain power after she's dead.
+    /// This also fix ApplyStatusEffectAction causing issue when target is null.
+    /// </summary>
     [HarmonyPatch(typeof(ApplyStatusEffectAction), "PreEventPhase")]
     class ApplyStatusEffectActionFix_Patch
     {

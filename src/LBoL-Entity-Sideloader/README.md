@@ -9,6 +9,12 @@ Modding framework for working with LBoL entities.
 [cyaneko](https://github.com/cyaneko)
 
 #### Change log
+`1.1.1` Added support for Bgm localization. Also, removed or rewrote some outdated patches in game fixes.
+
+`1.1.0` Updated to 1.8.1. Bgm localization still doesn't work, so please wait warmly.
+
+`1.0.1` Fixed a bug with cards showing duplicate tooltips if two or more status effects had the same relative effect.
+
 `1.0.0` 
 **Major Update: Custom Adventures & Event Architecture**
 

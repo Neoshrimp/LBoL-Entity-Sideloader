@@ -24,7 +24,7 @@ using LBoL.Base.Extensions;
 using LBoL.Core.StatusEffects;
 using LBoL.EntityLib.Cards.Character.Reimu;
 
-namespace LBoLEntitySideloader.GameFixes
+namespace LBoLEntitySideloader.GameFixes.UnneededPatches
 {
     // dev fixed
     //[HarmonyPatch(typeof(ReimuSilence), "Actions", MethodType.Enumerator)]
@@ -43,11 +43,11 @@ namespace LBoLEntitySideloader.GameFixes
             matcher.MatchEndForward(new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(CardConfig), nameof(CardConfig.Damage))));
 
             if (matcher.IsValid)
-                matcher.MatchEndForward(new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(Nullable<int>), nameof(Nullable<int>.Value))))
+                matcher.MatchEndForward(new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(int?), nameof(Nullable<int>.Value))))
                 .Advance(1)
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Pop))
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_1))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ReimuSilencePatch), nameof(ReimuSilencePatch.CheckUpgrade))))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ReimuSilencePatch), nameof(CheckUpgrade))))
 
                 ;
 

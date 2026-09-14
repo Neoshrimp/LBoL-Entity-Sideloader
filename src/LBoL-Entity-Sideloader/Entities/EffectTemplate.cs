@@ -33,7 +33,8 @@ namespace LBoLEntitySideloader.Entities
             var config = new EffectConfig(
                 Name: "",
                 Path: "",
-                Life: 0
+                Life: 0,
+                LoadingPriority: 0
                 );
 
             return config;

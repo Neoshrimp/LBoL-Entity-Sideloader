@@ -74,7 +74,7 @@ namespace LBoLEntitySideloader
 
 
             harmony.PatchAll();
-
+            StartGamePanel_Patches.Awake_Patch.ApplyStartRunButtonPatch(harmony);
         }
 
         private void OnDestroy()
@@ -235,10 +235,7 @@ namespace LBoLEntitySideloader
                     {
                         maBoi.Release();
                     }
-
             }));
-
-
         }
 
         IEnumerator DoubleDelayAction(Action action)
@@ -248,9 +245,5 @@ namespace LBoLEntitySideloader
 
             action();
         }
-
-
-
-
     }
 }

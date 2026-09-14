@@ -12,11 +12,13 @@ using UnityEngine;
 using LBoL.Base.Extensions;
 using UnityEngine.AddressableAssets;
 using YamlDotNet.Core.Tokens;
+using LBoL.Presentation.UI.Widgets;
+using LBoL.Core;
 
 namespace LBoLEntitySideloader.Entities
 {
     public abstract class BgmTemplate : EntityDefinition,
-        // 2do maybe add resource provider interface
+            IResourceConsumer<LocalizationOption>,
             IConfigProvider<BgmConfig>
     {
 
@@ -41,20 +43,74 @@ namespace LBoLEntitySideloader.Entities
             var config = new BgmConfig(
                     ID: "",
                     No: 0,
-                    Name: "",
                     Folder: "",
                     Path: "",
                     Volume : 1f,
                     LoopStart: null,
                     LoopEnd: null,
                     ExtraDelay: null,
-                    TrackName: "",
-                    Artist: "",
-                    Original: "",
-                    Comment: ""
+                    Artist: ""
             );
 
             return config;
+        }
+
+
+        public abstract LocalizationOption LoadLocalization();
+
+        // Bgm has no TypeFactory<T> entry, so it needs its own flat-table filler, same idea as PackTemplate.
+        public void Consume(LocalizationOption locOption)
+        {
+            if (locOption == null)
+                return;
+
+            if (locOption is GlobalLocalization)
+                throw new InvalidOperationException($"{nameof(GlobalLocalization)} LocalizationOption not supported for {nameof(BgmTemplate)}");
+
+            if (locOption is LocalizationFiles locFiles)
+            {
+                var termDic = locFiles.LoadLocTable(new string[] { GetId() });
+                FillBgmLocTable(termDic, locFiles.mergeTerms);
+                return;
+            }
+            if (locOption is DirectLocalization rawLoc)
+            {
+                var termDic = rawLoc.WrapTermDic(UniqueId);
+                FillBgmLocTable(termDic, rawLoc.mergeTerms);
+                return;
+            }
+
+            if (locOption is BatchLocalization batchLocalization)
+            {
+                batchLocalization.RegisterSelf(userAssembly);
+                return;
+            }
+        }
+
+        internal static void FillBgmLocTable(Dictionary<string, Dictionary<string, object>> termDic, bool mergeTerms)
+        {
+            if (termDic == null)
+                return;
+
+            var table = Localization.LocalizationTable;
+
+            foreach (var kv in termDic)
+            {
+                var id = kv.Key;
+                var terms = kv.Value;
+
+                foreach (var term in terms)
+                {
+                    // Consumers read "{ID}.TrackName", "{ID}.Original", "{ID}.Comment", "{ID}.Name"
+                    // (see BgmHint.ShowHint, MusicWidget.RefreshLocalization, MusicRoomPanel.OnLocaleChanged)
+                    var key = $"{id}.{term.Key}";
+
+                    if (mergeTerms)
+                        table[key] = term.Value; // overwrite/merge same as AlwaysAdd semantics for a flat table
+                    else
+                        table.AlwaysAdd(key, term.Value);
+                }
+            }
         }
 
         public abstract BgmConfig MakeConfig();

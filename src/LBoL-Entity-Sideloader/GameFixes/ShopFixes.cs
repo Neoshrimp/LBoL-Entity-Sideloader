@@ -68,7 +68,6 @@ namespace LBoLEntitySideloader.GameFixes
                  // in case there are no cards at all
                  .MatchEndForward(new CodeMatch(ci => ci.opcode == OpCodes.Callvirt && ci.operand is MethodBase mb && mb.Name == "get_Item"))
                  .SetInstruction(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ShopStation_Patch), nameof(ShopStation_Patch.IndexGuard))))
-
                  .InstructionEnumeration();
         }
 
@@ -103,12 +102,8 @@ namespace LBoLEntitySideloader.GameFixes
 
                  .MatchEndForward(new CodeMatch(ci => ci.opcode == OpCodes.Callvirt && ci.operand is MethodBase mb && mb.Name == "get_Item"))
                  .SetInstruction(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ShopPanel_Patch), nameof(ShopPanel_Patch.ExhibitIndexGuard))))
-
-
                  .InstructionEnumeration();
         }
-
-        
     }
 
 

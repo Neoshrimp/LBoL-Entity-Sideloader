@@ -5,7 +5,7 @@ using System.Text;
 using HarmonyLib;
 using LBoL.Core.Battle.BattleActions;
 
-namespace LBoLEntitySideloader.GameFixes
+namespace LBoLEntitySideloader.GameFixes.UnneededPatches
 {
 
     // devs fixed it

@@ -16,6 +16,7 @@ using LBoLEntitySideloader.ReflectionHelpers;
 using MonoMod.Utils;
 using Spine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,31 +40,88 @@ namespace LBoLEntitySideloader
         [HarmonyPriority(Priority.First)]
         class InitializeRestAsync_Patch
         {
-
-            static public async void Postfix(Task __result)
-            {   
+            static public async Task Postfix(Task __result)
+            {
                 await __result;
 
+                Log.log.LogInfo("[Diag] InitializeRestAsync postfix — registering + loading everything.");
 
-                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers, "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
+                EntityManager.Instance.LoadAll(EntityManager.Instance.sideloaderUsers,
+                    "All primary Sideloader users registered!", "Finished loading primary user resources", loadLoc: false);
 
                 UniqueTracker.Instance.RaisePostMainLoad();
-                // secondary users are populate after RaisePostMainLoad
-                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers, "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: true);
+
+                EntityManager.Instance.LoadAll(EntityManager.Instance.secondaryUsers,
+                    "All secondary Sideloader users registered!", "Finished loading secondary user resources", loadLoc: true);
 
                 UniqueTracker.Instance.populateLoadoutInfosActions.Do(a => a.Invoke());
-
                 EntityManager.Instance.addBossIconsActions.DoAll();
-
                 EntityManager.Instance.PostAllLoadProcessing();
 
+                EntityManager.AllUsersLoaded = true;
+                Log.log.LogInfo("[Diag] Sideloader fully loaded — main menu may now proceed.");
             }
-
         }
 
+        [HarmonyPatch(typeof(GameMaster), nameof(GameMaster.StartupEnterMainMenu))]
+        class GateStartupEnterMainMenu_Patch
+        {
+            static bool Prefix(int? saveIndex)
+            {
+                Singleton<GameMaster>.Instance.StartCoroutine(GatedCoStartupEnterMainMenu(saveIndex));
+                return false; // skip the original — we launch our own wrapped coroutine instead
+            }
+
+            static IEnumerator GatedCoStartupEnterMainMenu(int? saveIndex)
+            {
+                Log.log.LogInfo("[Diag] Holding main menu until sideloader finishes...");
+
+                while (!EntityManager.AllUsersLoaded)
+                    yield return null;
+
+                Log.log.LogInfo("[Diag] Sideloader ready — proceeding into CoStartupEnterMainMenu.");
+
+                var inner = OriginalCoStartupEnterMainMenu(Singleton<GameMaster>.Instance, saveIndex);
+                while (inner.MoveNext())
+                    yield return inner.Current;
+            }
+        }
+
+        // Separate class carrying the reverse patch, targeting the real private method.
+        [HarmonyPatch(typeof(GameMaster), "CoStartupEnterMainMenu")]
+        internal class OriginalCoStartupEnterMainMenu_ReversePatch
+        {
+            [HarmonyReversePatch]
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+            internal static IEnumerator Original(GameMaster instance, int? saveIndex)
+            {
+                // Harmony replaces this stub's body with the original method's IL at patch time.
+                throw new NotImplementedException("This stub is replaced by Harmony at runtime.");
+            }
+        }
+
+        static IEnumerator OriginalCoStartupEnterMainMenu(GameMaster instance, int? saveIndex)
+            => OriginalCoStartupEnterMainMenu_ReversePatch.Original(instance, saveIndex);
+
+        //[HarmonyPatch(typeof(GameMaster), nameof(GameMaster.StartupEnterMainMenu))]
+        //class Diag_StartupEnterMainMenu_Patch
+        //{
+        //    static void Prefix()
+        //    {
+        //        Log.log.LogInfo("[Diag] StartupEnterMainMenu called.");
+        //    }
+        //}
 
 
-
+        [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.Awake))]
+        [HarmonyPriority(Priority.First)]
+        class AddFormations_Patch
+        {
+            static void Postfix()
+            {
+                EnemyGroupTemplate.LoadCustomFormations();
+            }
+        }
 
         // temp fix?
         [HarmonyPatch(typeof(CrossPlatformHelper), nameof(CrossPlatformHelper.SetWindowTitle))]
@@ -89,15 +147,6 @@ namespace LBoLEntitySideloader
 
 
 
-        [HarmonyPatch(typeof(GameDirector), nameof(GameDirector.Awake))]
-        [HarmonyPriority(Priority.First)]
-        class AddFormations_Patch
-        {
-            static void Postfix()
-            {
-                EnemyGroupTemplate.LoadCustomFormations();
-            }
-        }
 
 
         [HarmonyPatch(typeof(LBoL.Presentation.Environments.Environment), nameof(LBoL.Presentation.Environments.Environment.Awake))]
@@ -264,9 +313,5 @@ namespace LBoLEntitySideloader
 
 
         }
-
-
-
-
     }
 }

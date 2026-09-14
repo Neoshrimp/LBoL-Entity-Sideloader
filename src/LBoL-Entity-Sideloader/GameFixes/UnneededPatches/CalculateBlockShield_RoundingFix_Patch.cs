@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace LBoLEntitySideloader.GameFixes
+namespace LBoLEntitySideloader.GameFixes.UnneededPatches
 {
-    [HarmonyPatch(typeof(BattleController), nameof(BattleController.CalculateBlockShield))]
+    // Unneeded
+    //[HarmonyPatch(typeof(BattleController), nameof(BattleController.CalculateBlockShield))]
     class CalculateBlockShield_RoundingFix_Patch
     {
 

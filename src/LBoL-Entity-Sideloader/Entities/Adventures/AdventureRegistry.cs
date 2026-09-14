@@ -45,7 +45,7 @@ namespace LBoLEntitySideloader
     [HarmonyPatch(typeof(DialogRunner), "LoadAsync")]
     public static class DialogRunnerPatch
     {
-        static bool Prefix(string name, IVariableStorage storage, Yarn.Library library, ref UniTask<DialogRunner> __result)
+        static bool Prefix(string name, IVariableStorage storage, Yarn.Library library, string playerId, ref UniTask<DialogRunner> __result)
         {
             BepinexPlugin.log.LogInfo($"[DialogRunnerPatch] Intercepted LoadAsync for dialog name: '{name}'");
 
@@ -66,7 +66,7 @@ namespace LBoLEntitySideloader
             BepinexPlugin.log.LogInfo($"[DialogRunnerPatch] Found YarnData for '{name}'. Getting string table...");
             Dictionary<string, string> stringTable = yarnData.GetStringTableForCurrentLocale();
 
-            var runner = new DialogRunner(name, yarnData.compiledBytes, stringTable, storage, library);
+            var runner = new DialogRunner(name, yarnData.compiledBytes, stringTable, storage, library, playerId);
 
 
             __result = UniTask.FromResult(runner);

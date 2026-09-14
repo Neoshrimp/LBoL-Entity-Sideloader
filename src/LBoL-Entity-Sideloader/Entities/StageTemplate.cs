@@ -100,6 +100,7 @@ namespace LBoLEntitySideloader.Entities
             moddedStage.BossPool = vanilla.BossPool;
             moddedStage.AdventurePool = vanilla.AdventurePool;
             moddedStage.FirstAdventurePool = vanilla.FirstAdventurePool;
+            moddedStage.TradeAdventureType = vanilla.TradeAdventureType;
         }
 
 
