@@ -15,6 +15,7 @@ using LBoL.Presentation;
 using LBoL.Presentation.UI.ExtraWidgets;
 using LBoL.Presentation.UI.Panels;
 using LBoL.Presentation.UI.Widgets;
+using LBoL.Presentation.Units;
 using LBoLEntitySideloader.ReflectionHelpers;
 using Mono.CSharp;
 using System;
@@ -465,6 +466,22 @@ namespace LBoLEntitySideloader.GameFixes
             if (__instance.Args.Unit == null)
             {
                 __instance.Args.ForceCancelBecause(CancelCause.InvalidTarget);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Fix an issue when source is null
+    /// </summary>
+    [HarmonyPatch(typeof(GameDirector), "GunShootAction", new Type[] { typeof(UnitView), typeof(IList<ValueTuple<UnitView, DamageInfo>>), typeof(string), typeof(GunType) })]
+    private class GameDirector_GunShootAction_Patch
+    {
+        private static bool Prefix(GameDirector __instance, ref UnitView source, IList<(UnitView target, DamageInfo damageInfo)> pairs, string gunName, GunType type)
+        {
+            if (source == null)
+            {
                 return false;
             }
             return true;
