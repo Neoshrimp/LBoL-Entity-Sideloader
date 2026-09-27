@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using LBoL.Base;
 using LBoL.Base.Extensions;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
@@ -44,6 +45,7 @@ namespace LBoLEntitySideloader
 
         public Dictionary<string, Type> typeName2VanillaType = new Dictionary<string, Type>();
 
+        public List<ManaColor> offColors = new List<ManaColor>();
 
         public bool IsForOverwriting(Type definitionType)
         {

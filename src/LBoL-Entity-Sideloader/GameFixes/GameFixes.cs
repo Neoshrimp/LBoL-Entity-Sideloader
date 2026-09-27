@@ -476,7 +476,7 @@ namespace LBoLEntitySideloader.GameFixes
     /// Fix an issue when source is null
     /// </summary>
     [HarmonyPatch(typeof(GameDirector), "GunShootAction", new Type[] { typeof(UnitView), typeof(IList<ValueTuple<UnitView, DamageInfo>>), typeof(string), typeof(GunType) })]
-    private class GameDirector_GunShootAction_Patch
+    class GameDirector_GunShootAction_Patch
     {
         private static bool Prefix(GameDirector __instance, ref UnitView source, IList<(UnitView target, DamageInfo damageInfo)> pairs, string gunName, GunType type)
         {

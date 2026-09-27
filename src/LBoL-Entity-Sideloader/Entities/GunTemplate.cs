@@ -20,16 +20,16 @@ namespace LBoLEntitySideloader.Entities
         public override Type TemplateType() => typeof(GunTemplate);
 
         /// <summary>
-        /// Id : the most important parameter. Maps gun to one or more Pieces,
-        /// Name : technically the Id of the GunCOnfig but in reality just a cosmetic name,
-        /// Spell : ,
-        /// Sequence : Sequence Id,
-        /// Animation : "shoot1", "shoot2", "shoot3" or "shoot4",
-        /// ForceHitTime : Forces damage update/the "hit" to happen when the timer ends. In seconds.,
-        /// ForceHitAnimation : Determines if a hit animation will play when the hit happens,
-        /// ForceShowEndStartTime : ,
-        /// Shooter : always "Direct" ?,
-        /// ShakePower : ,
+        /// Id : the most important parameter. Maps gun to one or more Pieces,<br/>
+        /// Name : technically the Id of the GunCOnfig but in reality just a cosmetic name,<br/>
+        /// Spell : ,<br/>
+        /// Sequence : Sequence Id,<br/>
+        /// Animation : "shoot1", "shoot2", "shoot3" or "shoot4",<br/>
+        /// ForceHitTime : Forces damage update/the "hit" to happen when the timer ends. In seconds.,<br/>
+        /// ForceHitAnimation : Determines if a hit animation will play when the hit happens,<br/>
+        /// ForceShowEndStartTime : ,<br/>
+        /// Shooter : always "Direct" ?,<br/>
+        /// ShakePower : ,<br/>
         /// </summary>
         /// <returns></returns>
         public GunConfig DefaultConfig()

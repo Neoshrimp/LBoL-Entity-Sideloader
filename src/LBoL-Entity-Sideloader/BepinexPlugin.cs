@@ -112,7 +112,6 @@ namespace LBoLEntitySideloader
         /// <param name="scriptEngineInfo"></param>
         public void Reload(BepInEx.PluginInfo scriptEngineInfo, bool hardReload = false)
         {
-
             if (!hardReload)
             {
                 log.LogInfo("'Soft' reload is not a thing. Use 'hard' reload instead");

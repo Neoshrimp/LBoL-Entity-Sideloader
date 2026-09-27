@@ -9,6 +9,14 @@ Modding framework for working with LBoL entities.
 
 
 [h1]Change log[/h1]
+`1.1.2` 
+Added CardIndexGenerator and GunNameId as QoL classes (imported from rm rf's character template). See their respective comments for details.
+Fixed an issue with gun shooting when the source is null (fixed by Int kid)
+Improved some documentation.
+
+`1.1.1` Added support for Bgm localization. Also, removed or rewrote some outdated patches in game fixes.
+
+`1.1.0` Updated to 1.8.1. Bgm localization still doesn't work, so please wait warmly.
 
 `1.0.1` Fixed a bug with cards showing duplicate tooltips if two or more status effects had the same relative effect.
 

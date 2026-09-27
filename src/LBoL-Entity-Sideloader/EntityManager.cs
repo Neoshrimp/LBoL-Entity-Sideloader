@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using LBoL.Base;
 using LBoL.Base.Extensions;
 using LBoL.ConfigData;
 using LBoL.Core;
@@ -8,6 +9,7 @@ using LBoL.Core.Adventures;
 using LBoLEntitySideloader.Attributes;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Entities.MockConfigs;
+using LBoLEntitySideloader.ExtraFunc;
 using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
@@ -63,9 +65,10 @@ namespace LBoLEntitySideloader
 
         public static UserInfo ScanAssembly(Assembly assembly, bool lookForFactypes = true)
         {
-
-            var userInfo = new UserInfo();
-            userInfo.assembly = assembly;
+            var userInfo = new UserInfo
+            {
+                assembly = assembly
+            };
 
             if (!assembly.IsDynamic && BepinexPlugin.devModeConfig.Value && !string.IsNullOrEmpty(assembly.Location))
             {
@@ -90,6 +93,12 @@ namespace LBoLEntitySideloader
                     if (type.SingularAttribute<BepInPlugin>(attributes) is BepInPlugin bp)
                     {
                         userInfo.GUID = bp.GUID;
+                        // Character mods define an offColor list in their bepinex plugin.
+                        // We just catch it here through reflection for sideloader's own index generator.
+                        // While old mods that used a local index generator would still work.
+                        var offColorsField = type.GetField("offColors", BindingFlags.Public | BindingFlags.Static);
+                        if (offColorsField?.GetValue(null) is List<ManaColor> offColors)
+                            userInfo.offColors = offColors;
                     }
                     else
                     {
@@ -519,11 +528,7 @@ namespace LBoLEntitySideloader
 
             var f_Id = ConfigReflection.GetIdField(configType);
 
-
-
             Log.LogDevExtra()?.LogDebug($"(Extra Logging) Registering config: id: {entityDefinition.UniqueId}, config type:{entityDefinition.ConfigType().Name}");
-
-
 
             // For adding config to array
             var f_Data = ConfigReflection.GetArrayField(configType);
@@ -537,6 +542,11 @@ namespace LBoLEntitySideloader
 
             if (!UniqueTracker.Instance.invalidRegistrations.Contains(defType) && (!user.IsForOverwriting(entityDefinition.GetType()) || TemplatesReflection.DoOverwrite(defType, nameof(configProvider.MakeConfig))))
             {
+                // MakeConfig() can't take extra parameters, so we can't pass the user's off-colors or assembly to it directly.
+                // Instead we set them here as static fields right before calling it,
+                // so CardIndexGenerator.GetUniqueIndex() (called from inside MakeConfig()) knows which mod it's generating an index for.
+                CardIndexGenerator.CurrentOffColors = user.offColors;
+                CardIndexGenerator.CurrentAssembly = user.assembly;
                 newConfig = configProvider.MakeConfig();
                 if (newConfig == null)
                     throw new ArgumentException($"{nameof(configProvider.MakeConfig)} must return a non-null value.");
@@ -600,10 +610,7 @@ namespace LBoLEntitySideloader
                 {
                     if (TemplatesReflection.DoOverwrite(defType, nameof(configProvider.MakeConfig)) && !UniqueTracker.IsOverwriten(entityDefinition.TemplateType(), entityDefinition.UniqueId, nameof(configProvider.MakeConfig), defType, user))
                     {
-
-
                         var i = UniqueTracker.Instance.id2ConfigListIndex[configType][IdContainer.CastFromObject(f_Id.GetValue(newConfig))];
-
 
                         switch (entityDefinition.UniqueId.idType)
                         {
@@ -620,17 +627,9 @@ namespace LBoLEntitySideloader
                         ref_Data()[i] = newConfig;
                     }
                 }
-
             }
-
-
             return newConfig;
-
-
         }
-
-
-
 
 
         internal static void RegisterTypes(Type facType, UserInfo user)

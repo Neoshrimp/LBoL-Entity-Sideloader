@@ -6,9 +6,9 @@ using System.Text;
 namespace LBoLEntitySideloader.ExtraFunc.GunHelpers
 {
     /// <summary>
-    /// Helper class for creating array matrices used in bullet pattern calculations.
-    /// These matrices follow the pattern: base + growth * groupID + growth2 * groupID² + wayGrowth * wayID
-    /// Each row can have an optional random range: [value, randomRange]
+    /// Helper class for creating array matrices used in bullet pattern calculations.<br/>
+    /// These matrices follow the pattern: base + growth * groupID + growth2 * groupID² + wayGrowth * wayID<br/>
+    /// Each row can have an optional random range: [value, randomRange]<br/>
     /// </summary>
     public static class PieceMatrixHelper
     {

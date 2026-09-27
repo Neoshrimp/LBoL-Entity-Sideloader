@@ -2,6 +2,7 @@
 using LBoL.ConfigData;
 using LBoL.Core;
 using LBoL.Core.StatusEffects;
+using LBoL.EntityLib.StatusEffects.Neutral.TwoColor;
 using LBoL.Presentation;
 using LBoLEntitySideloader.Resource;
 using System;
@@ -66,33 +67,63 @@ namespace LBoLEntitySideloader.Entities
         }
 
         /// <summary>
-        /// Id: should be left blank since it's eventually set by GetId() anyway.
-        /// Order: default priority for reactors/handlers. priority argument on reactors/handlers can be used instead. Priority 10 is normal
-        /// Type: Positive, negative or special. Special is something which doesn't interact with most of the game's mechanics i.e. Event Horizon's game over effect.
-        /// IsVerbose: does the effect have 'Brief' description? Brief description can be specified in yaml as 'Brief:' node. Brief will be used as status effect description outside of battle. Important if the status effect is generic, like Firepower or Flawless, and might need to be displayed as tooltip for cards. But for most cases it's fine to leave this false.
-        /// IsStackable: can the same status be added on top? Currently all status effects set to true but some of them doesn't have a level.
-        /// StackActionTriggerLevel: should effect status effect be Removed and execute StatusAction when reaching a certain level? Charge (Id:Charging) has StackActionTriggerLevel set to 8. When Charge reaches 8 it applies Burst through its StackAction.
-        /// HasLevel: does the StatusEffect have stack count? Most of ability status effects have stacks which allows them to get stronger when additional copies of the same ability are played. For example, Fire of Ena (Id:ModuoluoFireSe) deal damage equal to amount_of_stacks x rainbow_mana_spent.
-        /// LevelStackType: how should effects levels stack when an effect is applied while the same effect is already present? This property is irrelevant if HasLevel is false.
-        /// StackType.Add: add the two levels. The most common option.
-        /// StackType.Max: use the higher level.
-        /// StackType.Min: use the lower level.
-        /// StackType.Keep: always keep already present level.
-        /// StackType.Max: discard the present level and use the new one.
-        /// HasDuration: does the status disappears after certain number of turns? Frail, Weak, Vuln ect. all expire after certain amount of turns.
-        /// DurationStackType: StackType.Add,
-        /// DurationDecreaseTiming: DurationDecreaseTiming.Custom,
-        /// HasCount: has a counter? Number displayed on status effect icon for keeping track of some additional effects. For example, Rain of Hell (Id:HekaHellRainSe) use it to show total amount of damage which would be dealt at the end of the turn.
-        /// CountStackType: StackType.Keep,
-        /// LimitStackType: StackType.Keep,
-        /// ShowPlusByLimit: false,
-        /// Keywords: Keyword.None,
-        /// RelativeEffects: new List<string>() { },
-        /// VFX: "Default",
-        /// VFXloop: "Default",
-        /// SFX: "Default"
+        /// <para>
+        /// <b>Identity and ordering</b><br/>
+        /// <c>Id</c> — leave blank; it is assigned by <c>GetId()</c> at runtime.<br/>
+        /// <c>Order</c> — default priority for reactors/handlers. 
+        /// Priority argument on reactors/handlers can also be used instead. Priority 10 is normal<br/>
+        /// <c>Type</c> — Positive, Negative, or Special. Special effects do not
+        /// interact with most of the game's mechanics (e.g. Event Horizon's game-over effect).
+        /// </para>
+        /// <para>
+        /// <b>Display</b><br/>
+        /// <c>IsVerbose</c> — whether the effect has a "Brief" description. The brief
+        /// text is set in YAML under the <c>Brief:</c> node and is used as the status
+        /// description outside of battle. Set this when a generic effect (Firepower,
+        /// Flawless, etc.) may need to appear as a card tooltip; otherwise false is fine.<br/>
+        /// <c>Keywords</c> — keyworrds to show up as related tooltips; default <c>Keyword.None</c>.<br/>
+        /// <c>RelativeEffects</c> — list of effect to show up as related tooltips (use <c>nameof(Seclass)</c>); default empty.
+        /// <c>VFX</c> — presumably VFX when applying the SE? (Untested); default <c>"Default"</c>.<br/>
+        /// <c>VFXloop</c> — vfx loop while status exists. See <see cref="Grace"/>'s configs; default <c>"Default"</c>.<br/>
+        /// <c>SFX</c> — sound effect when applying the SE? (Untested); default <c>"Default"</c>.
+        /// </para>
+        /// <para>
+        /// <b>Stacking and levels</b><br/>
+        /// <c>IsStackable</c> — can the same status be applied on top of itself?
+        /// Almost status effects set this true. Most unstackable just have no level.<br/>
+        /// <c>HasLevel</c> — does the effect carry a stack count? Most ability effects
+        /// do, letting them grow stronger when additional copies of the same ability
+        /// are played. Fire of Ena (<see cref="ModuoluoFireSe"/>), for example, deals
+        /// damage equal to <c>stacks × rainbow_mana_spent</c>.<br/>
+        /// <c>LevelStackType</c> — how levels combine when the effect is applied while
+        /// already present. Ignored when <c>HasLevel</c> is false:
+        /// <br/>  • <c>StackType.Add</c> — sum the two levels (most common).
+        /// <br/>  • <c>StackType.Max</c> — take the higher level.
+        /// <br/>  • <c>StackType.Min</c> — take the lower level.
+        /// <br/>  • <c>StackType.Keep</c> — keep the existing level.
+        /// <br/>  • <c>StackType.Overwrite</c> — discard the existing level and use the new one.
+        /// <br/>
+        /// <c>StackActionTriggerLevel</c> — if set, the effect is removed and its
+        /// <c>StatusAction</c> runs upon reaching this level. Charge
+        /// (<see cref="Charging"/>) uses 8, applying Burst when it maxes out.
+        /// </para>
+        /// <para>
+        /// <b>Duration</b><br/>
+        /// <c>HasDuration</c> — does the status expire after a number of turns?
+        /// Frail, Weak, Vulnerable, etc. all expire this way.<br/>
+        /// <c>DurationStackType</c> — how durations combine; default <c>StackType.Add</c>.<br/>
+        /// <c>DurationDecreaseTiming</c> — when the duration ticks down; default <c>DurationDecreaseTiming.Custom</c>.
+        /// </para>
+        /// <para>
+        /// <b>Counters</b><br/>
+        /// <c>HasCount</c> — whether the icon displays a counter for tracking an
+        /// auxiliary value. Rain of Hell (<see cref="HekaHellRainSe"/>) uses it to show
+        /// the total damage that will be dealt at end of turn.<br/>
+        /// <c>CountStackType</c> — how counters combine; default <c>StackType.Keep</c>.<br/>
+        /// <c>LimitStackType</c> — Undocumented; default <c>StackType.Keep</c>.<br/>
+        /// <c>ShowPlusByLimit</c> — undocumented; default false.
+        /// </para>
         /// </summary>
-        /// <returns></returns>
         public abstract StatusEffectConfig MakeConfig();
 
         /// <summary>

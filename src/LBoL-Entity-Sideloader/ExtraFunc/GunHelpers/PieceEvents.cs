@@ -32,15 +32,16 @@ namespace LBoLEntitySideloader.ExtraFunc.GunHelpers
         /// </summary>
         Homing = 5,
         /// <summary>
-        /// Bounces off screen boundaries (mirror reflection). Does not bounce off the wall on the opposite side of the shooter.
-        /// If its event mode is 1, it will aim towards the target at reflection instead.
-        /// Use special bouncing method for it.
+        /// Bounces off screen boundaries (mirror reflection). Does not bounce off the wall on the opposite side of the shooter.<br/>
+        /// If its event mode is 1, it will aim towards the target at reflection instead.<br/>
+        /// Use special bouncing method for it.<br/>
         /// </summary>
         BounceReflect = 9,
         /// <summary>
-        /// Bounces to cardinal directions at boundaries (hitting the bottom changes its angle straight up). Does not bounce off the wall on the opposite side of the shooter.
-        /// If its event mode is 1, it will aim towards the target at reflection.
-        /// Use special bouncing method for it.
+        /// Bounces to cardinal directions at boundaries (hitting the bottom changes its angle straight up). <br/>
+        /// Does not bounce off the wall on the opposite side of the shooter.<br/>
+        /// If its event mode is 1, it will aim towards the target at reflection.<br/>
+        /// Use special bouncing method for it.<br/>
         /// </summary>
         BounceCardinal = 10,
         /// <summary>
@@ -72,9 +73,9 @@ namespace LBoLEntitySideloader.ExtraFunc.GunHelpers
         /// </summary>
         MovePerpendicular = 17,
         /// <summary>
-        /// Moves forward in AccAngle direction.
-        /// Used for bullets that want to have a different direction to its sprite compared to its actual movement direction.
-        /// For example, spinning objects.
+        /// Moves forward in AccAngle direction.<br/>
+        /// Used for bullets that want to have a different direction to its sprite compared to its actual movement direction.<br/>
+        /// For example, spinning objects.<br/>
         /// </summary>
         MoveAccAngleForward = 18,
         /// <summary>
