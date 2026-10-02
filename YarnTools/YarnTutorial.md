@@ -261,7 +261,8 @@ Yuuka:
 
 Create a `.yarn` file and place it inside `Resources/yarn/YuukaGarden.yarn`. 
 
-To write Yarn scripts, you can reference decompiled base game Yarn files (ask in the `mod-dev` channel if you need them). Here is an example Yarn script offering 2 choices:
+To write Yarn scripts, you can reference decompiled base game Yarn files (ask in the `mod-dev` channel if you need them). 
+Here is an example Yarn script offering 2 choices:
 1. Run away: take damage and gain a specific card.
 2. Apologize: lose power and gain a random exhibit.
 
@@ -296,9 +297,11 @@ Yuuka: Surely you did not stomp on any of them, right? #line:yuuka_002
 
 #### Important Yarn Writing Rules:
 * **Declare Variables:** Declare your variables at the top of the Yarn script (`<<declare $var = ...>>`) and set their values in C# (see Step 7).
+* **Dialogue Commands:** Yarns use runtime commands defined by the game in the lines themselves. For example you can write `({getPlayerShortName()} gets hit by some danmaku while running away.) #line:yuuka_003`. You can find them in three different classes: `Stage` itself, `Vnpanel`, and `DialogFunctions`.
 * **Speaker Commands:** `<<lEnemyName Yuuka>>` and `<<lPlayerName>>` placed above every dialogue line to set who is talking (otherwise, it will be a narrator).
 * **No Blank Lines:** Make sure there are **no empty lines** in the dialogue flow, as blank lines will break Yarn's line sequencing.
-* **Line IDs:** The `#line:tag` at the end of each text line connects the dialogue line to its translation in your YAML file.
+* **Line IDs:** The `#line:tag` at the end of each text line connects the dialogue line to its translation in your YAML file. This does mean the actual text in the yarn file is unnecessary, aside from the dialogue commands. So it's your choice if you want to write the dialogue here or if you want to just write something like `filler #line:tag` or `{$hpLoss} {getCardName($cardReward)} #line:tag` in every line.
+* **<<Stop>> right there:** A yarn file must always end with a <<stop>>, else the event will crash.
 
 ---
 
@@ -344,13 +347,13 @@ line:opt_run: "Run. Lose {0} HP, gain |{1}|."
 line:opt_apologize: "Apologize. Lose {0} <sprite=\"Point\" name=\"Power\">, gain a random Exhibit."
 ```
 
-> **Formatting Note:** `{0}`, `{1}`, etc., map to arguments passed in the original text of in the Yarn.
+> **Formatting Note:** `{0}`, `{1}`, etc., map to arguments in {} passed in the original text of in the Yarn.
 
 ---
 
 ### Step 9: Build Your Project
 
-Build your solution in Visual Studio or via `dotnet build`. 
+Build your solution in your IDE or via `dotnet build`. 
 
 The `.csproj` target added in Step 1 will automatically invoke `YarnTools/ysc.exe`, compile `Resources/yarn/YuukaGarden.yarn` into `Resources/yarnc/YuukaGarden.yarnc`, and embed it into your DLL. You can safely ignore any extra `.csv` files generated alongside it.
 
@@ -362,7 +365,7 @@ The `.csproj` target added in Step 1 will automatically invoke `YarnTools/ysc.ex
 2. Open the debug panel and navigate to the **Events** tab (3rd tab).
 3. You will find it at the end.
 
-However, your event hasn't been added to the actual pool of encounterable events within the act yet.
+However, your event hasn't been added to the actual pool of encounterable events within the game's acts yet.
 
 ---
 
@@ -452,4 +455,40 @@ public sealed class ReimuSteal : Adventure
         storage.SetValue("$reimuOpponent", "Reimu");
     }
 }
+```
+
+### More yarn examples
+
+#### Reimu Steal
+An event that lets you fight Reimu (the act 1 boss Reimu) for some gold.
+
+```yarn
+title: Main
+---
+<<declare $goldGain = 0>>
+<<declare $reimuOpponent = "">>
+<<setAdventureImage "">>
+<<lEnemyName Reimu>>
+You find a bag of rich money on the side of the road, but before you can take it— #line:reimu_001
+<<lEnemyName Reimu>>
+Reimu: "Yes! This will fund the shrine for months!" #line:reimu_002
+<<lEnemyName Reimu>>
+Reimu: "Hey, what are you looking at? Finders keepers!" #line:reimu_003
+-> Fight Reimu for the bag of money. Trigger a fight, gain {$goldGain} <sprite="Point" name="Gold">. #line:opt_fight
+    <<lEnemyName Reimu>>
+    Reimu: "You're assaulting a religious figure! This won't go unpunished!" #line:reimu_004
+    <<crossfadeAdventureImage "" 0.6>>
+    <<bgmElite>>
+    <<battle {$reimuOpponent} false>>
+    <<bgmStage>>
+    <<setVisible true>>
+    <<lEnemyName Reimu>>
+    Reimu: "Ugh, fine. I didn't even need the money." #line:reimu_005
+    <<gainMoney {$goldGain}>>
+-> Let Reimu go. #line:opt_letgo
+    <<lEnemyName Reimu>>
+    Reimu: "Ehehe! This will be considered a donation from the gods!" #line:reimu_006
+    (Reimu flies away.) #line:reimu_007
+<<stop>>
+===
 ```
