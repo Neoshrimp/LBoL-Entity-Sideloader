@@ -15,26 +15,19 @@ namespace LBoLEntitySideloader.GameFixes
     [HarmonyPatch(typeof(CardDetailPanel), "SetData")]
     internal static class UnlimitedRelativeCards
     {
-        private static readonly AccessTools.FieldRef<CardDetailPanel, Transform> relativeCellLayout =
-            AccessTools.FieldRefAccess<CardDetailPanel, Transform>("relativeCellLayout");
-        private static readonly AccessTools.FieldRef<CardDetailPanel, List<CardWidget>> relativeCardWidgets =
-            AccessTools.FieldRefAccess<CardDetailPanel, List<CardWidget>>("relativeCardWidgets");
-        private static readonly AccessTools.FieldRef<CardDetailPanel, RecordCardCell> cardCellTemplate =
-            AccessTools.FieldRefAccess<CardDetailPanel, RecordCardCell>("cardCellTemplate");
-
         private static void Postfix(CardDetailPanel __instance, Card card)
         {
-            Transform layout = relativeCellLayout(__instance);
+            var layout = __instance.relativeCellLayout;
             if (card == null || layout == null) return;
             List<Card> cards = card.EnumerateRelativeCards().ToList();
             // bars only when the cards don't fit the full-size widgets
-            int bars = cards.Count > relativeCardWidgets(__instance).Count ? cards.Count : 0;
+            int bars = cards.Count > __instance.relativeCardWidgets.Count ? cards.Count : 0;
             // vanilla stops at 10 bars, add the rest
             if (bars > 0)
             {
                 foreach (Card extra in cards.Skip(10))
                 {
-                    RecordCardCell cell = Object.Instantiate(cardCellTemplate(__instance), layout);
+                    RecordCardCell cell = Object.Instantiate(__instance.cardCellTemplate, layout);
                     cell.Card = extra;
                     cell.name = "RelativeCard:" + extra.Name;
                     cell.gameObject.SetActive(true);
