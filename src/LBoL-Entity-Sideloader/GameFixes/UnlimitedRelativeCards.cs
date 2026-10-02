@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using HarmonyLib;
 using LBoL.Core.Cards;
 using LBoL.Presentation.UI.Panels;
@@ -20,43 +19,40 @@ namespace LBoLEntitySideloader.GameFixes
             AccessTools.FieldRefAccess<CardDetailPanel, Transform>("relativeCellLayout");
         private static readonly AccessTools.FieldRef<CardDetailPanel, List<CardWidget>> relativeCardWidgets =
             AccessTools.FieldRefAccess<CardDetailPanel, List<CardWidget>>("relativeCardWidgets");
-
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            return new CodeMatcher(instructions)
-                // if (list.Count > 10) { list = list.Take(10).ToList(); LogWarning(...); }
-                .MatchStartForward(
-                    new CodeMatch(ci => ci.opcode.Name.StartsWith("callvirt") && ci.operand?.ToString().Contains("get_Count") == true),
-                    new CodeMatch(ci => ci.LoadsConstant(10)),
-                    new CodeMatch(ci => ci.opcode.Name.StartsWith("ble")))
-                .ThrowIfInvalid("CardDetailPanel.SetData: relative card cap not found")
-                .Advance(1)
-                .SetInstruction(new CodeInstruction(OpCodes.Ldc_I4, int.MaxValue))
-                .InstructionEnumeration();
-        }
+        private static readonly AccessTools.FieldRef<CardDetailPanel, RecordCardCell> cardCellTemplate =
+            AccessTools.FieldRefAccess<CardDetailPanel, RecordCardCell>("cardCellTemplate");
 
         private static void Postfix(CardDetailPanel __instance, Card card)
         {
             Transform layout = relativeCellLayout(__instance);
             if (card == null || layout == null) return;
-            // Bars are only used when the cards do not fit the full-size widgets.
-            int count = card.EnumerateRelativeCards().Count();
-            int bars = count > relativeCardWidgets(__instance).Count ? count : 0;
+            List<Card> cards = card.EnumerateRelativeCards().ToList();
+            // bars only when the cards don't fit the full-size widgets
+            int bars = cards.Count > relativeCardWidgets(__instance).Count ? cards.Count : 0;
+            // vanilla stops at 10 bars, add the rest
+            if (bars > 0)
+            {
+                foreach (Card extra in cards.Skip(10))
+                {
+                    RecordCardCell cell = Object.Instantiate(cardCellTemplate(__instance), layout);
+                    cell.Card = extra;
+                    cell.name = "RelativeCard:" + extra.Name;
+                    cell.gameObject.SetActive(true);
+                }
+            }
             RelativeCardsScroller.For(layout).Restart(bars);
         }
     }
 
-    // Shows at most 10 bars. With more, it holds on the first 10, scrolls down until the last
-    // bar is at the bottom, holds there, then cuts back to the first 10 and repeats.
-    // Hovering the bars pauses it and lets the wheel scroll them; 3 seconds after the pointer
-    // leaves, it eases back into scrolling down from where it is.
+    // shows 10 bars at most, scrolls through the rest and loops back
+    // hovering pauses it and allows wheel scrolling, it resumes 3 seconds after the pointer leaves
     internal sealed class RelativeCardsScroller : MonoBehaviour, IScrollHandler
     {
         private const int VisibleBars = 10;
         private const float HoldSeconds = 3f;
         private const float SecondsPerBar = 1f;
         private const float ResumeSeconds = 3f;
-        // How quickly a wheel scroll catches up with where it was scrolled to.
+        // how fast wheel scrolling catches up
         private const float WheelSharpness = 15f;
 
         private enum Phase { HoldTop, Scroll, HoldBottom }
@@ -89,8 +85,7 @@ namespace LBoLEntitySideloader.GameFixes
             scroller.rect = (RectTransform)layout;
             scroller.grid = layout.GetComponent<GridLayoutGroup>();
             scroller.mask = layout.gameObject.AddComponent<RectMask2D>();
-            // A bar's visuals are smaller than its cell, so raycasts between bars would miss
-            // them; this invisible image catches the wheel anywhere in the box, behind the bars.
+            // invisible image so the wheel works in the gaps between bars
             scroller.wheelArea = layout.gameObject.AddComponent<Image>();
             scroller.wheelArea.color = Color.clear;
             scroller.baseHeight = scroller.rect.sizeDelta.y;
@@ -106,17 +101,17 @@ namespace LBoLEntitySideloader.GameFixes
             phase = Phase.HoldTop;
             phaseTime = 0f;
             paused = false;
-            // The mask clips to this rect, so it is sized to exactly the visible bars.
+            // sized to the visible bars, the mask clips to it
             mask.enabled = hidden > 0;
             wheelArea.enabled = hidden > 0;
             float height = hidden > 0 ? VisibleBars * step - grid.spacing.y : baseHeight;
             rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
             SetOffset(0f);
-            // Disabled, it also leaves wheel scrolling to the panel.
+            // disabled, wheel scrolling goes to the panel
             enabled = hidden > 0;
         }
 
-        // Only reaches here while enabled, i.e. while the bars overflow.
+        // only called while enabled (bars overflow)
         public void OnScroll(PointerEventData eventData)
         {
             float ticks = eventData.currentInputModule != null
@@ -129,7 +124,7 @@ namespace LBoLEntitySideloader.GameFixes
 
         private void Update()
         {
-            // The panel runs on unscaled time (its tweens ignore the time scale).
+            // the panel uses unscaled time
             float dt = Time.unscaledDeltaTime;
             if (IsHovered())
                 Pause();
@@ -171,7 +166,7 @@ namespace LBoLEntitySideloader.GameFixes
             unhoveredTime = 0f;
         }
 
-        // Eases into scrolling down from wherever it was left.
+        // continues scrolling down from where it was left
         private void Resume()
         {
             paused = false;
@@ -193,7 +188,7 @@ namespace LBoLEntitySideloader.GameFixes
             phaseTime = 0f;
         }
 
-        // The bars fill the whole visible rect, so the pointer being in it is a bar hovered.
+        // the bars fill the visible rect
         private bool IsHovered()
         {
             if (Mouse.current == null) return false;
@@ -202,7 +197,7 @@ namespace LBoLEntitySideloader.GameFixes
             return RectTransformUtility.RectangleContainsScreenPoint(rect, Mouse.current.position.ReadValue(), cam);
         }
 
-        // Negative top padding moves the bars up while the mask stays put.
+        // negative top padding moves the bars up under the mask
         private void SetOffset(float value)
         {
             int top = -Mathf.RoundToInt(value);
