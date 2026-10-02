@@ -487,4 +487,34 @@ namespace LBoLEntitySideloader.GameFixes
             return true;
         }
     }
+
+    /// <summary>
+    /// Remove warning when there are no animation for a spine model
+    /// </summary>
+    [HarmonyPatch(typeof(UnitView), "SetAnimation")]
+    class UnitView_SetAnimation_Patch
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions)
+                .MatchForward(false, new CodeMatch(i => i.Calls(AccessTools.Method(typeof(UnityEngine.Debug), nameof(UnityEngine.Debug.LogWarning), new[] { typeof(object) }))))
+                .SetInstruction(new CodeInstruction(OpCodes.Pop))
+                .InstructionEnumeration();
+        }
+    }
+
+    /// <summary>
+    /// Remove error when there are no animation for a spine model
+    /// </summary>
+    [HarmonyPatch(typeof(UnitView), "ShootStartAnimation", new Type[] { typeof(string), typeof(List<float>), typeof(List<float>) })]
+    class UnitView_ShootStartAnimation_Patch
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions)
+                .MatchForward(false, new CodeMatch(i => i.Calls(AccessTools.Method(typeof(UnityEngine.Debug), nameof(UnityEngine.Debug.LogError), new[] { typeof(object) }))))
+                .SetInstruction(new CodeInstruction(OpCodes.Pop))
+                .InstructionEnumeration();
+        }
+    }
 }
