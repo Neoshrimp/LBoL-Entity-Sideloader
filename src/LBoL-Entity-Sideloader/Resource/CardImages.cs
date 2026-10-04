@@ -59,11 +59,11 @@ namespace LBoLEntitySideloader.Resource
         public void AutoLoad(CardTemplate cardTemplate, string extension, string relativePath = "", bool hasUpgradeImage = false)
         {
 
-            AutoLoad(cardTemplate.GetId(), extension, relativePath, CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator as List<string>, hasUpgradeImage);
-            
+            AutoLoad(cardTemplate.GetId(), extension, relativePath, CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator, hasUpgradeImage);
+
         }
 
-        public void AutoLoad(string mainId, string extension, string relativePath, List<string> subIds = null, bool hasUpgradeImage = false)
+        public void AutoLoad(string mainId, string extension, string relativePath, IReadOnlyList<string> subIds = null, bool hasUpgradeImage = false)
         {
 
             main = loadingAction(relativePath + mainId + extension);
@@ -76,7 +76,7 @@ namespace LBoLEntitySideloader.Resource
                 {
                     subs.Add(mainId + sub, loadingAction(relativePath + mainId + sub + extension));
                 }
-            
+
         }
 
         public Texture2D Load() => main;
