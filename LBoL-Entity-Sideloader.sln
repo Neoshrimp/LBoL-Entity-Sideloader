@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GunDesigner", "src\GunDesig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EffectLib", "src\EffectLib\EffectLib.csproj", "{90C662B6-5F77-4A4A-80F1-2F4DFEEBF922}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactYoumu", "src\ContactYoumu\ContactYoumu.csproj", "{2D5077EE-C37E-4855-8A99-3116E2D8D859}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchWorkshop", "src\PatchWorkshop\PatchWorkshop.csproj", "{E2F506CC-1499-46C6-B987-9C3796FDC07F}"
 EndProject
 Global
