@@ -33,6 +33,39 @@ namespace LBoLEntitySideloader.Entities
         public override Type EntityType() => typeof(Stage);
         public override Type TemplateType() => typeof(StageTemplate);
 
+
+        /// <summary>
+        /// Id : ,
+        /// Obj0 : background environment,
+        /// Obj1 : and so on,
+        /// Level1 : on which (greater or equal)stage level Obj0 background should be replaced with Obj1 background?,
+        /// Obj2 : and so on,
+        /// Level2 : and so on,
+        /// Obj3 : and so on,
+        /// Level3 : and so on,
+        /// Obj4 : and so on,
+        /// Level4 and so on: 
+        /// </summary>
+        /// <returns></returns>
+        public StageConfig DefaultConfig()
+        {
+            var config = new StageConfig(
+                Id: "",
+                Obj0: VanillaEnvironments.BambooForest0,
+                Obj1: "",
+                Level1: 1,
+                Obj2: "",
+                Level2: 0,
+                Obj3: "",
+                Level3: 0,
+                Obj4: VanillaEnvironments.WindGodLake2,
+                Level4: 0
+                );
+            return config;
+        }
+        public abstract StageConfig MakeConfig();
+
+
         /// <summary>
         /// Registers a modification delegate targeting a specific stage by ID (e.g., "BambooForest").
         /// Use this to add/remove custom enemies, elites, bosses, or events from stage pools.
@@ -117,13 +150,13 @@ namespace LBoLEntitySideloader.Entities
 
 
         /// <summary>
-        /// Subscribes a custom stage instance to execute all Sideloader StageModActions registered 
+        /// Subscribes a custom stage instance to execute all Sideloader modifyStageActions registered 
         /// by other mods targeting the specified vanilla stage T (e.g., BambooForest).
-        /// This ensures custom stages automatically receive modded enemies, elites, and events.
+        /// <para>Tldr: This ensures a custom stage N automatically gets modded encounters and events that the chosen vanilla counterpart T would get.</para>
         /// </summary>
         /// <typeparam name="T">The vanilla stage type whose modifications should be applied.</typeparam>
         /// <param name="moddedStage">The target custom stage instance receiving the modifications.</param>
-        public void ListenToVanilla<T>(Stage moddedStage) where T : Stage
+        public static void ListenToVanilla<T>(Stage moddedStage) where T : Stage
         {
             string targetVanillaId = typeof(T).Name;
             foreach (var sm in UniqueTracker.Instance.modifyStageActions)
@@ -135,6 +168,7 @@ namespace LBoLEntitySideloader.Entities
             }
         }
 
+        #region Environments
         internal static HashSet<string> customEnvs = new HashSet<string>();
         internal static HashSet<Action> loadedFromDiskEnvironments = new HashSet<Action>();
         internal static HashSet<string> currentEnvs = new HashSet<string>();
@@ -328,37 +362,7 @@ namespace LBoLEntitySideloader.Entities
             public const string WindGodLake2 = "WindGodLake2";
         }
 
-        /// <summary>
-        /// Id : ,
-        /// Obj0 : background environment,
-        /// Obj1 : and so on,
-        /// Level1 : on which (greater or equal)stage level Obj0 background should be replaced with Obj1 background?,
-        /// Obj2 : and so on,
-        /// Level2 : and so on,
-        /// Obj3 : and so on,
-        /// Level3 : and so on,
-        /// Obj4 : and so on,
-        /// Level4 and so on: 
-        /// </summary>
-        /// <returns></returns>
-        public StageConfig DefaultConfig()
-        {
-            var config = new StageConfig(
-                Id : "",
-                Obj0 : VanillaEnvironments.BambooForest0,
-                Obj1 : "",
-                Level1 : 1,
-                Obj2 : "",
-                Level2 : 0,
-                Obj3 : "",
-                Level3 : 0,
-                Obj4 : VanillaEnvironments.WindGodLake2,
-                Level4 : 0
-                );
-            return config;
-        }
-        public abstract StageConfig MakeConfig();
-
+        #endregion
 
 
         [HarmonyPatch(typeof(StartGamePanel), "OnShowing")]
@@ -406,10 +410,7 @@ namespace LBoLEntitySideloader.Entities
                     .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AddStage_Patch), nameof(AddStage_Patch.ModStageArray))))
                     .InstructionEnumeration();
             }
-
         }
-
-
 
         [HarmonyPatch]
         class EnableCustomBg_Patch
@@ -429,7 +430,64 @@ namespace LBoLEntitySideloader.Entities
                 Environment.CurrentEnvironment.gameObject.SetActive(true);
             }
         }
+    }
+
+    public static class StageExtensions
+    {
+        /// <summary>
+        /// Copies all base enemy pools, elite pools, boss pools, adventure pools, level settings, 
+        /// and story flags from a vanilla Stage type onto a target custom stage instance.
+        /// </summary>
+        /// <param name="thisStage">Stage who receives the copied properties</param>
+        /// <param name="copyTargetStage">Stage whose properties are being copied</param>
+        public static void CopyFromStage(this Stage thisStage, Type copyTargetStage)
+        {
+            if (copyTargetStage != typeof(Stage))
+            {
+                BepinexPlugin.log.LogError($"The stage type being copied: {copyTargetStage.Name} is not a stage at all.");
+            }
+            var vanilla = Library.CreateStage(copyTargetStage);
+
+            thisStage.Level = vanilla.Level;
+            thisStage.CardUpgradedChance = vanilla.CardUpgradedChance;
+            thisStage.IsSelectingBoss = vanilla.IsSelectingBoss;
+            thisStage.StoryBossId = vanilla.StoryBossId;
+
+            // Copy enemy, elite, boss, and adventure pools
+            thisStage.EnemyPoolAct1 = vanilla.EnemyPoolAct1;
+            thisStage.EnemyPoolAct2 = vanilla.EnemyPoolAct2;
+            thisStage.EnemyPoolAct3 = vanilla.EnemyPoolAct3;
+            thisStage.EliteEnemyPool = vanilla.EliteEnemyPool;
+            thisStage.BossPool = vanilla.BossPool;
+            thisStage.AdventurePool = vanilla.AdventurePool;
+            thisStage.FirstAdventurePool = vanilla.FirstAdventurePool;
+            thisStage.TradeAdventureType = vanilla.TradeAdventureType;
+        }
 
 
+        /// <summary>
+        /// Copies all base enemy pools, elite pools, boss pools, adventure pools, level settings, 
+        /// and story flags from a vanilla Stage type onto a target custom stage instance.
+        /// </summary>
+        public static void CopyFromStage<T>(Stage thisStage) where T : Stage
+        {
+            thisStage.CopyFromStage(typeof(T));
+        }
+
+
+        /// <summary>
+        /// Subscribes a custom stage instance to execute all Sideloader modifyStageActions registered 
+        /// by other mods targeting the specified vanilla stage T (e.g., BambooForest).
+        /// <para>Tldr: This ensures a custom stage N automatically gets modded encounters and events that the chosen vanilla counterpart T would get.</para>
+        /// </summary>
+        public static void ListenToVanilla<T>(this Stage stage) where T : Stage
+        {
+            string targetId = typeof(T).Name;
+            foreach (var sm in UniqueTracker.Instance.modifyStageActions)
+            {
+                if (sm.Id == targetId)
+                    sm.mod.Invoke(stage);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using UnityEngine;
@@ -59,9 +60,8 @@ namespace LBoLEntitySideloader.Resource
         public void AutoLoad(CardTemplate cardTemplate, string extension, string relativePath = "", bool hasUpgradeImage = false)
         {
             var subIllustrators = CardConfig.FromId(cardTemplate.UniqueId).SubIllustrator;
-            List<string> subIds = subIllustrators is null
-                ? null
-                : [.. subIllustrators];
+            List<string> subIds = subIllustrators?.ToList();
+            
 
             AutoLoad(cardTemplate.GetId(), extension, relativePath, subIds, hasUpgradeImage);
         }

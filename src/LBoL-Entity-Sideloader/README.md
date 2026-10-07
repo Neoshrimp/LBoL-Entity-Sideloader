@@ -1,5 +1,7 @@
 Modding framework for working with LBoL entities.
 
+More info at [github repo](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master)
+
 #### 1.0 is out!
 
 
@@ -7,8 +9,21 @@ Modding framework for working with LBoL entities.
 
 [IntoxicatedKid](https://github.com/IntoxicatedKid),
 [cyaneko](https://github.com/cyaneko)
+[lvalon](https://github.com/Lvalon)
 
 #### Change log
+`1.1.4`
+Added stage extension methods and reorganized stage template a lil bit.
+Fixed an issue with CardImages.AutoLoad not casting the subillustrator list properly. Thank you ayahiya.
+Updated the project to C# language version 9.0. 
+
+`1.1.3`
+Missing Spine Animations no longer give out a warning (reducing logbloat). 
+Thanks intkid.
+Related cards now show a scroll bar when a card has 10 or more relative cards.
+Fixed a bug when auto playing cards in the hand leaving a "Phantom" card in the hand due to not updating the hand layout. 
+Thanks Lvalon
+
 `1.1.2` 
 Added CardIndexGenerator and GunNameId as QoL classes (imported from rm rf's character template). See their respective comments for details.
 Fixed an issue with gun shooting when the source is null (fixed by Int kid)
@@ -183,5 +198,3 @@ ResourceLoader can load AssetBundle s now.
 
 
 -------------------------------------
-
-More info at [github repo](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/tree/master)
