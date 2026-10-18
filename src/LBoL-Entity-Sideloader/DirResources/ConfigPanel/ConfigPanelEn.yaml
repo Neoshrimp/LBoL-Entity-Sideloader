@@ -1,0 +1,8 @@
+ModOptionsPanel:
+  MainMenuButton: Mod Configuration
+  Reset: Reset
+  RequiresRestart: Requires Restart
+  RestartNotice: Some changes require restarting the game to take effect.
+  PressAKey: Press a key...
+  On: "On"
+  Off: "Off"

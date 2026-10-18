@@ -10,6 +10,7 @@ using LBoLEntitySideloader.PersistentValues;
 using LBoLEntitySideloader.ReflectionHelpers;
 using LBoLEntitySideloader.Resource;
 using LBoLEntitySideloader.TemplateGen;
+using LBoLEntitySideloader.UIAdditions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,8 +39,8 @@ namespace LBoLEntitySideloader
                     _instance = new UniqueTracker();
                     _instance.indexTable.Sequence(typeof(BgmConfig)).SetCounter(120);
                     _instance.indexTable.Sequence(typeof(PlayerUnitConfig)).SetCounter(6);
-                    // 2do related to collection panel
-                    _instance.indexTable.Sequence(typeof(ExhibitConfig)).SetCounter(800);
+                    // see UIAdditions.MuseumModdedExhibitPatch
+                    _instance.indexTable.Sequence(typeof(ExhibitConfig)).SetCounter(MuseumModdedExhibitPatch.ModIndexStart);
 
 
                 }
@@ -188,11 +189,28 @@ namespace LBoLEntitySideloader
             {
                 if (intentionSuffixFuncs == null)
                 {
-                    intentionSuffixFuncs = EntityManager.Instance.AllUsers.Select(tu => tu.userInfo)
+                    var dict = new Dictionary<string, Func<Intention, string>>();
+                    var templates = EntityManager.Instance.AllUsers
+                    .Select(tu => tu.userInfo)
                     .SelectMany(ui => ui.definitionInstances.Values)
-                    .Where(d => d is IntentionTemplate)
-                    .Cast<IntentionTemplate>()
-                    .ToDictionary(it => it.UniqueId.ToString(), it => new Func<Intention, string>(it.SelectAltIconsSuffix));
+                    .OfType<IntentionTemplate>();
+
+                    foreach (var intention in templates)
+                    {
+                        string id = intention.UniqueId.ToString();
+
+                        if (dict.ContainsKey(id))
+                        {
+                            BepinexPlugin.log.LogWarning(
+                                $"Duplicate IntentionTemplate ID detected: '{id}'. Overwriting with new entry."
+                            );
+                        }
+
+                        // overwrite
+                        dict[id] = intention.SelectAltIconsSuffix;
+                    }
+
+                    intentionSuffixFuncs = dict;
                 }
                 return intentionSuffixFuncs;
             }

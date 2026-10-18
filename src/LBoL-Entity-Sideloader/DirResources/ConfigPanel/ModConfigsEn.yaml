@@ -1,0 +1,20 @@
+_Plugin:
+  Name: Entity Sideloader
+
+DevMode:
+  _Name: Developer Mode
+  DevMode:
+    Name: Developer Mode
+    Description: Enables mod developer mode for extra functionality and error feedback.
+  ExtraLogging:
+    Name: Extra Logging
+    Description: Enables some additional error feedback when devMode is enabled.
+  ReloadKey:
+    Name: Reload Key
+    Description: Reload all entities (requires scriptengine).
+  HardReloadKey:
+    Name: Hard Reload Key
+    Description: Hard reload localization and all entities (requires scriptengine).
+  AutoRestart:
+    Name: Auto Restart
+    Description: Restart level after reloading all entities.

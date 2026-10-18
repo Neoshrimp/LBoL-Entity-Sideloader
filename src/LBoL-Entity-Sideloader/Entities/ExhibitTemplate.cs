@@ -5,6 +5,7 @@ using LBoL.Core;
 using LBoL.Core.Cards;
 using LBoL.Core.StatusEffects;
 using LBoL.Presentation;
+using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,26 @@ namespace LBoLEntitySideloader.Entities
         IResourceConsumer<LocalizationOption>,
         IResourceConsumer<ExhibitSprites>
     {
+        public enum MuseumSection
+        {
+            /// <summary>
+            /// Automatically choose the section where this relic depending on its configs. See <see cref="UIAdditions.MuseumModdedExhibitPatch.AutoSection(ExhibitConfig)"/> for the rules.
+            /// </summary>
+            Auto = 0,
+            Treasure = 1,
+            Shining = 2,
+            Rare = 3,
+            Uncommon = 4,
+            Common = 5,
+            Shop = 6,
+            EventsAndOther = 7,
+            FinalAct = 8,
+        }
+        /// <summary>W
+        /// hich section in the museum/collection this exhibit is listed under. 
+        /// Auto uses rules to automatically assign them based on rarity and availability.
+        /// </summary>
+        public virtual MuseumSection GetMuseumSection() => MuseumSection.Auto;
 
         public override Type TemplateType()
         {
@@ -92,7 +113,6 @@ namespace LBoLEntitySideloader.Entities
 
 
         }
-
         public abstract LocalizationOption LoadLocalization();
 
 
@@ -100,9 +120,6 @@ namespace LBoLEntitySideloader.Entities
         {
             ProcessLocalization(locOptions, EntityType());
         }
-
-
-
 
     }
 }

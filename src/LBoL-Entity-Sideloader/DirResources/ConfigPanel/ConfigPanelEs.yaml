@@ -1,0 +1,8 @@
+﻿ModOptionsPanel:
+  MainMenuButton: Configuración de mods
+  Reset: Restablecer
+  RequiresRestart: Es necesario reiniciar 
+  RestartNotice: Algunos cambios requieren reiniciar el juego para aplicarse.
+  PressAKey: Pulsa una tecla...
+  On: "Activado"
+  Off: "Desactivado" 

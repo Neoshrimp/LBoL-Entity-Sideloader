@@ -27,7 +27,9 @@ namespace LBoLEntitySideloader.Entities
 
         public override Type EntityType() => throw new InvalidDataException();
 
-        // packs dont actually reference pack config in anyway
+        /// <summary>
+        /// packs dont actually reference pack config in anyway
+        /// </summary>
         public PackConfig DefaultConfig()
         {
             return new PackConfig("", new string[] { });

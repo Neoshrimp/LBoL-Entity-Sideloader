@@ -1,0 +1,8 @@
+﻿ModOptionsPanel:
+  MainMenuButton: 模組調整
+  Reset: 重設
+  RequiresRestart: 需要重開
+  RestartNotice: 有些改動只會在重開遊戲後實施
+  PressAKey: 按個按鍵
+  On: 開
+  Off: 關

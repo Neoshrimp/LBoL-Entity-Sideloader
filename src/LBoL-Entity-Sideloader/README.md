@@ -12,6 +12,14 @@ More info at [github repo](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/t
 [lvalon](https://github.com/Lvalon)
 
 #### Change log
+`1.2.0`
+Added new mod configuration menu. Now you can edit mod configs from within the game!
+For modders, see ModConfigL10n and ConfigurationManagerAttributes for localization and extra gui features to interact with the panel.
+
+Modded Exhibits now show up in their proper categories in the collection. Modders can also set where they want a particular exhibit to go through overriding GetMuseumSection in the exhibit template.
+
+Fixed a bug with intentions with more than one image not loading the alt images properly.
+
 `1.1.4`
 Added stage extension methods and reorganized stage template a lil bit.
 Fixed an issue with CardImages.AutoLoad not casting the subillustrator list properly. Thank you ayahiya.

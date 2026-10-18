@@ -11,6 +11,8 @@ using LBoL.Presentation.UI;
 using LBoL.Presentation.UI.Panels;
 using LBoLEntitySideloader.Entities;
 using LBoLEntitySideloader.Entities.Patches;
+using LBoLEntitySideloader.ModConfigs;
+using LBoLEntitySideloader.Resource;
 using MonoMod.Utils;
 using System;
 using System.Collections;
@@ -66,6 +68,9 @@ namespace LBoLEntitySideloader
             hardReloadKeyConfig = Config.Bind("DevMode", "HardReloadKey", new KeyboardShortcut(KeyCode.None), "Hard reload localization and all entities (requires scriptengine).");
 
             autoRestartLevelConfig = Config.Bind("DevMode", "AutoRestart", true, "Restart level after reloading all entities.");
+
+            ModConfigPanelL10n.Init(new DirectorySource(PluginInfo.GUID, ""));
+            ModConfigL10n.Register(PluginInfo.GUID, new DirectorySource(PluginInfo.GUID, ""));
 
             ImageLoader.Init();
 
