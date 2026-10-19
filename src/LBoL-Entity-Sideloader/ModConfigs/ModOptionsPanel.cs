@@ -134,6 +134,18 @@ namespace LBoLEntitySideloader.ModConfigs
         /// List of modified config files until the panel closes.
         /// </summary>
         private readonly HashSet<ConfigFile> _dirtyConfigFiles = new HashSet<ConfigFile>();
+        private sealed class PanelRow
+        {
+            public string Section, Key;
+            /// <summary>
+            /// Set only for normal configs
+            /// </summary>
+            public ConfigEntryBase Entry;
+            /// <summary>
+            /// Set only for buttons
+            /// </summary>
+            public ModConfigButtons.ButtonDef Button;
+        }
         /// <summary>
         /// Single plugin's config page. Links the sidebar tab to the settings that that plugin has.
         /// </summary>
@@ -150,7 +162,7 @@ namespace LBoLEntitySideloader.ModConfigs
             /// <summary>
             /// All non-hidden configuration entries belonging to this plugin.
             /// </summary>
-            public List<ConfigEntryBase> Entries;
+            public List<PanelRow> Rows;
         }
         /// <summary>
         /// Tracker for config entries marked with 'requiresRestart = true'.
@@ -270,12 +282,25 @@ namespace LBoLEntitySideloader.ModConfigs
                             descriptionTextTemplate.fontSize, TextAlignmentOptions.Midline,
                             new Color(1f, 0.9f, 0.2f, 1f));
             _restartText.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
-            var rrt = _restartText.rectTransform;
-            rrt.anchorMin = rrt.anchorMax = new Vector2(0.5f, 0f);
-            rrt.pivot = new Vector2(0.5f, 0f);
-            rrt.sizeDelta = new Vector2(1400f, 60f);
-            rrt.anchoredPosition = new Vector2(0f, 30f);
+            var restarttTextTransform = _restartText.rectTransform;
+            restarttTextTransform.anchorMin = restarttTextTransform.anchorMax = new Vector2(0.5f, 0f);
+            restarttTextTransform.pivot = new Vector2(0.5f, 0f);
+            restarttTextTransform.sizeDelta = new Vector2(1400f, 60f);
+            restarttTextTransform.anchoredPosition = new Vector2(0f, 30f);
             _restartText.gameObject.SetActive(false);
+
+
+            // Give the ScrollView a bottom margin so titles don't collide with the button
+            bgButton.transform.SetAsLastSibling();
+            var sv = leftRoot.GetComponentInParent<ScrollRect>();
+            if (sv != null)
+            {
+                var scrollTransform = (RectTransform)sv.transform;
+                var bgTransform = (RectTransform)bgButton.transform;
+                // Button height + margin
+                var bottomOffset = bgTransform.rect.height + 108f;
+                scrollTransform.offsetMin = new Vector2(scrollTransform.offsetMin.x, scrollTransform.offsetMin.y + bottomOffset);
+            }
 
             Application.quitting += FlushDirty;
         }
@@ -382,15 +407,21 @@ namespace LBoLEntitySideloader.ModConfigs
                 if (plugin == null) byGuid.TryGetValue(info.Metadata.GUID, out plugin);
                 if (plugin == null) continue;
 
-                var entries = plugin.Config
+                var rows = plugin.Config
                     .Select(kv => kv.Value)
                     .Where(e => GetAttrs(e)?.Hidden != true)
-                    .GroupBy(e => e.Definition.Section)
-                    .OrderBy(g => string.IsNullOrEmpty(g.Key) ? 0 : 1)   // unsectioned first
+                    .Select(e => new PanelRow { Section = e.Definition.Section ?? "", Key = e.Definition.Key, Entry = e })
+                    .ToList();
+                rows.AddRange(ModConfigButtons.For(info.Metadata.GUID)
+                    .Select(b => new PanelRow { Section = b.Section, Key = b.Key, Button = b }));
+
+                var ordered = rows
+                    .GroupBy(r => r.Section)
+                    .OrderBy(sectionGroup => string.IsNullOrEmpty(sectionGroup.Key) ? 0 : 1)   // unsectioned first
                     .SelectMany(g => g)
                     .ToList();
-                if (entries.Count > 0)
-                    _pages.Add(new Page { Guid = info.Metadata.GUID, Title = info.Metadata.Name, Entries = entries });
+                if (ordered.Count > 0)
+                    _pages.Add(new Page { Guid = info.Metadata.GUID, Title = info.Metadata.Name, Rows = ordered });
             }
         }
 
@@ -399,8 +430,10 @@ namespace LBoLEntitySideloader.ModConfigs
         ModConfigL10n.Get(p.Guid, "_Plugin", null, "Name") ?? p.Title;
 
         // "Name"/"Description"/"ButtonText"/"Choices"... for one entry. null if there is no yaml value.
-        private string Loc(ConfigEntryBase e, string path1, params string[] extraPaths) =>
-            ModConfigL10n.Get(_currentPluginGuid, e.Definition.Section, e.Definition.Key, path1, extraPaths);
+        private string Loc(string section, string key, string path1, params string[] extra) =>
+            ModConfigL10n.Get(_currentPluginGuid, section, key, path1, extra);
+        private string Loc(ConfigEntryBase e, string path1, params string[] extra) =>
+            Loc(e.Definition.Section, e.Definition.Key, path1, extra);
         #endregion
 
         #region Build Page
@@ -414,21 +447,20 @@ namespace LBoLEntitySideloader.ModConfigs
             string lastSection = null;
             MakeText(_currentPageConfigsContainer, PageTitle(page), descriptionTextTemplate.fontSize * 2f,
                      TextAlignmentOptions.Midline, null, FontStyles.Bold);
-            foreach (var entry in page.Entries)
+            foreach (var row in page.Rows)
             {
-                var section = entry.Definition.Section;
-                if (section != lastSection)
+                if (row.Section != lastSection)
                 {
-                    lastSection = section;
-                    var sectionName = ModConfigL10n.Get(_currentPluginGuid, section, null, "_Name") ?? section;
+                    lastSection = row.Section;
+                    var sectionName = ModConfigL10n.Get(_currentPluginGuid, row.Section, null, "_Name") ?? row.Section;
                     if (!string.IsNullOrEmpty(sectionName))
                         MakeText(_currentPageConfigsContainer, sectionName, descriptionTextTemplate.fontSize * 1.6f,
                             TextAlignmentOptions.MidlineLeft, GlobalConfig.DefaultKeywordColor, FontStyles.Bold);
                 }
-                try { BuildRow(entry); }
-                catch (Exception ex) { Debug.LogError($"[ModOptions] Failed to build {entry.Definition}: {ex}"); }
+                try { BuildRow(row); }
+                catch (Exception ex) { Debug.LogError($"[ModOptions] Failed to build {row.Section}/{row.Key}: {ex}"); }
             }
-            AddResetButton(page);
+            if (page.Rows.Any(r => r.Entry != null)) AddResetButton(page);   // nothing to reset on a buttons-only page
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_currentPageConfigsContainer);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_currentPageConfigsContainer);   // second pass: TMP wrapping needs a width first
@@ -464,14 +496,14 @@ namespace LBoLEntitySideloader.ModConfigs
             return true;
         }
 
-        private void BuildRow(ConfigEntryBase e)
+        private void BuildRow(PanelRow r)
         {
+            var e = r.Entry;
             var row = NewGroup("Row", _currentPageConfigsContainer, true, 4f);
             var top = NewGroup("Top", row, false, 24f);
 
-            var label = MakeText(top, Loc(e, "Name") ?? e.Definition.Key, descriptionTextTemplate.fontSize,
-                         TextAlignmentOptions.MidlineLeft);
-
+            var label = MakeText(top, Loc(r.Section, r.Key, "Name") ?? r.Key,
+                                 descriptionTextTemplate.fontSize, TextAlignmentOptions.MidlineLeft);
             label.textWrappingMode = TextWrappingModes.Normal;
             label.overflowMode = TextOverflowModes.Overflow;
             HalfWidth(label.gameObject);
@@ -480,7 +512,7 @@ namespace LBoLEntitySideloader.ModConfigs
             slot.SetParent(top, false);
             HalfWidth(slot.gameObject);
 
-            float h = BuildControl(slot, e);
+            float h = r.Button != null ? BuildButton(slot, r) : BuildControl(slot, e);
             if (slot.TryGetComponent<LayoutElement>(out var layout))
             {
                 layout.minHeight = h;
@@ -490,10 +522,14 @@ namespace LBoLEntitySideloader.ModConfigs
                 slot.gameObject.AddComponent<LayoutElement>().minHeight = h;
             }
 
-            var desc = Loc(e, "Description") ?? e.Description?.Description;
+            var desc = DescriptionFor(r);
             if (!string.IsNullOrEmpty(desc))
+            {
+                desc = StringDecorator.Decorate(desc);
+
                 MakeText(row, desc, descriptionTextTemplate.fontSize * 0.75f, TextAlignmentOptions.TopLeft,
                          new Color(0.7f, 0.7f, 0.7f, 1f), usesRichText: true);
+            }
             if (GetAttrs(e)?.RequiresRestart == true)
                 MakeText(row, ModConfigPanelL10n.Translate("RequiresRestart"), descriptionTextTemplate.fontSize * 0.75f,
                          TextAlignmentOptions.TopLeft, GlobalConfig.DefaultKeywordColor);
@@ -504,6 +540,20 @@ namespace LBoLEntitySideloader.ModConfigs
                 cg.alpha = 0.5f;
             }
             AddSeparator(row);
+        }
+
+        private string DescriptionFor(PanelRow row)
+        {
+            var entry = row.Entry;
+            var desc = Loc(row.Section, row.Key, "Description") ?? entry?.Description?.Description ?? row.Button?.Description;
+
+            if (entry != null && entry.Definition.Key == "EnableAct1Boss"
+                && entry.SettingType == typeof(bool) && entry.DefaultValue is bool def && !def)
+            {
+                var note = ModConfigPanelL10n.Translate("Act1BossNote");
+                desc = string.IsNullOrEmpty(desc) ? note : desc + "\n" + note;
+            }
+            return desc;
         }
 
 
@@ -542,10 +592,10 @@ namespace LBoLEntitySideloader.ModConfigs
         }
         private void ResetPage(Page page)
         {
-            foreach (var e in page.Entries)
+            foreach (var r in page.Rows)
             {
-                if (GetAttrs(e)?.ReadOnly == true) continue;
-                SetValue(e, e.DefaultValue);
+                if (r.Entry == null || GetAttrs(r.Entry)?.ReadOnly == true) continue;
+                SetValue(r.Entry, r.Entry.DefaultValue);
             }
             ShowPage(page);   // rebuild so every widget re-reads its value
         }
@@ -572,7 +622,6 @@ namespace LBoLEntitySideloader.ModConfigs
         #region Widget Builders
         private float BuildControl(RectTransform slot, ConfigEntryBase e)
         {
-            if (GetAttrs(e)?.OnClick is Action click) return BuildButton(slot, e, click);
             var t = e.SettingType;
             if (t == typeof(bool)) return BuildSwitch(slot, e);
             // KeyCode is an enum, so this must come before the dropdown check
@@ -757,22 +806,23 @@ namespace LBoLEntitySideloader.ModConfigs
             return h;
         }
 
-        private float BuildButton(RectTransform slot, ConfigEntryBase e, Action click)
+        private float BuildButton(RectTransform slot, PanelRow r)
         {
-            var tplT = _settingsPanelReference.transform.Find(ResetTemplatePath);
-            if (tplT == null) return MinRowHeight;
-            var size = ((RectTransform)tplT).rect.size;
-            var go = Instantiate(tplT.gameObject, slot);
+            var click = r.Button.OnClick;
+            var buttonTemplateTransform = _settingsPanelReference.transform.Find(ResetTemplatePath);
+            if (buttonTemplateTransform == null) return MinRowHeight;
+            var size = ((RectTransform)buttonTemplateTransform).rect.size;
+            var go = Instantiate(buttonTemplateTransform.gameObject, slot);
             StripExtras(go);
             go.SetActive(true);
             var rt = (RectTransform)go.transform;
             PlaceRight(rt, size);
 
             foreach (var lt in go.GetComponentsInChildren<LocalizedText>(true)) lt.enabled = false;
-            string label = Loc(e, "ButtonText");
-            if (string.IsNullOrEmpty(label)) label = GetAttrs(e)?.ButtonText;
-            if (string.IsNullOrEmpty(label)) label = Loc(e, "Name");
-            if (string.IsNullOrEmpty(label)) label = e.Definition.Key;
+            string label = Loc(r.Section, r.Key, "ButtonText");
+            if (string.IsNullOrEmpty(label)) label = r.Button.ButtonText;
+            if (string.IsNullOrEmpty(label)) label = Loc(r.Section, r.Key, "Name");
+            if (string.IsNullOrEmpty(label)) label = r.Key;
 
             float textW = 0f;
             foreach (var tmp in go.GetComponentsInChildren<TextMeshProUGUI>(true))
@@ -893,6 +943,7 @@ namespace LBoLEntitySideloader.ModConfigs
         }
         private static ConfigurationManagerAttributes GetAttrs(ConfigEntryBase e)
         {
+            if (e == null) return null;
             var tags = e.Description?.Tags;
             if (tags == null) return null;
             foreach (var t in tags)

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace LBoLEntitySideloader.ModConfigs
 {
-    public static class ModOptionsButton
+    public static class ModOptionsButtonPatch
     {
         private const string ButtonName = "ModOptionsButton";
         private static readonly Vector3 ButtonPosition = new Vector3(5.5f, -15.15f, 10f);

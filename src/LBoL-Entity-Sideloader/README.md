@@ -12,9 +12,19 @@ More info at [github repo](https://github.com/Neoshrimp/LBoL-Entity-Sideloader/t
 [lvalon](https://github.com/Lvalon)
 
 #### Change log
+`1.2.1`
+Added japanese localization. Thank you to neff.
+
+Changed how buttons are registered into the mod config menu. See the new LBoLEntitySideloader.ModConfigs.ModConfigButtons class for info.
+
+Fixed bug where too many mods overlapped over the mod config menu's back button.
+
+Added a warning notice to the EnableAct1Boss option, as lots of mods don't have it implemented.
+
 `1.2.0`
 Added new mod configuration menu. Now you can edit mod configs from within the game!
-For modders, see ModConfigL10n and ConfigurationManagerAttributes for localization and extra gui features to interact with the panel.
+For modders, see LBoLEntitySideloader.ModConfigs.ModConfigL10n and LBoLEntitySideloader.ModConfigs.ConfigurationManagerAttributes for localization and extra gui features to interact with the panel.
+Thank you to Lvalon and xerox asutnima for chinese and spanish localization of the menu, respectively.
 
 Modded Exhibits now show up in their proper categories in the collection. Modders can also set where they want a particular exhibit to go through overriding GetMuseumSection in the exhibit template.
 

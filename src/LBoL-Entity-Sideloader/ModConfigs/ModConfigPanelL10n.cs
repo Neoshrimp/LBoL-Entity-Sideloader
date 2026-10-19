@@ -1,4 +1,5 @@
 ﻿using LBoL.Core;
+using LBoL.Presentation.I10N;
 using LBoLEntitySideloader.Resource;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace LBoLEntitySideloader.ModConfigs
             ["PressAKey"] = "Press a key...",
             ["On"] = "On",
             ["Off"] = "Off",
+            ["Act1BossNote"] = "|This option may not work. Check the mods page to see if an act 1 boss exists.|",
         };
 
         
@@ -61,7 +63,6 @@ namespace LBoLEntitySideloader.ModConfigs
         /// Replaces {0}, {1} in text with the args. Currently unused.
         /// </summary>
         public static string Format(string key, params object[] args) => string.Format(Translate(key), args);
-
         private static Dictionary<string, string> GetOrLoadTable(Locale locale)
         {
             if (_cache.TryGetValue(locale, out var table)) return table;

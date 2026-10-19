@@ -1,0 +1,8 @@
+﻿ModOptionsPanel:
+  MainMenuButton: Mod設定
+  Reset: デフォルトに戻す
+  RequiresRestart: 再起動が必要
+  RestartNotice: 一部のModでは、変更を反映するためにゲームを再起動する必要があります。
+  PressAKey: キーを押してください...
+  On: "オン"
+  Off: "オフ"

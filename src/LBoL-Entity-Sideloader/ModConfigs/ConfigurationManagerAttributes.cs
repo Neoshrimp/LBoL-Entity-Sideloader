@@ -14,8 +14,8 @@ namespace LBoLEntitySideloader.ModConfigs
     /// • <b>Toggle Switch:</b> Bind a <c>bool</c>.<br/>
     /// • <b>Slider:</b> Pass an <c>AcceptableValueRange&lt;T&gt;</c> to <c>ConfigDescription</c>.<br/>
     /// • <b>Dropdown:</b> Pass an <c>AcceptableValueList&lt;T&gt;</c> (or standard <c>Enum</c>) to <c>ConfigDescription</c>.<br/>
-    /// • <b>Action Button:</b> Set OnClick in this attribute.<br/>
-    /// • <b>Text Box:</b> Default fallback for strings, unbounded numbers, or flags.
+    /// • <b>Action Button:</b> See <see cref="ModConfigButtons"/><br/>
+    /// • <b>Text Box:</b> Default fallback for strings or unbounded numbers.
     /// </para>
     /// <para>Example: Creating a Slider (Range):</para>
     /// <code>
@@ -26,15 +26,6 @@ namespace LBoLEntitySideloader.ModConfigs
     /// <code>
     /// Config.Bind("Gameplay", "Difficulty", "Normal", new ConfigDescription("Game mode",
     ///     new AcceptableValueList&lt;string&gt;("Easy", "Normal", "Hard")));
-    /// </code>
-    /// <para>Example: Creating a clickable button (type can just be <c>bool</c>):</para>
-    /// <code>
-    /// Config.Bind("Extra", "Print Hello world", false, new ConfigDescription("prints hello world", null,
-    ///     new ConfigurationManagerAttributes
-    ///     {
-    ///         ButtonText = "HelloWorld",
-    ///         OnClick = () => MyMod.log.Info("Hello World")
-    ///     }));
     /// </code>
     /// <para>Example: Requiring restart:</para>
     /// <code>
@@ -74,18 +65,5 @@ namespace LBoLEntitySideloader.ModConfigs
         /// Tags this option as requiring a restart. When changed, shows a notice at the bottom.
         /// </summary>
         public bool? RequiresRestart;
-        /// <summary>
-        /// A function. When set, replaces the config with a button that does this action on click.
-        /// <para>The config type becomes irrelevant in this case.</para>
-        /// </summary>
-        public System.Action OnClick;
-#nullable enable
-        /// <summary>
-        /// For a button config, determines what the text on the button should be.
-        /// Only relevant if the button text has no yaml.
-        /// If empty and has no yaml, uses the key of the option as its name.
-        /// </summary>
-        public string? ButtonText;
-#nullable restore
     }
 }
