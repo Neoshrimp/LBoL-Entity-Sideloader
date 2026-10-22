@@ -137,7 +137,9 @@ namespace LBoLEntitySideloader
                             userInfo.entitiesToOverwrite.Add(type, new ModificationInfo() { attribute = overwrite });
                         }
                     }
-                    else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed)
+                    // ! if this EntityDefinition subclass is abstract, then warning doesn't need to be displayed
+                    // ! abstract classes can't be instanced anyway, so no need to log this warning.
+                    else if (BepinexPlugin.devModeConfig.Value && !type.IsSealed && !type.IsAbstract)
                     {
                         Log.LogDevExtra()?.LogWarning($"(Extra logging) {assembly.GetName().Name}: {type} is subtype of {typeof(EntityDefinition).Name} but isn't sealed. Final entity templates need to be sealed.");
                     }
@@ -235,7 +237,7 @@ namespace LBoLEntitySideloader
 
         public static void AddExternalDefinitionTypePromise(Type entityLogicType, Func<Type> defTypePromise, Assembly userAssembly = null)
         {
-            if(userAssembly  == null)
+            if (userAssembly == null)
                 userAssembly = Assembly.GetCallingAssembly();
 
 
@@ -254,8 +256,8 @@ namespace LBoLEntitySideloader
             UniqueTracker.Instance.typePromiseDic[userAssembly][facType].Add(new UniqueTracker.DefTypePromisePair() { entityLogicType = entityLogicType, defTypePromise = defTypePromise });
 
         }
-        
-        
+
+
         /// <summary>
         /// Add an action which will be executed after all main entities were loaded.
         /// Should be called from BePinEx Awake injection point.
@@ -270,7 +272,8 @@ namespace LBoLEntitySideloader
                 callingAssembly = Assembly.GetCallingAssembly();
 
 
-            Action postLoadAction = () => {
+            Action postLoadAction = () =>
+            {
                 try
                 {
                     action();
@@ -341,7 +344,7 @@ namespace LBoLEntitySideloader
 
         internal void RegisterUser(UserInfo user)
         {
-            
+
             log.LogInfo($"Registering assembly: {user.assembly.GetName().Name}");
             Log.LogDev()?.LogDebug($"Adding configs..");
 
@@ -720,7 +723,7 @@ namespace LBoLEntitySideloader
                 var weighter = exInfo?.CreateWeighter();
 
                 if (weighter != null)
-                {   
+                {
                     Library._exhibitWeighterTable.AlwaysAdd(entityType, weighter);
                 }
             }
@@ -954,7 +957,7 @@ namespace LBoLEntitySideloader
                 }
 
                 // load global localization
-                if(UniqueTracker.Instance.typesToLocalize.ContainsKey(user.assembly))
+                if (UniqueTracker.Instance.typesToLocalize.ContainsKey(user.assembly))
                     foreach (var kv2 in UniqueTracker.Instance.typesToLocalize[user.assembly])
                     {
                         try
@@ -992,7 +995,7 @@ namespace LBoLEntitySideloader
                     }
 
                 if (UniqueTracker.Instance.unitNamesGlobalLocalizationFiles.TryGetValue(user.assembly, out var unLocfiles))
-                {                   
+                {
                     try
                     {
                         LocalizationOption.FillUnitNameTable(unLocfiles.Load(Localization.CurrentLocale), unLocfiles.mergeTerms, UniqueTracker.Instance.unitIdsToLocalize[user.assembly]);
@@ -1006,7 +1009,7 @@ namespace LBoLEntitySideloader
                 }
 
                 // load batch loc
-                if(UniqueTracker.Instance.batchLocalization.ContainsKey(user.assembly))
+                if (UniqueTracker.Instance.batchLocalization.ContainsKey(user.assembly))
                     foreach (var types2Set in UniqueTracker.Instance.batchLocalization[user.assembly])
                     {
                         // special localization cases
@@ -1064,7 +1067,7 @@ namespace LBoLEntitySideloader
             {
                 Instance.RegisterUsers(sideloaderUsers, onRegistrationCompleteMsg);
                 Instance.LoadAssetsForResourceHelper(sideloaderUsers);
-                if(loadLoc)
+                if (loadLoc)
                     Instance.LoadLocalization(sideloaderUsers);
             }
             catch (Exception ex)
@@ -1099,9 +1102,9 @@ namespace LBoLEntitySideloader
             }
         }
 
-        public IEnumerable<(Assembly ass, UserInfo userInfo)> AllUsers 
-        { 
-            get => sideloaderUsers.userInfos.Concat(secondaryUsers.userInfos).Select(kv => (kv.Key, kv.Value)); 
+        public IEnumerable<(Assembly ass, UserInfo userInfo)> AllUsers
+        {
+            get => sideloaderUsers.userInfos.Concat(secondaryUsers.userInfos).Select(kv => (kv.Key, kv.Value));
         }
 
 
